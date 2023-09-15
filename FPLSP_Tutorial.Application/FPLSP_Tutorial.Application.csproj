@@ -17,7 +17,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\FPLSPTutorial.Domain\FPLSP_Tutorial.Domain.csproj" />
 	  <ProjectReference Include="..\FPLSP_Tutorial.Domain\FPLSP_Tutorial.Domain.csproj" />
 	</ItemGroup>
 

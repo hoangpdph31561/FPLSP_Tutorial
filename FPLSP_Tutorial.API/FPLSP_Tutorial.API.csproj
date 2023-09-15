@@ -12,8 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FPLSPTutorial.Application\FPLSP_Tutorial.Application.csproj" />
-	<ProjectReference Include="..\FPLSPTutorial.Infrastructure\FPLSP_Tutorial.Infrastructure.csproj" />
 	<ProjectReference Include="..\FPLSP_Tutorial.Application\FPLSP_Tutorial.Application.csproj" />
 	<ProjectReference Include="..\FPLSP_Tutorial.Infrastructure\FPLSP_Tutorial.Infrastructure.csproj" />
   </ItemGroup>

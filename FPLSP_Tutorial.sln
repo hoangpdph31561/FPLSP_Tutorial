@@ -5,20 +5,20 @@ VisualStudioVersion = 17.6.33829.357
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{B0B9116E-7D33-4098-A9CE-AFACD93B560E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FPLSP_Tutorial.API", "FPLSPTutorial.API\FPLSP_Tutorial.API.csproj", "{8232FCAA-4965-4479-BF2A-BCC25754FB76}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FPLSP_Tutorial.API", "FPLSP_Tutorial.API\FPLSP_Tutorial.API.csproj", "{8232FCAA-4965-4479-BF2A-BCC25754FB76}"
 	ProjectSection(ProjectDependencies) = postProject
 		{05302EE6-F9D8-4B55-A104-A4CB6EB00CF4} = {05302EE6-F9D8-4B55-A104-A4CB6EB00CF4}
 		{BB8993B4-0960-42F7-BEB7-B53DFCE98E42} = {BB8993B4-0960-42F7-BEB7-B53DFCE98E42}
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FPLSP_Tutorial.Application", "FPLSPTutorial.Application\FPLSP_Tutorial.Application.csproj", "{BB8993B4-0960-42F7-BEB7-B53DFCE98E42}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FPLSP_Tutorial.Application", "FPLSP_Tutorial.Application\FPLSP_Tutorial.Application.csproj", "{BB8993B4-0960-42F7-BEB7-B53DFCE98E42}"
 	ProjectSection(ProjectDependencies) = postProject
 		{2DD7629F-86F6-48C1-8A93-70E6F3E5A114} = {2DD7629F-86F6-48C1-8A93-70E6F3E5A114}
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FPLSP_Tutorial.Domain", "FPLSPTutorial.Domain\FPLSP_Tutorial.Domain.csproj", "{2DD7629F-86F6-48C1-8A93-70E6F3E5A114}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FPLSP_Tutorial.Domain", "FPLSP_Tutorial.Domain\FPLSP_Tutorial.Domain.csproj", "{2DD7629F-86F6-48C1-8A93-70E6F3E5A114}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FPLSP_Tutorial.Infrastructure", "FPLSPTutorial.Infrastructure\FPLSP_Tutorial.Infrastructure.csproj", "{05302EE6-F9D8-4B55-A104-A4CB6EB00CF4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FPLSP_Tutorial.Infrastructure", "FPLSP_Tutorial.Infrastructure\FPLSP_Tutorial.Infrastructure.csproj", "{05302EE6-F9D8-4B55-A104-A4CB6EB00CF4}"
 	ProjectSection(ProjectDependencies) = postProject
 		{2DD7629F-86F6-48C1-8A93-70E6F3E5A114} = {2DD7629F-86F6-48C1-8A93-70E6F3E5A114}
 		{BB8993B4-0960-42F7-BEB7-B53DFCE98E42} = {BB8993B4-0960-42F7-BEB7-B53DFCE98E42}

@@ -1,0 +1,31 @@
+﻿using FPLSPTutorial.Application.Interfaces.Services;
+using FPLSPTutorial.Infrastructure.Database.AppDbContext;
+using FPLSPTutorial.Infrastructure.Implements.Services;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace FPLSPTutorial.Infrastructure.Extensions
+{
+    public static class ServiceCollectionExtensions
+    {
+        public static IServiceCollection AddEventBus(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddDbContextPool<ExampleReadOnlyDbContext>(options =>
+            {
+                // Configure your DbContext options here
+                options.UseSqlServer(configuration.GetConnectionString("SatoshiCashDbConnection"));
+            });
+
+            services.AddDbContextPool<ExampleReadWriteDbContext>(options =>
+            {
+                // Configure your DbContext options here
+                options.UseSqlServer(configuration.GetConnectionString("SatoshiCashDbConnection"));
+            });
+
+            services.AddTransient<ILocalizationService, LocalizationService>();
+
+            return services;
+        }
+    }
+}

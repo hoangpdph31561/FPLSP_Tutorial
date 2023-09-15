@@ -1,0 +1,68 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33829.357
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{B0B9116E-7D33-4098-A9CE-AFACD93B560E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FPLSP_Tutorial.API", "FPLSPTutorial.API\FPLSP_Tutorial.API.csproj", "{8232FCAA-4965-4479-BF2A-BCC25754FB76}"
+	ProjectSection(ProjectDependencies) = postProject
+		{05302EE6-F9D8-4B55-A104-A4CB6EB00CF4} = {05302EE6-F9D8-4B55-A104-A4CB6EB00CF4}
+		{BB8993B4-0960-42F7-BEB7-B53DFCE98E42} = {BB8993B4-0960-42F7-BEB7-B53DFCE98E42}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FPLSP_Tutorial.Application", "FPLSPTutorial.Application\FPLSP_Tutorial.Application.csproj", "{BB8993B4-0960-42F7-BEB7-B53DFCE98E42}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2DD7629F-86F6-48C1-8A93-70E6F3E5A114} = {2DD7629F-86F6-48C1-8A93-70E6F3E5A114}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FPLSP_Tutorial.Domain", "FPLSPTutorial.Domain\FPLSP_Tutorial.Domain.csproj", "{2DD7629F-86F6-48C1-8A93-70E6F3E5A114}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FPLSP_Tutorial.Infrastructure", "FPLSPTutorial.Infrastructure\FPLSP_Tutorial.Infrastructure.csproj", "{05302EE6-F9D8-4B55-A104-A4CB6EB00CF4}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2DD7629F-86F6-48C1-8A93-70E6F3E5A114} = {2DD7629F-86F6-48C1-8A93-70E6F3E5A114}
+		{BB8993B4-0960-42F7-BEB7-B53DFCE98E42} = {BB8993B4-0960-42F7-BEB7-B53DFCE98E42}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FPLSP_Tutorial.WASM", "FPLSP_Tutorial.WASM\FPLSP_Tutorial.WASM.csproj", "{7113D7FB-195F-45C6-8DD4-111F3F58A672}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8232FCAA-4965-4479-BF2A-BCC25754FB76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8232FCAA-4965-4479-BF2A-BCC25754FB76}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8232FCAA-4965-4479-BF2A-BCC25754FB76}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8232FCAA-4965-4479-BF2A-BCC25754FB76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB8993B4-0960-42F7-BEB7-B53DFCE98E42}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB8993B4-0960-42F7-BEB7-B53DFCE98E42}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB8993B4-0960-42F7-BEB7-B53DFCE98E42}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB8993B4-0960-42F7-BEB7-B53DFCE98E42}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DD7629F-86F6-48C1-8A93-70E6F3E5A114}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DD7629F-86F6-48C1-8A93-70E6F3E5A114}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DD7629F-86F6-48C1-8A93-70E6F3E5A114}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DD7629F-86F6-48C1-8A93-70E6F3E5A114}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05302EE6-F9D8-4B55-A104-A4CB6EB00CF4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05302EE6-F9D8-4B55-A104-A4CB6EB00CF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05302EE6-F9D8-4B55-A104-A4CB6EB00CF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05302EE6-F9D8-4B55-A104-A4CB6EB00CF4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7113D7FB-195F-45C6-8DD4-111F3F58A672}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7113D7FB-195F-45C6-8DD4-111F3F58A672}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7113D7FB-195F-45C6-8DD4-111F3F58A672}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7113D7FB-195F-45C6-8DD4-111F3F58A672}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{8232FCAA-4965-4479-BF2A-BCC25754FB76} = {B0B9116E-7D33-4098-A9CE-AFACD93B560E}
+		{BB8993B4-0960-42F7-BEB7-B53DFCE98E42} = {B0B9116E-7D33-4098-A9CE-AFACD93B560E}
+		{2DD7629F-86F6-48C1-8A93-70E6F3E5A114} = {B0B9116E-7D33-4098-A9CE-AFACD93B560E}
+		{05302EE6-F9D8-4B55-A104-A4CB6EB00CF4} = {B0B9116E-7D33-4098-A9CE-AFACD93B560E}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0A34EC36-020D-44F6-B77B-86CC71817A9B}
+	EndGlobalSection
+EndGlobal

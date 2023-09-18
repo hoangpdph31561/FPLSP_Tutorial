@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace FPLSP_Tutorial.Infrastructure.Database.AppDbContext
 {
-    public class DatabaseContext : DbContext
+    public class AppReadWriteDbContext : DbContext
     {
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -21,7 +21,7 @@ namespace FPLSP_Tutorial.Infrastructure.Database.AppDbContext
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("SERVER=.;DATABASE=FPLSP_Tutorial;Integrated Security=True;Encrypt=False;");
+                optionsBuilder.UseSqlServer("Data Source=66.42.55.38;Initial Catalog=FPLSP_Tutorial;User ID=sa;Password=fplsp@2022;MultipleActiveResultSets=true;TrustServerCertificate=True;");
             }
         }
 

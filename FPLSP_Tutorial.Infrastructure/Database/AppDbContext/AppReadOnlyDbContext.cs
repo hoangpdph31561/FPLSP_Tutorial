@@ -11,6 +11,14 @@ namespace FPLSP_Tutorial.Infrastructure.Database.AppDbContext
 {
     public class AppReadOnlyDbContext : DbContext
     {
+        public AppReadOnlyDbContext()
+        {
+        }
+
+        public AppReadOnlyDbContext(DbContextOptions<AppReadOnlyDbContext> options) : base(options)
+        {
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

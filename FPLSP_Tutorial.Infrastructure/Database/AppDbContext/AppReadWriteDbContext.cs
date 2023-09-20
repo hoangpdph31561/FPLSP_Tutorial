@@ -29,7 +29,13 @@ namespace FPLSP_Tutorial.Infrastructure.Database.AppDbContext
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Data Source=66.42.55.38;Initial Catalog=FPLSP_Tutorial;User ID=test;Password=E=lPJeY>-g/9QxzE;MultipleActiveResultSets=true;TrustServerCertificate=True;");
+                optionsBuilder.UseSqlServer(
+                    "Data Source=66.42.55.38;" +
+                    "Initial Catalog=FPLSP_Tutorial;" +
+                    "User ID=test;" +
+                    "Password=E=lPJeY>g/9QxzE;" +
+                    "MultipleActiveResultSets=true;" +
+                    "TrustServerCertificate=True;");
             }
         }
 

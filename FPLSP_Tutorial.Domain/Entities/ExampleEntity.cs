@@ -1,7 +1,7 @@
-﻿using FPLSPTutorial.Domain.Constants;
-using FPLSPTutorial.Domain.Entities.Base;
+﻿using FPLSP_Tutorial.Domain.Constants;
+using FPLSP_Tutorial.Domain.Entities.Base;
 
-namespace FPLSPTutorial.Domain.Entities
+namespace FPLSP_Tutorial.Domain.Entities
 {
     public class ExampleEntity : IEntityBase
     {

@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
-using static FPLSPTutorial.Application.ValueObjects.Common.QueryConstant;
+using static FPLSP_Tutorial.Application.ValueObjects.Common.QueryConstant;
 
-namespace FPLSPTutorial.Application.ValueObjects.Common;
+namespace FPLSP_Tutorial.Application.ValueObjects.Common;
 
 public class SearchModel
 {

@@ -1,9 +1,9 @@
-using FPLSPTutorial.Application.ValueObjects.Common;
-using FPLSPTutorial.Application.ValueObjects.Exceptions;
+using FPLSP_Tutorial.Application.ValueObjects.Common;
+using FPLSP_Tutorial.Application.ValueObjects.Exceptions;
 using MediatR;
 using System.Diagnostics.CodeAnalysis;
 
-namespace FPLSPTutorial.Application.ValueObjects.Respone
+namespace FPLSP_Tutorial.Application.ValueObjects.Respone
 {
     /// <summary>
     /// To generate result for all actions in this system.

@@ -1,6 +1,6 @@
-﻿using FPLSPTutorial.Application.ValueObjects.Common;
+﻿using FPLSP_Tutorial.Application.ValueObjects.Common;
 
-namespace FPLSPTutorial.Application.ValueObjects.Exceptions
+namespace FPLSP_Tutorial.Application.ValueObjects.Exceptions
 {
     public class UnauthorizedException : ExceptionBase
     {

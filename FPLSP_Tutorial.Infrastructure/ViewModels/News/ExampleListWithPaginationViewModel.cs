@@ -1,10 +1,10 @@
-﻿using FPLSPTutorial.Application.DataTransferObjects.Example.Request;
-using FPLSPTutorial.Application.Interfaces.Repositories.ReadOnly;
-using FPLSPTutorial.Application.Interfaces.Services;
-using FPLSPTutorial.Application.ValueObjects.Common;
-using FPLSPTutorial.Application.ViewModels;
+﻿using FPLSP_Tutorial.Application.DataTransferObjects.Example.Request;
+using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly;
+using FPLSP_Tutorial.Application.Interfaces.Services;
+using FPLSP_Tutorial.Application.ValueObjects.Common;
+using FPLSP_Tutorial.Application.ViewModels;
 
-namespace FPLSPTutorial.Infrastructure.ViewModels.News
+namespace FPLSP_Tutorial.Infrastructure.ViewModels.News
 {
     public class ExampleListWithPaginationViewModel : ViewModelBase<ViewExampleWithPaginationRequest>
     {

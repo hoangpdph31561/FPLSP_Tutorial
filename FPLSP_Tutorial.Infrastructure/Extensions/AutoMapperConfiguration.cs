@@ -3,7 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
-namespace FPLSPTutorial.Infrastructure.Extensions;
+namespace FPLSP_Tutorial.Infrastructure.Extensions;
 
 public static class AutoMapperConfiguration
 {

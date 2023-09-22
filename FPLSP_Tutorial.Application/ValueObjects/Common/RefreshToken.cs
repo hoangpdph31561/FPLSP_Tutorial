@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace FPLSPTutorial.Application.ValueObjects.Common
+namespace FPLSP_Tutorial.Application.ValueObjects.Common
 {
     public class RefreshToken
     {

@@ -1,4 +1,4 @@
-﻿namespace FPLSPTutorial.Infrastructure.Extensions
+﻿namespace FPLSP_Tutorial.Infrastructure.Extensions
 {
     public class LocalizationConfiguration
     {

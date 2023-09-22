@@ -1,6 +1,6 @@
-﻿using FPLSPTutorial.Application.ValueObjects.Pagination;
+﻿using FPLSP_Tutorial.Application.ValueObjects.Pagination;
 
-namespace FPLSPTutorial.Application.DataTransferObjects.Example.Request
+namespace FPLSP_Tutorial.Application.DataTransferObjects.Example.Request
 {
     public class ViewExampleWithPaginationRequest : PaginationRequest
     {

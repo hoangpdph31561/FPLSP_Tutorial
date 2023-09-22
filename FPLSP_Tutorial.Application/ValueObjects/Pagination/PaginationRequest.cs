@@ -1,6 +1,6 @@
-using FPLSPTutorial.Application.ValueObjects.Common;
+using FPLSP_Tutorial.Application.ValueObjects.Common;
 
-namespace FPLSPTutorial.Application.ValueObjects.Pagination;
+namespace FPLSP_Tutorial.Application.ValueObjects.Pagination;
 
 public class PaginationRequest
 {

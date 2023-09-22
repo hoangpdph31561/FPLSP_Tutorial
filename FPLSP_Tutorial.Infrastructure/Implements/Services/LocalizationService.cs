@@ -1,9 +1,9 @@
-﻿using FPLSPTutorial.Application.Interfaces.Services;
+﻿using FPLSP_Tutorial.Application.Interfaces.Services;
 using Microsoft.Extensions.Localization;
 using System.Globalization;
 using System.Reflection;
 
-namespace FPLSPTutorial.Infrastructure.Implements.Services
+namespace FPLSP_Tutorial.Infrastructure.Implements.Services
 {
     public class LocalizationService : ILocalizationService
     {

@@ -1,13 +1,13 @@
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using FPLSPTutorial.Application.ValueObjects.Common;
-using FPLSPTutorial.Application.ValueObjects.Pagination;
-using FPLSPTutorial.Domain.Entities.Base;
+using FPLSP_Tutorial.Application.ValueObjects.Common;
+using FPLSP_Tutorial.Application.ValueObjects.Pagination;
+using FPLSP_Tutorial.Domain.Entities.Base;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
-using static FPLSPTutorial.Application.ValueObjects.Common.QueryConstant;
+using static FPLSP_Tutorial.Application.ValueObjects.Common.QueryConstant;
 
-namespace FPLSPTutorial.Infrastructure.Extensions;
+namespace FPLSP_Tutorial.Infrastructure.Extensions;
 
 public static class QueryableExtensions
 {

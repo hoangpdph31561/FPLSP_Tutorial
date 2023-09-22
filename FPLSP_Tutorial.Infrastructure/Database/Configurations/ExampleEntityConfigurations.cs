@@ -1,8 +1,8 @@
-﻿using FPLSPTutorial.Domain.Entities;
+﻿using FPLSP_Tutorial.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FPLSPTutorial.Infrastructure.Database.Configurations
+namespace FPLSP_Tutorial.Infrastructure.Database.Configurations
 {
     public partial class ExampleEntityConfigurations : IEntityTypeConfiguration<ExampleEntity>
     {

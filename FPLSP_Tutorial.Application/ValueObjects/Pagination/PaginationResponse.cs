@@ -1,4 +1,4 @@
-namespace FPLSPTutorial.Application.ValueObjects.Pagination;
+namespace FPLSP_Tutorial.Application.ValueObjects.Pagination;
 
 public class PaginationResponse<TDataType>
 {

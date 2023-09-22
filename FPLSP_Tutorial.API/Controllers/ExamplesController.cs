@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
-using FPLSPTutorial.Application.DataTransferObjects.Example.Request;
-using FPLSPTutorial.Application.Interfaces.Repositories.ReadOnly;
-using FPLSPTutorial.Application.Interfaces.Repositories.ReadWrite;
-using FPLSPTutorial.Application.Interfaces.Services;
-using FPLSPTutorial.Infrastructure.ViewModels.News;
+using FPLSP_Tutorial.Application.DataTransferObjects.Example.Request;
+using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly;
+using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadWrite;
+using FPLSP_Tutorial.Application.Interfaces.Services;
+using FPLSP_Tutorial.Infrastructure.ViewModels.News;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FPLSPTutorial.API.Controllers
+namespace FPLSP_Tutorial.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

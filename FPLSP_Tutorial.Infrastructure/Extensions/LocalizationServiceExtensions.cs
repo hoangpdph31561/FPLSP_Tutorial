@@ -1,4 +1,4 @@
-﻿using FPLSPTutorial.Infrastructure.Extensions;
+﻿using FPLSP_Tutorial.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Configuration;
@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
 using System.Globalization;
 
-namespace FPLSPTutorial.Infrastructure.Extensions
+namespace FPLSP_Tutorial.Infrastructure.Extensions
 {
     public static class LocalizationServiceExtensions
     {

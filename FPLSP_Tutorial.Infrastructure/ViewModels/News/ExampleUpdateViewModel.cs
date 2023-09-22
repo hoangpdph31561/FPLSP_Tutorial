@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
-using FPLSPTutorial.Application.DataTransferObjects.Example.Request;
-using FPLSPTutorial.Application.Interfaces.Repositories.ReadWrite;
-using FPLSPTutorial.Application.Interfaces.Services;
-using FPLSPTutorial.Application.ValueObjects.Common;
-using FPLSPTutorial.Application.ViewModels;
-using FPLSPTutorial.Domain.Entities;
+using FPLSP_Tutorial.Application.DataTransferObjects.Example.Request;
+using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadWrite;
+using FPLSP_Tutorial.Application.Interfaces.Services;
+using FPLSP_Tutorial.Application.ValueObjects.Common;
+using FPLSP_Tutorial.Application.ViewModels;
+using FPLSP_Tutorial.Domain.Entities;
 
-namespace FPLSPTutorial.Infrastructure.ViewModels.News
+namespace FPLSP_Tutorial.Infrastructure.ViewModels.News
 {
     public class ExampleUpdateViewModel : ViewModelBase<ExampleUpdateRequest>
     {

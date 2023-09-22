@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace FPLSPTutorial.Application.ValueObjects.Common;
+namespace FPLSP_Tutorial.Application.ValueObjects.Common;
 
 [ExcludeFromCodeCoverage]
 public class ErrorItem

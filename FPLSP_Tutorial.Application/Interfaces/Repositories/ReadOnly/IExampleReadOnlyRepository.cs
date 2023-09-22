@@ -1,9 +1,9 @@
-﻿using FPLSPTutorial.Application.DataTransferObjects.Example;
-using FPLSPTutorial.Application.DataTransferObjects.Example.Request;
-using FPLSPTutorial.Application.ValueObjects.Pagination;
-using FPLSPTutorial.Application.ValueObjects.Respone;
+﻿using FPLSP_Tutorial.Application.DataTransferObjects.Example;
+using FPLSP_Tutorial.Application.DataTransferObjects.Example.Request;
+using FPLSP_Tutorial.Application.ValueObjects.Pagination;
+using FPLSP_Tutorial.Application.ValueObjects.Respone;
 
-namespace FPLSPTutorial.Application.Interfaces.Repositories.ReadOnly
+namespace FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly
 {
     public interface IExampleReadOnlyRepository
     {

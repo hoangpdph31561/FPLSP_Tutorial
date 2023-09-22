@@ -1,6 +1,6 @@
-﻿using FPLSPTutorial.Application.ValueObjects.Respone;
+﻿using FPLSP_Tutorial.Application.ValueObjects.Respone;
 
-namespace FPLSPTutorial.Application.ViewModels
+namespace FPLSP_Tutorial.Application.ViewModels
 {
     /// <summary>
     ///     Provide all common field in view model

@@ -1,7 +1,7 @@
-﻿using FPLSPTutorial.Domain.Entities;
+﻿using FPLSP_Tutorial.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace FPLSPTutorial.Infrastructure.Database.AppDbContext
+namespace FPLSP_Tutorial.Infrastructure.Database.AppDbContext
 {
     public class ExampleReadOnlyDbContext : DbContext
     {

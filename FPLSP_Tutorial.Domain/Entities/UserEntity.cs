@@ -1,5 +1,5 @@
-﻿using FPLSPTutorial.Domain.Constants;
-using FPLSPTutorial.Domain.Entities.Base;
+﻿using FPLSP_Tutorial.Domain.Constants;
+using FPLSP_Tutorial.Domain.Entities.Base;
 using System.Text.Json.Nodes;
 
 namespace FPLSP_Tutorial.Domain.Entities

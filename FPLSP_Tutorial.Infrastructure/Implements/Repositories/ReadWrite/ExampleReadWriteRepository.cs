@@ -1,14 +1,14 @@
-﻿using FPLSPTutorial.Application.DataTransferObjects.Example.Request;
-using FPLSPTutorial.Application.Interfaces.Repositories.ReadWrite;
-using FPLSPTutorial.Application.Interfaces.Services;
-using FPLSPTutorial.Application.ValueObjects.Common;
-using FPLSPTutorial.Application.ValueObjects.Respone;
-using FPLSPTutorial.Domain.Constants;
-using FPLSPTutorial.Domain.Entities;
-using FPLSPTutorial.Infrastructure.Database.AppDbContext;
+﻿using FPLSP_Tutorial.Application.DataTransferObjects.Example.Request;
+using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadWrite;
+using FPLSP_Tutorial.Application.Interfaces.Services;
+using FPLSP_Tutorial.Application.ValueObjects.Common;
+using FPLSP_Tutorial.Application.ValueObjects.Respone;
+using FPLSP_Tutorial.Domain.Constants;
+using FPLSP_Tutorial.Domain.Entities;
+using FPLSP_Tutorial.Infrastructure.Database.AppDbContext;
 using Microsoft.EntityFrameworkCore;
 
-namespace FPLSPTutorial.Infrastructure.Implements.Repositories.ReadWrite
+namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
 {
     public class ExampleReadWriteRepository : IExampleReadWriteRepository
     {

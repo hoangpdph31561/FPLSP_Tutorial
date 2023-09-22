@@ -1,4 +1,4 @@
-﻿namespace FPLSPTutorial.Domain.Constants
+﻿namespace FPLSP_Tutorial.Domain.Constants
 {
     public class EntityStatus
     {

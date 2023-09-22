@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Localization;
 using System.Globalization;
 
-namespace FPLSPTutorial.Application.Interfaces.Services
+namespace FPLSP_Tutorial.Application.Interfaces.Services
 {
     public interface ILocalizationService
     {

@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using FPLSPTutorial.Application.DataTransferObjects.Example;
-using FPLSPTutorial.Domain.Entities;
+using FPLSP_Tutorial.Application.DataTransferObjects.Example;
+using FPLSP_Tutorial.Domain.Entities;
 
-namespace FPLSPTutorial.Infrastructure.Extensions.AutoMapperProfiles
+namespace FPLSP_Tutorial.Infrastructure.Extensions.AutoMapperProfiles
 {
     public class ExampleProfile : Profile
     {

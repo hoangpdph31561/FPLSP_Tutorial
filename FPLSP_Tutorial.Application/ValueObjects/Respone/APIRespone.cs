@@ -1,7 +1,7 @@
-﻿using FPLSPTutorial.Application.ValueObjects.Common;
+﻿using FPLSP_Tutorial.Application.ValueObjects.Common;
 using System.Text.Json.Serialization;
 
-namespace FPLSPTutorial.Application.ValueObjects.Respone
+namespace FPLSP_Tutorial.Application.ValueObjects.Respone
 {
     public class APIRespone
     {

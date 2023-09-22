@@ -1,18 +1,18 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using FPLSPTutorial.Application.DataTransferObjects.Example;
-using FPLSPTutorial.Application.DataTransferObjects.Example.Request;
-using FPLSPTutorial.Application.Interfaces.Repositories.ReadOnly;
-using FPLSPTutorial.Application.Interfaces.Services;
-using FPLSPTutorial.Application.ValueObjects.Common;
-using FPLSPTutorial.Application.ValueObjects.Pagination;
-using FPLSPTutorial.Application.ValueObjects.Respone;
-using FPLSPTutorial.Domain.Entities;
-using FPLSPTutorial.Infrastructure.Database.AppDbContext;
-using FPLSPTutorial.Infrastructure.Extensions;
+using FPLSP_Tutorial.Application.DataTransferObjects.Example;
+using FPLSP_Tutorial.Application.DataTransferObjects.Example.Request;
+using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly;
+using FPLSP_Tutorial.Application.Interfaces.Services;
+using FPLSP_Tutorial.Application.ValueObjects.Common;
+using FPLSP_Tutorial.Application.ValueObjects.Pagination;
+using FPLSP_Tutorial.Application.ValueObjects.Respone;
+using FPLSP_Tutorial.Domain.Entities;
+using FPLSP_Tutorial.Infrastructure.Database.AppDbContext;
+using FPLSP_Tutorial.Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
 
-namespace FPLSPTutorial.Infrastructure.Implements.Repositories.ReadOnly
+namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
 {
     public class ExampleReadOnlyRepository : IExampleReadOnlyRepository
     {

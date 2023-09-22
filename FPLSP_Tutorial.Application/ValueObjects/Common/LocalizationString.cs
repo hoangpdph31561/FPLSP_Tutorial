@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace FPLSPTutorial.Application.ValueObjects.Common
+namespace FPLSP_Tutorial.Application.ValueObjects.Common
 {
     /// <summary>
     ///     To define all localized strings in the system

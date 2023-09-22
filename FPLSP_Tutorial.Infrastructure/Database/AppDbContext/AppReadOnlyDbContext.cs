@@ -1,6 +1,6 @@
 ﻿using FPLSP_Tutorial.Domain.Entities;
-using FPLSPTutorial.Domain.Entities;
-using FPLSPTutorial.Infrastructure.Database.AppDbContext;
+using FPLSP_Tutorial.Domain.Entities;
+using FPLSP_Tutorial.Infrastructure.Database.AppDbContext;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

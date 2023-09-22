@@ -1,8 +1,8 @@
-﻿using FPLSPTutorial.Application.DataTransferObjects.Example.Request;
-using FPLSPTutorial.Application.ValueObjects.Respone;
-using FPLSPTutorial.Domain.Entities;
+﻿using FPLSP_Tutorial.Application.DataTransferObjects.Example.Request;
+using FPLSP_Tutorial.Application.ValueObjects.Respone;
+using FPLSP_Tutorial.Domain.Entities;
 
-namespace FPLSPTutorial.Application.Interfaces.Repositories.ReadWrite
+namespace FPLSP_Tutorial.Application.Interfaces.Repositories.ReadWrite
 {
     public interface IExampleReadWriteRepository
     {

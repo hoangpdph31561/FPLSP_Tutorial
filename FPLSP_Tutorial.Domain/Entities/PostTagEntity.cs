@@ -6,7 +6,7 @@ namespace FPLSP_Tutorial.Domain.Entities
     public class PostTagEntity : ICreatedBase
     {
         public Guid Id { get; set; }
-        public Guid PostId { get; set; }
+        public Guid? PostId { get; set; }
         public Guid TagId { get; set; }
         public string Status { get; set; } = EntityStatus.Active;
 

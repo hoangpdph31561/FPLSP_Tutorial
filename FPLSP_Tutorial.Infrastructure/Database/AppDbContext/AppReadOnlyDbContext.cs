@@ -46,5 +46,6 @@ namespace FPLSP_Tutorial.Infrastructure.Database.AppDbContext
         public DbSet<PostEntity> PostEntities { get; set; }
         public DbSet<TagEntity> TagEntities { get; set; }
         public DbSet<PostTagEntity> PostTagEntities { get; set; }
+        public DbSet<MajorRequestEntity> MajorRequestEntities { get; set; }
     }
 }

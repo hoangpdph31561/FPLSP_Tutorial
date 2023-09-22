@@ -19,5 +19,6 @@ namespace FPLSP_Tutorial.Domain.Entities
 
         public List<UserMajorEntity> UserMajors { get; set; }
         public List<TagEntity> Tags { get; set; }
+        public List<MajorRequestEntity> MajorRequests { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using FPLSPTutorial.Domain.Constants;
 using FPLSPTutorial.Domain.Entities.Base;
+using System.Text.Json.Nodes;
 
 namespace FPLSP_Tutorial.Domain.Entities
 {
@@ -8,6 +9,7 @@ namespace FPLSP_Tutorial.Domain.Entities
         public Guid Id { get; set; }
         public string Email { get; set; } = string.Empty;
         public string Username { get; set; } = string.Empty;
+        public JsonArray RoleCodes { get; set; } = new JsonArray();
         public string Status { get; set; } = EntityStatus.Active;
 
         public DateTimeOffset CreatedTime { get; set; }

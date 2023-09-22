@@ -34,7 +34,7 @@ namespace FPLSP_Tutorial.Infrastructure.Database.AppDbContext
                     "Data Source=66.42.55.38;" +
                     "Initial Catalog=FPLSP_Tutorial;" +
                     "User ID=test;" +
-                    "Password=E=lPJeY>g/9QxzE;" +
+                    "Password=E=lPJeY>-g/9QxzE;" +
                     "MultipleActiveResultSets=true;" +
                     "TrustServerCertificate=True;");
             }
@@ -46,5 +46,6 @@ namespace FPLSP_Tutorial.Infrastructure.Database.AppDbContext
         public DbSet<PostEntity> PostEntities { get; set; }
         public DbSet<TagEntity> TagEntities { get; set; }
         public DbSet<PostTagEntity> PostTagEntities { get; set; }
+        public DbSet<MajorRequestEntity> MajorRequestEntities { get; set; }
     }
 }

@@ -5,7 +5,7 @@ namespace FPLSP_Tutorial.Domain.Entities
 {
     public class UserEntity : IEntityBase
     {
-        public string Id { get; set; }
+        public Guid Id { get; set; }
         public string Email { get; set; } = string.Empty;
         public string Username { get; set; } = string.Empty;
         public string Status { get; set; } = EntityStatus.Active;

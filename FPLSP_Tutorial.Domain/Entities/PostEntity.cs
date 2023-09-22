@@ -6,6 +6,8 @@ namespace FPLSP_Tutorial.Domain.Entities
     public class PostEntity : IEntityBase
     {
         public Guid Id { get; set; }
+        public Guid? PostId { get; set; }
+        public string PostType { get; set; } = string.Empty;
         public string Title { get; set; } = string.Empty;
         public string Content { get; set; } = string.Empty;
         public string Status { get; set; } = EntityStatus.Active;
@@ -19,5 +21,8 @@ namespace FPLSP_Tutorial.Domain.Entities
         public DateTimeOffset DeletedTime { get; set; }
 
         public List<PostTagEntity> PostTags { get; set; }
+
+        public PostEntity Post { get; set; }
+        public List<PostEntity> Posts { get; set; }
     }
 }

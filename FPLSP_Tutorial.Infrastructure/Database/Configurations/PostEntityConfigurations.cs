@@ -11,6 +11,8 @@ namespace FPLSP_Tutorial.Infrastructure.Database.Configurations
             builder.ToTable("Post");
             builder.HasKey(c => c.Id);
             builder.Property(c => c.Id).ValueGeneratedOnAdd();
+
+            builder.HasOne(c => c.Post).WithMany(c => c.Posts).HasForeignKey(c => c.PostId).OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

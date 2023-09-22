@@ -1,9 +1,9 @@
 ﻿using FPLSPTutorial.Domain.Constants;
 using FPLSPTutorial.Domain.Entities.Base;
 
-namespace FPLSPTutorial.Domain.Entities
+namespace FPLSP_Tutorial.Domain.Entities
 {
-    public class CategoryEntity : IEntityBase
+    public class MajorEntity : IEntityBase
     {
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
@@ -17,6 +17,7 @@ namespace FPLSPTutorial.Domain.Entities
         public Guid? DeletedBy { get; set; }
         public DateTimeOffset DeletedTime { get; set; }
 
-        public ICollection<PostEntity> PostEntities { get; set; }
+        public List<UserMajorEntity> UserMajors { get; set; }
+        public List<TagEntity> Tags { get; set; }
     }
 }

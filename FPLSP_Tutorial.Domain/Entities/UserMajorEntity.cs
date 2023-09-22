@@ -1,13 +1,18 @@
 ﻿using FPLSPTutorial.Domain.Constants;
 using FPLSPTutorial.Domain.Entities.Base;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace FPLSP_Tutorial.Domain.Entities
 {
-    public class PostEntity : IEntityBase
+    public class UserMajorEntity : IEntityBase
     {
         public Guid Id { get; set; }
-        public string Title { get; set; } = string.Empty;
-        public string Content { get; set; } = string.Empty;
+        public Guid MajorId { get; set; }
+        public Guid UserId { get; set; }
         public string Status { get; set; } = EntityStatus.Active;
 
         public DateTimeOffset CreatedTime { get; set; }
@@ -18,6 +23,7 @@ namespace FPLSP_Tutorial.Domain.Entities
         public Guid? DeletedBy { get; set; }
         public DateTimeOffset DeletedTime { get; set; }
 
-        public List<PostTagEntity> PostTags { get; set; }
+        public MajorEntity Major { get; set; }
+        public UserEntity User { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using FPLSPTutorial.Domain.Entities;
+﻿using FPLSP_Tutorial.Domain.Entities;
+using FPLSPTutorial.Domain.Entities;
 using FPLSPTutorial.Infrastructure.Database.AppDbContext;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -39,8 +40,11 @@ namespace FPLSP_Tutorial.Infrastructure.Database.AppDbContext
             }
         }
 
-        public DbSet<LevelEntity> Levels { get; set; }
-        public DbSet<CategoryEntity> Categories { get; set; }
-        public DbSet<PostEntity> Posts { get; set; }
+        public DbSet<MajorEntity> MajorEntities { get; set; }
+        public DbSet<UserEntity> UserEntities { get; set; }
+        public DbSet<UserMajorEntity> UserMajorEntities { get; set; }
+        public DbSet<PostEntity> PostEntities { get; set; }
+        public DbSet<TagEntity> TagEntities { get; set; }
+        public DbSet<PostTagEntity> PostTagEntities { get; set; }
     }
 }

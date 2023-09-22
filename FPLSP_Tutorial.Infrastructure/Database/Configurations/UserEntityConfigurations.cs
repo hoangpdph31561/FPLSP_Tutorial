@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace FPLSP_Tutorial.Infrastructure.Database.Configurations
 {
-    public class PostEntityConfigurations : IEntityTypeConfiguration<PostEntity>
+    public class UserEntityConfigurations : IEntityTypeConfiguration<UserEntity>
     {
-        public void Configure(EntityTypeBuilder<PostEntity> builder)
+        public void Configure(EntityTypeBuilder<UserEntity> builder)
         {
-            builder.ToTable("Post");
+            builder.ToTable("User");
             builder.HasKey(c => c.Id);
             builder.Property(c => c.Id).ValueGeneratedOnAdd();
         }

@@ -8,7 +8,7 @@ namespace FPLSP_Tutorial.Domain.Entities
         public Guid Id { get; set; }
         public Guid? PostId { get; set; }
         public Guid TagId { get; set; }
-        public string Status { get; set; } = EntityStatus.Active;
+        public int Status { get; set; } = 1;
 
         public DateTimeOffset CreatedTime { get; set; }
         public Guid? CreatedBy { get; set; }

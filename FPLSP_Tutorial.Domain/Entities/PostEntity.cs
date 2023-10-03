@@ -10,7 +10,7 @@ namespace FPLSP_Tutorial.Domain.Entities
         public string PostType { get; set; } = string.Empty;
         public string Title { get; set; } = string.Empty;
         public string Content { get; set; } = string.Empty;
-        public string Status { get; set; } = EntityStatus.Active;
+        public int Status { get; set; } = 1;
 
         public DateTimeOffset CreatedTime { get; set; }
         public Guid? CreatedBy { get; set; }

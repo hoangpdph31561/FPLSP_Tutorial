@@ -1,9 +1,9 @@
 ﻿using FPLSP_Tutorial.Application.ValueObjects.Common;
 using System.Text.Json.Serialization;
 
-namespace FPLSP_Tutorial.Application.ValueObjects.Respone
+namespace FPLSP_Tutorial.Application.ValueObjects.Response
 {
-    public class APIRespone
+    public class APIResponse
     {
         [JsonPropertyName("success")]
         public bool Success { get; set; }

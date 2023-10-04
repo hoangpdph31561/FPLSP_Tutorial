@@ -16,13 +16,13 @@ namespace FPLSP_Tutorial.Infrastructure.Extensions
             services.AddDbContextPool<AppReadOnlyDbContext>(options =>
             {
                 // Configure your DbContext options here
-                options.UseSqlServer(configuration.GetConnectionString("AppDbConnection"));
+                options.UseSqlServer(configuration.GetConnectionString("DbConnection"));
             });
 
             services.AddDbContextPool<AppReadWriteDbContext>(options =>
             {
                 // Configure your DbContext options here
-                options.UseSqlServer(configuration.GetConnectionString("AppDbConnection"));
+                options.UseSqlServer(configuration.GetConnectionString("DbConnection"));
             });
 
             services.AddTransient<ILocalizationService, LocalizationService>();

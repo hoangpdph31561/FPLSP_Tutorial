@@ -3,7 +3,7 @@ using FPLSP_Tutorial.Application.ValueObjects.Exceptions;
 using MediatR;
 using System.Diagnostics.CodeAnalysis;
 
-namespace FPLSP_Tutorial.Application.ValueObjects.Respone
+namespace FPLSP_Tutorial.Application.ValueObjects.Response
 {
     /// <summary>
     /// To generate result for all actions in this system.

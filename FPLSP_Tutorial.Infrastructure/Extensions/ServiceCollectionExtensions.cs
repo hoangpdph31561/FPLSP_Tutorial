@@ -1,5 +1,7 @@
-﻿using FPLSP_Tutorial.Infrastructure.Database.AppDbContext;
+﻿using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly;
 using FPLSP_Tutorial.Application.Interfaces.Services;
+using FPLSP_Tutorial.Infrastructure.Database.AppDbContext;
+using FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly;
 using FPLSP_Tutorial.Infrastructure.Implements.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -24,6 +26,7 @@ namespace FPLSP_Tutorial.Infrastructure.Extensions
             });
 
             services.AddTransient<ILocalizationService, LocalizationService>();
+            services.AddTransient<IExampleReadOnlyRepository, ExampleReadOnlyRepository>();
 
             return services;
         }

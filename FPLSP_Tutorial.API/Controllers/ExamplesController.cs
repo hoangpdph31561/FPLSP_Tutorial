@@ -10,14 +10,14 @@ namespace FPLSP_Tutorial.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ExampleController : ControllerBase
+    public class ExamplesController : ControllerBase
     {
         public readonly IExampleReadOnlyRepository _exampleReadOnlyRepository;
         public readonly IExampleReadWriteRepository _exampleReadWriteRepository;
         private readonly ILocalizationService _localizationService;
         private readonly IMapper _mapper;
 
-        public ExampleController(IExampleReadOnlyRepository exampleReadOnlyRepository, IExampleReadWriteRepository exampleReadWriteRepository, IConfiguration configuration, ILocalizationService localizationService, IMapper mapper)
+        public ExamplesController(IExampleReadOnlyRepository exampleReadOnlyRepository, IExampleReadWriteRepository exampleReadWriteRepository, IConfiguration configuration, ILocalizationService localizationService, IMapper mapper)
         {
             _exampleReadOnlyRepository = exampleReadOnlyRepository;
             _exampleReadWriteRepository = exampleReadWriteRepository;

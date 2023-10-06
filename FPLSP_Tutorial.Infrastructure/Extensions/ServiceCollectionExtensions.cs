@@ -46,6 +46,7 @@ namespace FPLSP_Tutorial.Infrastructure.Extensions
             #region Transients
             services.AddTransient<ILocalizationService, LocalizationService>();
             services.AddTransient<IExampleReadOnlyRepository, ExampleReadOnlyRepository>();
+            services.AddTransient<IExampleReadWriteRepository, ExampleReadWriteRepository>();
             services.AddTransient<ITagReadOnlyRepository, TagReadOnlyRepository>();
             services.AddTransient<ITagReadWriteRepository, TagReadWriteRepository>();
             #endregion

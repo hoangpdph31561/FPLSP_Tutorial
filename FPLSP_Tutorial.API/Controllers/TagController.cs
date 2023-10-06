@@ -3,9 +3,6 @@ using FPLSP_Tutorial.Application.DataTransferObjects.Tag.TagRequest;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadWrite;
 using FPLSP_Tutorial.Application.Interfaces.Services;
-using FPLSP_Tutorial.Infrastructure.Database.AppDbContext;
-using FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly;
-using FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite;
 using FPLSP_Tutorial.Infrastructure.ViewModels.News;
 using FPLSP_Tutorial.Infrastructure.ViewModels.TagViewModels;
 using Microsoft.AspNetCore.Http;
@@ -18,19 +15,17 @@ namespace FPLSP_Tutorial.API.Controllers
     [ApiController]
     public class TagController : ControllerBase
     {
-        private readonly AppReadOnlyDbContext _dbContext;
         private readonly ITagReadOnlyRepository _tagReadOnlyRepository;
         private readonly ITagReadWriteRepository _tagReadWriteRepository;
         private readonly ILocalizationService _localizationService;
         private readonly IMapper _mapper;
 
-        public TagController(ITagReadOnlyRepository tagReadOnlyRepository, ITagReadWriteRepository tagReadWriteRepository, ILocalizationService localizationService, IMapper mapper, AppReadOnlyDbContext dbContext)
+        public TagController(ITagReadOnlyRepository tagReadOnlyRepository, ITagReadWriteRepository tagReadWriteRepository, ILocalizationService localizationService, IMapper mapper)
         {
             _tagReadOnlyRepository = tagReadOnlyRepository;
             _tagReadWriteRepository = tagReadWriteRepository;
             _localizationService = localizationService;
             _mapper = mapper;
-            _dbContext = dbContext;
         }
 
         [HttpPost]
@@ -49,6 +44,36 @@ namespace FPLSP_Tutorial.API.Controllers
             TagViewModel vm = new(_tagReadOnlyRepository, _localizationService);
 
             await vm.HandleAsync(id, cancellationToken);
+
+            return Ok(vm);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetByIdMajor([FromQuery]TagViewModelRequest request, CancellationToken cancellationToken)
+        {
+            TagViewModelByIdMajor vm = new(_tagReadOnlyRepository, _localizationService);
+
+            await vm.HandleAsync(request, cancellationToken);
+
+            return Ok(vm);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> Put(TagUpdateRequest request, CancellationToken cancellationToken)
+        {
+            TagUpdateViewModel vm = new(_tagReadWriteRepository, _localizationService, _mapper);
+
+            await vm.HandleAsync(request, cancellationToken);
+
+            return Ok(vm);
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> Delete(TagDeleteRequest request, CancellationToken cancellationToken)
+        {
+            TagDeleteViewModel vm = new(_tagReadWriteRepository, _localizationService, _mapper);
+
+            await vm.HandleAsync(request, cancellationToken);
 
             return Ok(vm);
         }

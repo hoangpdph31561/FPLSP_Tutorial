@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Azure;
 using FPLSP_Tutorial.Application.DataTransferObjects.Tag;
 using FPLSP_Tutorial.Application.DataTransferObjects.Tag.TagRequest;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly;
@@ -37,7 +38,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
         {
             try
             {
-                var tag = await _tagEntities.AsNoTracking().Where(c => c.MajorId == idTag && !c.Deleted).ProjectTo<TagDto>(_mapper.ConfigurationProvider)
+                var tag = await _tagEntities.AsNoTracking().Where(c => c.Id == idTag && !c.Deleted).ProjectTo<TagDto>(_mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync(cancellationToken);
 
                 return RequestResult<TagDto?>.Succeed(tag);
@@ -50,6 +51,35 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
                     {
                         Error = e.Message,
                         FieldName = LocalizationString.Common.FailedToGet + "tag"
+                    }
+                });
+            }
+        }
+
+        public async Task<RequestResult<List<TagDto>?>> GetTagByIdMajorAsync(Guid? idMajor, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var tags = _tagEntities.AsNoTracking().AsQueryable();
+
+                if (idMajor == null)
+                {
+                    tags.Where(x => x.MajorId == idMajor && !x.Deleted);
+                }
+
+                var tagDtos = await tags.ProjectTo<TagDto>(_mapper.ConfigurationProvider)
+                .ToListAsync(cancellationToken);
+
+                return RequestResult<List<TagDto>?>.Succeed(tagDtos);
+            }
+            catch (Exception e)
+            {
+                return RequestResult<List<TagDto>?>.Fail(_localizationService["Tags is not found"], new[]
+                {
+                    new ErrorItem
+                    {
+                        Error = e.Message,
+                        FieldName = LocalizationString.Common.FailedToGet + "tags"
                     }
                 });
             }

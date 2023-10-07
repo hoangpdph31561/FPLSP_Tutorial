@@ -1,34 +1,36 @@
 ﻿using AutoMapper;
 using Azure.Core;
+using FPLSP_Tutorial.Application.DataTransferObjects.PostTag.Request;
 using FPLSP_Tutorial.Application.DataTransferObjects.Tag.TagRequest;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadWrite;
 using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Application.ValueObjects.Common;
 using FPLSP_Tutorial.Application.ViewModels;
+using FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FPLSP_Tutorial.Infrastructure.ViewModels.TagViewModels
+namespace FPLSP_Tutorial.Infrastructure.ViewModels.PostTagViewModels
 {
-    public class TagDeleteViewModel : ViewModelBase<TagDeleteRequest>
+    public class PostTagDeleteViewModel : ViewModelBase<PostTagDeleteRequest>
     {
-        public readonly ITagReadWriteRepository _tagReadWriteRepository;
+        public readonly IPostTagReadWriteRespository _postTagReadWriteRespository;
         private readonly ILocalizationService _localizationService;
 
-        public TagDeleteViewModel(ITagReadWriteRepository tagReadWriteRepository, ILocalizationService localizationService)
+        public PostTagDeleteViewModel(IPostTagReadWriteRespository postTagReadWriteRespository, ILocalizationService localizationService)
         {
-            _tagReadWriteRepository = tagReadWriteRepository;
+            _postTagReadWriteRespository = postTagReadWriteRespository;
             _localizationService = localizationService;
         }
 
-        public override async Task HandleAsync(TagDeleteRequest request, CancellationToken cancellationToken)
+        public async override Task HandleAsync(PostTagDeleteRequest request, CancellationToken cancellationToken)
         {
             try
             {
-                var result = await _tagReadWriteRepository.DeleteTagAsync(request, cancellationToken);
+                var result = await _postTagReadWriteRespository.DeletePostTagAsync(request, cancellationToken);
 
                 Success = result.Success;
                 ErrorItems = result.Errors;
@@ -42,8 +44,8 @@ namespace FPLSP_Tutorial.Infrastructure.ViewModels.TagViewModels
                     {
                     new ErrorItem
                     {
-                        Error = _localizationService["Error occurred while delete the tag"],
-                        FieldName = string.Concat(LocalizationString.Common.FailedToDelete, "Tag")
+                        Error = _localizationService["Error occurred while Delete the posttag"],
+                        FieldName = string.Concat(LocalizationString.Common.FailedToDelete, "PostTag")
                     }
                 };
             }

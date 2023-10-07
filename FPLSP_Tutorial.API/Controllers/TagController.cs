@@ -71,7 +71,7 @@ namespace FPLSP_Tutorial.API.Controllers
         [HttpDelete]
         public async Task<IActionResult> Delete(TagDeleteRequest request, CancellationToken cancellationToken)
         {
-            TagDeleteViewModel vm = new(_tagReadWriteRepository, _localizationService, _mapper);
+            TagDeleteViewModel vm = new(_tagReadWriteRepository, _localizationService);
 
             await vm.HandleAsync(request, cancellationToken);
 

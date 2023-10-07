@@ -47,7 +47,7 @@ namespace FPLSP_Tutorial.Infrastructure.ViewModels.TagViewModels
                     {
                     new ErrorItem
                     {
-                        Error = _localizationService["Error occurred while getting tags"],
+                        Error = _localizationService["Error occurred while create tags"],
                         FieldName = string.Concat(LocalizationString.Common.FailedToGet, "Tags")
                     }
                 };

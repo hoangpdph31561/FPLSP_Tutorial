@@ -49,6 +49,8 @@ namespace FPLSP_Tutorial.Infrastructure.Extensions
             services.AddTransient<IExampleReadWriteRepository, ExampleReadWriteRepository>();
             services.AddTransient<ITagReadOnlyRepository, TagReadOnlyRepository>();
             services.AddTransient<ITagReadWriteRepository, TagReadWriteRepository>();
+            services.AddTransient<IMajorReadOnlyRepository, MajorReadOnlyRepository>();
+            services.AddTransient<IMajorReadWriteRepository, MajorReadWriteRepository>();
             #endregion
             return services;
         }

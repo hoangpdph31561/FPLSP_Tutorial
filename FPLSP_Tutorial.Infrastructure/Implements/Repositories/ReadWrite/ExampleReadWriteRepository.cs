@@ -49,27 +49,27 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
             try
             {
                 // Get existed example
-                var example = await GetExampleByIdAsync(request.Id, cancellationToken);
+                var MajorRequest = await GetExampleByIdAsync(request.Id, cancellationToken);
 
                 // Update value to existed example
-                example!.Deleted = true;
-                example.DeletedBy = request.DeletedBy;
-                example.DeletedTime = DateTimeOffset.UtcNow;
-                example.Status = EntityStatus.Deleted;
+                MajorRequest!.Deleted = true;
+                MajorRequest.DeletedBy = request.DeletedBy;
+                MajorRequest.DeletedTime = DateTimeOffset.UtcNow;
+                MajorRequest.Status = EntityStatus.Deleted;
 
-                _dbContext.Examples.Update(example);
+                _dbContext.Examples.Update(MajorRequest);
                 await _dbContext.SaveChangesAsync(cancellationToken);
 
                 return RequestResult<int>.Succeed(1);
             }
             catch (Exception e)
             {
-                return RequestResult<int>.Fail(_localizationService["Unable to delete example"], new[]
+                return RequestResult<int>.Fail(_localizationService["Unable to delete MajorRequest"], new[]
                 {
                     new ErrorItem
                     {
                         Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToDelete + "example"
+                        FieldName = LocalizationString.Common.FailedToDelete + "MajorRequest"
                     }
                 });
             }
@@ -87,10 +87,8 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
 
                 example.ModifiedBy = entity.ModifiedBy;
                 example.ModifiedTime = DateTimeOffset.UtcNow;
-
                 _dbContext.Examples.Update(example);
                 await _dbContext.SaveChangesAsync(cancellationToken);
-
                 return RequestResult<int>.Succeed(1);
             }
             catch (Exception e)

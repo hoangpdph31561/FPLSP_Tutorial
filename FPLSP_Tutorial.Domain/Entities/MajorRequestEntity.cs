@@ -7,7 +7,7 @@ namespace FPLSP_Tutorial.Domain.Entities
         public Guid Id { get; set; }
         public Guid MajorId { get; set; }
         public bool IsManager { get; set; }
-        public int Status { get; set; } = 1;
+        public string Status { get; set; } 
 
         public DateTimeOffset CreatedTime { get; set; }
         public Guid? CreatedBy { get; set; }

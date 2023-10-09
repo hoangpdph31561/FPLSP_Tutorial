@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FPLSP_Tutorial.Infrastructure.ViewModels.News
+namespace FPLSP_Tutorial.Infrastructure.ViewModels.TagViewModels
 {
     public class TagViewModel : ViewModelBase<Guid>
     {

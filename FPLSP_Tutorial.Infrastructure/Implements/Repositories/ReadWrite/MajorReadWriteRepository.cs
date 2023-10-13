@@ -30,12 +30,12 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
             }
             catch (Exception e)
             {
-                return RequestResult<Guid>.Fail(_localizationService["Unable to create example"], new[]
+                return RequestResult<Guid>.Fail(_localizationService["Unable to create Major"], new[]
                 {
                     new ErrorItem
                     {
                         Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToCreate + "example"
+                        FieldName = LocalizationString.Common.FailedToCreate + "Major"
                     }
                 });
             }

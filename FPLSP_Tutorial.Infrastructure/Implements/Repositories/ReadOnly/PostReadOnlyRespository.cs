@@ -47,7 +47,14 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
             catch (Exception e)
             {
 
-                throw;
+                return RequestResult<PaginationResponse<ViewPostWithPaginationResponse>>.Fail(_localizationService["List of example are not found"], new[]
+                {
+                    new ErrorItem
+                    {
+                        Error = e.Message,
+                        FieldName = LocalizationString.Common.FailedToGet + "list of example"
+                    }
+                });
             }
         }
 

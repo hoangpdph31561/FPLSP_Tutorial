@@ -8,7 +8,9 @@ namespace FPLSP_Tutorial.Application.DataTransferObjects.ClientPost.Response
 {
     public class ClientTagResponse
     {
+        //id tag
         public Guid Id { get; set; }
+        //name tag
         public string Name { get; set; }
     }
 }

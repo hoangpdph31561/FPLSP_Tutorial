@@ -9,7 +9,9 @@ using FPLSP_Tutorial.Application.ValueObjects.Common;
 using FPLSP_Tutorial.Application.ValueObjects.Pagination;
 using FPLSP_Tutorial.Application.ValueObjects.Response;
 using FPLSP_Tutorial.Infrastructure.Database.AppDbContext;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,12 +36,22 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ClientPostReadOn
         {
             try
             {
-                var querry = await (from post in _readOnlyDbContext.PostEntities
+                var result = await (from post in _readOnlyDbContext.PostEntities
                              join postTag in _readOnlyDbContext.PostTagEntities on post.Id equals postTag.PostId
                              join tag in _readOnlyDbContext.TagEntities on postTag.TagId equals tag.Id
-                             where tag.MajorId == request.MajorId
-                             select post).AsNoTracking().ToListAsync(cancellationToken);
-                var result = _mapper.Map<List<ClientPostListResponse>>(querry);
+                             join user in _readOnlyDbContext.UserEntities on post.CreatedBy equals user.Id
+                             where tag.MajorId == request.MajorId && !post.Deleted
+                             orderby post.CreatedTime descending
+                             select new ClientPostListResponse
+                             {
+                                 Id = post.Id,
+                                 Title = post.Title,
+                                 Status = post.Status,
+                                 CreatedTime = post.CreatedTime,
+                                 CreatedBy =  post.CreatedBy,
+                                 UserCreatedName = user.Username
+                             }).AsNoTracking().ToListAsync(cancellationToken);
+                
                 PaginationResponse<ClientPostListResponse> response = new()
                 {
                     Data = result,
@@ -66,9 +78,52 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ClientPostReadOn
             }
         }
 
-        public Task<RequestResult<PaginationResponse<ClientPostListResponse>>> GetClientPostBySearchAsync(ClientPostSearchRequest request, CancellationToken cancellationToken)
+        public async Task<RequestResult<PaginationResponse<ClientPostListResponse>>> GetClientPostBySearchAsync(ClientPostSearchRequest request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var result = await (from post in _readOnlyDbContext.PostEntities
+                             join postTag in _readOnlyDbContext.PostTagEntities on post.Id equals postTag.PostId
+                             join tag in _readOnlyDbContext.TagEntities on postTag.TagId equals tag.Id
+                             join user in _readOnlyDbContext.UserEntities on post.CreatedBy equals user.Id
+                             where tag.MajorId == request.MajorId && 
+                             !post.Deleted && 
+                             (request.LstTags == null || request.LstTags.Count == 0 || request.LstTags.Contains(tag.Id)) 
+                             && (request.NamePost == null || post.Title.ToLower().Trim().Contains(request.NamePost.ToLower().Trim()))
+                             orderby post.CreatedTime descending
+                             select  new ClientPostListResponse
+                             {
+                                 Id = post.Id,
+                                 Title = post.Title,
+                                 Status = post.Status,
+                                 CreatedTime = post.CreatedTime,
+                                 CreatedBy = post.CreatedBy,
+                                 UserCreatedName = user.Username
+                             }).AsNoTracking().ToListAsync(cancellationToken);
+                PaginationResponse<ClientPostListResponse> response = new()
+                {
+                    Data =result,
+                };
+                return RequestResult<PaginationResponse<ClientPostListResponse>>.Succeed(new PaginationResponse<ClientPostListResponse>
+                {
+                    PageNumber = request.PageNumber,
+                    PageSize = request.PageSize,
+                    HasNext = response.HasNext,
+                    Data = response.Data
+                });
+            }
+            catch (Exception e)
+            {
+
+                return RequestResult<PaginationResponse<ClientPostListResponse>>.Fail(_localizationService["List of post cannot found"], new[]
+               {
+                    new ErrorItem
+                    {
+                        Error = e.Message,
+                        FieldName = LocalizationString.Common.FailedToGet + "list of posts"
+                    }
+                });
+            }
         }
 
         public async Task<RequestResult<ClientPostDetailResponse>> GetClientPostDetailAsync(Guid id, CancellationToken cancellationToken)
@@ -109,7 +164,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ClientPostReadOn
                     var parentPost = await _readOnlyDbContext.PostEntities.AsNoTracking().Where(x => x.Id == query.PostId).FirstOrDefaultAsync(cancellationToken);
                     response.ParentPost = _mapper.Map<ClientPostDTO>(parentPost);
                 }
-                var childPosts = await _readOnlyDbContext.PostEntities.AsNoTracking().Where(x => x.Id != query.Id && !x.Deleted && x.PostId == response.ParentPost.Id).ToListAsync(cancellationToken);
+                var childPosts = await _readOnlyDbContext.PostEntities.AsNoTracking().Where(x => x.Id != query.Id && !x.Deleted && x.PostId == response.ParentPost.Id).OrderByDescending(x => x.CreatedTime).ToListAsync(cancellationToken);
 
                 response.ChildPosts = _mapper.Map<List<ClientPostDTO>>(childPosts);
                 PaginationResponse<ClientPostParentChildResponse> result = new()
@@ -145,13 +200,15 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ClientPostReadOn
         {
             try
             {
-                var tagsOfPost = await _readOnlyDbContext.PostTagEntities.Where(x => x.PostId == request.Id).Join(
-        _readOnlyDbContext.TagEntities,
-        postTag => postTag.TagId,
-        tag => tag.Id,
-        (postTag, tag) => new ClientTagResponse { Id = postTag.TagId, Name = tag.Name }
-    )
-    .ToListAsync(cancellationToken);
+                var tagsOfPost = await (from post in _readOnlyDbContext.PostEntities
+                                  join postTag in _readOnlyDbContext.PostTagEntities on post.Id equals postTag.PostId
+                                  join tag in _readOnlyDbContext.TagEntities on postTag.TagId equals tag.Id
+                                  where post.Id == request.Id
+                                  select new ClientTagResponse
+                                  {
+                                      Id = tag.Id,
+                                      Name = tag.Name,
+                                  }).AsNoTracking().ToListAsync(cancellationToken);
                 PaginationResponse<ClientTagResponse> result = new()
                 {
                     Data = tagsOfPost

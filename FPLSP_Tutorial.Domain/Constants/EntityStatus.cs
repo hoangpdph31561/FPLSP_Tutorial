@@ -2,20 +2,20 @@
 {
     public class EntityStatus
     {
-        public const string Active = "ACTIVE";
+        public const int Active = 1;
 
-        public const string InActive = "INACTIVE";
+        public const int InActive = 2;
 
-        public const string Deleted = "DELETED";
+        public const int Deleted = 3;
 
-        public const string Pending = "PENDING";
+        public const int Pending = 4;
 
-        public const string PendingForActivation = "PENDINGFORACTIVATION";
+        public const int PendingForActivation = 5;
 
-        public const string PendingForConfirmation = "PENDINGFORCONFIRMATION";
+        public const int PendingForConfirmation = 6;
 
-        public const string PendingForApproval = "PENDINGFORAPPROVAL";
+        public const int PendingForApproval = 7;
 
-        public const string Locked = "LOCKED";
+        public const int Locked = 8;
     }
 }

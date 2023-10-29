@@ -10,7 +10,8 @@ namespace FPLSP_Tutorial.Domain.Entities
         public string Email { get; set; } = string.Empty;
         public string Username { get; set; } = string.Empty;
         public JsonArray RoleCodes { get; set; } = new JsonArray();
-        public int Status { get; set; } =  1;
+        public int Status { get; set; } = EntityStatus.Active;
+
         public DateTimeOffset CreatedTime { get; set; }
         public Guid? CreatedBy { get; set; }
         public List<UserMajorEntity> UserMajors { get; set; }

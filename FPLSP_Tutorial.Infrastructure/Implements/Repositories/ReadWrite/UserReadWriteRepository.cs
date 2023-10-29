@@ -7,6 +7,7 @@ using FPLSP_Tutorial.Domain.Constants;
 using FPLSP_Tutorial.Domain.Entities;
 using FPLSP_Tutorial.Infrastructure.Database.AppDbContext;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Nodes;
 
 namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
 {
@@ -23,6 +24,8 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
         {
             try
             {
+                entity.Id = Guid.NewGuid();
+                entity.CreatedTime = DateTime.UtcNow;     
                 await _dbContext.UserEntities.AddAsync(entity);
                 await _dbContext.SaveChangesAsync(cancellationToken);
 
@@ -45,14 +48,11 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
         {
             try
             {
-                var User = await GetUserByIdAsync(request.Id, cancellationToken);
+                var user = await GetUserByIdAsync(request.Id, cancellationToken);
 
-                User!.Deleted = true;
-                User.DeletedBy = request.DeletedBy;
-                User.DeletedTime = DateTimeOffset.UtcNow;
-                User.Status = EntityStatus.Deleted;
+                user.Status = Convert.ToInt32(EntityStatus.Deleted);
 
-                _dbContext.UserEntities.Update(User);
+                _dbContext.UserEntities.Remove(user);
                 await _dbContext.SaveChangesAsync(cancellationToken);
 
                 return RequestResult<int>.Succeed(1);
@@ -81,14 +81,13 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
         {
             try
             {
-                var User = await GetUserByIdAsync(entity.Id, cancellationToken);
+                var user = await GetUserByIdAsync(entity.Id, cancellationToken);
 
-                User!.Username = string.IsNullOrWhiteSpace(entity.Username) ? User.Username : entity.Username;
+                user.Username = entity.Username == null ? "N/A" : entity.Username;
 
-                User.ModifiedBy = entity.ModifiedBy;
-                User.ModifiedTime = DateTimeOffset.UtcNow;
+                user.RoleCodes = entity.RoleCodes == null ? (JsonArray)JsonArray.Parse("[\"N/A\"]") : entity.RoleCodes;
 
-                _dbContext.UserEntities.Update(User);
+                _dbContext.UserEntities.Update(user);
                 await _dbContext.SaveChangesAsync(cancellationToken);
 
                 return RequestResult<int>.Succeed(1);

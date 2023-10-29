@@ -16,12 +16,12 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
 {
     public class UserReadOnlyRepository : IUserReadOnlyRepository
     {
-        private readonly DbSet<UserEntity> _userEntities;
+        private readonly AppReadOnlyDbContext _dbcontext;
         private readonly IMapper _mapper;
         private readonly ILocalizationService _localizationService;
         public UserReadOnlyRepository(IMapper mapper, ILocalizationService localizationService, AppReadOnlyDbContext dbContext)
         {
-            _userEntities = dbContext.Set<UserEntity>();
+            _dbcontext = dbContext;
             _mapper = mapper;
             _localizationService = localizationService;
         }
@@ -29,7 +29,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
         {
             try
             {
-                var user = await _userEntities.AsNoTracking().Where(c => c.Id == idUser && !c.Deleted).ProjectTo<UserDTO>(_mapper.ConfigurationProvider)
+                var user = await _dbcontext.UserEntities.AsNoTracking().Where(c => c.Id == idUser).ProjectTo<UserDTO>(_mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync(cancellationToken);
 
                 return RequestResult<UserDTO?>.Succeed(user);
@@ -51,8 +51,8 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
         {
             try
             {
-                IQueryable<UserEntity> queryable = _userEntities.AsNoTracking().AsQueryable();
-                var result = await _userEntities.AsNoTracking()
+                IQueryable<UserEntity> queryable = _dbcontext.UserEntities.AsNoTracking().AsQueryable();
+                var result = await _dbcontext.UserEntities.AsNoTracking()
                     .PaginateAsync<UserEntity, UserDTO>(request, _mapper, cancellationToken);
 
                 return RequestResult<PaginationResponse<UserDTO>>.Succeed(new PaginationResponse<UserDTO>()

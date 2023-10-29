@@ -1,5 +1,4 @@
 ﻿using FPLSP_Tutorial.Domain.Entities;
-using FPLSP_Tutorial.Domain.Entities;
 using FPLSP_Tutorial.Infrastructure.Database.AppDbContext;
 using Microsoft.EntityFrameworkCore;
 using System;

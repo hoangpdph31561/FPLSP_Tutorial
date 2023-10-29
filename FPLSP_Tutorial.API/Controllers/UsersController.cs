@@ -1,14 +1,9 @@
 ﻿using AutoMapper;
 using FPLSP_Tutorial.Application.DataTransferObjects.User.Request;
-using FPLSP_Tutorial.Application.DataTransferObjects.User.Request;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadWrite;
 using FPLSP_Tutorial.Application.Interfaces.Services;
-using FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly;
-using FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite;
 using FPLSP_Tutorial.Infrastructure.ViewModels.User;
-using FPLSP_Tutorial.Infrastructure.ViewModels.User;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FPLSP_Tutorial.API.Controllers
@@ -40,7 +35,7 @@ namespace FPLSP_Tutorial.API.Controllers
 
             return Ok(vm);
         }
-        [HttpGet("{id}")]
+        [HttpGet("id")]
         public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
         {
             UserViewModel vm = new(_userReadOnlyRepository, _localizationService);

@@ -6,6 +6,7 @@ namespace FPLSP_Tutorial.Domain.Entities
     public class MajorEntity : IEntityBase
     {
         public Guid Id { get; set; }
+        public string Code { get; set; }
         public string Name { get; set; } = string.Empty;
         // chuyển từ kiểu int sang string của Status
         public string Status { get; set; } = EntityStatus.Active;

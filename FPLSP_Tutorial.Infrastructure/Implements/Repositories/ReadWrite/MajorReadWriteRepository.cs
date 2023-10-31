@@ -84,8 +84,9 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
             {
                 var major = await GetMajorByIdAsync(entity.Id, cancellationToken);
 
-                major!.Name = string.IsNullOrWhiteSpace(entity.Name) ? major.Name : entity.Name;
-
+                major!.Name = entity.Name == null ? "N/A" : entity.Name;
+                major!.Code = entity.Code;
+                major!.Status = entity.Status == entity.Status ? EntityStatus.Active : EntityStatus.InActive;
                 major.ModifiedBy = entity.ModifiedBy;
                 major.ModifiedTime = DateTimeOffset.UtcNow;
 

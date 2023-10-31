@@ -1,5 +1,4 @@
-﻿using FPLSP_Tutorial.Application.DataTransferObjects.User.Request;
-using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadWrite;
+﻿using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadWrite;
 using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Application.ValueObjects.Common;
 using FPLSP_Tutorial.Application.ValueObjects.Response;
@@ -25,7 +24,13 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
             try
             {
                 entity.Id = Guid.NewGuid();
-                entity.CreatedTime = DateTime.UtcNow;     
+                entity.Email = entity.Email;
+                entity.Username = string.IsNullOrWhiteSpace(entity.Username) ? "N/A" : entity.Username;
+                entity.RoleCodes = entity.RoleCodes == null ? (JsonArray)JsonArray.Parse("[\"N/A\"]") : entity.RoleCodes;
+                entity.Status = entity.Status == EntityStatus.Active ? EntityStatus.Active : EntityStatus.InActive;
+
+                entity.CreatedTime = DateTime.UtcNow;  
+                entity.CreatedBy = entity.CreatedBy;
                 await _dbContext.UserEntities.AddAsync(entity);
                 await _dbContext.SaveChangesAsync(cancellationToken);
 
@@ -44,32 +49,6 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
             }
         }
 
-        public async Task<RequestResult<int>> DeleteUserAsync(UserDeleteRequest request, CancellationToken cancellationToken)
-        {
-            try
-            {
-                var user = await GetUserByIdAsync(request.Id, cancellationToken);
-
-                user.Status = Convert.ToInt32(EntityStatus.Deleted);
-
-                _dbContext.UserEntities.Remove(user);
-                await _dbContext.SaveChangesAsync(cancellationToken);
-
-                return RequestResult<int>.Succeed(1);
-            }
-            catch (Exception e)
-            {
-                return RequestResult<int>.Fail(_localizationService["Unable to delete User"], new[]
-                {
-                    new ErrorItem
-                    {
-                        Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToDelete + "User"
-                    }
-                });
-            }
-        }
-
         private async Task<UserEntity> GetUserByIdAsync(Guid idUser, CancellationToken cancellationToken)
         {
             var example = await _dbContext.UserEntities.FirstOrDefaultAsync(c => c.Id == idUser, cancellationToken);
@@ -83,9 +62,9 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
             {
                 var user = await GetUserByIdAsync(entity.Id, cancellationToken);
 
-                user.Username = entity.Username == null ? "N/A" : entity.Username;
-
                 user.RoleCodes = entity.RoleCodes == null ? (JsonArray)JsonArray.Parse("[\"N/A\"]") : entity.RoleCodes;
+
+                user.Status = entity.Status == EntityStatus.Active ? EntityStatus.Active : EntityStatus.InActive;
 
                 _dbContext.UserEntities.Update(user);
                 await _dbContext.SaveChangesAsync(cancellationToken);

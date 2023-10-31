@@ -65,14 +65,6 @@ namespace FPLSP_Tutorial.API.Controllers
             return Ok(vm);
         }
 
-        [HttpDelete]
-        public async Task<IActionResult> Delete(UserDeleteRequest request, CancellationToken cancellationToken)
-        {
-            UserDeleteViewModel vm = new(_userReadWriteRepository, _localizationService, _mapper);
-
-            await vm.HandleAsync(request, cancellationToken);
-
-            return Ok(vm);
-        }
+        
     }
 }

@@ -8,6 +8,5 @@ namespace FPLSP_Tutorial.Application.Interfaces.Repositories.ReadWrite
     {
         Task<RequestResult<Guid>> AddUserAsync(UserEntity entity, CancellationToken cancellationToken);
         Task<RequestResult<int>> UpdateUserAsync(UserEntity entity, CancellationToken cancellationToken);
-        Task<RequestResult<int>> DeleteUserAsync(UserDeleteRequest request, CancellationToken cancellationToken);
     }
 }

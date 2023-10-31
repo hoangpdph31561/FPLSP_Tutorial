@@ -1,12 +1,11 @@
-﻿namespace FPLSP_Tutorial.Application.DataTransferObjects.Major.Request
+﻿using FPLSP_Tutorial.Domain.Constants;
+
+namespace FPLSP_Tutorial.Application.DataTransferObjects.Major.Request
 {
     public class MajorUpdateRequest
     {
-        public Guid MajorId { get; set; }
-        public Guid UserId { get; set; }
-        public bool IsManager { get; set; }
-        public int Status { get; set; } = 1;
-        
-        public string Username { get; set; } = string.Empty;
+        public string Code { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public int Status { get; set; } = EntityStatus.Active;
     }
 }

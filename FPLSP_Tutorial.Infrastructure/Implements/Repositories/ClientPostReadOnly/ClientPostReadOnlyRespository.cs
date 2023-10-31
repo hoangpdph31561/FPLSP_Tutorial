@@ -3,12 +3,15 @@ using AutoMapper.QueryableExtensions;
 using FPLSP_Tutorial.Application.DataTransferObjects.ClientPost;
 using FPLSP_Tutorial.Application.DataTransferObjects.ClientPost.Request;
 using FPLSP_Tutorial.Application.DataTransferObjects.ClientPost.Response;
+
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ClientPostReadOnly;
 using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Application.ValueObjects.Common;
 using FPLSP_Tutorial.Application.ValueObjects.Pagination;
 using FPLSP_Tutorial.Application.ValueObjects.Response;
+using FPLSP_Tutorial.Domain.Entities;
 using FPLSP_Tutorial.Infrastructure.Database.AppDbContext;
+using FPLSP_Tutorial.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
@@ -17,6 +20,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ClientPostReadOnly
 {
@@ -36,32 +41,27 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ClientPostReadOn
         {
             try
             {
-                var result = await (from post in _readOnlyDbContext.PostEntities
-                             join postTag in _readOnlyDbContext.PostTagEntities on post.Id equals postTag.PostId
-                             join tag in _readOnlyDbContext.TagEntities on postTag.TagId equals tag.Id
-                             join user in _readOnlyDbContext.UserEntities on post.CreatedBy equals user.Id
-                             where tag.MajorId == request.MajorId && !post.Deleted
-                             orderby post.CreatedTime descending
-                             select new ClientPostListResponse
-                             {
-                                 Id = post.Id,
-                                 Title = post.Title,
-                                 Status = post.Status,
-                                 CreatedTime = post.CreatedTime,
-                                 CreatedBy =  post.CreatedBy,
-                                 UserCreatedName = user.Username
-                             }).AsNoTracking().ToListAsync(cancellationToken);
-                
-                PaginationResponse<ClientPostListResponse> response = new()
+                var groupPostId = await _readOnlyDbContext.TagEntities.AsNoTracking().Where(x => x.MajorId == request.MajorId).Select(x => x.PostTags.Select(pt => pt.PostId).ToList()).ToListAsync(cancellationToken);
+
+                List<Guid> lstPostId = new List<Guid>();
+                foreach (var post in groupPostId)
                 {
-                    Data = result,
-                };
+                    lstPostId.AddRange(post);
+                }
+
+                var test = await _readOnlyDbContext.PostEntities.AsNoTracking().Where(x => lstPostId.Contains(x.Id) && !x.Deleted).PaginateAsync<PostEntity, ClientPostListResponse>(request, _mapper, cancellationToken);
+                foreach (var entity in test.Data!)
+                {
+                    var createdName = await _readOnlyDbContext.UserEntities.AsNoTracking().Where(x => x.Id == entity.CreatedBy).Select(x => x.Username).FirstOrDefaultAsync(cancellationToken);
+                    entity.UserCreatedName = createdName == null ? "N/A" : createdName!;
+                }
+
                 return RequestResult<PaginationResponse<ClientPostListResponse>>.Succeed(new PaginationResponse<ClientPostListResponse>
                 {
                     PageNumber = request.PageNumber,
                     PageSize = request.PageSize,
-                    HasNext = response.HasNext,
-                    Data = response.Data
+                    HasNext = test.HasNext,
+                    Data = test.Data
                 });
             }
             catch (Exception e)
@@ -78,38 +78,56 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ClientPostReadOn
             }
         }
 
+        public async Task<RequestResult<PaginationResponse<ClientPost_MajorDTO>>> GetAllMajorAsync(ClientPost_GetMajorRequestWithPagination request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var result = await _readOnlyDbContext.MajorEntities.AsNoTracking().PaginateAsync<MajorEntity,ClientPost_MajorDTO>(request, _mapper, cancellationToken);
+                return RequestResult<PaginationResponse<ClientPost_MajorDTO>>.Succeed(new PaginationResponse<ClientPost_MajorDTO>
+                {
+                    PageNumber = request.PageNumber,
+                    PageSize = request.PageSize,
+                    HasNext = result.HasNext,
+                    Data = result.Data
+                });
+            }
+            catch (Exception e)
+            {
+
+                return RequestResult<PaginationResponse<ClientPost_MajorDTO>>.Fail(_localizationService["List of Major cannot found"], new[]
+                {
+                    new ErrorItem
+                    {
+                        Error= e.Message,
+                        FieldName = LocalizationString.Common.FailedToGet + "list of Major"
+                    }
+                });
+            }
+        }
+
         public async Task<RequestResult<PaginationResponse<ClientPostListResponse>>> GetClientPostBySearchAsync(ClientPostSearchRequest request, CancellationToken cancellationToken)
         {
             try
             {
-                var result = await (from post in _readOnlyDbContext.PostEntities
-                             join postTag in _readOnlyDbContext.PostTagEntities on post.Id equals postTag.PostId
-                             join tag in _readOnlyDbContext.TagEntities on postTag.TagId equals tag.Id
-                             join user in _readOnlyDbContext.UserEntities on post.CreatedBy equals user.Id
-                             where tag.MajorId == request.MajorId && 
-                             !post.Deleted && 
-                             (request.LstTags == null || request.LstTags.Count == 0 || request.LstTags.Contains(tag.Id)) 
-                             && (request.NamePost == null || post.Title.ToLower().Trim().Contains(request.NamePost.ToLower().Trim()))
-                             orderby post.CreatedTime descending
-                             select  new ClientPostListResponse
-                             {
-                                 Id = post.Id,
-                                 Title = post.Title,
-                                 Status = post.Status,
-                                 CreatedTime = post.CreatedTime,
-                                 CreatedBy = post.CreatedBy,
-                                 UserCreatedName = user.Username
-                             }).AsNoTracking().ToListAsync(cancellationToken);
-                PaginationResponse<ClientPostListResponse> response = new()
+                var groupPostId = await _readOnlyDbContext.TagEntities.Where(x => x.MajorId == request.MajorId && request.LstTags!.Contains(x.Id)).Select(x => x.PostTags.Select(pt => pt.PostId).ToList()).ToListAsync(cancellationToken);
+                List<Guid> lstPostId = new List<Guid>();
+                foreach (var post in groupPostId)
                 {
-                    Data =result,
-                };
+                    lstPostId.AddRange(post);
+                }
+                var result = await _readOnlyDbContext.PostEntities.AsNoTracking().Where(x => lstPostId.Contains(x.Id) && x.Title.ToLower().Trim().Contains(request.NamePost.ToLower().Trim())).PaginateAsync<PostEntity, ClientPostListResponse>(request, _mapper, cancellationToken);
+
+                foreach (var item in result.Data!)
+                {
+                    var createdName = await _readOnlyDbContext.UserEntities.AsNoTracking().Where(x => x.Id == item.Id).Select(x => x.Username).FirstOrDefaultAsync(cancellationToken);
+                    item.UserCreatedName = createdName == null ? "N/A" : createdName!;
+                }
                 return RequestResult<PaginationResponse<ClientPostListResponse>>.Succeed(new PaginationResponse<ClientPostListResponse>
                 {
                     PageNumber = request.PageNumber,
                     PageSize = request.PageSize,
-                    HasNext = response.HasNext,
-                    Data = response.Data
+                    HasNext = result.HasNext,
+                    Data = result.Data
                 });
             }
             catch (Exception e)
@@ -131,8 +149,8 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ClientPostReadOn
             try
             {
                 var result = await _readOnlyDbContext.PostEntities.AsNoTracking().Where(x => x.Id == id && !x.Deleted).ProjectTo<ClientPostDetailResponse>(_mapper.ConfigurationProvider).FirstOrDefaultAsync(cancellationToken);
-                var userPostName = await _readOnlyDbContext.UserEntities.AsNoTracking().Where(x => x.Id == result.CreatedBy).FirstOrDefaultAsync(cancellationToken);
-                result.UserCreatedName = userPostName.Username;
+
+                result!.UserCreatedName = await _readOnlyDbContext.UserEntities.AsNoTracking().FirstOrDefaultAsync(x => x.Id == result.CreatedBy) == null ? "N/A" : _readOnlyDbContext.UserEntities.AsNoTracking().First(x => x.Id == result.CreatedBy).Username;
                 return RequestResult<ClientPostDetailResponse>.Succeed(result);
             }
             catch (Exception e)
@@ -149,34 +167,40 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ClientPostReadOn
             }
         }
 
+        public async Task<RequestResult<MajorRequestEntity>> GetMajorRequestByIdAsync(Guid id, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var result = await _readOnlyDbContext.MajorRequestEntities.Where(x => x.Id == id).FirstOrDefaultAsync(cancellationToken);
+                return RequestResult<MajorRequestEntity>.Succeed(result);
+            }
+            catch (Exception e)
+            {
+
+                return RequestResult<MajorRequestEntity>.Fail(_localizationService["Example is not found"], new[]
+                {
+                    new ErrorItem
+                    {
+                        Error = e.Message,
+                        FieldName = LocalizationString.Common.FailedToGet + "example"
+                    }
+                });
+            }
+        }
+
         public async Task<RequestResult<PaginationResponse<ClientPostParentChildResponse>>> GetParentChildPostAsync(ClientPostRequestIdWithPagination request, CancellationToken cancellationToken)
         {
             try
             {
-                var query = await _readOnlyDbContext.PostEntities.AsNoTracking().Where(x => x.Id == request.Id && !x.Deleted).FirstOrDefaultAsync(cancellationToken);
-                ClientPostParentChildResponse response = new();
-                if (query.PostId == null)
-                {
-                    response.ParentPost = _mapper.Map<ClientPostDTO>(query);
-                }
-                else
-                {
-                    var parentPost = await _readOnlyDbContext.PostEntities.AsNoTracking().Where(x => x.Id == query.PostId).FirstOrDefaultAsync(cancellationToken);
-                    response.ParentPost = _mapper.Map<ClientPostDTO>(parentPost);
-                }
-                var childPosts = await _readOnlyDbContext.PostEntities.AsNoTracking().Where(x => x.Id != query.Id && !x.Deleted && x.PostId == response.ParentPost.Id).OrderByDescending(x => x.CreatedTime).ToListAsync(cancellationToken);
+                //IQueryable<PostEntity> queryable = _readOnlyDbContext.PostEntities.AsNoTracking().Where(x => x.Id == request.Id && !x.Deleted).AsQueryable();
+                var result_Test = await _readOnlyDbContext.PostEntities.AsNoTracking().Where(x => x.Id == request.Id && !x.Deleted).PaginateAsync<PostEntity, ClientPostParentChildResponse>(request, _mapper, cancellationToken);
 
-                response.ChildPosts = _mapper.Map<List<ClientPostDTO>>(childPosts);
-                PaginationResponse<ClientPostParentChildResponse> result = new()
-                {
-                    Data = (ICollection<ClientPostParentChildResponse>)response
-                };
                 return RequestResult<PaginationResponse<ClientPostParentChildResponse>>.Succeed(new PaginationResponse<ClientPostParentChildResponse>
                 {
                     PageNumber = request.PageNumber,
                     PageSize = request.PageSize,
-                    HasNext = result.HasNext,
-                    Data = result.Data
+                    HasNext = result_Test.HasNext,
+                    Data = result_Test.Data
                 });
             }
             catch (Exception e)
@@ -196,41 +220,23 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ClientPostReadOn
 
         }
 
-        public async Task<RequestResult<PaginationResponse<ClientTagResponse>>> GetPostTagsAsync(ClientPostRequestIdWithPagination request, CancellationToken cancellationToken)
+        public async Task<RequestResult<ClientTagResponse>> GetPostTagsAsync(Guid id, CancellationToken cancellationToken)
         {
             try
             {
-                var tagsOfPost = await (from post in _readOnlyDbContext.PostEntities
-                                  join postTag in _readOnlyDbContext.PostTagEntities on post.Id equals postTag.PostId
-                                  join tag in _readOnlyDbContext.TagEntities on postTag.TagId equals tag.Id
-                                  where post.Id == request.Id
-                                  select new ClientTagResponse
-                                  {
-                                      Id = tag.Id,
-                                      Name = tag.Name,
-                                  }).AsNoTracking().ToListAsync(cancellationToken);
-                PaginationResponse<ClientTagResponse> result = new()
-                {
-                    Data = tagsOfPost
-                };
-                return RequestResult<PaginationResponse<ClientTagResponse>>.Succeed(new PaginationResponse<ClientTagResponse>
-                {
-                    PageNumber = request.PageNumber,
-                    PageSize = request.PageSize,
-                    HasNext = result.HasNext,
-                    Data = result.Data
-                });
+                var result = await _readOnlyDbContext.PostEntities.AsNoTracking().Where(x => x.Id == id).ProjectTo<ClientTagResponse>(_mapper.ConfigurationProvider).FirstOrDefaultAsync(cancellationToken);
+                return RequestResult<ClientTagResponse>.Succeed(result);
 
             }
             catch (Exception e)
             {
 
-                return RequestResult<PaginationResponse<ClientTagResponse>>.Fail(_localizationService["List of tags cannot found"], new[]
+                return RequestResult<ClientTagResponse>.Fail(_localizationService["Tags of Post are not found"], new[]
                 {
                     new ErrorItem
                     {
                         Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToGet + "list of tags"
+                        FieldName = LocalizationString.Common.FailedToGet + "example"
                     }
                 });
             }

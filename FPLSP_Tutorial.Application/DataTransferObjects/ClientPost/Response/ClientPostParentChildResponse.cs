@@ -10,8 +10,8 @@ namespace FPLSP_Tutorial.Application.DataTransferObjects.ClientPost.Response
     public class ClientPostParentChildResponse
     {
         //Thông tin bài viết mẹ
-        public ClientPostDTO ParentPost { get; set; }
+        public ClientPostDTO? ParentPost { get; set; }
         //Thông tin các bài viết con
-        public List<ClientPostDTO> ChildPosts { get; set; }
+        public List<ClientPostDTO>? ChildPosts { get; set; }
     }
 }

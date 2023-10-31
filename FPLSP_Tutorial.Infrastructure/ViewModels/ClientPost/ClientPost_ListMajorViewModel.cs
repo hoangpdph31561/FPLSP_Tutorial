@@ -12,40 +12,40 @@ using System.Threading.Tasks;
 
 namespace FPLSP_Tutorial.Infrastructure.ViewModels.ClientPost
 {
-    public class ClientPostGetPostTagViewModel : ViewModelBase<Guid>
+    public class ClientPost_ListMajorViewModel : ViewModelBase<ClientPost_GetMajorRequestWithPagination>
     {
-        private readonly IClientPostReadOnlyRespository _clientPostReadRespository;
+        private readonly IClientPostReadOnlyRespository _clientPostReadOnlyRespository;
         private readonly IMapper _mapper;
         private readonly ILocalizationService _localizationService;
-        public ClientPostGetPostTagViewModel(IClientPostReadOnlyRespository clientPostReadOnlyRespository, IMapper mapper, ILocalizationService localizationService)
+        public ClientPost_ListMajorViewModel(IClientPostReadOnlyRespository clientPostReadOnlyRespository, IMapper mapper, ILocalizationService localizationService)
         {
-            _clientPostReadRespository = clientPostReadOnlyRespository;
+            _clientPostReadOnlyRespository = clientPostReadOnlyRespository;
             _mapper = mapper;
             _localizationService = localizationService;
         }
-        public override async Task HandleAsync(Guid id, CancellationToken cancellationToken)
+        public override async Task HandleAsync(ClientPost_GetMajorRequestWithPagination request, CancellationToken cancellationToken)
         {
             try
             {
-                var result = await _clientPostReadRespository.GetPostTagsAsync(id, cancellationToken);
+                var result = await _clientPostReadOnlyRespository.GetAllMajorAsync(request, cancellationToken);
                 Data = result.Data!;
                 Success = result.Success;
                 ErrorItems = result.Errors;
                 Message = result.Message;
                 return;
             }
-            catch (Exception)
+            catch 
             {
 
                 Success = false;
                 ErrorItems = new[]
                 {
-    new ErrorItem
-    {
-        Error = _localizationService["Error occurred while getting the list of Tags of post"],
-        FieldName = string.Concat(LocalizationString.Common.FailedToGet, "list of Tags of post")
-    }
-};
+                new ErrorItem
+                {
+                    Error = _localizationService["Error occurred while getting the list of Major"],
+                    FieldName = string.Concat(LocalizationString.Common.FailedToGet, "list of Major")
+                }
+            };
             }
         }
     }

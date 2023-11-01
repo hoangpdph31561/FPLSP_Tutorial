@@ -4,7 +4,6 @@ using FPLSP_Tutorial.Application.Interfaces.Repositories.ClientPostReadOnly;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ClientPostReadWrite;
 using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Infrastructure.ViewModels.ClientPost;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FPLSP_Tutorial.API.Controllers
@@ -27,7 +26,7 @@ namespace FPLSP_Tutorial.API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetPostById(Guid id, CancellationToken cancellationToken)
         {
-            ClientPostDetailViewModel vm = new(_clientPostReadOnlyRespository,_mapper, _localizationService);
+            ClientPostDetailViewModel vm = new(_clientPostReadOnlyRespository, _mapper, _localizationService);
             await vm.HandleAsync(id, cancellationToken);
             return Ok(vm);
         }
@@ -35,13 +34,13 @@ namespace FPLSP_Tutorial.API.Controllers
         public async Task<IActionResult> GetPostByMajorId([FromQuery] ClientPostListRequest request, CancellationToken cancellationToken)
         {
             ClientPostGetByMajorIdViewModel vm = new(_clientPostReadOnlyRespository, _mapper, _localizationService);
-            await vm.HandleAsync(request,cancellationToken);
+            await vm.HandleAsync(request, cancellationToken);
             return Ok(vm);
         }
         [HttpGet("getPostTag/{id}")]
         public async Task<IActionResult> GetPostTag(Guid id, CancellationToken cancellationToken)
         {
-            ClientPostGetPostTagViewModel vm = new (_clientPostReadOnlyRespository,_mapper, _localizationService);
+            ClientPostGetPostTagViewModel vm = new(_clientPostReadOnlyRespository, _mapper, _localizationService);
             await vm.HandleAsync(id, cancellationToken);
             return Ok(vm);
         }
@@ -53,7 +52,7 @@ namespace FPLSP_Tutorial.API.Controllers
             return Ok(vm);
         }
         [HttpGet("getPostSearch")]
-        public async Task<IActionResult> GetPostSearch([FromQuery] ClientPostSearchRequest request,  CancellationToken cancellationToken)
+        public async Task<IActionResult> GetPostSearch([FromQuery] ClientPostSearchRequest request, CancellationToken cancellationToken)
         {
             ClientPostSearchViewModel vm = new(_clientPostReadOnlyRespository, _mapper, _localizationService);
             await vm.HandleAsync(request, cancellationToken);
@@ -62,14 +61,14 @@ namespace FPLSP_Tutorial.API.Controllers
         [HttpGet("getMajor")]
         public async Task<IActionResult> GetMajor([FromQuery] ClientPost_GetMajorRequestWithPagination request, CancellationToken cancellationToken)
         {
-            ClientPost_ListMajorViewModel vm = new(_clientPostReadOnlyRespository,_mapper, _localizationService);
-            await vm.HandleAsync(request,cancellationToken);
+            ClientPost_ListMajorViewModel vm = new(_clientPostReadOnlyRespository, _mapper, _localizationService);
+            await vm.HandleAsync(request, cancellationToken);
             return Ok(vm);
         }
         [HttpPost]
         public async Task<IActionResult> CreateMajorRequest(InputMajorRequest request, CancellationToken cancellationToken)
         {
-            ClienPostMajorRequestCreateViewModel vm = new (_clientPostReadOnlyRespository, _clientPostReadWriteRespository,_mapper,_localizationService);
+            ClienPostMajorRequestCreateViewModel vm = new(_clientPostReadOnlyRespository, _clientPostReadWriteRespository, _mapper, _localizationService);
             await vm.HandleAsync(request, cancellationToken);
             return Ok(vm);
         }

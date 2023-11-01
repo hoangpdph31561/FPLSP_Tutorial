@@ -12,16 +12,7 @@ using FPLSP_Tutorial.Application.ValueObjects.Response;
 using FPLSP_Tutorial.Domain.Entities;
 using FPLSP_Tutorial.Infrastructure.Database.AppDbContext;
 using FPLSP_Tutorial.Infrastructure.Extensions;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ClientPostReadOnly
 {
@@ -82,7 +73,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ClientPostReadOn
         {
             try
             {
-                var result = await _readOnlyDbContext.MajorEntities.AsNoTracking().PaginateAsync<MajorEntity,ClientPost_MajorDTO>(request, _mapper, cancellationToken);
+                var result = await _readOnlyDbContext.MajorEntities.AsNoTracking().PaginateAsync<MajorEntity, ClientPost_MajorDTO>(request, _mapper, cancellationToken);
                 return RequestResult<PaginationResponse<ClientPost_MajorDTO>>.Succeed(new PaginationResponse<ClientPost_MajorDTO>
                 {
                     PageNumber = request.PageNumber,

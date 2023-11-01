@@ -3,15 +3,9 @@ using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadWrite;
 using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Application.ValueObjects.Common;
 using FPLSP_Tutorial.Application.ValueObjects.Response;
-using FPLSP_Tutorial.Domain.Constants;
 using FPLSP_Tutorial.Domain.Entities;
 using FPLSP_Tutorial.Infrastructure.Database.AppDbContext;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
 {
@@ -82,7 +76,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
         {
             try
             {
-                var tag = await GetTagByIdAsync(entity.Id,cancellationToken);
+                var tag = await GetTagByIdAsync(entity.Id, cancellationToken);
                 tag!.Name = entity.Name;
 
                 tag.ModifiedBy = entity.ModifiedBy;

@@ -3,11 +3,6 @@ using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadWrite;
 using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Application.ValueObjects.Common;
 using FPLSP_Tutorial.Application.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FPLSP_Tutorial.Infrastructure.ViewModels.Posts
 {
@@ -18,7 +13,7 @@ namespace FPLSP_Tutorial.Infrastructure.ViewModels.Posts
         public PostDeleteViewModel(IPostReadWriteRespository postReadWriteRespository, ILocalizationService localizationService)
         {
             _postReadWriteRespository = postReadWriteRespository;
-            _localizationService = localizationService; 
+            _localizationService = localizationService;
         }
         public override async Task HandleAsync(PostDeleteRequest request, CancellationToken cancellationToken)
         {

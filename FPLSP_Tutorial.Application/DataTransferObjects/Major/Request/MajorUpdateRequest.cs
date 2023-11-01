@@ -1,4 +1,4 @@
-﻿using FPLSP_Tutorial.Domain.Constants;
+﻿using FPLSP_Tutorial.Domain.Enums;
 
 namespace FPLSP_Tutorial.Application.DataTransferObjects.Major.Request
 {
@@ -7,7 +7,7 @@ namespace FPLSP_Tutorial.Application.DataTransferObjects.Major.Request
         public Guid Id { get; set; }
         public string Code { get; set; }
         public string Name { get; set; } = string.Empty;
-        public int Status { get; set; } = EntityStatus.Active;
+        public EntityStatus Status { get; set; } = EntityStatus.Active;
         public DateTimeOffset ModifiedTime { get; set; }
         public Guid? ModifiedBy { get; set; }
     }

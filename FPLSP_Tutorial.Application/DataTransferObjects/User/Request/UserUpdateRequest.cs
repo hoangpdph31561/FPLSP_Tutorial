@@ -1,5 +1,4 @@
-﻿using FPLSP_Tutorial.Domain.Constants;
-using System.Text.Json.Nodes;
+﻿using FPLSP_Tutorial.Domain.Enums;
 
 namespace FPLSP_Tutorial.Application.DataTransferObjects.User.Request
 {
@@ -7,6 +6,6 @@ namespace FPLSP_Tutorial.Application.DataTransferObjects.User.Request
     {
         public Guid Id { get; set; }
         public List<string> RoleCodes { get; set; } = new List<string>();
-        public int Status { get; set; } = EntityStatus.Active;
+        public EntityStatus Status { get; set; } = EntityStatus.Active;
     }
 }

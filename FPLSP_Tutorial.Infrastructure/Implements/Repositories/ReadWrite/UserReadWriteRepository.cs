@@ -2,12 +2,11 @@
 using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Application.ValueObjects.Common;
 using FPLSP_Tutorial.Application.ValueObjects.Response;
-using FPLSP_Tutorial.Domain.Constants;
 using FPLSP_Tutorial.Domain.Entities;
+using FPLSP_Tutorial.Domain.Enums;
 using FPLSP_Tutorial.Infrastructure.Database.AppDbContext;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using System.Text.Json.Nodes;
 
 namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
 {
@@ -30,7 +29,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
                 entity.RoleCodes = entity.RoleCodes == null ? JsonConvert.DeserializeObject<List<string>>("[\"N/A\"]") : entity.RoleCodes;
                 entity.Status = entity.Status == EntityStatus.Active ? EntityStatus.Active : EntityStatus.InActive;
 
-                entity.CreatedTime = DateTime.UtcNow;  
+                entity.CreatedTime = DateTime.UtcNow;
                 entity.CreatedBy = entity.CreatedBy;
                 await _dbContext.UserEntities.AddAsync(entity);
                 await _dbContext.SaveChangesAsync(cancellationToken);

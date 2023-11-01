@@ -8,11 +8,6 @@ using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Application.ValueObjects.Common;
 using FPLSP_Tutorial.Application.ViewModels;
 using FPLSP_Tutorial.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FPLSP_Tutorial.Infrastructure.ViewModels.ClientPost
 {
@@ -35,9 +30,9 @@ namespace FPLSP_Tutorial.Infrastructure.ViewModels.ClientPost
             try
             {
                 var createResult = await _clientPostReadWriteRespository.AddMajorRequest(_mapper.Map<MajorRequestEntity>(request), cancellationToken);
-                if(createResult.Success)
+                if (createResult.Success)
                 {
-                    var result = await _clientPostReadOnlyRespository.GetMajorRequestByIdAsync(createResult.Data,cancellationToken);
+                    var result = await _clientPostReadOnlyRespository.GetMajorRequestByIdAsync(createResult.Data, cancellationToken);
                     Data = result.Data!;
                     Success = result.Success;
                     ErrorItems = result.Errors;
@@ -48,7 +43,7 @@ namespace FPLSP_Tutorial.Infrastructure.ViewModels.ClientPost
                 ErrorItems = createResult.Errors;
                 Message = createResult.Message;
             }
-            catch (Exception )
+            catch (Exception)
             {
                 Success = false;
                 ErrorItems = new[]

@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using FPLSP_Tutorial.Application.DataTransferObjects.Example;
 using FPLSP_Tutorial.Application.DataTransferObjects.MajorRequest;
 using FPLSP_Tutorial.Application.DataTransferObjects.MajorRequest.Request;
-using FPLSP_Tutorial.Application.DataTransferObjects.Post.Response;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly;
 using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Application.ValueObjects.Common;
@@ -13,12 +11,6 @@ using FPLSP_Tutorial.Domain.Entities;
 using FPLSP_Tutorial.Infrastructure.Database.AppDbContext;
 using FPLSP_Tutorial.Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
 {

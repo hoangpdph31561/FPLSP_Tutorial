@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FPLSP_Tutorial.Domain.Enums;
 
 namespace FPLSP_Tutorial.Application.DataTransferObjects.MajorUser
 {
@@ -11,7 +7,7 @@ namespace FPLSP_Tutorial.Application.DataTransferObjects.MajorUser
         public Guid MajorId { get; set; }
         public Guid UserId { get; set; }
         public bool IsManager { get; set; }
-        public int Status { get; set; } = 1;
+        public EntityStatus Status { get; set; } = EntityStatus.Active;
         public DateTimeOffset CreatedTime { get; set; }
         public Guid? CreatedBy { get; set; }
 

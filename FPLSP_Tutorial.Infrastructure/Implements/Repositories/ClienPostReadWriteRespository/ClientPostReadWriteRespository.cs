@@ -1,16 +1,9 @@
-﻿using FPLSP_Tutorial.Application.DataTransferObjects.ClientPost.Request;
-
-using FPLSP_Tutorial.Application.Interfaces.Repositories.ClientPostReadWrite;
+﻿using FPLSP_Tutorial.Application.Interfaces.Repositories.ClientPostReadWrite;
 using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Application.ValueObjects.Common;
 using FPLSP_Tutorial.Application.ValueObjects.Response;
 using FPLSP_Tutorial.Domain.Entities;
 using FPLSP_Tutorial.Infrastructure.Database.AppDbContext;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ClienPostReadWriteRespository
 {
@@ -22,13 +15,13 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ClienPostReadWri
         {
             _dbContext = dbContext;
             _localizationService = localizationService;
-            
+
         }
         public async Task<RequestResult<Guid>> AddMajorRequest(MajorRequestEntity entity, CancellationToken cancellationToken)
         {
             try
             {
-                
+
                 entity.CreatedTime = DateTimeOffset.Now;
                 entity.ModifiedTime = DateTimeOffset.Now;
                 entity.DeletedTime = DateTimeOffset.Now;

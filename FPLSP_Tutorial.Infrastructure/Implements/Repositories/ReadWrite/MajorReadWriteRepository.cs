@@ -3,8 +3,8 @@ using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadWrite;
 using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Application.ValueObjects.Common;
 using FPLSP_Tutorial.Application.ValueObjects.Response;
-using FPLSP_Tutorial.Domain.Constants;
 using FPLSP_Tutorial.Domain.Entities;
+using FPLSP_Tutorial.Domain.Enums;
 using FPLSP_Tutorial.Infrastructure.Database.AppDbContext;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,13 +23,6 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
         {
             try
             {
-                entity.Id = Guid.NewGuid();
-                entity.Code = entity.Code;
-                entity.Name = string.IsNullOrWhiteSpace(entity.Name) ? entity.Name : entity.Name;
-                entity.Status = entity.Status == EntityStatus.Active ? EntityStatus.Active : EntityStatus.InActive;
-                entity.CreatedTime = DateTimeOffset.UtcNow;
-                entity.CreatedBy = entity.CreatedBy;
-
                 await _dbContext.MajorEntities.AddAsync(entity);
                 await _dbContext.SaveChangesAsync(cancellationToken);
 
@@ -37,12 +30,12 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
             }
             catch (Exception e)
             {
-                return RequestResult<Guid>.Fail(_localizationService["Unable to create Major"], new[]
+                return RequestResult<Guid>.Fail(_localizationService["Unable to create example"], new[]
                 {
                     new ErrorItem
                     {
                         Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToCreate + "Major"
+                        FieldName = LocalizationString.Common.FailedToCreate + "example"
                     }
                 });
             }
@@ -91,9 +84,8 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
             {
                 var major = await GetMajorByIdAsync(entity.Id, cancellationToken);
 
-                major!.Name = string.IsNullOrWhiteSpace(entity.Name) ? "N/A" : entity.Name;
-                major!.Code = entity.Code;
-                major!.Status = entity.Status == entity.Status ? EntityStatus.Active : EntityStatus.InActive;
+                major!.Name = string.IsNullOrWhiteSpace(entity.Name) ? major.Name : entity.Name;
+
                 major.ModifiedBy = entity.ModifiedBy;
                 major.ModifiedTime = DateTimeOffset.UtcNow;
 

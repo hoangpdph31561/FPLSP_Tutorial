@@ -1,5 +1,4 @@
-﻿using FPLSP_Tutorial.Application.DataTransferObjects.User.Request;
-using FPLSP_Tutorial.Application.ValueObjects.Response;
+﻿using FPLSP_Tutorial.Application.ValueObjects.Response;
 using FPLSP_Tutorial.Domain.Entities;
 
 namespace FPLSP_Tutorial.Application.Interfaces.Repositories.ReadWrite

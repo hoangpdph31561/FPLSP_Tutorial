@@ -1,13 +1,8 @@
 ﻿using AutoMapper;
 using FPLSP_Tutorial.Application.DataTransferObjects.PostTag.Request;
-using FPLSP_Tutorial.Application.DataTransferObjects.Tag.TagRequest;
-using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadWrite;
 using FPLSP_Tutorial.Application.Interfaces.Services;
-using FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite;
 using FPLSP_Tutorial.Infrastructure.ViewModels.PostTagViewModels;
-using FPLSP_Tutorial.Infrastructure.ViewModels.TagViewModels;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FPLSP_Tutorial.API.Controllers

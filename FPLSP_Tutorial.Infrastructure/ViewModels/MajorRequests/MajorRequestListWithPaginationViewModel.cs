@@ -1,15 +1,8 @@
 ﻿using FPLSP_Tutorial.Application.DataTransferObjects.MajorRequest.Request;
-using FPLSP_Tutorial.Application.DataTransferObjects.Post.Request;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly;
 using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Application.ValueObjects.Common;
 using FPLSP_Tutorial.Application.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FPLSP_Tutorial.Infrastructure.ViewModels.MajorRequests
 {

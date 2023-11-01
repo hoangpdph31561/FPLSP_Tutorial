@@ -16,7 +16,7 @@ namespace FPLSP_Tutorial.Infrastructure.ViewModels.User
         private readonly ILocalizationService _localizationService;
         private readonly IMapper _mapper;
 
-        public UserCreateViewModel(IUserReadOnlyRepository userReadOnlyRepository, IUserReadWriteRepository userReadWriteRepository 
+        public UserCreateViewModel(IUserReadOnlyRepository userReadOnlyRepository, IUserReadWriteRepository userReadWriteRepository
             , ILocalizationService localizationService, IMapper mapper)
         {
             _userReadOnlyRepository = userReadOnlyRepository;

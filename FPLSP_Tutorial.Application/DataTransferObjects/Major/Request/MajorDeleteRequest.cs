@@ -1,6 +1,4 @@
-﻿using FPLSP_Tutorial.Domain.Constants;
-
-namespace FPLSP_Tutorial.Application.DataTransferObjects.Major.Request
+﻿namespace FPLSP_Tutorial.Application.DataTransferObjects.Major.Request
 {
     public class MajorDeleteRequest
     {

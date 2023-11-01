@@ -3,11 +3,6 @@ using FPLSP_Tutorial.Application.DataTransferObjects.ClientPost;
 using FPLSP_Tutorial.Application.DataTransferObjects.ClientPost.Request;
 using FPLSP_Tutorial.Application.DataTransferObjects.ClientPost.Response;
 using FPLSP_Tutorial.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FPLSP_Tutorial.Infrastructure.Extensions.AutoMapperProfiles
 {

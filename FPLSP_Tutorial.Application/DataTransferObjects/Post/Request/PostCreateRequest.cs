@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FPLSP_Tutorial.Domain.Enums;
 
 namespace FPLSP_Tutorial.Application.DataTransferObjects.Post.Request
 {
@@ -12,6 +8,6 @@ namespace FPLSP_Tutorial.Application.DataTransferObjects.Post.Request
         public string Title { get; set; }
         public string Content { get; set; }
         public Guid? ParentPost { get; set; }
-        public int Status { get; set; }
+        public EntityStatus Status { get; set; } = EntityStatus.Active;
     }
 }

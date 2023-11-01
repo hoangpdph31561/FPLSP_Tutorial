@@ -4,9 +4,7 @@ using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadWrite;
 using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Infrastructure.ViewModels.TagViewModels;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace FPLSP_Tutorial.API.Controllers
 {
@@ -48,7 +46,7 @@ namespace FPLSP_Tutorial.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetByIdMajor([FromQuery]TagViewModelRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetByIdMajor([FromQuery] TagViewModelRequest request, CancellationToken cancellationToken)
         {
             TagViewModelByIdMajor vm = new(_tagReadOnlyRepository, _localizationService);
 

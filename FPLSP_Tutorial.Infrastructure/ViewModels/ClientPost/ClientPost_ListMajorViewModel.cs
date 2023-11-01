@@ -4,11 +4,6 @@ using FPLSP_Tutorial.Application.Interfaces.Repositories.ClientPostReadOnly;
 using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Application.ValueObjects.Common;
 using FPLSP_Tutorial.Application.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FPLSP_Tutorial.Infrastructure.ViewModels.ClientPost
 {
@@ -34,7 +29,7 @@ namespace FPLSP_Tutorial.Infrastructure.ViewModels.ClientPost
                 Message = result.Message;
                 return;
             }
-            catch 
+            catch
             {
 
                 Success = false;

@@ -1,7 +1,7 @@
-﻿using FPLSP_Tutorial.Application.ValueObjects.Pagination;
-using FPLSP_Tutorial.Application.ValueObjects.Response;
-using FPLSP_Tutorial.Application.DataTransferObjects.Tag;
+﻿using FPLSP_Tutorial.Application.DataTransferObjects.Tag;
 using FPLSP_Tutorial.Application.DataTransferObjects.Tag.TagRequest;
+using FPLSP_Tutorial.Application.ValueObjects.Pagination;
+using FPLSP_Tutorial.Application.ValueObjects.Response;
 
 namespace FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly
 {

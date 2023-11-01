@@ -65,6 +65,6 @@ namespace FPLSP_Tutorial.API.Controllers
             return Ok(vm);
         }
 
-        
+
     }
 }

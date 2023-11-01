@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FPLSP_Tutorial.Domain.Enums;
 
 namespace FPLSP_Tutorial.Application.DataTransferObjects.MajorRequest.Request
 {
     public class MajorRequestUpdateRequest
     {
         public Guid Id { get; set; }
-        public int Status { get; set; } = 1;
+        public EntityStatus Status { get; set; } = EntityStatus.Active;
     }
 }

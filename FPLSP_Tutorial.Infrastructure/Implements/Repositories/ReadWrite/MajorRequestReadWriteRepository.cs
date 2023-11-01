@@ -91,7 +91,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
                 var majorRequest = await GetExampleByIdAsync(entity.Id, cancellationToken);
 
                 // Update value to existed example
-                majorRequest!.Status = string.IsNullOrWhiteSpace(entity.Status) ? majorRequest.Status : entity.Status;
+                //majorRequest!.Status = string.IsNullOrWhiteSpace(entity.Status) ? majorRequest.Status : entity.Status;
 
                 majorRequest.ModifiedBy = entity.ModifiedBy;
                 majorRequest.ModifiedTime = DateTimeOffset.UtcNow;

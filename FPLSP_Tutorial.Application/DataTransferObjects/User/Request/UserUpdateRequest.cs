@@ -5,7 +5,8 @@ namespace FPLSP_Tutorial.Application.DataTransferObjects.User.Request
 {
     public class UserUpdateRequest
     {
-        public JsonArray RoleCodes { get; set; } = new JsonArray();
+        public Guid Id { get; set; }
+        public List<string> RoleCodes { get; set; } = new List<string>();
         public int Status { get; set; } = EntityStatus.Active;
     }
 }

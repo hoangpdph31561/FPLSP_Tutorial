@@ -6,6 +6,7 @@ using FPLSP_Tutorial.Domain.Constants;
 using FPLSP_Tutorial.Domain.Entities;
 using FPLSP_Tutorial.Infrastructure.Database.AppDbContext;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System.Text.Json.Nodes;
 
 namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
@@ -26,7 +27,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
                 entity.Id = Guid.NewGuid();
                 entity.Email = entity.Email;
                 entity.Username = string.IsNullOrWhiteSpace(entity.Username) ? "N/A" : entity.Username;
-                entity.RoleCodes = entity.RoleCodes == null ? (JsonArray)JsonArray.Parse("[\"N/A\"]") : entity.RoleCodes;
+                entity.RoleCodes = entity.RoleCodes == null ? JsonConvert.DeserializeObject<List<string>>("[\"N/A\"]") : entity.RoleCodes;
                 entity.Status = entity.Status == EntityStatus.Active ? EntityStatus.Active : EntityStatus.InActive;
 
                 entity.CreatedTime = DateTime.UtcNow;  
@@ -62,7 +63,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
             {
                 var user = await GetUserByIdAsync(entity.Id, cancellationToken);
 
-                user.RoleCodes = entity.RoleCodes == null ? (JsonArray)JsonArray.Parse("[\"N/A\"]") : entity.RoleCodes;
+                user.RoleCodes = entity.RoleCodes == null ? JsonConvert.DeserializeObject<List<string>>("[\"N/A\"]") : entity.RoleCodes;
 
                 user.Status = entity.Status == EntityStatus.Active ? EntityStatus.Active : EntityStatus.InActive;
 

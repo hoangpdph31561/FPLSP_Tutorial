@@ -15,7 +15,7 @@ namespace FPLSP_Tutorial.Infrastructure.Database.Configurations
             builder.Property(c => c.Id).ValueGeneratedOnAdd();
             builder.Property(c => c.RoleCodes).HasConversion(
                 v => JsonConvert.SerializeObject(v),
-                v => JsonConvert.DeserializeObject<JsonArray>(v));
+                v => JsonConvert.DeserializeObject<List<string>>(v));
         }
     }
 }

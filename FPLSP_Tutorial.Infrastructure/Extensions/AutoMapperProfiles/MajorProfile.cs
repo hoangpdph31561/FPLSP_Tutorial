@@ -10,10 +10,9 @@ namespace FPLSP_Tutorial.Infrastructure.Extensions.AutoMapperProfiles
         public MajorProfile()
         {
             CreateMap<MajorEntity, MajorDTOs>();
-            CreateMap<MajorCreateRequest, MajorDTOs>();
-            CreateMap<MajorUpdateRequest, MajorDTOs>();
-            CreateMap<MajorDeleteRequest, MajorDTOs>();
-            CreateMap<MajorCreateRequest, MajorDTOs>();
+            CreateMap<MajorCreateRequest, MajorEntity>();
+            CreateMap<MajorUpdateRequest, MajorEntity>();
+            CreateMap<MajorDeleteRequest, MajorEntity>();
         }
     }
 }

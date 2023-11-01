@@ -8,7 +8,7 @@ namespace FPLSP_Tutorial.Application.DataTransferObjects.User
         public Guid Id { get; set; }
         public string Email { get; set; } = string.Empty;
         public string Username { get; set; } = string.Empty;
-        public JsonArray RoleCodes { get; set; } = new JsonArray();
+        public List<string> RoleCodes { get; set; } = new List<string>();
         public int Status { get; set; } = 1;
     }
 }

@@ -9,6 +9,8 @@ namespace FPLSP_Tutorial.Application.DataTransferObjects.MajorRequest
     public class MajorRequestDto
     {
         public Guid MajorId { get; set; }
+        public string tenChuyenNganh { get; set; }
+        public string email { get; set; }
         public bool IsManager { get; set; }
         public int Status { get; set; } = 1;
         public Guid? CreatedBy { get; set; }

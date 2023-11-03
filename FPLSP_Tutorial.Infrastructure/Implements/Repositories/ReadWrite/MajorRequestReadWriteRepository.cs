@@ -46,7 +46,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
                     new ErrorItem
                     {
                         Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToCreate + "example"
+                        FieldName = LocalizationString.Common.FailedToCreate + "MajorRequest"
                     }
                 });
             }
@@ -57,13 +57,13 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
             try
             {
                 // Get existed example
-                var majorRequest = await GetExampleByIdAsync(request.Id, cancellationToken);
+                var majorRequest = await GetUserMajorByIdAsync(request.Id, cancellationToken);
 
                 // Update value to existed example
                 majorRequest!.Deleted = true;
                 majorRequest.DeletedBy = request.DeletedBy;
                 majorRequest.DeletedTime = DateTimeOffset.UtcNow;
-                majorRequest.Status = EntityStatus.Deleted;
+                //  majorRequest.Status = EntityStatus.Deleted; // push code nên rồi pull code lại về rồi sửa :))))
 
                 _dbContext.MajorRequestEntities.Update(majorRequest);
                 await _dbContext.SaveChangesAsync(cancellationToken);
@@ -87,11 +87,9 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
         {
             try
             {
-                // Get existed example
-                var majorRequest = await GetExampleByIdAsync(entity.Id, cancellationToken);
+                var majorRequest = await GetUserMajorByIdAsync(entity.Id, cancellationToken);
 
-                // Update value to existed example
-                majorRequest!.Status = string.IsNullOrWhiteSpace(entity.Status) ? majorRequest.Status : entity.Status;
+                majorRequest!.Status = entity.Status;
 
                 majorRequest.ModifiedBy = entity.ModifiedBy;
                 majorRequest.ModifiedTime = DateTimeOffset.UtcNow;
@@ -111,7 +109,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
                 });
             }
         }
-        private async Task<MajorRequestEntity?> GetExampleByIdAsync(Guid idMajorRequest, CancellationToken cancellationToken)
+        private async Task<MajorRequestEntity?> GetUserMajorByIdAsync(Guid idMajorRequest, CancellationToken cancellationToken)
         {
             var majorRequest = await _dbContext.MajorRequestEntities.FirstOrDefaultAsync(c => c.Id == idMajorRequest && !c.Deleted, cancellationToken);
 

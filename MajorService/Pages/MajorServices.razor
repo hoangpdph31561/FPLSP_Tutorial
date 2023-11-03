@@ -1,0 +1,97 @@
+﻿@page "/majorService"
+@using MajorService.Data.MajorRequest;
+@using MajorService.Data.MajorRequest.Request;
+@using MajorService.Data.UserMajor;
+@using MajorService.Pagination;
+@using MajorService.Repo.Inplements;
+@using MajorService.Repo.Interfaces;
+@inject IDialogService _diagService;
+@inject ISnackbar _mudSnackbar;
+
+<MudTabs>
+      <MudTabPanel Text="Danh Sách giảng viên">
+    <MudPaper Class="p-2" Elevation="0">
+    <div class="d-flex justify-items-center">
+    <div class="mr-auto">
+    </div>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary">Thêm</MudButton>
+    </div>
+    </MudPaper>
+    <MudTextField @bind-Value="Search" Label="Tìm kiếm giảng viên" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" />
+
+        <MudTable Items="@lstMajorUser">
+    <HeaderContent>
+    <MudTh>Email</MudTh>
+    <MudTh>Chức vụ</MudTh>
+    <MudTh>Chuyên ngành</MudTh>
+    <MudTh>Trạng thái</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+    <MudTd>@context.email</MudTd>
+    <MudTd>@context.RoleCodes</MudTd>
+    <MudTd>@context.TenChuyenNganh</MudTd>
+    <MudTd>@context.Status</MudTd>
+    <MudTd>Phê duyệt</MudTd>
+    </RowTemplate>
+    </MudTable>
+    </MudTabPanel>
+    <MudTabPanel Text="Danh Sách giảng viên chờ duyệt">
+        <MudTextField @bind-Value="Search" Label="Tìm kiếm giảng viên" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" />
+        <MudTable Items="@MajorRequest">
+            <HeaderContent>
+                <MudTh>Email</MudTh>
+                <MudTh>Chuyên ngành</MudTh>
+                <MudTh>Trạng thái</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd>@context.email</MudTd>
+                <MudTd>@context.tenChuyenNganh</MudTd>
+                <MudTd>@context.Status</MudTd>
+                <MudTd>
+                    <div class="d-flex" style="margin-top:10px">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary">Chấp nhận</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="left:10px" OnClick="() => OnDelete(context.Id)">Từ chối</MudButton>
+                    </div>
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
+    </MudTabPanel>
+</MudTabs>
+@code {
+    [Inject] private IMajorRequestRepo majorRequestRepo { get; set; }
+    [Inject] private IMajorUserRepo majorUserRepo { get; set; }
+    List<MajorRequestDto> MajorRequest;
+    List<MajorUserDto> lstMajorUser ;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var paginationMajorRequest = await majorRequestRepo.GetListMajorRequest();
+        MajorRequest = paginationMajorRequest.Data.ToList();
+
+        var paginationMajorUser = await majorUserRepo.GetListMajorUser();
+        lstMajorUser = paginationMajorUser.Data.ToList();
+    }
+    private async Task OnDelete(Guid id)
+    {
+        var request = new MajorRequestDeleteRequest
+            {
+                Id = id,
+            };
+        var confirm = await _diagService.ShowMessageBox
+              (
+                  "Thông báo",
+                  "Bạn chắn chắn xóa giảng viên này?",
+                  "Xác nhận",
+                  cancelText: "Hủy"
+              );
+        if (confirm == true)
+        {
+            var removeConfirm = await majorRequestRepo.DeleteMajorRequest(request);
+            //  await LoadData();
+        }
+       
+        
+    }
+    public string Search { get; set; }
+
+}

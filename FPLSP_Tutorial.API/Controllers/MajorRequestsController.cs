@@ -28,8 +28,7 @@ namespace FPLSP_Tutorial.API.Controllers
             _localizationService = localizationService;
             _mapper = mapper;
         }
-
-        // GET api/<ExampleController>/5
+    
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] ViewMajorRequestWithPaginationRequest request, CancellationToken cancellationToken)
         {
@@ -38,10 +37,9 @@ namespace FPLSP_Tutorial.API.Controllers
 
             await vm.HandleAsync(request, cancellationToken);
 
-            return Ok(vm);
+            return Ok(vm.Data);
         }
 
-        // GET api/<ExampleController>/5
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
         {
@@ -62,21 +60,6 @@ namespace FPLSP_Tutorial.API.Controllers
             return Ok(vm);
         }
 
-        /// <summary>
-        /// Tao demo call api yeu cau cap quyen chu bo mon 
-        /// </summary>
-        /// <param name="request"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        //[HttpPost]
-        //public async Task<string> Post(MajorRequestCreateRequest request, CancellationToken cancellationToken)
-        //{
-        //    MajorRequestCreateViewModel vm = new(_majorRequestReadOnlyRespository, _majorRequestReadWriteRespository, _localizationService, _mapper);
-
-        //    await vm.HandleAsync(request, cancellationToken);
-
-        //    return "Thanh cong";
-        //}
 
         [HttpPut]
         public async Task<IActionResult> Put(MajorRequestUpdateRequest request, CancellationToken cancellationToken)

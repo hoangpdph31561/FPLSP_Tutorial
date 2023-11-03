@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FPLSP_Tutorial.Application.DataTransferObjects.MajorUser.Request
 {
-    public class ViewTagWithPaginationRequest : PaginationRequest
+    public class ViewMajorUserWithPaginationRequest : PaginationRequest
     {
     }
 }

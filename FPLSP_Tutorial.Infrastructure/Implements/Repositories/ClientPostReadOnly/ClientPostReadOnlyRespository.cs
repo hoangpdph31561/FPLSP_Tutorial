@@ -2,8 +2,6 @@
 using AutoMapper.QueryableExtensions;
 using FPLSP_Tutorial.Application.DataTransferObjects.ClientPost;
 using FPLSP_Tutorial.Application.DataTransferObjects.ClientPost.Request;
-using FPLSP_Tutorial.Application.DataTransferObjects.ClientPost.Response;
-
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ClientPostReadOnly;
 using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Application.ValueObjects.Common;
@@ -13,6 +11,7 @@ using FPLSP_Tutorial.Domain.Entities;
 using FPLSP_Tutorial.Infrastructure.Database.AppDbContext;
 using FPLSP_Tutorial.Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ClientPostReadOnly
 {
@@ -28,7 +27,36 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ClientPostReadOn
             _mapper = mapper;
             _localizationService = localizationService;
         }
-        public async Task<RequestResult<PaginationResponse<ClientPostListResponse>>> GetAllClientPostListAsync(ClientPostListRequest request, CancellationToken cancellationToken)
+
+
+        public async Task<RequestResult<PaginationResponse<MajorBaseDTO>>> GetAllMajorAsync(ClientPostMajorRequestWithPagination request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var result = await _readOnlyDbContext.MajorEntities.AsNoTracking().PaginateAsync<MajorEntity, MajorBaseDTO>(request, _mapper, cancellationToken);
+                return RequestResult<PaginationResponse<MajorBaseDTO>>.Succeed(new PaginationResponse<MajorBaseDTO>
+                {
+                    PageNumber = request.PageNumber,
+                    PageSize = request.PageSize,
+                    HasNext = result.HasNext,
+                    Data = result.Data
+                });
+            }
+            catch (Exception e)
+            {
+
+                return RequestResult<PaginationResponse<MajorBaseDTO>>.Fail(_localizationService["List of Major cannot found"], new[]
+                {
+                    new ErrorItem
+                    {
+                        Error= e.Message,
+                        FieldName = LocalizationString.Common.FailedToGet + "list of Major"
+                    }
+                });
+            }
+        }
+
+        public async Task<RequestResult<PaginationResponse<PostMainDTO>>> GetAllPostByMajorAsync(ClientPostListRequest request, CancellationToken cancellationToken)
         {
             try
             {
@@ -40,14 +68,55 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ClientPostReadOn
                     lstPostId.AddRange(post);
                 }
 
-                var test = await _readOnlyDbContext.PostEntities.AsNoTracking().Where(x => lstPostId.Contains(x.Id) && !x.Deleted).PaginateAsync<PostEntity, ClientPostListResponse>(request, _mapper, cancellationToken);
+                var test = await _readOnlyDbContext.PostEntities.AsNoTracking().Where(x => lstPostId.Contains(x.Id) && !x.Deleted).PaginateAsync<PostEntity, PostMainDTO>(request, _mapper, cancellationToken);
                 foreach (var entity in test.Data!)
                 {
                     var createdName = await _readOnlyDbContext.UserEntities.AsNoTracking().Where(x => x.Id == entity.CreatedBy).Select(x => x.Username).FirstOrDefaultAsync(cancellationToken);
-                    entity.UserCreatedName = createdName == null ? "N/A" : createdName!;
+                    entity.CreatedName = createdName == null ? "N/A" : createdName!;
                 }
 
-                return RequestResult<PaginationResponse<ClientPostListResponse>>.Succeed(new PaginationResponse<ClientPostListResponse>
+                return RequestResult<PaginationResponse<PostMainDTO>>.Succeed(new PaginationResponse<PostMainDTO>
+                {
+                    PageNumber = request.PageNumber,
+                    PageSize = request.PageSize,
+                    HasNext = test.HasNext,
+                    Data = test.Data,
+                });
+            }
+            catch (Exception e)
+            {
+
+                return RequestResult<PaginationResponse<PostMainDTO>>.Fail(_localizationService["List of post cannot found"], new[]
+               {
+                    new ErrorItem
+                    {
+                        Error = e.Message,
+                        FieldName = LocalizationString.Common.FailedToGet + "list of posts"
+                    }
+                });
+            }
+        }
+
+        public async Task<RequestResult<PaginationResponse<PostMainDTO>>> GetAllPostByMajorIdAdminAsync(ClientPostListRequest request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var groupPostId = await _readOnlyDbContext.TagEntities.AsNoTracking().Where(x => x.MajorId == request.MajorId).Select(x => x.PostTags.Select(pt => pt.PostId).ToList()).ToListAsync(cancellationToken);
+
+                List<Guid> lstPostId = new List<Guid>();
+                foreach (var post in groupPostId)
+                {
+                    lstPostId.AddRange(post);
+                }
+
+                var test = await _readOnlyDbContext.PostEntities.AsNoTracking().Where(x => lstPostId.Contains(x.Id)).PaginateAsync<PostEntity, PostMainDTO>(request, _mapper, cancellationToken);
+                foreach (var entity in test.Data!)
+                {
+                    var createdName = await _readOnlyDbContext.UserEntities.AsNoTracking().Where(x => x.Id == entity.CreatedBy).Select(x => x.Username).FirstOrDefaultAsync(cancellationToken);
+                    entity.CreatedName = createdName == null ? "N/A" : createdName!;
+                }
+
+                return RequestResult<PaginationResponse<PostMainDTO>>.Succeed(new PaginationResponse<PostMainDTO>
                 {
                     PageNumber = request.PageNumber,
                     PageSize = request.PageSize,
@@ -58,7 +127,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ClientPostReadOn
             catch (Exception e)
             {
 
-                return RequestResult<PaginationResponse<ClientPostListResponse>>.Fail(_localizationService["List of post cannot found"], new[]
+                return RequestResult<PaginationResponse<PostMainDTO>>.Fail(_localizationService["List of post cannot found"], new[]
                {
                     new ErrorItem
                     {
@@ -69,12 +138,23 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ClientPostReadOn
             }
         }
 
-        public async Task<RequestResult<PaginationResponse<ClientPost_MajorDTO>>> GetAllMajorAsync(ClientPost_GetMajorRequestWithPagination request, CancellationToken cancellationToken)
+        public async Task<RequestResult<PaginationResponse<PostBaseDTO?>>> GetChildPostsByPostIdAsync(PostIdRequestWithPagination request, CancellationToken cancellationToken)
         {
             try
             {
-                var result = await _readOnlyDbContext.MajorEntities.AsNoTracking().PaginateAsync<MajorEntity, ClientPost_MajorDTO>(request, _mapper, cancellationToken);
-                return RequestResult<PaginationResponse<ClientPost_MajorDTO>>.Succeed(new PaginationResponse<ClientPost_MajorDTO>
+                var post = await _readOnlyDbContext.PostEntities.AsNoTracking().Where(x => x.Id == request.Id && !x.Deleted).FirstOrDefaultAsync(cancellationToken);
+                PaginationResponse<PostBaseDTO> result = new();
+                if (post!.PostId == null)
+                {
+                    var querry = await _readOnlyDbContext.PostEntities.AsNoTracking().Where(x => x.Id == request.Id && !x.Deleted).Select(x => x.Posts.Select(z => z.Id).ToList()).FirstOrDefaultAsync(cancellationToken);
+                    result = await _readOnlyDbContext.PostEntities.AsNoTracking().Where(x => querry!.Contains(x.Id) && !x.Deleted && x.Id != post.Id).PaginateAsync<PostEntity, PostBaseDTO>(request, _mapper, cancellationToken);
+                }
+                else
+                {
+                    var querry = await _readOnlyDbContext.PostEntities.AsNoTracking().Where(x => x.Id == post.PostId).Select(x => x.Posts.Select(child => child.Id).ToList()).FirstOrDefaultAsync(cancellationToken);
+                    result = await _readOnlyDbContext.PostEntities.AsNoTracking().Where(x => querry!.Contains(x.Id) && !x.Deleted && x.Id != post.Id).PaginateAsync<PostEntity, PostBaseDTO>(request, _mapper, cancellationToken);
+                }
+                return RequestResult<PaginationResponse<PostBaseDTO?>>.Succeed(new PaginationResponse<PostBaseDTO?>
                 {
                     PageNumber = request.PageNumber,
                     PageSize = request.PageSize,
@@ -85,46 +165,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ClientPostReadOn
             catch (Exception e)
             {
 
-                return RequestResult<PaginationResponse<ClientPost_MajorDTO>>.Fail(_localizationService["List of Major cannot found"], new[]
-                {
-                    new ErrorItem
-                    {
-                        Error= e.Message,
-                        FieldName = LocalizationString.Common.FailedToGet + "list of Major"
-                    }
-                });
-            }
-        }
-
-        public async Task<RequestResult<PaginationResponse<ClientPostListResponse>>> GetClientPostBySearchAsync(ClientPostSearchRequest request, CancellationToken cancellationToken)
-        {
-            try
-            {
-                var groupPostId = await _readOnlyDbContext.TagEntities.Where(x => x.MajorId == request.MajorId && request.LstTags!.Contains(x.Id)).Select(x => x.PostTags.Select(pt => pt.PostId).ToList()).ToListAsync(cancellationToken);
-                List<Guid> lstPostId = new List<Guid>();
-                foreach (var post in groupPostId)
-                {
-                    lstPostId.AddRange(post);
-                }
-                var result = await _readOnlyDbContext.PostEntities.AsNoTracking().Where(x => lstPostId.Contains(x.Id) && x.Title.ToLower().Trim().Contains(request.NamePost.ToLower().Trim())).PaginateAsync<PostEntity, ClientPostListResponse>(request, _mapper, cancellationToken);
-
-                foreach (var item in result.Data!)
-                {
-                    var createdName = await _readOnlyDbContext.UserEntities.AsNoTracking().Where(x => x.Id == item.Id).Select(x => x.Username).FirstOrDefaultAsync(cancellationToken);
-                    item.UserCreatedName = createdName == null ? "N/A" : createdName!;
-                }
-                return RequestResult<PaginationResponse<ClientPostListResponse>>.Succeed(new PaginationResponse<ClientPostListResponse>
-                {
-                    PageNumber = request.PageNumber,
-                    PageSize = request.PageSize,
-                    HasNext = result.HasNext,
-                    Data = result.Data
-                });
-            }
-            catch (Exception e)
-            {
-
-                return RequestResult<PaginationResponse<ClientPostListResponse>>.Fail(_localizationService["List of post cannot found"], new[]
+                return RequestResult<PaginationResponse<PostBaseDTO?>>.Fail(_localizationService["List of post cannot found"], new[]
                {
                     new ErrorItem
                     {
@@ -135,24 +176,29 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ClientPostReadOn
             }
         }
 
-        public async Task<RequestResult<ClientPostDetailResponse>> GetClientPostDetailAsync(Guid id, CancellationToken cancellationToken)
+        public async Task<RequestResult<PaginationResponse<MajorBaseDTO>>> GetMajorByUserIdAsync(GetMajorByUserIdWithPaginationRequest request, CancellationToken cancellationToken)
         {
             try
             {
-                var result = await _readOnlyDbContext.PostEntities.AsNoTracking().Where(x => x.Id == id && !x.Deleted).ProjectTo<ClientPostDetailResponse>(_mapper.ConfigurationProvider).FirstOrDefaultAsync(cancellationToken);
-
-                result!.UserCreatedName = await _readOnlyDbContext.UserEntities.AsNoTracking().FirstOrDefaultAsync(x => x.Id == result.CreatedBy) == null ? "N/A" : _readOnlyDbContext.UserEntities.AsNoTracking().First(x => x.Id == result.CreatedBy).Username;
-                return RequestResult<ClientPostDetailResponse>.Succeed(result);
+                var querry = await _readOnlyDbContext.UserMajorEntities.AsNoTracking().Where(x => x.UserId == request.Id && !x.Deleted).Select(x => x.MajorId).ToListAsync(cancellationToken);
+                var result = await _readOnlyDbContext.MajorEntities.AsNoTracking().Where(x => querry.Contains(x.Id) && !x.Deleted).PaginateAsync<MajorEntity,MajorBaseDTO>(request, _mapper, cancellationToken);
+                return RequestResult<PaginationResponse<MajorBaseDTO>>.Succeed(new PaginationResponse<MajorBaseDTO>
+                {
+                    PageNumber = request.PageNumber,
+                    PageSize = request.PageSize,
+                    HasNext = result.HasNext,
+                    Data = result.Data
+                });
             }
             catch (Exception e)
             {
 
-                return RequestResult<ClientPostDetailResponse>.Fail(_localizationService["Post is not found"], new[]
-                {
+                return RequestResult<PaginationResponse<MajorBaseDTO>>.Fail(_localizationService["List of majors cannot found"], new[]
+               {
                     new ErrorItem
                     {
                         Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToGet + "post"
+                        FieldName = LocalizationString.Common.FailedToGet + "list of majors"
                     }
                 });
             }
@@ -162,72 +208,93 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ClientPostReadOn
         {
             try
             {
-                var result = await _readOnlyDbContext.MajorRequestEntities.Where(x => x.Id == id).FirstOrDefaultAsync(cancellationToken);
+                var result = await _readOnlyDbContext.MajorRequestEntities.AsNoTracking().Where(x => x.Id == id).FirstOrDefaultAsync(cancellationToken);
                 return RequestResult<MajorRequestEntity>.Succeed(result);
             }
             catch (Exception e)
             {
 
-                return RequestResult<MajorRequestEntity>.Fail(_localizationService["Example is not found"], new[]
+                return RequestResult<MajorRequestEntity>.Fail(_localizationService["Major Request is not found"], new[]
                 {
                     new ErrorItem
                     {
                         Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToGet + "example"
+                        FieldName = LocalizationString.Common.FailedToGet + "Major request"
                     }
                 });
             }
         }
 
-        public async Task<RequestResult<PaginationResponse<ClientPostParentChildResponse>>> GetParentChildPostAsync(ClientPostRequestIdWithPagination request, CancellationToken cancellationToken)
+
+
+        public async Task<RequestResult<PostBaseDTO?>> GetParentPostByPostIdAsync(Guid id, CancellationToken cancellationToken)
         {
             try
             {
-                //IQueryable<PostEntity> queryable = _readOnlyDbContext.PostEntities.AsNoTracking().Where(x => x.Id == request.Id && !x.Deleted).AsQueryable();
-                var result_Test = await _readOnlyDbContext.PostEntities.AsNoTracking().Where(x => x.Id == request.Id && !x.Deleted).PaginateAsync<PostEntity, ClientPostParentChildResponse>(request, _mapper, cancellationToken);
+                var result = await _readOnlyDbContext.PostEntities.AsNoTracking().Where(x => x.Id == id).Select(x => x.Post).Where(x => !x.Deleted).ProjectTo<PostBaseDTO>(_mapper.ConfigurationProvider).FirstOrDefaultAsync(cancellationToken);
+                return RequestResult<PostBaseDTO?>.Succeed(result);
 
-                return RequestResult<PaginationResponse<ClientPostParentChildResponse>>.Succeed(new PaginationResponse<ClientPostParentChildResponse>
+            }
+            catch (Exception e)
+            {
+
+                return RequestResult<PostBaseDTO?>.Fail(_localizationService["ParentPost is not found"], new[]
+               {
+                    new ErrorItem
+                    {
+                        Error = e.Message,
+                        FieldName = LocalizationString.Common.FailedToGet + "ParentPost"
+                    }
+                });
+            }
+        }
+
+        public async Task<RequestResult<PostDetailDTO>> GetPostDetailByIdAsync(Guid id, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var result = await _readOnlyDbContext.PostEntities.AsNoTracking().Where(x => x.Id == id && !x.Deleted).ProjectTo<PostDetailDTO>(_mapper.ConfigurationProvider).FirstOrDefaultAsync(cancellationToken);
+
+                result!.CreatedName = await _readOnlyDbContext.UserEntities.AsNoTracking().FirstOrDefaultAsync(x => x.Id == result.CreatedBy) == null ? "N/A" : _readOnlyDbContext.UserEntities.AsNoTracking().First(x => x.Id == result.CreatedBy).Username;
+                return RequestResult<PostDetailDTO>.Succeed(result);
+            }
+            catch (Exception e)
+            {
+
+                return RequestResult<PostDetailDTO>.Fail(_localizationService["Post is not found"], new[]
+               {
+                    new ErrorItem
+                    {
+                        Error = e.Message,
+                        FieldName = LocalizationString.Common.FailedToGet + "Post"
+                    }
+                });
+            }
+        }
+
+        public async Task<RequestResult<PaginationResponse<TagBaseDTO>>> GetPostTagsByPostIdAsync(PostIdRequestWithPagination request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var querry = await _readOnlyDbContext.PostEntities.Where(x => x.Id == request.Id && !x.Deleted).Select(x => x.PostTags.Select(pt => pt.TagId).ToList()).FirstOrDefaultAsync(cancellationToken);
+                var result = await _readOnlyDbContext.TagEntities.Where(x => querry!.Contains(x.Id) && !x.Deleted).PaginateAsync<TagEntity, TagBaseDTO>(request, _mapper, cancellationToken);
+                return RequestResult<PaginationResponse<TagBaseDTO>>.Succeed(new PaginationResponse<TagBaseDTO>
                 {
                     PageNumber = request.PageNumber,
                     PageSize = request.PageSize,
-                    HasNext = result_Test.HasNext,
-                    Data = result_Test.Data
+                    HasNext = result.HasNext,
+                    Data = result.Data
                 });
             }
             catch (Exception e)
             {
 
-                return RequestResult<PaginationResponse<ClientPostParentChildResponse>>.Fail(_localizationService["List of parent post child cannot found"], new[]
-                {
+                return RequestResult<PaginationResponse<TagBaseDTO>>.Fail(_localizationService["List of tags of post cannot found"], new[]
+{
                     new ErrorItem
                     {
                         Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToGet + "list of parent child posts"
-                    }
-                });
-
-            }
-
-
-        }
-
-        public async Task<RequestResult<ClientTagResponse>> GetPostTagsAsync(Guid id, CancellationToken cancellationToken)
-        {
-            try
-            {
-                var result = await _readOnlyDbContext.PostEntities.AsNoTracking().Where(x => x.Id == id).ProjectTo<ClientTagResponse>(_mapper.ConfigurationProvider).FirstOrDefaultAsync(cancellationToken);
-                return RequestResult<ClientTagResponse>.Succeed(result);
-
-            }
-            catch (Exception e)
-            {
-
-                return RequestResult<ClientTagResponse>.Fail(_localizationService["Tags of Post are not found"], new[]
-                {
-                    new ErrorItem
-                    {
-                        Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToGet + "example"
+                        FieldName = LocalizationString.Common.FailedToGet + "list of tags of post"
                     }
                 });
             }

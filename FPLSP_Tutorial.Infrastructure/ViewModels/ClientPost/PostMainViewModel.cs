@@ -1,35 +1,40 @@
 ﻿using AutoMapper;
+using Azure.Core;
 using FPLSP_Tutorial.Application.DataTransferObjects.ClientPost.Request;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ClientPostReadOnly;
 using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Application.ValueObjects.Common;
 using FPLSP_Tutorial.Application.ViewModels;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace FPLSP_Tutorial.Infrastructure.ViewModels.ClientPost
 {
-    public class ClientPostGetByMajorIdViewModel : ViewModelBase<ClientPostListRequest>
+    public class PostMainViewModel : ViewModelBase<ClientPostListRequest>
     {
         private readonly IClientPostReadOnlyRespository _clientPostReadRespository;
-        private readonly IMapper _mapper;
         private readonly ILocalizationService _localizationService;
-        public ClientPostGetByMajorIdViewModel(IClientPostReadOnlyRespository clientPostReadOnlyRespository, IMapper mapper, ILocalizationService localizationService)
+        public PostMainViewModel(IClientPostReadOnlyRespository clientPostReadOnlyRespository, ILocalizationService localizationService)
         {
             _clientPostReadRespository = clientPostReadOnlyRespository;
-            _mapper = mapper;
             _localizationService = localizationService;
         }
-        public override async Task HandleAsync(ClientPostListRequest request, CancellationToken cancellationToken)
+
+        public async override Task HandleAsync(ClientPostListRequest request, CancellationToken cancellationToken)
         {
             try
             {
-                var result = await _clientPostReadRespository.GetAllClientPostListAsync(request, cancellationToken);
+                var result = await _clientPostReadRespository.GetAllPostByMajorAsync(request, cancellationToken);
                 Data = result.Data!;
                 Success = result.Success;
                 ErrorItems = result.Errors;
                 Message = result.Message;
                 return;
             }
-            catch (Exception)
+            catch 
             {
 
                 Success = false;

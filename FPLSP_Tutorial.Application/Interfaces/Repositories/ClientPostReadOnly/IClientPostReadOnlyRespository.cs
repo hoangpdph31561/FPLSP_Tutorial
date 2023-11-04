@@ -1,6 +1,5 @@
 ﻿using FPLSP_Tutorial.Application.DataTransferObjects.ClientPost;
 using FPLSP_Tutorial.Application.DataTransferObjects.ClientPost.Request;
-using FPLSP_Tutorial.Application.DataTransferObjects.ClientPost.Response;
 using FPLSP_Tutorial.Application.ValueObjects.Pagination;
 using FPLSP_Tutorial.Application.ValueObjects.Response;
 using FPLSP_Tutorial.Domain.Entities;
@@ -9,13 +8,18 @@ namespace FPLSP_Tutorial.Application.Interfaces.Repositories.ClientPostReadOnly
 {
     public interface IClientPostReadOnlyRespository
     {
-        Task<RequestResult<ClientPostDetailResponse>> GetClientPostDetailAsync(Guid id, CancellationToken cancellationToken);
-        Task<RequestResult<PaginationResponse<ClientPostListResponse>>> GetAllClientPostListAsync(ClientPostListRequest request, CancellationToken cancellationToken);
-        Task<RequestResult<PaginationResponse<ClientPostListResponse>>> GetClientPostBySearchAsync(ClientPostSearchRequest request, CancellationToken cancellationToken);
-        Task<RequestResult<PaginationResponse<ClientPostParentChildResponse>>> GetParentChildPostAsync(ClientPostRequestIdWithPagination request, CancellationToken cancellationToken);
-        Task<RequestResult<ClientTagResponse>> GetPostTagsAsync(Guid id, CancellationToken cancellationToken);
+        #region API old
         Task<RequestResult<MajorRequestEntity>> GetMajorRequestByIdAsync(Guid id, CancellationToken cancellationToken);
-        Task<RequestResult<PaginationResponse<ClientPost_MajorDTO>>> GetAllMajorAsync(ClientPost_GetMajorRequestWithPagination request, CancellationToken cancellationToken);
-
+        Task<RequestResult<PaginationResponse<MajorBaseDTO>>> GetAllMajorAsync(ClientPostMajorRequestWithPagination request, CancellationToken cancellationToken);
+        #endregion
+        #region API new
+        Task<RequestResult<PostDetailDTO>> GetPostDetailByIdAsync(Guid id, CancellationToken cancellationToken);
+        Task<RequestResult<PaginationResponse<PostMainDTO>>> GetAllPostByMajorIdAdminAsync(ClientPostListRequest request, CancellationToken cancellationToken);
+        Task<RequestResult<PaginationResponse<PostMainDTO>>> GetAllPostByMajorAsync(ClientPostListRequest request, CancellationToken cancellationToken);
+        Task<RequestResult<PostBaseDTO?>> GetParentPostByPostIdAsync(Guid id, CancellationToken cancellationToken);
+        Task<RequestResult<PaginationResponse<PostBaseDTO?>>> GetChildPostsByPostIdAsync(PostIdRequestWithPagination request, CancellationToken cancellationToken);
+        Task<RequestResult<PaginationResponse<TagBaseDTO>>> GetPostTagsByPostIdAsync(PostIdRequestWithPagination request, CancellationToken cancellationToken);
+        Task<RequestResult<PaginationResponse<MajorBaseDTO>>> GetMajorByUserIdAsync(GetMajorByUserIdWithPaginationRequest request, CancellationToken cancellationToken);
+        #endregion
     }
 }

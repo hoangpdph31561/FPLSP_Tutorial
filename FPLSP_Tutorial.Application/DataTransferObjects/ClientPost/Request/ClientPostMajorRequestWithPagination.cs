@@ -2,7 +2,7 @@
 
 namespace FPLSP_Tutorial.Application.DataTransferObjects.ClientPost.Request
 {
-    public class ClientPost_GetMajorRequestWithPagination : PaginationRequest
+    public class ClientPostMajorRequestWithPagination : PaginationRequest
     {
     }
 }

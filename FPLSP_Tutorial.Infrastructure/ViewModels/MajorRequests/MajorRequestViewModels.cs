@@ -2,13 +2,6 @@
 using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Application.ValueObjects.Common;
 using FPLSP_Tutorial.Application.ViewModels;
-using FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly;
-using FPLSP_Tutorial.Infrastructure.Implements.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FPLSP_Tutorial.Infrastructure.ViewModels.MajorRequests
 {
@@ -22,7 +15,7 @@ namespace FPLSP_Tutorial.Infrastructure.ViewModels.MajorRequests
             _majorRequestReadOnlyRespository = majorRequestReadOnlyRespository;
             _localizationService = localizationService;
         }
-        public async override Task HandleAsync(Guid idMajorRequest , CancellationToken cancellationToken)
+        public async override Task HandleAsync(Guid idMajorRequest, CancellationToken cancellationToken)
         {
             try
             {

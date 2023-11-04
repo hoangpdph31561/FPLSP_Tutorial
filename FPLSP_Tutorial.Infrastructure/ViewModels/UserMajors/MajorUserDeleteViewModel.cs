@@ -1,16 +1,9 @@
 ﻿using AutoMapper;
-using Azure.Core;
-using FPLSP_Tutorial.Application.DataTransferObjects.Example.Request;
 using FPLSP_Tutorial.Application.DataTransferObjects.MajorUser.Request;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadWrite;
 using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Application.ValueObjects.Common;
 using FPLSP_Tutorial.Application.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FPLSP_Tutorial.Infrastructure.ViewModels.UserMajors
 {
@@ -22,7 +15,7 @@ namespace FPLSP_Tutorial.Infrastructure.ViewModels.UserMajors
         public MajorUserDeleteViewModel(IMapper mapper, IMajorUserReadWriteResponsitory majorUserReadWriteResponsitory, ILocalizationService localizationService)
         {
             _mapper = mapper;
-           _majorUserReadWriteResponsitory = majorUserReadWriteResponsitory;
+            _majorUserReadWriteResponsitory = majorUserReadWriteResponsitory;
             _localizationService = localizationService;
         }
         public override async Task HandleAsync(DeleteMajorUserRequest data, CancellationToken cancellationToken)

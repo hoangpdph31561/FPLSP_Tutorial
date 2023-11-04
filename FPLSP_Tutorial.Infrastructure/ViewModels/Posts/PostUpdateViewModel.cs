@@ -5,11 +5,6 @@ using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Application.ValueObjects.Common;
 using FPLSP_Tutorial.Application.ViewModels;
 using FPLSP_Tutorial.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FPLSP_Tutorial.Infrastructure.ViewModels.Posts
 {
@@ -35,7 +30,7 @@ namespace FPLSP_Tutorial.Infrastructure.ViewModels.Posts
                 Message = result.Message;
                 return;
             }
-            catch (Exception )
+            catch (Exception)
             {
 
                 Success = false;

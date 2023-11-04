@@ -12,7 +12,7 @@ namespace FPLSP_Tutorial.Infrastructure.Database.Configurations
             builder.HasKey(c => c.Id);
             builder.Property(c => c.Id).ValueGeneratedOnAdd();
 
-            builder.HasOne(c => c.Major).WithMany(c => c.UserMajors).HasForeignKey(c => c.MajorId); 
+            builder.HasOne(c => c.Major).WithMany(c => c.UserMajors).HasForeignKey(c => c.MajorId);
             builder.HasOne(c => c.User).WithMany(c => c.UserMajors).HasForeignKey(c => c.UserId);
         }
     }

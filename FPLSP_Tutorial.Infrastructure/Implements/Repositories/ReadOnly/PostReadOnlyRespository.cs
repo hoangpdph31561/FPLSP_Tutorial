@@ -11,11 +11,6 @@ using FPLSP_Tutorial.Domain.Entities;
 using FPLSP_Tutorial.Infrastructure.Database.AppDbContext;
 using FPLSP_Tutorial.Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
 {
@@ -35,7 +30,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
             try
             {
                 IQueryable<PostEntity> queryable = _appDbContext.PostEntities.AsNoTracking().AsQueryable();
-                var result = await queryable.AsNoTracking().PaginateAsync<PostEntity,ViewPostWithPaginationResponse>(request,_mapper, cancellationToken);
+                var result = await queryable.AsNoTracking().PaginateAsync<PostEntity, ViewPostWithPaginationResponse>(request, _mapper, cancellationToken);
                 return RequestResult<PaginationResponse<ViewPostWithPaginationResponse>>.Succeed(new PaginationResponse<ViewPostWithPaginationResponse>()
                 {
                     PageNumber = request.PageNumber,

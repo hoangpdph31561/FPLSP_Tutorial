@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
 using FPLSP_Tutorial.Application.DataTransferObjects.MajorRequest.Request;
 using FPLSP_Tutorial.Application.DataTransferObjects.MajorUser.Request;
-using FPLSP_Tutorial.Application.DataTransferObjects.Post.Request;
-using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadWrite;
 using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly;
@@ -10,7 +8,6 @@ using FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite;
 using FPLSP_Tutorial.Infrastructure.ViewModels.MajorRequests;
 using FPLSP_Tutorial.Infrastructure.ViewModels.Posts;
 using FPLSP_Tutorial.Infrastructure.ViewModels.UserMajors;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FPLSP_Tutorial.API.Controllers
@@ -52,7 +49,7 @@ namespace FPLSP_Tutorial.API.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteMajorRequest(DeleteMajorUserRequest request, CancellationToken cancellationToken)
         {
-            MajorUserDeleteViewModel vm = new(_mapper,_majorUserReadWriteRespository, _localizationService);
+            MajorUserDeleteViewModel vm = new(_mapper, _majorUserReadWriteRespository, _localizationService);
             await vm.HandleAsync(request, cancellationToken);
             return Ok(vm);
         }

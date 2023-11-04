@@ -1,7 +1,11 @@
-﻿using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly;
+﻿using FPLSP_Tutorial.Application.Interfaces.Repositories.ClientPostReadOnly;
+using FPLSP_Tutorial.Application.Interfaces.Repositories.ClientPostReadWrite;
+using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadWrite;
 using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Infrastructure.Database.AppDbContext;
+using FPLSP_Tutorial.Infrastructure.Implements.Repositories.ClienPostReadWriteRespository;
+using FPLSP_Tutorial.Infrastructure.Implements.Repositories.ClientPostReadOnly;
 using FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly;
 using FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite;
 using FPLSP_Tutorial.Infrastructure.Implements.Services;
@@ -49,6 +53,13 @@ namespace FPLSP_Tutorial.Infrastructure.Extensions
             services.AddTransient<IExampleReadWriteRepository, ExampleReadWriteRepository>();
             services.AddTransient<ITagReadOnlyRepository, TagReadOnlyRepository>();
             services.AddTransient<ITagReadWriteRepository, TagReadWriteRepository>();
+            services.AddTransient<IMajorReadOnlyRepository, MajorReadOnlyRepository>();
+            services.AddTransient<IMajorReadWriteRepository, MajorReadWriteRepository>();
+            services.AddTransient<IPostTagReadWriteRespository, PostTagReadWriteRepository>();
+            services.AddTransient<IUserReadOnlyRepository, UserReadOnlyRepository>();
+            services.AddTransient<IUserReadWriteRepository, UserReadWriteRepository>();
+            services.AddTransient<IClientPostReadOnlyRespository, ClientPostReadOnlyRespository>();
+            services.AddTransient<IClientPostReadWriteRespository, ClientPostReadWriteRespository>();
             #endregion
             return services;
         }

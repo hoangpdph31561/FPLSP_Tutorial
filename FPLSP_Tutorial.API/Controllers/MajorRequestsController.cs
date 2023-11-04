@@ -1,13 +1,9 @@
 ﻿using AutoMapper;
-using FPLSP_Tutorial.Application.DataTransferObjects.Example.Request;
 using FPLSP_Tutorial.Application.DataTransferObjects.MajorRequest.Request;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadWrite;
 using FPLSP_Tutorial.Application.Interfaces.Services;
-using FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly;
 using FPLSP_Tutorial.Infrastructure.ViewModels.MajorRequests;
-using FPLSP_Tutorial.Infrastructure.ViewModels.News;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FPLSP_Tutorial.API.Controllers

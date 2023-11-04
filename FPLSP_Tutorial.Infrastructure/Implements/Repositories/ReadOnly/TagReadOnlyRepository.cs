@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using Azure;
 using FPLSP_Tutorial.Application.DataTransferObjects.Tag;
 using FPLSP_Tutorial.Application.DataTransferObjects.Tag.TagRequest;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly;
@@ -12,12 +11,7 @@ using FPLSP_Tutorial.Domain.Entities;
 using FPLSP_Tutorial.Infrastructure.Database.AppDbContext;
 using FPLSP_Tutorial.Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
 {

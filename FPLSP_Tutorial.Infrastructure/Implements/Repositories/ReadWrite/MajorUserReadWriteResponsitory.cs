@@ -47,14 +47,12 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
         {
             try
             {
-                // Get existed example
                 var userMajor = await GetMajorUserByIdAsync(request.Id, cancellationToken);
 
-                // Update value to existed example
                 userMajor!.Deleted = true;
                 userMajor.DeletedBy = request.DeletedBy;
                 userMajor.DeletedTime = DateTimeOffset.UtcNow;
-                userMajor.Status = EntityStatus.Deleted;
+                //userMajor.Status = userMajor.Status; // push code nên rồi pull code lại về rồi sửa :))))
 
                 _dbContext.UserMajorEntities.Update(userMajor);
                 await _dbContext.SaveChangesAsync(cancellationToken);
@@ -74,6 +72,32 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
             }
 
         }
+
+        public async Task<RequestResult<int>> UpdateMajorUserAsync(UserMajorEntity entity, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var majorUser = await GetMajorUserByIdAsync(entity.Id, cancellationToken);
+
+                majorUser!.Status = entity.Status ;
+
+                _dbContext.UserMajorEntities.Update(majorUser);
+                await _dbContext.SaveChangesAsync(cancellationToken);
+                return RequestResult<int>.Succeed(1);
+            }
+            catch (Exception e)
+            {
+                return RequestResult<int>.Fail(_localizationService["Unable to update UserMajor"], new[]
+                {
+                    new ErrorItem
+                    {
+                        Error = e.Message,
+                        FieldName = LocalizationString.Common.FailedToUpdate + "UserMajor"
+                    }
+                });
+            }
+        }
+
         private async Task<UserMajorEntity?> GetMajorUserByIdAsync(Guid idMajorUser, CancellationToken cancellationToken)
         {
             var userMajor = await _dbContext.UserMajorEntities.FirstOrDefaultAsync(c => c.Id == idMajorUser && !c.Deleted, cancellationToken);

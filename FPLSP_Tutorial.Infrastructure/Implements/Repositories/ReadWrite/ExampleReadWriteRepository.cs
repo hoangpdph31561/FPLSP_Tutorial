@@ -55,7 +55,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
                 MajorRequest!.Deleted = true;
                 MajorRequest.DeletedBy = request.DeletedBy;
                 MajorRequest.DeletedTime = DateTimeOffset.UtcNow;
-                MajorRequest.Status = EntityStatus.Deleted;
+                // MajorRequest.Status = EntityStatus.Deleted;  // push code nên rồi pull code lại về rồi sửa :))))
 
                 _dbContext.Examples.Update(MajorRequest);
                 await _dbContext.SaveChangesAsync(cancellationToken);

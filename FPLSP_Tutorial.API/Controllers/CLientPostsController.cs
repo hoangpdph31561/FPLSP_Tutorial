@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Azure.Core;
 using FPLSP_Tutorial.Application.DataTransferObjects.ClientPost.Request;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ClientPostReadOnly;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ClientPostReadWrite;
@@ -23,43 +24,36 @@ namespace FPLSP_Tutorial.API.Controllers
             _localizationService = localizationService;
             _clientPostReadWriteRespository = clientPostReadWriteRespository;
         }
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetPostById(Guid id, CancellationToken cancellationToken)
+        [HttpGet("getParentPost/{id}")]
+        public async Task<IActionResult> GetParentPost(Guid id, CancellationToken cancellationToken)
         {
-            ClientPostDetailViewModel vm = new(_clientPostReadOnlyRespository, _mapper, _localizationService);
+            PostParentViewModel vm = new(_clientPostReadOnlyRespository, _localizationService);
             await vm.HandleAsync(id, cancellationToken);
             return Ok(vm);
         }
-        [HttpGet("getByMajorId")]
-        public async Task<IActionResult> GetPostByMajorId([FromQuery] ClientPostListRequest request, CancellationToken cancellationToken)
+        [HttpGet("getChildPost")]
+        public async Task<IActionResult> GetChildPosts([FromQuery] PostIdRequestWithPagination request, CancellationToken cancellationToken)
         {
-            ClientPostGetByMajorIdViewModel vm = new(_clientPostReadOnlyRespository, _mapper, _localizationService);
+            ChildPostViewModel vm = new(_clientPostReadOnlyRespository, _localizationService);
             await vm.HandleAsync(request, cancellationToken);
             return Ok(vm);
         }
-        [HttpGet("getPostTag/{id}")]
-        public async Task<IActionResult> GetPostTag(Guid id, CancellationToken cancellationToken)
+        [HttpGet("getPostDetail/{id}")]
+        public async Task<IActionResult> GetPostDetail(Guid id, CancellationToken cancellationToken)
         {
-            ClientPostGetPostTagViewModel vm = new(_clientPostReadOnlyRespository, _mapper, _localizationService);
+            PostDetailViewModel vm = new(_clientPostReadOnlyRespository, _localizationService);
             await vm.HandleAsync(id, cancellationToken);
             return Ok(vm);
         }
-        [HttpGet("getParentChildPost")]
-        public async Task<IActionResult> GetParentChildPost([FromQuery] ClientPostRequestIdWithPagination request, CancellationToken cancellationToken)
+        [HttpGet("getPostByMajorId")]
+        public async Task<IActionResult> GetPostsByMajorId([FromQuery] ClientPostListRequest request, CancellationToken cancellationToken)
         {
-            ClientPostParentChildViewModel vm = new(_clientPostReadOnlyRespository, _mapper, _localizationService);
-            await vm.HandleAsync(request, cancellationToken);
-            return Ok(vm);
-        }
-        [HttpGet("getPostSearch")]
-        public async Task<IActionResult> GetPostSearch([FromQuery] ClientPostSearchRequest request, CancellationToken cancellationToken)
-        {
-            ClientPostSearchViewModel vm = new(_clientPostReadOnlyRespository, _mapper, _localizationService);
+            PostMainViewModel vm = new(_clientPostReadOnlyRespository, _localizationService);
             await vm.HandleAsync(request, cancellationToken);
             return Ok(vm);
         }
         [HttpGet("getMajor")]
-        public async Task<IActionResult> GetMajor([FromQuery] ClientPost_GetMajorRequestWithPagination request, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetMajor([FromQuery] ClientPostMajorRequestWithPagination request, CancellationToken cancellationToken)
         {
             ClientPost_ListMajorViewModel vm = new(_clientPostReadOnlyRespository, _mapper, _localizationService);
             await vm.HandleAsync(request, cancellationToken);
@@ -69,6 +63,20 @@ namespace FPLSP_Tutorial.API.Controllers
         public async Task<IActionResult> CreateMajorRequest(InputMajorRequest request, CancellationToken cancellationToken)
         {
             ClienPostMajorRequestCreateViewModel vm = new(_clientPostReadOnlyRespository, _clientPostReadWriteRespository, _mapper, _localizationService);
+            await vm.HandleAsync(request, cancellationToken);
+            return Ok(vm);
+        }
+        [HttpGet("getPostTags")]
+        public async Task<IActionResult> GetPostTagsByPostId([FromQuery]PostIdRequestWithPagination request, CancellationToken cancellationToken)
+        {
+            PostTagViewModel vm = new(_clientPostReadOnlyRespository, _localizationService);
+            await vm.HandleAsync(request, cancellationToken);
+            return Ok(vm);
+        }
+        [HttpGet("getMajorsByUserId")]
+        public async Task<IActionResult> GetMajorsByUserId([FromQuery] GetMajorByUserIdWithPaginationRequest request, CancellationToken cancellationToken)
+        {
+            MajorByUserIdViewModel vm = new(_clientPostReadOnlyRespository, _localizationService);
             await vm.HandleAsync(request, cancellationToken);
             return Ok(vm);
         }

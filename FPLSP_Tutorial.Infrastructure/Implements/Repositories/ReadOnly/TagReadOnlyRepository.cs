@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using BaseSolution.Infrastructure.Extensions;
 using FPLSP_Tutorial.Application.DataTransferObjects.Tag;
 using FPLSP_Tutorial.Application.DataTransferObjects.Tag.TagRequest;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly;

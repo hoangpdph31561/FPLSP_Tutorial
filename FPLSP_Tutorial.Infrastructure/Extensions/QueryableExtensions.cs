@@ -1,11 +1,13 @@
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using BaseSolution.Application.ValueObjects.Common;
-using BaseSolution.Application.ValueObjects.Pagination;
-using BaseSolution.Domain.Entities.Base;
+
+using FPLSP_Tutorial.Application.ValueObjects.Common;
+using FPLSP_Tutorial.Application.ValueObjects.Pagination;
+using FPLSP_Tutorial.Domain.Entities.Base;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
-using static BaseSolution.Application.ValueObjects.Common.QueryConstant;
+
+using static FPLSP_Tutorial.Application.ValueObjects.Common.QueryConstant;
 
 namespace BaseSolution.Infrastructure.Extensions;
 

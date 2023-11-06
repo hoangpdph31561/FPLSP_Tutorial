@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <Folder Include="Data\Request\" />
+    <Folder Include="Service\" />
   </ItemGroup>
 
 </Project>

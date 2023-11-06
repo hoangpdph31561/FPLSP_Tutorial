@@ -28,7 +28,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FPLSP_Tutorial.WASM", "FPLS
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MajorService", "MajorService\MajorService.csproj", "{18F54135-190C-4458-A403-57AF75264094}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientPost", "ClientPost\ClientPost.csproj", "{049C275F-C768-4C10-B9A5-0CB00B0FD559}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClientPost", "ClientPost\ClientPost.csproj", "{049C275F-C768-4C10-B9A5-0CB00B0FD559}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,16 +1,40 @@
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using FPLSP_Tutorial.Application.ValueObjects.Common;
-using FPLSP_Tutorial.Application.ValueObjects.Pagination;
-using FPLSP_Tutorial.Domain.Entities.Base;
+using BaseSolution.Application.ValueObjects.Common;
+using BaseSolution.Application.ValueObjects.Pagination;
+using BaseSolution.Domain.Entities.Base;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
-using static FPLSP_Tutorial.Application.ValueObjects.Common.QueryConstant;
+using static BaseSolution.Application.ValueObjects.Common.QueryConstant;
 
-namespace FPLSP_Tutorial.Infrastructure.Extensions;
+namespace BaseSolution.Infrastructure.Extensions;
 
 public static class QueryableExtensions
 {
+    public static async Task<PaginationResponse<TSourceEntity>> PaginateAsync<TSourceEntity>(
+        this IQueryable<TSourceEntity> queryable, PaginationRequest request,
+        CancellationToken cancellationToken)
+    {
+        // Force to sort by CreateTime asc 
+        IQueryable<TSourceEntity> finalQuery = queryable;
+
+        // Hit to the db to get data back to client side
+        var result = await finalQuery
+            .Skip((request.PageNumber - 1) * request.PageSize)
+            .Take(request.PageSize + 1)
+            .ToListAsync(cancellationToken);
+
+        bool hasNext = result.Count == request.PageSize + 1;
+
+        return new PaginationResponse<TSourceEntity>()
+        {
+            PageNumber = request.PageNumber,
+            PageSize = request.PageSize,
+            HasNext = hasNext,
+            Data = result.Take(request.PageSize).ToList()
+        };
+    }
+
     public static async Task<PaginationResponse<TTargetEntity>> PaginateAsync<TSourceEntity, TTargetEntity>(
         this IQueryable<TSourceEntity> queryable, PaginationRequest request, IMapper mapper,
         CancellationToken cancellationToken) where TSourceEntity : ICreatedBase

@@ -1,7 +1,10 @@
 ﻿@page "/majorService"
+@using MajorService.Common;
 @using MajorService.Data.MajorRequest;
 @using MajorService.Data.MajorRequest.Request;
 @using MajorService.Data.UserMajor;
+@using MajorService.Data.UserMajor.Request;
+@using MajorService.Enum;
 @using MajorService.Pagination;
 @using MajorService.Repo.Inplements;
 @using MajorService.Repo.Interfaces;
@@ -14,11 +17,14 @@
     <div class="d-flex justify-items-center">
     <div class="mr-auto">
     </div>
-    <MudButton Variant="Variant.Filled" Color="Color.Primary">Thêm</MudButton>
+     <MudTextField @bind-Value="Search" Label="Tìm kiếm giảng viên" Variant="Variant.Outlined" Style="margin-right:5px" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" />
+        <AdditionalSearchBarColumn>
+        <MudSelect Variant="Variant.Outlined" Class="custom-list-display-border-input" Style="background-color: white;" AnchorOrigin="Origin.BottomCenter" Label="Chuyên ngành" @bind-Value="tenChuyenNganh">
+             
+        </MudSelect>
+    </AdditionalSearchBarColumn>
     </div>
     </MudPaper>
-    <MudTextField @bind-Value="Search" Label="Tìm kiếm giảng viên" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" />
-
         <MudTable Items="@lstMajorUser">
     <HeaderContent>
     <MudTh>Email</MudTh>
@@ -31,7 +37,10 @@
     <MudTd>@context.RoleCodes</MudTd>
     <MudTd>@context.TenChuyenNganh</MudTd>
     <MudTd>@context.Status</MudTd>
-    <MudTd>Phê duyệt</MudTd>
+    <MudTd>
+          <div class="d-flex" style="margin-top:10px">
+            </div>
+    </MudTd>
     </RowTemplate>
     </MudTable>
     </MudTabPanel>
@@ -49,7 +58,7 @@
                 <MudTd>@context.Status</MudTd>
                 <MudTd>
                     <div class="d-flex" style="margin-top:10px">
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary">Chấp nhận</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => OnAdd(context.Id,context.MajorId,context.CreatedBy,context.Status)">Chấp nhận</MudButton>
                         <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="left:10px" OnClick="() => OnDelete(context.Id)">Từ chối</MudButton>
                     </div>
                 </MudTd>
@@ -58,19 +67,32 @@
     </MudTabPanel>
 </MudTabs>
 @code {
-    [Inject] private IMajorRequestRepo majorRequestRepo { get; set; }
     [Inject] private IMajorUserRepo majorUserRepo { get; set; }
-    List<MajorRequestDto> MajorRequest;
     List<MajorUserDto> lstMajorUser ;
+    [Inject] private IMajorRequestRepo majorRequestRepo { get; set; }
+    List<MajorRequestDto> MajorRequest;
+
+    // khai báo 
+    private string tenChuyenNganh = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
+        LoadDataMajorUser();
+        LoadDataMajorRequest();
+
+    }
+    private async Task LoadDataMajorRequest()
+    {
         var paginationMajorRequest = await majorRequestRepo.GetListMajorRequest();
         MajorRequest = paginationMajorRequest.Data.ToList();
-
+    }
+    private async Task LoadDataMajorUser()
+    {
         var paginationMajorUser = await majorUserRepo.GetListMajorUser();
         lstMajorUser = paginationMajorUser.Data.ToList();
+
     }
+
     private async Task OnDelete(Guid id)
     {
         var request = new MajorRequestDeleteRequest
@@ -87,11 +109,57 @@
         if (confirm == true)
         {
             var removeConfirm = await majorRequestRepo.DeleteMajorRequest(request);
-            //  await LoadData();
+            await LoadDataMajorRequest();
         }
-       
-        
     }
+    private async Task OnAdd(Guid id, Guid MajorID, Guid? UserId, EntityStatus status )
+    {
+        var requestDelete = new MajorRequestDeleteRequest
+            {
+                Id = id,
+            };
+        var requestCreateUser = new CreateUserMajorRequest
+            {
+                MajorId = MajorID,
+                UserId = UserId,
+                Status = status
+            };
+
+        var confirm = await _diagService.ShowMessageBox
+              (
+                  "Thông báo",
+                  "Bạn chắn chắn muốn thêm giảng viên này?",
+                  "Xác nhận",
+                  cancelText: "Hủy"
+              );
+        if (confirm == true)
+        { 
+            var createConfirm = await majorUserRepo.CreateMajorUser(requestCreateUser);
+            if(!createConfirm)
+            {
+                var messageErro = await _diagService.ShowMessageBox
+             (
+                 "Thông báo",
+                 "Thêm thất bại !"
+             );
+            }
+            else
+            {
+                var message = await _diagService.ShowMessageBox
+           (
+               "Thông báo",
+               "Thêm thành công !"
+           );
+                var removeConfirm = await majorRequestRepo.DeleteMajorRequest(requestDelete);
+                await LoadDataMajorRequest();
+                await LoadDataMajorUser();
+
+            }
+         
+        }
+    }
+
+
     public string Search { get; set; }
 
 }

@@ -36,8 +36,8 @@ namespace FPLSP_Tutorial.Infrastructure.ViewModels.UserMajors
                     {
                     new ErrorItem
                     {
-                        Error = _localizationService["Error occurred while getting the Example"],
-                        FieldName = string.Concat(LocalizationString.Common.FailedToGet, "Example")
+                        Error = _localizationService["Error occurred while getting the UserMajor"],
+                        FieldName = string.Concat(LocalizationString.Common.FailedToGet, "UserMajor")
                     }
                 };
             }

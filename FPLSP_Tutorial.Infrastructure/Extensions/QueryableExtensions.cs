@@ -90,13 +90,13 @@ public static class QueryableExtensions
         // Return source if value is null
         if (searchModel.SearchValue == null)
             return source;
-        var parameter = Expression.Parameter(typeof(T), "item");
+        var parameter = Expression.Parameter(typeof(T), "MajorRequest");
         var memberSelector = searchModel.SearchFieldName.Split('.').Aggregate((Expression)parameter, Expression.PropertyOrField);
         var memberType = memberSelector.Type;
         var value = searchModel.SearchValue;
         // Cast value to type of Member
         if (value != null && value.GetType() != memberType)
-            value = (string)Convert.ChangeType(value, memberType);
+            value = Convert.ChangeType(value, memberType).ToString();
 
         if (searchModel.MatchType == MatchTypes.Contain)
         {

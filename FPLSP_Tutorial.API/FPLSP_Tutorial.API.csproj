@@ -13,6 +13,7 @@
 
   <ItemGroup>
 	<ProjectReference Include="..\FPLSP_Tutorial.Application\FPLSP_Tutorial.Application.csproj" />
+	<ProjectReference Include="..\FPLSP_Tutorial.Domain\FPLSP_Tutorial.Domain.csproj" />
 	<ProjectReference Include="..\FPLSP_Tutorial.Infrastructure\FPLSP_Tutorial.Infrastructure.csproj" />
   </ItemGroup>
 

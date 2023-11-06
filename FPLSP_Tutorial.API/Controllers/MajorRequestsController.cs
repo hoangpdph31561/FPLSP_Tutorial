@@ -3,6 +3,7 @@ using FPLSP_Tutorial.Application.DataTransferObjects.MajorRequest.Request;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadWrite;
 using FPLSP_Tutorial.Application.Interfaces.Services;
+using FPLSP_Tutorial.Domain.Enums;
 using FPLSP_Tutorial.Infrastructure.ViewModels.MajorRequests;
 using Microsoft.AspNetCore.Mvc;
 
@@ -36,18 +37,27 @@ namespace FPLSP_Tutorial.API.Controllers
             return Ok(vm.Data);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
-        {
-            MajorRequestViewModels vm = new(_majorRequestReadOnlyRespository, _localizationService);
+        //[HttpGet("{id}")]
+        //public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
+        //{
+        //    MajorRequestViewModels vm = new(_majorRequestReadOnlyRespository, _localizationService);
 
-            await vm.HandleAsync(id, cancellationToken);
+        //    await vm.HandleAsync(id, cancellationToken);
+
+        //    return Ok(vm);
+        //}
+        [HttpGet("majorRequestNotDeleted")] // lấy ra cá majorRequest chưa bị xóa
+        public async Task<IActionResult> GetMajorRequest([FromQuery] ViewMajorRequestWithPaginationRequest status, CancellationToken cancellationToken)
+        {
+            MajorRequestStatusViewModels vm = new(_majorRequestReadOnlyRespository, _localizationService);
+
+            await vm.HandleAsync(status, cancellationToken);
 
             return Ok(vm);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post(MajorRequestCreateRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Post([FromQuery] MajorRequestCreateRequest request, CancellationToken cancellationToken)
         {
             MajorRequestCreateViewModel vm = new(_majorRequestReadOnlyRespository, _majorRequestReadWriteRespository, _localizationService, _mapper);
 
@@ -58,7 +68,7 @@ namespace FPLSP_Tutorial.API.Controllers
 
 
         [HttpPut]
-        public async Task<IActionResult> Put(MajorRequestUpdateRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Put([FromQuery] MajorRequestUpdateRequest request, CancellationToken cancellationToken)
         {
             MajorRequestUpDateViewModel vm = new(_majorRequestReadWriteRespository, _localizationService, _mapper);
 
@@ -68,7 +78,7 @@ namespace FPLSP_Tutorial.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> Delete(MajorRequestDeleteRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Delete([FromQuery] MajorRequestDeleteRequest request, CancellationToken cancellationToken)
         {
             MajorRequestDeleteViewModel vm = new(_majorRequestReadWriteRespository, _localizationService, _mapper);
 

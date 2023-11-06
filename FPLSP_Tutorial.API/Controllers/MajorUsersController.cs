@@ -41,14 +41,14 @@ namespace FPLSP_Tutorial.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateNewMajorRequest(CreateUserMajorRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateNewMajorRequest([FromBody] CreateUserMajorRequest request, CancellationToken cancellationToken)
         {
             MajorUserCreateViewModel vm = new(_majorUserReadWriteRespository, _localizationService, _mapper);
             await vm.HandleAsync(request, cancellationToken);
             return Ok(vm);
         }
         [HttpDelete]
-        public async Task<IActionResult> DeleteMajorRequest(DeleteMajorUserRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeleteMajorRequest([FromQuery] DeleteMajorUserRequest request, CancellationToken cancellationToken)
         {
             MajorUserDeleteViewModel vm = new(_mapper, _majorUserReadWriteRespository, _localizationService);
             await vm.HandleAsync(request, cancellationToken);
@@ -56,7 +56,7 @@ namespace FPLSP_Tutorial.API.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Put(UpdateMajorUserRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Put([FromQuery] UpdateMajorUserRequest request, CancellationToken cancellationToken)
         {
             MajorUserUpdateViewModel vm = new(_majorUserReadWriteRespository, _localizationService, _mapper);
 

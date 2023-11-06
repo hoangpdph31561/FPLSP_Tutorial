@@ -17,8 +17,8 @@ namespace MajorService.Repo.Inplements
             _httpClient = httpClient;
         }
         public async Task<PaginationResponse<MajorRequestDto>> GetListMajorRequest()
-        {
-            var result = await _httpClient.GetFromJsonAsync<PaginationResponse<MajorRequestDto>>($"/api/MajorRequests");
+        { 
+            var result = await _httpClient.GetFromJsonAsync<PaginationResponse<MajorRequestDto>>($"/api/MajorRequests/majorRequestDeleted");
             if (result == null)
             {
                 return new();
@@ -27,14 +27,12 @@ namespace MajorService.Repo.Inplements
         }
         public async Task<bool> DeleteMajorRequest(MajorRequestDeleteRequest request)
         {
-            var resultDelete = await _httpClient.DeleteAsync($"/api/MajorRequests/id={request.Id}");
+            var resultDelete = await _httpClient.DeleteAsync($"/api/MajorRequests?id={request.Id}");
             if (resultDelete.IsSuccessStatusCode)
             {
                 return true;
             }
             return false;
         }
-
-
     }
 }

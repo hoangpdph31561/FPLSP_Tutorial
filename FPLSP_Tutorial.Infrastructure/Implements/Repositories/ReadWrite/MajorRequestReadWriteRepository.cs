@@ -50,15 +50,11 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
         {
             try
             {
-                // Get existed example
-                var majorRequest = await GetUserMajorByIdAsync(request.Id, cancellationToken);
+                var majorRequest = await GetMajorRequestByIdAsync(request.Id, cancellationToken);
 
-                // Update value to existed example
+                // update trạng thái 
                 majorRequest!.Deleted = true;
-                majorRequest.DeletedBy = request.DeletedBy;
-                majorRequest.DeletedTime = DateTimeOffset.UtcNow;
-                //  majorRequest.Status = EntityStatus.Deleted; // push code nên rồi pull code lại về rồi sửa :))))
-
+                majorRequest.Status = EntityStatus.Deleted; 
                 _dbContext.MajorRequestEntities.Update(majorRequest);
                 await _dbContext.SaveChangesAsync(cancellationToken);
 
@@ -81,11 +77,9 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
         {
             try
             {
-                var majorRequest = await GetUserMajorByIdAsync(entity.Id, cancellationToken);
+                var majorRequest = await GetMajorRequestByIdAsync(entity.Id, cancellationToken);
 
-                // Update value to existed example
                 majorRequest!.Status = entity.Status;
-
                 majorRequest.ModifiedBy = entity.ModifiedBy;
                 majorRequest.ModifiedTime = DateTimeOffset.UtcNow;
                 _dbContext.MajorRequestEntities.Update(majorRequest);
@@ -104,7 +98,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
                 });
             }
         }
-        private async Task<MajorRequestEntity?> GetUserMajorByIdAsync(Guid idMajorRequest, CancellationToken cancellationToken)
+        private async Task<MajorRequestEntity?> GetMajorRequestByIdAsync(Guid idMajorRequest, CancellationToken cancellationToken)
         {
             var majorRequest = await _dbContext.MajorRequestEntities.FirstOrDefaultAsync(c => c.Id == idMajorRequest && !c.Deleted, cancellationToken);
 

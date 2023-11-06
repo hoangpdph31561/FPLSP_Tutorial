@@ -14,7 +14,7 @@ namespace FPLSP_Tutorial.Infrastructure.Extensions.AutoMapperProfiles
     {
         public MajorRequestProfile()
         {
-            CreateMap<MajorRequestEntity, MajorRequestDto>().ForMember(des => des.tenChuyenNganh, src => src.MapFrom(src => src.Major.Name));
+            CreateMap<MajorRequestEntity, MajorRequestDto>().ForMember(des => des.MajorName, src => src.MapFrom(src => src.Major.Name));
             CreateMap<MajorRequestCreateRequest, MajorRequestEntity>();
             CreateMap<MajorRequestDeleteRequest, MajorRequestEntity>();
             CreateMap<MajorRequestUpdateRequest, MajorRequestEntity>();

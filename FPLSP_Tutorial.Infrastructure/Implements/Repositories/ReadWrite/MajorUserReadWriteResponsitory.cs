@@ -24,6 +24,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
         {
             try
             {
+                entity.Id = new Guid();
                 entity.CreatedTime = DateTimeOffset.UtcNow;
                 await _dbContext.UserMajorEntities.AddAsync(entity);
                 await _dbContext.SaveChangesAsync(cancellationToken);
@@ -52,7 +53,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
                 userMajor!.Deleted = true;
                 userMajor.DeletedBy = request.DeletedBy;
                 userMajor.DeletedTime = DateTimeOffset.UtcNow;
-                //userMajor.Status = userMajor.Status; // push code nên rồi pull code lại về rồi sửa :))))
+                userMajor.Status = EntityStatus.Deleted;
 
                 _dbContext.UserMajorEntities.Update(userMajor);
                 await _dbContext.SaveChangesAsync(cancellationToken);

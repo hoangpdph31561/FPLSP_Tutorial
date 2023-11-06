@@ -49,15 +49,14 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
             try
             {
                 // Get existed example
-                var MajorRequest = await GetExampleByIdAsync(request.Id, cancellationToken);
+                var example = await GetExampleByIdAsync(request.Id, cancellationToken);
 
                 // Update value to existed example
-                MajorRequest!.Deleted = true;
-                MajorRequest.DeletedBy = request.DeletedBy;
-                MajorRequest.DeletedTime = DateTimeOffset.UtcNow;
-                // MajorRequest.Status = EntityStatus.Deleted;  // push code nên rồi pull code lại về rồi sửa :))))
-
-                _dbContext.Examples.Update(MajorRequest);
+                example!.Deleted = true;
+                example.DeletedBy = request.DeletedBy;
+                example.DeletedTime = DateTimeOffset.UtcNow;
+                 example.Status = EntityStatus.Deleted; 
+                _dbContext.Examples.Update(example);
                 await _dbContext.SaveChangesAsync(cancellationToken);
 
                 return RequestResult<int>.Succeed(1);

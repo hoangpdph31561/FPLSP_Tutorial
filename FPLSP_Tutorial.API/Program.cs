@@ -25,6 +25,10 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IMajorRequestReadOnlyRespository, MajorRequestReadOnlyRepository>();
 builder.Services.AddScoped<IMajorRequestReadWriteRespository, MajorRequestReadWriteRepository>();
 
+
+builder.Services.AddScoped<IMajorUserReadWriteResponsitory, MajorUserReadWriteResponsitory>();
+builder.Services.AddScoped<IUserMajorReadOnlyRespository, UserMajorReadOnlyRespository>();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy",

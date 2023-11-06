@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using BaseSolution.Infrastructure.Extensions;
 using FPLSP_Tutorial.Application.DataTransferObjects.Major;
 using FPLSP_Tutorial.Application.DataTransferObjects.MajorRequest;
 using FPLSP_Tutorial.Application.DataTransferObjects.MajorRequest.Request;

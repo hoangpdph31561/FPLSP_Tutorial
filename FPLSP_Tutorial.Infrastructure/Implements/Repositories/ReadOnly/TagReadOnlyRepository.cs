@@ -19,7 +19,8 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
     public class TagReadOnlyRepository : ITagReadOnlyRepository
     {
         private readonly DbSet<TagEntity> _tagEntities;
-        private readonly IMapper _mapper;
+        private readonly DbSet<PostTagEntity> _postTagEntities;
+		private readonly IMapper _mapper;
         private readonly ILocalizationService _localizationService;
 
         public TagReadOnlyRepository(AppReadOnlyDbContext dbContext, IMapper mapper, ILocalizationService localizationService)
@@ -27,7 +28,9 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
             _tagEntities = dbContext.Set<TagEntity>();
             _mapper = mapper;
             _localizationService = localizationService;
-        }
+			_postTagEntities = dbContext.Set<PostTagEntity>();
+
+		}
 
         public async Task<RequestResult<TagDto?>> GetTagByIdAsync(Guid idTag, CancellationToken cancellationToken)
         {
@@ -51,15 +54,30 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
             }
         }
 
-        public async Task<RequestResult<List<TagDto>?>> GetTagByIdMajorAsync(Guid? idMajor, CancellationToken cancellationToken)
+        public async Task<RequestResult<List<TagDto>?>> GetTagByIdMajorAsync(Guid? idMajor, Guid? idPost , CancellationToken cancellationToken)
         {
             try
             {
                 var tags = _tagEntities.AsNoTracking().AsQueryable();
 
-                if (idMajor == null)
+                //lấy listTag theo idMajor
+                if (idMajor != null)
                 {
                     tags.Where(x => x.MajorId == idMajor && !x.Deleted);
+                }
+
+                //lấy listTag theo idPost
+                if (idPost != null)
+                {
+                    var lstPT = await _postTagEntities.ToListAsync();
+                    lstPT.Where(c=>c.PostId == idPost && !c.Deleted);
+                    if (lstPT != null)
+                    {
+                        foreach (var pt in lstPT)
+                        {
+                            tags.Where(c => c.Id == pt.TagId);
+                        }
+                    }
                 }
 
                 var tagDtos = await tags.ProjectTo<TagDto>(_mapper.ConfigurationProvider)

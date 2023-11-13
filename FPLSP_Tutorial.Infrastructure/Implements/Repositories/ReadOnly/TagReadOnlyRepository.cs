@@ -54,34 +54,19 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
             }
         }
 
-        public async Task<RequestResult<List<TagDto>?>> GetTagByIdMajorAsync(Guid? idMajor, Guid? idPost , CancellationToken cancellationToken)
+        public async Task<RequestResult<List<TagDto>?>> GetTagByIdMajorAsync(Guid? MajorId, Guid? PostId , CancellationToken cancellationToken)
         {
             try
             {
-                var tags = _tagEntities.AsNoTracking().AsQueryable();
+                var TagIds = await _postTagEntities.Where(c => c.PostId == PostId && !c.Deleted).Select(c=>c.TagId).ToListAsync();
 
-                //lấy listTag theo idMajor
-                if (idMajor != null)
-                {
-                    tags.Where(x => x.MajorId == idMajor && !x.Deleted);
-                }
-
-                //lấy listTag theo idPost
-                if (idPost != null)
-                {
-                    var lstPT = await _postTagEntities.ToListAsync();
-                    lstPT.Where(c=>c.PostId == idPost && !c.Deleted);
-                    if (lstPT != null)
-                    {
-                        foreach (var pt in lstPT)
-                        {
-                            tags.Where(c => c.Id == pt.TagId);
-                        }
-                    }
-                }
-
-                var tagDtos = await tags.ProjectTo<TagDto>(_mapper.ConfigurationProvider)
+                var tagDtos = await _tagEntities.Where(c=> TagIds.Contains(c.Id)).ProjectTo<TagDto>(_mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken);
+
+                if (MajorId != null)
+                {
+                    tagDtos = tagDtos.Where(c => c.MajorId == MajorId).ToList();
+                }
 
                 return RequestResult<List<TagDto>?>.Succeed(tagDtos);
             }

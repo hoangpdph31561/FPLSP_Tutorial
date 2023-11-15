@@ -1,9 +1,78 @@
 ﻿@page "/mainpage"
-
-<MudText Align="Align.Center">Trang chủ</MudText>
-<MudText>| Bài viết hệ thống</MudText>
-
-
+<PageTitle>Trang chủ</PageTitle>
+<MenuMainPage Label="Trang chủ" IsLoading="@(_lstMajor == null)" DisableSearch="_isDisableControls">
+    <BodyContent>
+        <MudPaper Class="mx-4" Width="100%" Elevation="0">
+            <MudText Typo="Typo.h6" Class="px-4">Các bài viết chuyên ngành</MudText>
+            <MudTable Items="_lstMajor" Hover="true" Breakpoint="Breakpoint.Sm">
+                <ColGroup>
+                    <col style="width: 70%;"/>
+                    <col  style="width: 30%"/>
+                </ColGroup>
+                <HeaderContent>
+                    <MudTh>Tên chuyên ngành</MudTh>
+                    <MudTh>Thao tác</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTh>Chuyên ngành @context.Name</MudTh>
+                    <MudTh><MudButton Variant="Variant.Filled" OnClick="@( async() => await ShowPostByMajor(context.Id))" Color="Color.Primary">@((_major.ShowDetail == true) ? "Ẩn bài viết chuyên ngành" : "Hiện bài viết chuyên ngành")</MudButton></MudTh>
+                </RowTemplate>
+                <ChildRowContent>
+                        @if(_lstPost != null && _major.ShowDetail)
+                    {
+                        <MudTr>
+                            <MudTable Items="_lstPost" Context="post">
+                                <RowTemplate>
+                                    <MudTd>@post.Title</MudTd>
+                                    <MudTd>@post.CreatedTime.ToString("dd/MM/yyyy")</MudTd>
+                                    <MudTd>@post.CreatedName</MudTd>
+                                    <MudTd>@post.Status</MudTd>
+                                </RowTemplate>
+                            </MudTable>
+                        </MudTr>
+                    }
+                    
+                </ChildRowContent>
+            </MudTable>
+        </MudPaper>
+    </BodyContent>
+</MenuMainPage>
 @code {
+    #region Khai báo
+    [Inject]
+    public IClientPostService ClientPostService { get; set; }
+    public APIResponse _apiResponse { get; set; }
+    private PaginationRequest _paginationRequest = new();
+    private ClientPostMajorRequestWithPagination _request { get; set; } = new();
+    private PaginationResponse<MajorBaseDTO> _majorDTOS;
+    private List<MajorBaseDTO> _lstMajor;
+    private PaginationResponse<PostMainDTO> _postPagination;
+    private List<PostMainDTO> _lstPost;
+    private ClientPostGetByMajorIdWithPaginationRequest _postRequest = new();
+    private bool _isLoadingAll = true;
+    private bool _isLoadingList = true;
+    private bool _isDisableControls = false;
+    
+    #endregion
+    protected async override Task OnInitializedAsync()
+    {
+        _majorDTOS = await ClientPostService.GetMajorList(_request);
+        /*
+        * _majorDTOS = (PaginationResponse<MajorBaseDTO>)_apiResponse.Data;
+        * 
+        */
+        _lstMajor = _majorDTOS.Data.ToList();
 
+    }
+    private MajorBaseDTO _major = new();
+    private async Task ShowPostByMajor(Guid id)
+    {
+        _major = _lstMajor.First(x => x.Id == id);
+        _postRequest.MajorId = id.ToString();
+        _postPagination = await ClientPostService.GetPostsByMajorId(_postRequest);
+        _lstPost = _postPagination.Data.ToList();
+        _major.ShowDetail = !_major.ShowDetail;
+    }
+
+    
 }

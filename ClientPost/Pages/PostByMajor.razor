@@ -1,0 +1,56 @@
+﻿@page "/postbymajor/{id}"
+<PageTitle>Bài viết chuyên ngành</PageTitle>
+<MenuMainPage Label="@($"Chuyên ngành {major.Name}")">
+    <BodyContent>
+        @if (lstPosts == null || lstPosts.Count == 0)
+        {
+            <MudText Typo="Typo.h3" Class="mx-2">Chuyên ngành chưa có bài viết nào</MudText>
+        }
+        else
+        {
+            <MudText Typo="Typo.h5" Class="ma-4">| Danh sách các bài viết</MudText>
+            <MudTable Items="lstPosts">
+                <RowTemplate>
+                    <MudTd><MudNavLink Style="font-size: 20px; font-weight:bold;" Href="@($"/postdetail/{context.Id}")">Bài viết @context.Title</MudNavLink></MudTd>
+                    <MudTd>Ngày đăng: @context.CreatedTime.ToString("dd/MM/yyyy")</MudTd>
+                    <MudTd>Tác giả: @context.CreatedName</MudTd>
+                    <MudTd>@context.Status</MudTd>
+                </RowTemplate>
+            </MudTable>
+
+        }
+
+    </BodyContent>
+</MenuMainPage>
+
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+    [Inject]
+    public IClientPostService ClientPostService { get; set; }
+    private ClientPostGetByMajorIdWithPaginationRequest request { get; set; } = new();
+    private PaginationResponse<PostMainDTO> result { get; set; }
+    private List<PostMainDTO> lstPosts { get; set; }
+    private MajorBaseDTO major = new();
+    protected async override Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+    private async Task LoadData()
+    {
+        request.MajorId = Id;
+        result = await ClientPostService.GetPostsByMajorId(request);
+        major = await ClientPostService.GetMajorsById(Id);
+        lstPosts = result.Data.ToList();
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (request.MajorId != Id)
+        {
+            await LoadData();
+        }
+        
+        StateHasChanged();
+    }
+}

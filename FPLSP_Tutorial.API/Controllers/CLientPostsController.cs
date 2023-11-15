@@ -1,23 +1,27 @@
 ﻿using AutoMapper;
-using Azure.Core;
+using AutoMapper.Features;
+using FPLSP_Tutorial.Application.DataTransferObjects.ClientPost;
 using FPLSP_Tutorial.Application.DataTransferObjects.ClientPost.Request;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ClientPostReadOnly;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ClientPostReadWrite;
 using FPLSP_Tutorial.Application.Interfaces.Services;
+using FPLSP_Tutorial.Application.ValueObjects.Pagination;
+using FPLSP_Tutorial.Application.ValueObjects.Response;
 using FPLSP_Tutorial.Infrastructure.ViewModels.ClientPost;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FPLSP_Tutorial.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CLientPostsController : ControllerBase
+    public class ClientPostsController : ControllerBase
     {
         private readonly IClientPostReadOnlyRespository _clientPostReadOnlyRespository;
         private readonly IClientPostReadWriteRespository _clientPostReadWriteRespository;
         private readonly IMapper _mapper;
         private readonly ILocalizationService _localizationService;
-        public CLientPostsController(IClientPostReadOnlyRespository clientPostReadOnlyRespository, IClientPostReadWriteRespository clientPostReadWriteRespository, IMapper mapper, ILocalizationService localizationService)
+        public ClientPostsController(IClientPostReadOnlyRespository clientPostReadOnlyRespository, IClientPostReadWriteRespository clientPostReadWriteRespository, IMapper mapper, ILocalizationService localizationService)
         {
             _clientPostReadOnlyRespository = clientPostReadOnlyRespository;
             _mapper = mapper;
@@ -29,35 +33,66 @@ namespace FPLSP_Tutorial.API.Controllers
         {
             PostParentViewModel vm = new(_clientPostReadOnlyRespository, _localizationService);
             await vm.HandleAsync(id, cancellationToken);
-            return Ok(vm);
+            if(vm.Success)
+            {
+                PostBaseDTO result = (PostBaseDTO) vm.Data;
+                return Ok(result);
+            }
+            return BadRequest(vm);
         }
         [HttpGet("getChildPost")]
         public async Task<IActionResult> GetChildPosts([FromQuery] PostIdRequestWithPagination request, CancellationToken cancellationToken)
         {
             ChildPostViewModel vm = new(_clientPostReadOnlyRespository, _localizationService);
             await vm.HandleAsync(request, cancellationToken);
-            return Ok(vm);
+            if (vm.Success)
+            {
+                PaginationResponse<PostBaseDTO> result = (PaginationResponse<PostBaseDTO>)vm.Data;
+                return Ok(result);
+            }
+            return BadRequest(vm);
         }
         [HttpGet("getPostDetail/{id}")]
         public async Task<IActionResult> GetPostDetail(Guid id, CancellationToken cancellationToken)
         {
             PostDetailViewModel vm = new(_clientPostReadOnlyRespository, _localizationService);
             await vm.HandleAsync(id, cancellationToken);
-            return Ok(vm);
+            PostDetailDTO result = new();
+            if(vm.Success)
+            {
+                result = (PostDetailDTO) vm.Data;
+                return Ok(result);
+            }
+            return BadRequest(vm);
         }
         [HttpGet("getPostByMajorId")]
         public async Task<IActionResult> GetPostsByMajorId([FromQuery] ClientPostListRequest request, CancellationToken cancellationToken)
         {
             PostMainViewModel vm = new(_clientPostReadOnlyRespository, _localizationService);
             await vm.HandleAsync(request, cancellationToken);
-            return Ok(vm);
+            PaginationResponse<PostMainDTO> response = new();
+            if(vm.Success)
+            {
+                response = (PaginationResponse<PostMainDTO>)vm.Data;
+                return Ok(response);
+            }
+            return BadRequest(vm);
         }
         [HttpGet("getMajor")]
         public async Task<IActionResult> GetMajor([FromQuery] ClientPostMajorRequestWithPagination request, CancellationToken cancellationToken)
         {
             ClientPost_ListMajorViewModel vm = new(_clientPostReadOnlyRespository, _mapper, _localizationService);
             await vm.HandleAsync(request, cancellationToken);
-            return Ok(vm);
+            //APIResponse apiResponse = new();
+            PaginationResponse<MajorBaseDTO> response = new();
+            if(vm.Success)
+            {
+                response = (PaginationResponse<MajorBaseDTO>)vm.Data;
+                return Ok(response);
+
+            }
+            return BadRequest(vm);
+            
         }
         [HttpPost]
         public async Task<IActionResult> CreateMajorRequest(InputMajorRequest request, CancellationToken cancellationToken)
@@ -67,11 +102,17 @@ namespace FPLSP_Tutorial.API.Controllers
             return Ok(vm);
         }
         [HttpGet("getPostTags")]
-        public async Task<IActionResult> GetPostTagsByPostId([FromQuery]PostIdRequestWithPagination request, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetPostTagsByPostId([FromQuery] PostIdRequestWithPagination request, CancellationToken cancellationToken)
         {
             PostTagViewModel vm = new(_clientPostReadOnlyRespository, _localizationService);
             await vm.HandleAsync(request, cancellationToken);
-            return Ok(vm);
+            PaginationResponse<TagBaseDTO> result = new();
+            if(vm.Success)
+            {
+                result = (PaginationResponse<TagBaseDTO>)vm.Data;
+                return Ok(result);
+            }
+            return BadRequest(vm);
         }
         [HttpGet("getMajorsByUserId")]
         public async Task<IActionResult> GetMajorsByUserId([FromQuery] GetMajorByUserIdWithPaginationRequest request, CancellationToken cancellationToken)
@@ -79,6 +120,46 @@ namespace FPLSP_Tutorial.API.Controllers
             MajorByUserIdViewModel vm = new(_clientPostReadOnlyRespository, _localizationService);
             await vm.HandleAsync(request, cancellationToken);
             return Ok(vm);
+        }
+        [HttpGet("getAllMajorsList")]
+        public async Task<IActionResult> GetMajorsList(CancellationToken cancellationToken)
+        {
+            GetAllMajorsListViewModel vm = new(_clientPostReadOnlyRespository, _localizationService);
+            await vm.HandleAsync(1, cancellationToken);
+            if(vm.Success)
+            {
+                List<MajorBaseDTO> list = new List<MajorBaseDTO>();
+                list = (List<MajorBaseDTO>)vm.Data;
+                return Ok(list);
+            }
+            return BadRequest(vm);
+        }
+        [HttpGet("getAllPostBySearch")]
+        public async Task<IActionResult> GetPostBySearchAsync([FromQuery] ClientPostSearchWithPaginationRequest request, CancellationToken cancellationToken)
+        {
+            GetPostSearchWithPaginationViewModel vm = new(_clientPostReadOnlyRespository, _localizationService);
+            await vm.HandleAsync(request, cancellationToken);
+            return Ok(vm);
+        }
+        [HttpGet("getAllTagListByPostId/{id}")]
+        public async Task<IActionResult> GetTagsListByPostId(Guid id, CancellationToken cancellationToken)
+        {
+            GetTagListByPostIdViewModel vm = new(_clientPostReadOnlyRespository, _localizationService);
+            await vm.HandleAsync(id, cancellationToken);
+            return Ok(vm);
+        }
+        [HttpGet("getMajor/{id}")]
+        public async Task<IActionResult> GetMajorById(Guid id, CancellationToken cancellationToken)
+        {
+            ClientPostMajorViewModel vm = new(_clientPostReadOnlyRespository, _localizationService);
+            await vm.HandleAsync(id, cancellationToken);
+            if(vm.Success)
+            {
+                MajorBaseDTO result = new();
+                result = (MajorBaseDTO)vm.Data;
+                return Ok(result);
+            }
+            return BadRequest(vm);
         }
     }
 }

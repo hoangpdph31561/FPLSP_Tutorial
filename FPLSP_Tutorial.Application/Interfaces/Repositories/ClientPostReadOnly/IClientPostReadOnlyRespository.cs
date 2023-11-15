@@ -20,6 +20,11 @@ namespace FPLSP_Tutorial.Application.Interfaces.Repositories.ClientPostReadOnly
         Task<RequestResult<PaginationResponse<PostBaseDTO?>>> GetChildPostsByPostIdAsync(PostIdRequestWithPagination request, CancellationToken cancellationToken);
         Task<RequestResult<PaginationResponse<TagBaseDTO>>> GetPostTagsByPostIdAsync(PostIdRequestWithPagination request, CancellationToken cancellationToken);
         Task<RequestResult<PaginationResponse<MajorBaseDTO>>> GetMajorByUserIdAsync(GetMajorByUserIdWithPaginationRequest request, CancellationToken cancellationToken);
+        Task<RequestResult<List<MajorBaseDTO>>> GetAllMajors(CancellationToken cancellationToken);
+        Task<RequestResult<List<PostMainDTO>>> GetAllPostByMajorId(Guid? id, CancellationToken cancellationToken);
+        Task<RequestResult<List<TagBaseDTO>>> GetAllTagsByPostId(Guid id, CancellationToken cancellationToken);
+        Task<RequestResult<PaginationResponse<PostMainDTO>>> GetAllPostsBySearchAsyn(ClientPostSearchWithPaginationRequest request,CancellationToken cancellationToken);
+        Task<RequestResult<MajorBaseDTO?>> GetMajorByIdAsync(Guid id, CancellationToken cancellationToken);
         #endregion
     }
 }

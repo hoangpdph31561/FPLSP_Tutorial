@@ -6,12 +6,12 @@ using FPLSP_Tutorial.Application.ViewModels;
 
 namespace FPLSP_Tutorial.Infrastructure.ViewModels.TagViewModels
 {
-    public class TagViewModelByIdMajor : ViewModelBase<TagViewModelRequest>
+    public class ListTagViewModel : ViewModelBase<TagViewModelRequest>
     {
         private readonly ITagReadOnlyRepository _tagReadOnlyRepository;
         private readonly ILocalizationService _localizationService;
 
-        public TagViewModelByIdMajor(ITagReadOnlyRepository tagReadOnlyRepository, ILocalizationService localizationService)
+        public ListTagViewModel(ITagReadOnlyRepository tagReadOnlyRepository, ILocalizationService localizationService)
         {
             _tagReadOnlyRepository = tagReadOnlyRepository;
             _localizationService = localizationService;
@@ -21,7 +21,7 @@ namespace FPLSP_Tutorial.Infrastructure.ViewModels.TagViewModels
         {
             try
             {
-                var result = await _tagReadOnlyRepository.GetTagByIdMajorAsync(request.IdMajor, cancellationToken);
+                var result = await _tagReadOnlyRepository.GetTagByIdMajorAsync(request.IdMajor, request.IdPost, cancellationToken);
 
                 Data = result.Data!;
                 Success = result.Success;

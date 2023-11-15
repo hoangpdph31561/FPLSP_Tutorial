@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace MajorService.Pagination
+﻿namespace FPLSP_Tutorial.WASM.Data.Pagination
 {
     public class PaginationResponse<TDataType>
     {

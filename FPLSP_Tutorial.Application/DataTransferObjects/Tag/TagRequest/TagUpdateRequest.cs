@@ -3,6 +3,7 @@
     public class TagUpdateRequest
     {
         public Guid Id { get; set; }
-        public string? Name { get; set; }
+        public Guid? MajorId { get; set; }
+        public string Name { get; set; } = string.Empty;
     }
 }

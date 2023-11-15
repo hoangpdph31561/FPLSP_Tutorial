@@ -29,7 +29,7 @@ namespace FPLSP_Tutorial.Infrastructure.ViewModels.MajorRequests
         {
             try
             {
-                var result = await _majorRequestReadOnlyRespository.GetMajorRequestWithPaginationByADeletedAsync(data, cancellationToken);
+                var result = await _majorRequestReadOnlyRespository.GetMajorRequestWithPaginationByNotDeletedAsync(data, cancellationToken);
                 Data = result.Data!;
                 Success = result.Success;
                 ErrorItems = result.Errors;

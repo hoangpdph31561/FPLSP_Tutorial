@@ -92,7 +92,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ClientPostReadOn
                     lstPostId.AddRange(post);
                 }
 
-                var test = await _readOnlyDbContext.PostEntities.AsNoTracking().Where(x => lstPostId.Contains(x.Id) && !x.Deleted).PaginateAsync<PostEntity, PostMainDTO>(request, _mapper, cancellationToken);
+                var test = await _readOnlyDbContext.PostEntities.AsNoTracking().Where(x => !x.Deleted && lstPostId.Contains(x.Id)  ).PaginateAsync<PostEntity, PostMainDTO>(request, _mapper, cancellationToken);
                 foreach (var entity in test.Data!)
                 {
                     var createdName = await _readOnlyDbContext.UserEntities.AsNoTracking().Where(x => x.Id == entity.CreatedBy).Select(x => x.Username).FirstOrDefaultAsync(cancellationToken);

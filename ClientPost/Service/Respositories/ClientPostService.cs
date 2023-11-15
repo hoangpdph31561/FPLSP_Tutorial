@@ -22,7 +22,7 @@ namespace ClientPost.Service.Respositories
 
         public async Task<PaginationResponse<PostBaseDTO>?> GetChildByPostId(ClientPostGetChildWithPaginationRequest request)
         {
-            string url = $"/api/ClientPosts/getMajor?Id={request.Id}PageNumber={request.PageNumber}&PageSize={request.PageSize}";
+            string url = $"/api/ClientPosts/getChildPost?Id={request.Id}&PageNumber={request.PageNumber}&PageSize={request.PageSize}";
             var result = await _httpClient.GetFromJsonAsync<PaginationResponse<PostBaseDTO>>(url);
             return result;
         }

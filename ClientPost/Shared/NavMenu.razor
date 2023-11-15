@@ -5,31 +5,7 @@
     <MudNavLink Href="mainpage" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Pages">Trang chủ</MudNavLink>
     <MudNavLink Href="systempost" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Pages">Bài viết hệ thống</MudNavLink>
     
-    <MudNavGroup Title="Bài viết chuyên ngành" Expanded="true">
-        @if(lstMajor != null)
-        {
-            @foreach (var item in lstMajor)
-            {
-                <MudNavLink Href="@($"/postbymajor/{item.Id}")">@item.Name</MudNavLink>
-            }
-        }
-        
-    </MudNavGroup>
 </MudNavMenu>
 
 @code {
-    [Inject]
-    public IClientPostService ClientPostService { get; set; }
-    private PaginationResponse<MajorBaseDTO> majorPagination;
-    private List<MajorBaseDTO> lstMajor;
-
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadData();
-    }
-    private async Task LoadData()
-    {
-        majorPagination = await ClientPostService.GetMajorList(new ClientPostMajorRequestWithPagination { PageSize = int.MaxValue - 1 });
-        lstMajor = majorPagination.Data.ToList();
-    }
 }

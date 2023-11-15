@@ -17,9 +17,9 @@
                     <MudTd>@context.Status</MudTd>
                 </RowTemplate>
             </MudTable>
-
+            <CustomePagination Class="my-1" HasNext="@result.HasNext" OnPageChange="@(async e=> await  OnPaginationButtonClick(e))" CurrentPageNumber="@result.PageNumber"></CustomePagination>
         }
-
+        
     </BodyContent>
 </MenuMainPage>
 
@@ -52,5 +52,11 @@
         }
         
         StateHasChanged();
+    }
+    private async Task OnPaginationButtonClick(int pageNumber)
+    {
+        
+        request.PageNumber = pageNumber;
+        await LoadData();
     }
 }

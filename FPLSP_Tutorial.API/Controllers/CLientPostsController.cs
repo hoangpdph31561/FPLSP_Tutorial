@@ -33,12 +33,12 @@ namespace FPLSP_Tutorial.API.Controllers
         {
             PostParentViewModel vm = new(_clientPostReadOnlyRespository, _localizationService);
             await vm.HandleAsync(id, cancellationToken);
-            if(vm.Success)
+            if(vm.Success && vm.Data != null)
             {
                 PostBaseDTO result = (PostBaseDTO) vm.Data;
                 return Ok(result);
             }
-            return BadRequest(vm);
+            return Ok(vm);
         }
         [HttpGet("getChildPost")]
         public async Task<IActionResult> GetChildPosts([FromQuery] PostIdRequestWithPagination request, CancellationToken cancellationToken)

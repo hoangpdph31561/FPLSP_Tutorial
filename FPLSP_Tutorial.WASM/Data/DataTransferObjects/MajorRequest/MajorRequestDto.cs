@@ -1,13 +1,13 @@
-﻿using MajorService.Enum;
+﻿using FPLSP_Tutorial.WASM.Enum;
 
-namespace MajorService.Data.MajorRequest
+namespace FPLSP_Tutorial.WASM.Data.MajorRequest
 {
-    public class MajorRequestDto
+    public class MajorRequestDto  
     {
         public Guid Id { get; set; }
 
         public Guid MajorId { get; set; }
-        public string tenChuyenNganh { get; set; }
+        public string majorName { get; set; }
         public string email { get; set; }
         public bool IsManager { get; set; }
         public EntityStatus Status { get; set; } = EntityStatus.Active;

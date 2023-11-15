@@ -1,0 +1,39 @@
+﻿@page "/quanlybaiviet"
+
+<h3>PostServices</h3>
+
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">STT</th>
+            <th scope="col">Title</th>
+            <th scope="col">HasTag</th>
+            <th scope="col">Type</th>
+            <th scope="col">Tác vụ</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in _posts)
+        {
+            <tr>
+                <td>></td>
+                <td>@item.STT</td>
+                <td>@item.Title</td>
+                <td>
+                    @foreach (var x in item.tagDtos)
+                    {
+                        <em>@x.Name,  </em>
+                    }
+                </td>
+                <td>@item.Type</td>
+                <td>
+                    <button class="btn btn-primary"> Sửa </button>
+                    <button class="btn btn-primary"> Xóa </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,86 @@
+﻿@page "/postdetail/{id}"
+<PageTitle>Bài viết @result.Title</PageTitle>
+<MenuMainPage></MenuMainPage>
+@if(result == null)
+{
+    <MudText>Không có bài viết nào</MudText>
+}
+else
+{
+    <MudGrid Justify="Justify.SpaceBetween">
+        <MudItem>
+            <MudText Typo="Typo.h3">Bài viết @result.Title</MudText>
+        </MudItem>
+        <MudItem>
+            <MudText Align="Align.Center">Ngày tạo: @result.CreatedTime.ToString("dd/MM/yyyy")</MudText>
+        </MudItem>
+    </MudGrid>
+    <MudGrid Justify="Justify.SpaceBetween">
+        <MudItem>
+            <MudGrid Justify="Justify.FlexStart">
+                <MudItem>
+                    <MudText>Tags</MudText>
+                </MudItem>
+                @if(lstTags.Count == 0)
+                {
+                    <MudItem><MudText>Không có tag bài viết của bài viết này</MudText></MudItem>
+                }
+                @foreach (var item in lstTags)
+                {
+                    <MudItem><MudButton Color="Color.Info" Variant="Variant.Filled" DisableElevation="true" >@item.Name</MudButton></MudItem>
+                }
+            </MudGrid>
+        </MudItem>
+        <MudItem>
+            <MudText Align="Align.Center" Class="pa-2 ma-1 rounded-pill text-white mud-theme-tertiary" >@result.Status</MudText>
+        </MudItem>
+    </MudGrid>
+    <MudPaper Class="pa-3" Elevation="0">
+        <MudText Typo="Typo.h6">Người viết: @result.CreatedName</MudText>
+    </MudPaper>
+    
+    <MudPaper Class="pa-4">
+        <MudText>@result.Content</MudText>
+    </MudPaper>
+    <MudText >|Tham khảo</MudText>
+    <MudText><MudLink Href="@($"/postdetail/{parentPost.Id}")"  onclick="@(() => OnClick(parentPost.Id.ToString()))">@parentPost.Title</MudLink></MudText>
+    @if (lstChildPosts.Count > 0)
+    {
+        @foreach (var item in lstChildPosts)
+        {
+            <MudText><MudLink Href="@($"/postdetail/{item.Id}")" onclick="@(() => OnClick(item.Id.ToString()))">@item.Id.ToString()</MudLink></MudText>
+        }
+    }
+}
+@code {
+    [Parameter]
+    public string Id { get; set; } = string.Empty;
+    [Inject]
+    public IClientPostService ClientPostService { get; set; }
+    [Inject]
+    public NavigationManager NavigationManager { get; set; }
+    PostDetailDTO result = new();
+    PaginationResponse<TagBaseDTO> tagsResult { get; set; } = new();
+    List<TagBaseDTO> lstTags { get; set; } = new();
+    ClientPostGetTagsByPostIdWithPaginationRequest request = new();
+    PostBaseDTO parentPost = new();
+    PaginationResponse<PostBaseDTO> childPosts = new();
+    List<PostBaseDTO> lstChildPosts = new();
+    ClientPostGetChildWithPaginationRequest requestChild = new();
+    protected override async Task OnInitializedAsync()
+    {
+        request.Id = Id;
+        requestChild.Id = Id;
+        result = await ClientPostService.GetPostDetailById(Id);
+        tagsResult = await ClientPostService.GetTagsByPostId(request);
+        lstTags = tagsResult.Data.ToList();
+        parentPost = await ClientPostService.GetParentPostById(Id);
+        childPosts = await ClientPostService.GetChildByPostId(requestChild);
+        lstChildPosts = childPosts.Data.ToList();
+    }
+    private async Task OnClick(string id)
+    {
+        result = await ClientPostService.GetPostDetailById(id);
+        StateHasChanged();
+    }
+}

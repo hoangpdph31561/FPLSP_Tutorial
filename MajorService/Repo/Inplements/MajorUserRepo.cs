@@ -1,7 +1,9 @@
-﻿using MajorService.Data.UserMajor;
+﻿using MajorService.Data.DataTransferObjects.UserMajor.Request;
+using MajorService.Data.Pagination;
+using MajorService.Data.UserMajor;
 using MajorService.Data.UserMajor.Request;
-using MajorService.Pagination;
 using MajorService.Repo.Interfaces;
+using MajorService.ViewModel;
 using System.Net.Http.Json;
 
 namespace MajorService.Repo.Inplements
@@ -24,10 +26,21 @@ namespace MajorService.Repo.Inplements
             }
             return false;
         }
-
         public async Task<PaginationResponse<MajorUserDto>> GetListMajorUser()
         {
             var result = await _httpClient.GetFromJsonAsync<PaginationResponse<MajorUserDto>>($"/api/MajorUsers");
+            if (result == null)
+            {
+                return new();
+            }
+            return result;
+        }
+
+        public async Task<PaginationResponse<MajorUserDto>> GetListMajorUserBySearch(ViewMajorUserBySearchRequest request)
+        {
+            // /api/MajorUsers/GetBySearch?Email=a
+
+            var result = await _httpClient.GetFromJsonAsync<PaginationResponse<MajorUserDto>>($"/api/MajorUsers/GetBySearch?Email={request.Email}");
             if (result == null)
             {
                 return new();

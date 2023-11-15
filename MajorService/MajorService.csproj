@@ -7,9 +7,25 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Pages\CustomListDisplay.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.12" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.12" PrivateAssets="all" />
     <PackageReference Include="MudBlazor" Version="6.11.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Pages\CustomListDisplay.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Pages\CustomListDisplay.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Pages\CustomListDisplay.razor" />
   </ItemGroup>
 
 </Project>

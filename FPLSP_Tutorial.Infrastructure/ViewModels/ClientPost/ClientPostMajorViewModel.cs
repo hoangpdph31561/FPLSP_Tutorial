@@ -2,11 +2,6 @@
 using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Application.ValueObjects.Common;
 using FPLSP_Tutorial.Application.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FPLSP_Tutorial.Infrastructure.ViewModels.ClientPost
 {
@@ -16,7 +11,7 @@ namespace FPLSP_Tutorial.Infrastructure.ViewModels.ClientPost
         private readonly ILocalizationService _localizationService;
         public ClientPostMajorViewModel(IClientPostReadOnlyRespository clientPostReadOnly, ILocalizationService localizationService)
         {
-            _clientPostReadOnly = clientPostReadOnly;   
+            _clientPostReadOnly = clientPostReadOnly;
             _localizationService = localizationService;
         }
         public async override Task HandleAsync(Guid id, CancellationToken cancellationToken)

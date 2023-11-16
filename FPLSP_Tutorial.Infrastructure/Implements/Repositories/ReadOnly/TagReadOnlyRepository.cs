@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using BaseSolution.Infrastructure.Extensions;
 using FPLSP_Tutorial.Application.DataTransferObjects.Tag;
 using FPLSP_Tutorial.Application.DataTransferObjects.Tag.TagRequest;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly;
@@ -20,7 +19,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
     {
         private readonly DbSet<TagEntity> _tagEntities;
         private readonly DbSet<PostTagEntity> _postTagEntities;
-		private readonly IMapper _mapper;
+        private readonly IMapper _mapper;
         private readonly ILocalizationService _localizationService;
 
         public TagReadOnlyRepository(AppReadOnlyDbContext dbContext, IMapper mapper, ILocalizationService localizationService)
@@ -28,9 +27,9 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
             _tagEntities = dbContext.Set<TagEntity>();
             _mapper = mapper;
             _localizationService = localizationService;
-			_postTagEntities = dbContext.Set<PostTagEntity>();
+            _postTagEntities = dbContext.Set<PostTagEntity>();
 
-		}
+        }
 
         public async Task<RequestResult<TagDto?>> GetTagByIdAsync(Guid idTag, CancellationToken cancellationToken)
         {
@@ -54,13 +53,13 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
             }
         }
 
-        public async Task<RequestResult<List<TagDto>?>> GetTagByIdMajorAsync(Guid? MajorId, Guid? PostId , CancellationToken cancellationToken)
+        public async Task<RequestResult<List<TagDto>?>> GetTagByIdMajorAsync(Guid? MajorId, Guid? PostId, CancellationToken cancellationToken)
         {
             try
             {
-                var TagIds = await _postTagEntities.Where(c => c.PostId == PostId && !c.Deleted).Select(c=>c.TagId).ToListAsync();
+                var TagIds = await _postTagEntities.Where(c => c.PostId == PostId && !c.Deleted).Select(c => c.TagId).ToListAsync();
 
-                var tagDtos = await _tagEntities.Where(c=> TagIds.Contains(c.Id)).ProjectTo<TagDto>(_mapper.ConfigurationProvider)
+                var tagDtos = await _tagEntities.Where(c => TagIds.Contains(c.Id)).ProjectTo<TagDto>(_mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken);
 
                 if (MajorId != null)

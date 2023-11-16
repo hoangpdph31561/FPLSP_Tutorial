@@ -1,9 +1,4 @@
 ﻿using FPLSP_Tutorial.Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FPLSP_Tutorial.Application.DataTransferObjects.ClientPost
 {
@@ -15,5 +10,7 @@ namespace FPLSP_Tutorial.Application.DataTransferObjects.ClientPost
         public Guid? CreatedBy { get; set; }
         //Tên người tạo
         public string CreatedName { get; set; } = string.Empty;
+        //Lấy ra 300 ký tự đầu tiên của bài viết
+        public string ContentShortened { get; set; } = string.Empty;
     }
 }

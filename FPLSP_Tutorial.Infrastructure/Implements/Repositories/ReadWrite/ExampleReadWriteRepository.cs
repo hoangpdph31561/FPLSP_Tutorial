@@ -55,7 +55,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
                 example!.Deleted = true;
                 example.DeletedBy = request.DeletedBy;
                 example.DeletedTime = DateTimeOffset.UtcNow;
-                 example.Status = EntityStatus.Deleted; 
+                example.Status = EntityStatus.Deleted;
                 _dbContext.Examples.Update(example);
                 await _dbContext.SaveChangesAsync(cancellationToken);
 

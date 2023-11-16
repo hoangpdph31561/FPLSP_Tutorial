@@ -26,7 +26,7 @@
 
 @code {
     [Parameter]
-    public string Id { get; set; }
+    public string? Id { get; set; }
     [Inject]
     public IClientPostService ClientPostService { get; set; }
     private ClientPostGetByMajorIdWithPaginationRequest request { get; set; } = new();
@@ -39,6 +39,7 @@
     }
     private async Task LoadData()
     {
+
         request.MajorId = Id;
         result = await ClientPostService.GetPostsByMajorId(request);
         major = await ClientPostService.GetMajorsById(Id);

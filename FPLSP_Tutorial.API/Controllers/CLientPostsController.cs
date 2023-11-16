@@ -1,14 +1,11 @@
 ﻿using AutoMapper;
-using AutoMapper.Features;
 using FPLSP_Tutorial.Application.DataTransferObjects.ClientPost;
 using FPLSP_Tutorial.Application.DataTransferObjects.ClientPost.Request;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ClientPostReadOnly;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ClientPostReadWrite;
 using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Application.ValueObjects.Pagination;
-using FPLSP_Tutorial.Application.ValueObjects.Response;
 using FPLSP_Tutorial.Infrastructure.ViewModels.ClientPost;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FPLSP_Tutorial.API.Controllers
@@ -33,9 +30,9 @@ namespace FPLSP_Tutorial.API.Controllers
         {
             PostParentViewModel vm = new(_clientPostReadOnlyRespository, _localizationService);
             await vm.HandleAsync(id, cancellationToken);
-            if(vm.Success && vm.Data != null)
+            if (vm.Success && vm.Data != null)
             {
-                PostBaseDTO result = (PostBaseDTO) vm.Data;
+                PostBaseDTO result = (PostBaseDTO)vm.Data;
                 return Ok(result);
             }
             return Ok(vm);
@@ -58,9 +55,9 @@ namespace FPLSP_Tutorial.API.Controllers
             PostDetailViewModel vm = new(_clientPostReadOnlyRespository, _localizationService);
             await vm.HandleAsync(id, cancellationToken);
             PostDetailDTO result = new();
-            if(vm.Success)
+            if (vm.Success)
             {
-                result = (PostDetailDTO) vm.Data;
+                result = (PostDetailDTO)vm.Data;
                 return Ok(result);
             }
             return BadRequest(vm);
@@ -71,7 +68,7 @@ namespace FPLSP_Tutorial.API.Controllers
             PostMainViewModel vm = new(_clientPostReadOnlyRespository, _localizationService);
             await vm.HandleAsync(request, cancellationToken);
             PaginationResponse<PostMainDTO> response = new();
-            if(vm.Success)
+            if (vm.Success)
             {
                 response = (PaginationResponse<PostMainDTO>)vm.Data;
                 return Ok(response);
@@ -85,14 +82,14 @@ namespace FPLSP_Tutorial.API.Controllers
             await vm.HandleAsync(request, cancellationToken);
             //APIResponse apiResponse = new();
             PaginationResponse<MajorBaseDTO> response = new();
-            if(vm.Success)
+            if (vm.Success)
             {
                 response = (PaginationResponse<MajorBaseDTO>)vm.Data;
                 return Ok(response);
 
             }
             return BadRequest(vm);
-            
+
         }
         [HttpPost]
         public async Task<IActionResult> CreateMajorRequest(InputMajorRequest request, CancellationToken cancellationToken)
@@ -107,7 +104,7 @@ namespace FPLSP_Tutorial.API.Controllers
             PostTagViewModel vm = new(_clientPostReadOnlyRespository, _localizationService);
             await vm.HandleAsync(request, cancellationToken);
             PaginationResponse<TagBaseDTO> result = new();
-            if(vm.Success)
+            if (vm.Success)
             {
                 result = (PaginationResponse<TagBaseDTO>)vm.Data;
                 return Ok(result);
@@ -126,7 +123,7 @@ namespace FPLSP_Tutorial.API.Controllers
         {
             GetAllMajorsListViewModel vm = new(_clientPostReadOnlyRespository, _localizationService);
             await vm.HandleAsync(1, cancellationToken);
-            if(vm.Success)
+            if (vm.Success)
             {
                 List<MajorBaseDTO> list = new List<MajorBaseDTO>();
                 list = (List<MajorBaseDTO>)vm.Data;
@@ -153,7 +150,7 @@ namespace FPLSP_Tutorial.API.Controllers
         {
             ClientPostMajorViewModel vm = new(_clientPostReadOnlyRespository, _localizationService);
             await vm.HandleAsync(id, cancellationToken);
-            if(vm.Success)
+            if (vm.Success)
             {
                 MajorBaseDTO result = new();
                 result = (MajorBaseDTO)vm.Data;

@@ -1,15 +1,10 @@
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
-
-using FPLSP_Tutorial.Application.ValueObjects.Common;
 using FPLSP_Tutorial.Application.ValueObjects.Pagination;
 using FPLSP_Tutorial.Domain.Entities.Base;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
 
-using static FPLSP_Tutorial.Application.ValueObjects.Common.QueryConstant;
-
-namespace BaseSolution.Infrastructure.Extensions;
+namespace FPLSP_Tutorial.Infrastructure.Extensions;
 
 public static class QueryableExtensions
 {
@@ -64,5 +59,5 @@ public static class QueryableExtensions
     }
 
 
-   
+
 }

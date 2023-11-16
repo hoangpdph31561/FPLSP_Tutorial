@@ -11,5 +11,7 @@ namespace ClientPost.Data.DataTransferObject
         public bool ShowDetail { get; set; } = false;
         //Tên người tạo
         public string CreatedName { get; set; } = string.Empty;
+        //tóm tắt bài viết
+        public string ContentShortened { get; set; } = string.Empty;
     }
 }

@@ -1,8 +1,9 @@
 ﻿using MajorService.Data.MajorRequest;
 using MajorService.Data.MajorRequest.Request;
+using MajorService.Data.Pagination;
 using MajorService.Data.UserMajor;
-using MajorService.Pagination;
 using MajorService.Repo.Interfaces;
+using MajorService.ViewModel;
 using System.Net.Http;
 using System.Net.Http.Json;
 
@@ -17,8 +18,8 @@ namespace MajorService.Repo.Inplements
             _httpClient = httpClient;
         }
         public async Task<PaginationResponse<MajorRequestDto>> GetListMajorRequest()
-        { 
-            var result = await _httpClient.GetFromJsonAsync<PaginationResponse<MajorRequestDto>>($"/api/MajorRequests/majorRequestDeleted");
+        {
+            var result = await _httpClient.GetFromJsonAsync<PaginationResponse<MajorRequestDto>>($"/api/MajorRequests/majorRequestNotDeleted");
             if (result == null)
             {
                 return new();

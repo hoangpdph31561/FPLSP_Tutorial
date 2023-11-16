@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
+using FPLSP_Tutorial.Application.DataTransferObjects.MajorRequest;
 using FPLSP_Tutorial.Application.DataTransferObjects.MajorRequest.Request;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadWrite;
 using FPLSP_Tutorial.Application.Interfaces.Services;
+using FPLSP_Tutorial.Application.ValueObjects.Pagination;
 using FPLSP_Tutorial.Domain.Enums;
 using FPLSP_Tutorial.Infrastructure.ViewModels.MajorRequests;
 using Microsoft.AspNetCore.Mvc;
@@ -34,9 +36,8 @@ namespace FPLSP_Tutorial.API.Controllers
 
             await vm.HandleAsync(request, cancellationToken);
 
-            return Ok(vm.Data);
+            return Ok(vm);
         }
-
         //[HttpGet("{id}")]
         //public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
         //{
@@ -47,13 +48,18 @@ namespace FPLSP_Tutorial.API.Controllers
         //    return Ok(vm);
         //}
         [HttpGet("majorRequestNotDeleted")] // lấy ra cá majorRequest chưa bị xóa
-        public async Task<IActionResult> GetMajorRequest([FromQuery] ViewMajorRequestWithPaginationRequest status, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetMajorRequest([FromQuery] ViewMajorRequestWithPaginationRequest request, CancellationToken cancellationToken)
         {
-            MajorRequestStatusViewModels vm = new(_majorRequestReadOnlyRespository, _localizationService);
+            MajorRequestListWithPaginationNotDeletedViewModels vm = new(_majorRequestReadOnlyRespository, _localizationService);
 
-            await vm.HandleAsync(status, cancellationToken);
-
-            return Ok(vm);
+            await vm.HandleAsync(request, cancellationToken);
+            if (vm.Success)
+            {
+                PaginationResponse<MajorRequestDto> paginationResponse = new PaginationResponse<MajorRequestDto>();
+                paginationResponse = (PaginationResponse<MajorRequestDto>)vm.Data;
+                return Ok(paginationResponse);
+            }
+            return BadRequest();
         }
 
         [HttpPost]

@@ -1,0 +1,119 @@
+﻿@page "/postdetail/{id}"
+<PageTitle>Bài viết @result.Title</PageTitle>
+<MenuMainPage IsLoading="@(result == null)" Label="@($"Bài viết {result!.Title}")">
+    <HeaderContent><MudText Align="Align.Center">Ngày tạo: @result.CreatedTime.ToString("dd/MM/yyyy")</MudText></HeaderContent>
+    <BodyContent>
+        <MudPaper Elevation="0">
+            @if(result == null)
+            {
+                <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="m-3" />
+            }
+            else
+            {
+                <MudGrid Justify="Justify.SpaceBetween">
+                    <MudItem>
+                        <MudGrid Justify="Justify.FlexStart">
+                            <MudItem>
+                                <MudText>Tags</MudText>
+                            </MudItem>
+                            @if (lstTags.Count == 0)
+                            {
+                                <MudItem><MudText>Không có tag bài viết của bài viết này</MudText></MudItem>
+                            }
+                            @foreach (var item in lstTags)
+                            {
+                                <MudItem><MudChip Color="Color.Info" Variant="Variant.Filled" DisableElevation="true">@item.Name</MudChip></MudItem>
+                            }
+                        </MudGrid>
+                    </MudItem>
+                    <MudItem>
+                        <MudText Align="Align.Center" Class="pa-2 ma-1 rounded-pill text-white mud-theme-tertiary">@result.Status</MudText>
+                    </MudItem>
+                </MudGrid>
+                <MudPaper Class="pa-3" Elevation="0">
+                    <MudText Typo="Typo.h6">Người viết: @result.CreatedName</MudText>
+                </MudPaper>
+
+                <MudPaper Class="pa-4">
+                    <MudText>@result.Content</MudText>
+                </MudPaper>
+                <MudText Typo="Typo.h5" Class="my-4">|Tham khảo</MudText>
+
+                @if (lstSuggestPost.Count > 0)
+                {
+                    <MudTable Items="lstSuggestPost">
+                        <HeaderContent>
+                            <MudTh>Tên bài viết</MudTh>
+                            <MudTh>Xem chi tiết</MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd><MudText>@context.Title</MudText></MudTd>
+                            <MudTd><MudButton OnClick="@(() => OnClick(context.Id.ToString()))">Xem chi tiết tại đây</MudButton></MudTd>
+                        </RowTemplate>
+                    </MudTable>
+                }
+            }
+        </MudPaper>
+    </BodyContent>
+</MenuMainPage>
+
+
+    
+    
+
+@code {
+    [Parameter]
+    public string Id { get; set; } = string.Empty; 
+    [Inject]
+    public IClientPostService ClientPostService { get; set; }
+    [Inject]
+    public NavigationManager NavigationManager { get; set; }
+    PostDetailDTO result = new();
+    PaginationResponse<TagBaseDTO> tagsResult { get; set; } = new();
+    List<TagBaseDTO> lstTags { get; set; } = new();
+    ClientPostGetTagsByPostIdWithPaginationRequest request = new();
+    PostBaseDTO parentPost = new();
+    PaginationResponse<PostBaseDTO> childPosts = new();
+    List<PostBaseDTO> lstChildPosts = new();
+    ClientPostGetChildWithPaginationRequest requestChild = new();
+    private List<PostBaseDTO> lstSuggestPost = new();
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+    private async Task LoadData()
+    {
+        request.Id = Id;
+        requestChild.Id = Id;
+        result = await ClientPostService.GetPostDetailById(Id);
+        tagsResult = await ClientPostService.GetTagsByPostId(request);
+        lstTags = tagsResult.Data.ToList();
+        parentPost = await ClientPostService.GetParentPostById(Id);
+        if (parentPost != null && parentPost.Id != Guid.Empty)
+        {
+            lstSuggestPost.Add(parentPost);
+        }
+        childPosts = await ClientPostService.GetChildByPostId(requestChild);
+        lstChildPosts = childPosts.Data.ToList();
+        if (childPosts != null)
+        {
+            lstSuggestPost.AddRange(childPosts.Data.ToList());
+        }
+    }
+    private async Task OnClick(string id)
+    {
+        if(Id != id)
+        {
+            NavigationManager.NavigateTo($"/postdetail/{id}");
+            Id = id;
+            lstSuggestPost.Clear();
+            await LoadData();
+            StateHasChanged();
+        }
+        else
+        {
+            await LoadData();
+        }
+
+    }
+}

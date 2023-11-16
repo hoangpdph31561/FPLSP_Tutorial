@@ -11,7 +11,8 @@ namespace FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly
         Task<RequestResult<MajorRequestDto?>> GetMajorRequestByIdAsync(Guid idMajorRequest, CancellationToken cancellationToken);
         Task<RequestResult<PaginationResponse<MajorRequestDto>>> GetMajorRequestWithPaginationByAdminAsync(
             ViewMajorRequestWithPaginationRequest request, CancellationToken cancellationToken); 
-        Task<RequestResult<PaginationResponse<MajorRequestDto>>> GetMajorRequestWithPaginationByADeletedAsync(
+        Task<RequestResult<PaginationResponse<MajorRequestDto>>> GetMajorRequestWithPaginationByNotDeletedAsync(
             ViewMajorRequestWithPaginationRequest request, CancellationToken cancellationToken);
+
     }
 }

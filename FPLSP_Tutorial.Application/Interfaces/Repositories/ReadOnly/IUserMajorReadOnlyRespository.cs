@@ -15,6 +15,7 @@ namespace FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly
     public interface IUserMajorReadOnlyRespository
     {
         Task<RequestResult<PaginationResponse<MajorUserDto>>> GetMajorUserWithPaginationByAdminAsync(
-          ViewMajorUserWithPaginationRequest request, CancellationToken cancellationToken);
+          ViewMajorUserWithPaginationRequest request, CancellationToken cancellationToken); 
+       
     }
 }

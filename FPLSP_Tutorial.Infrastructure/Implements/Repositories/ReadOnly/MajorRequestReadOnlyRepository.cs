@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using BaseSolution.Infrastructure.Extensions;
-using FPLSP_Tutorial.Application.DataTransferObjects.Major;
 using FPLSP_Tutorial.Application.DataTransferObjects.MajorRequest;
 using FPLSP_Tutorial.Application.DataTransferObjects.MajorRequest.Request;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly;
@@ -12,9 +11,7 @@ using FPLSP_Tutorial.Application.ValueObjects.Response;
 using FPLSP_Tutorial.Domain.Entities;
 using FPLSP_Tutorial.Domain.Enums;
 using FPLSP_Tutorial.Infrastructure.Database.AppDbContext;
-using FPLSP_Tutorial.Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
-using static FPLSP_Tutorial.Application.ValueObjects.Common.QueryConstant;
 
 namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
 {
@@ -52,48 +49,22 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
             }
         }
 
-        public async Task<RequestResult<PaginationResponse<MajorRequestDto>>> GetMajorRequestWithPaginationByADeletedAsync(ViewMajorRequestWithPaginationRequest request, CancellationToken cancellationToken)
+        public async Task<RequestResult<PaginationResponse<MajorRequestDto>>> GetMajorRequestWithPaginationByNotDeletedAsync(ViewMajorRequestWithPaginationRequest request, CancellationToken cancellationToken)
         {
             try
             {
-                request.SearchByFields = new List<SearchModel>()
+                var query = _dbContext.MajorRequestEntities.AsNoTracking().Where(x => x.Deleted == false && x.Status != EntityStatus.Deleted).ProjectTo<MajorRequestDto>(_mapper.ConfigurationProvider);
+                if (!string.IsNullOrWhiteSpace(request.Email))
                 {
-                    new()
-                    {
-                        SearchFieldName = nameof(MajorRequestEntity.CreatedBy),
-                        SearchValue = "6D795437-8325-42AC-C661-08DBDA231D0C",
-                        MatchType = MatchTypes.Equal
-                    }
-                } ;
-
-                // Lấy được result == MajorRequest
-                var result = await _dbContext.MajorRequestEntities.AsNoTracking().Where(x => x.Deleted == false && x.Status != EntityStatus.Deleted)
-
-                    .PaginateAsync<MajorRequestEntity, MajorRequestDto>(request, _mapper, cancellationToken);
-
-                // lấy ra List data majorRequest
-                List<MajorRequestDto> majorRequest = new List<MajorRequestDto>();
-                if (result != null)
-                {
-                    majorRequest = (List<MajorRequestDto>)result.Data;
-
-                    // từ líst data majorRequest => lấy ra Createby = id User => lấy ra Email
-                    foreach (var item in majorRequest)
-                    {
-                        UserEntity userEntity = _dbContext.UserEntities.AsNoTracking().Where(x => x.Id == item.CreatedBy).FirstOrDefault();
-                        if (userEntity != null)
-                        {
-                            item.Email = userEntity.Email;
-                        }
-                    }
-                  
+                    query = query.Where(x => x.Email.ToLower().Contains(request.Email));
                 }
+                var result = await query.PaginateAsync(request, cancellationToken);
                 return RequestResult<PaginationResponse<MajorRequestDto>>.Succeed(new PaginationResponse<MajorRequestDto>()
                 {
                     PageNumber = request.PageNumber,
                     PageSize = request.PageSize,
                     HasNext = result.HasNext,
-                    Data =majorRequest
+                    Data = result.Data,
                 });
             }
             catch (Exception e)
@@ -108,12 +79,10 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
                 });
             }
         }
-
         public async Task<RequestResult<PaginationResponse<MajorRequestDto>>> GetMajorRequestWithPaginationByAdminAsync(ViewMajorRequestWithPaginationRequest request, CancellationToken cancellationToken)
         {
             try
             {
-
                 IQueryable<MajorRequestEntity> queryable = _dbContext.MajorRequestEntities.AsNoTracking().AsQueryable();
                 var result = await _dbContext.MajorRequestEntities.AsNoTracking()
                     .PaginateAsync<MajorRequestEntity, MajorRequestDto>(request, _mapper, cancellationToken);
@@ -138,5 +107,6 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
                 });
             }
         }
+
     }
 }

@@ -1,52 +1,61 @@
 ﻿@page "/majorService"
 @using MajorService.Common;
+@using MajorService.Data.DataTransferObjects.UserMajor.Request;
 @using MajorService.Data.MajorRequest;
 @using MajorService.Data.MajorRequest.Request;
+@using MajorService.Data.Pagination;
 @using MajorService.Data.UserMajor;
 @using MajorService.Data.UserMajor.Request;
 @using MajorService.Enum;
-@using MajorService.Pagination;
 @using MajorService.Repo.Inplements;
 @using MajorService.Repo.Interfaces;
 @inject IDialogService _diagService;
 @inject ISnackbar _mudSnackbar;
 
 <MudTabs>
-      <MudTabPanel Text="Danh Sách giảng viên">
-    <MudPaper Class="p-2" Elevation="0">
-    <div class="d-flex justify-items-center">
-    <div class="mr-auto">
-    </div>
-     <MudTextField @bind-Value="Search" Label="Tìm kiếm giảng viên" Variant="Variant.Outlined" Style="margin-right:5px" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" />
-        <AdditionalSearchBarColumn>
-        <MudSelect Variant="Variant.Outlined" Class="custom-list-display-border-input" Style="background-color: white;" AnchorOrigin="Origin.BottomCenter" Label="Chuyên ngành" @bind-Value="tenChuyenNganh">
-             
-        </MudSelect>
-    </AdditionalSearchBarColumn>
-    </div>
-    </MudPaper>
-        <MudTable Items="@lstMajorUser">
-    <HeaderContent>
-    <MudTh>Email</MudTh>
-    <MudTh>Chức vụ</MudTh>
-    <MudTh>Chuyên ngành</MudTh>
-    <MudTh>Trạng thái</MudTh>
-    </HeaderContent>
-    <RowTemplate>
-    <MudTd>@context.email</MudTd>
-    <MudTd>@context.RoleCodes</MudTd>
-    <MudTd>@context.TenChuyenNganh</MudTd>
-    <MudTd>@context.Status</MudTd>
-    <MudTd>
-          <div class="d-flex" style="margin-top:10px">
+    <CustomListDisplay IsLoading="@(lstMajorUser == null)" Label="Danh sách giảng viên" OnSearch="@OnSearch">
+
+    <MudTabPanel Text="Danh Sách giảng viên">
+        <MudPaper Class="p-2" Elevation="0">
+            <div class="d-flex justify-items-center">
+                <div class="mr-auto">
+                </div>
+                    <AdditionalSearchBarColumn>
+                        <MudSelect Variant="Variant.Outlined" Class="custom-list-display-border-input" Style="background-color: white;" AnchorOrigin="Origin.BottomCenter" Label="Chuyên ngành" @bind-Value="tenChuyenNganh">
+                            @*  @foreach (var item in lstMajorUser)
+                            {
+                            <MudSelectItem Value="@(item.Id.ToString())">@item.TenChuyenNganh</MudSelectItem>
+                            } *@
+                        </MudSelect>
+                    </AdditionalSearchBarColumn>
             </div>
-    </MudTd>
-    </RowTemplate>
-    </MudTable>
+        </MudPaper>
+        <MudTable Items="@lstMajorUser">
+            <HeaderContent>
+                <MudTh>Email</MudTh>
+                <MudTh>Chức vụ</MudTh>
+                <MudTh>Chuyên ngành</MudTh>
+                <MudTh>Trạng thái</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd>@context.email</MudTd>
+
+                <MudTd>@context.RoleCodes</MudTd>
+                <MudTd>@context.TenChuyenNganh</MudTd>
+                <MudTd>@context.Status</MudTd>
+                <MudTd>
+                    <div class="d-flex" style="margin-top:10px">
+                    </div>
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
     </MudTabPanel>
+    </CustomListDisplay>
+    @*  View danh sách giảng viên chờ duyệt  *@
+
     <MudTabPanel Text="Danh Sách giảng viên chờ duyệt">
         <MudTextField @bind-Value="Search" Label="Tìm kiếm giảng viên" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" />
-        <MudTable Items="@MajorRequest">
+        <MudTable Items="@lstMajorRequest">
             <HeaderContent>
                 <MudTh>Email</MudTh>
                 <MudTh>Chuyên ngành</MudTh>
@@ -54,7 +63,7 @@
             </HeaderContent>
             <RowTemplate>
                 <MudTd>@context.email</MudTd>
-                <MudTd>@context.tenChuyenNganh</MudTd>
+                <MudTd>@context.majorName</MudTd>
                 <MudTd>@context.Status</MudTd>
                 <MudTd>
                     <div class="d-flex" style="margin-top:10px">
@@ -66,31 +75,50 @@
         </MudTable>
     </MudTabPanel>
 </MudTabs>
+
 @code {
     [Inject] private IMajorUserRepo majorUserRepo { get; set; }
-    List<MajorUserDto> lstMajorUser ;
+    List<MajorUserDto> lstMajorUser;
+    List<MajorUserDto> lstMajorUserSearch;
     [Inject] private IMajorRequestRepo majorRequestRepo { get; set; }
-    List<MajorRequestDto> MajorRequest;
-
-    // khai báo 
+    List<MajorRequestDto> lstMajorRequest { get; set; }
+    // khai báo
     private string tenChuyenNganh = string.Empty;
+
+    public MajorServices()
+    {
+    }
 
     protected override async Task OnInitializedAsync()
     {
-        LoadDataMajorUser();
-        LoadDataMajorRequest();
+        try
+        {
+            LoadDataMajorUser();
+            LoadDataMajorRequest();
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
 
     }
     private async Task LoadDataMajorRequest()
     {
         var paginationMajorRequest = await majorRequestRepo.GetListMajorRequest();
-        MajorRequest = paginationMajorRequest.Data.ToList();
+        // MajorRequest = (PaginationResponse<MajorRequestDto>)paginationMajorRequest;
+        lstMajorRequest = paginationMajorRequest.Data.ToList();
     }
     private async Task LoadDataMajorUser()
     {
         var paginationMajorUser = await majorUserRepo.GetListMajorUser();
+        // MajorUser = paginationMajorUser;
         lstMajorUser = paginationMajorUser.Data.ToList();
+    }
 
+    private async Task LoadDataMajorUserSearch(ViewMajorUserBySearchRequest request)
+    {
+        var paginationMajorUserSearch = await majorUserRepo.GetListMajorUserBySearch(request);
+        lstMajorUserSearch = paginationMajorUserSearch.Data.ToList();
     }
 
     private async Task OnDelete(Guid id)
@@ -112,7 +140,7 @@
             await LoadDataMajorRequest();
         }
     }
-    private async Task OnAdd(Guid id, Guid MajorID, Guid? UserId, EntityStatus status )
+    private async Task OnAdd(Guid id, Guid MajorID, Guid? UserId, EntityStatus status)
     {
         var requestDelete = new MajorRequestDeleteRequest
             {
@@ -133,9 +161,9 @@
                   cancelText: "Hủy"
               );
         if (confirm == true)
-        { 
+        {
             var createConfirm = await majorUserRepo.CreateMajorUser(requestCreateUser);
-            if(!createConfirm)
+            if (!createConfirm)
             {
                 var messageErro = await _diagService.ShowMessageBox
              (
@@ -155,11 +183,20 @@
                 await LoadDataMajorUser();
 
             }
-         
+
         }
+    }
+    public string Search { get; set; }
+    private async Task OnSearch(string? searchString)
+    {
+        var majorUserSearch = new ViewMajorUserBySearchRequest()
+            {
+                Email = searchString,
+            };
+        LoadDataMajorUserSearch(majorUserSearch);
+
     }
 
 
-    public string Search { get; set; }
 
 }

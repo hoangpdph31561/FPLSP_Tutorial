@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
-using Azure.Core;
 using FPLSP_Tutorial.Application.DataTransferObjects.MajorRequest;
 using FPLSP_Tutorial.Application.DataTransferObjects.MajorRequest.Request;
-using FPLSP_Tutorial.Application.DataTransferObjects.MajorUser;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadWrite;
 using FPLSP_Tutorial.Application.Interfaces.Services;
@@ -40,49 +38,29 @@ namespace FPLSP_Tutorial.API.Controllers
 
             return Ok(vm);
         }
+        //[HttpGet("{id}")]
+        //public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
+        //{
+        //    MajorRequestViewModels vm = new(_majorRequestReadOnlyRespository, _localizationService);
 
-        [HttpGet("get/{id}")]
-        public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
-        {
-            MajorRequestViewModels vm = new(_majorRequestReadOnlyRespository, _localizationService);
+        //    await vm.HandleAsync(id, cancellationToken);
 
-            await vm.HandleAsync(id, cancellationToken);
-
-            return Ok(vm);
-        }
+        //    return Ok(vm);
+        //}
         [HttpGet("majorRequestNotDeleted")] // lấy ra cá majorRequest chưa bị xóa
-        public async Task<IActionResult> GetMajor([FromQuery] ViewMajorRequestWithPaginationRequest status, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetMajorRequest([FromQuery] ViewMajorRequestWithPaginationRequest request, CancellationToken cancellationToken)
         {
-            MajorRequestStatusViewModels vm = new(_majorRequestReadOnlyRespository, _localizationService);
-            await vm.HandleAsync(status, cancellationToken);
+            MajorRequestListWithPaginationNotDeletedViewModels vm = new(_majorRequestReadOnlyRespository, _localizationService);
 
+            await vm.HandleAsync(request, cancellationToken);
             if (vm.Success)
             {
                 PaginationResponse<MajorRequestDto> paginationResponse = new PaginationResponse<MajorRequestDto>();
                 paginationResponse = (PaginationResponse<MajorRequestDto>)vm.Data;
                 return Ok(paginationResponse);
             }
-            return BadRequest(vm);
+            return BadRequest();
         }
-
-          [HttpGet("GetMajorRequest/searchEmail")] 
-        public async Task<IActionResult> GetMajorRequest([FromQuery] ViewMajorRequestSearchWithPaginationRequest searchEmail, CancellationToken cancellationToken)
-        {
-            MajorRequestBySearchEmailViewModel vm = new(_majorRequestReadOnlyRespository, _localizationService);
-            await vm.HandleAsync(searchEmail, cancellationToken);
-
-            return Ok(vm);
-            //if (vm.Success)
-            //{
-            //    PaginationResponse<MajorRequestDto> paginationResponse = new PaginationResponse<MajorRequestDto>();
-            //    paginationResponse = (PaginationResponse<MajorRequestDto>)vm.Data;
-            //    return Ok(paginationResponse);
-            //}
-            //return BadRequest(vm);
-        }
-          
-  
-
 
         [HttpPost]
         public async Task<IActionResult> Post([FromQuery] MajorRequestCreateRequest request, CancellationToken cancellationToken)
@@ -93,6 +71,7 @@ namespace FPLSP_Tutorial.API.Controllers
 
             return Ok(vm);
         }
+
 
         [HttpPut]
         public async Task<IActionResult> Put([FromQuery] MajorRequestUpdateRequest request, CancellationToken cancellationToken)

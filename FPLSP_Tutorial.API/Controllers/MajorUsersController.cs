@@ -1,15 +1,10 @@
 ﻿using AutoMapper;
-using FPLSP_Tutorial.Application.DataTransferObjects.MajorRequest.Request;
 using FPLSP_Tutorial.Application.DataTransferObjects.MajorUser;
 using FPLSP_Tutorial.Application.DataTransferObjects.MajorUser.Request;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadWrite;
 using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Application.ValueObjects.Pagination;
-using FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly;
-using FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite;
-using FPLSP_Tutorial.Infrastructure.ViewModels.MajorRequests;
-using FPLSP_Tutorial.Infrastructure.ViewModels.Posts;
 using FPLSP_Tutorial.Infrastructure.ViewModels.UserMajors;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,41 +25,10 @@ namespace FPLSP_Tutorial.API.Controllers
             _majorUserReadWriteRespository = majorUserReadWriteRespository;
             _userMajorReadOnlyRespository = userMajorReadOnlyRespository;
         }
-
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] ViewMajorUserWithPaginationRequest request, CancellationToken cancellationToken)
         {
             MajorUserListWithPaginationViewModel vm = new(_userMajorReadOnlyRespository, _localizationService);
-            vm = new(_userMajorReadOnlyRespository, _localizationService);
-
-            await vm.HandleAsync(request, cancellationToken);
-            if (vm.Success)
-            {
-                PaginationResponse<MajorUserDto> paginationResponse = new PaginationResponse<MajorUserDto>();
-                paginationResponse = (PaginationResponse<MajorUserDto>)vm.Data;
-                return Ok(paginationResponse);
-            }
-            return BadRequest();
-        }
-         [HttpGet("GetBySearch")]
-        public async Task<IActionResult> GetBySearch([FromQuery] ViewMajorUserBySearchRequest request, CancellationToken cancellationToken)
-        {
-            MajorUserSearchByEmailViewModel vm = new(_userMajorReadOnlyRespository, _localizationService);
-            vm = new(_userMajorReadOnlyRespository, _localizationService);
-
-            await vm.HandleAsync(request, cancellationToken);
-            if (vm.Success)
-            {
-                PaginationResponse<MajorUserDto> paginationResponse = new PaginationResponse<MajorUserDto>();
-                paginationResponse = (PaginationResponse<MajorUserDto>)vm.Data;
-                return Ok(paginationResponse);
-            }
-            return BadRequest();
-        }
-         [HttpGet("GetBySearchMajor")]
-        public async Task<IActionResult> GetBySearchMajor([FromQuery] ViewMajorUserBySearchRequest request, CancellationToken cancellationToken)
-        {
-            MajorUserBySearchMajorViewModel vm = new(_userMajorReadOnlyRespository, _localizationService);
             vm = new(_userMajorReadOnlyRespository, _localizationService);
 
             await vm.HandleAsync(request, cancellationToken);
@@ -90,7 +54,6 @@ namespace FPLSP_Tutorial.API.Controllers
             await vm.HandleAsync(request, cancellationToken);
             return Ok(vm);
         }
-
         [HttpPut]
         public async Task<IActionResult> Put([FromQuery] UpdateMajorUserRequest request, CancellationToken cancellationToken)
         {

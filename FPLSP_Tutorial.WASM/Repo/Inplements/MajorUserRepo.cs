@@ -3,7 +3,6 @@ using FPLSP_Tutorial.WASM.Data.Pagination;
 using FPLSP_Tutorial.WASM.Data.UserMajor;
 using FPLSP_Tutorial.WASM.Data.UserMajor.Request;
 using FPLSP_Tutorial.WASM.Repo.Interfaces;
-using FPLSP_Tutorial.WASM.ViewModel;
 using System.Net.Http.Json;
 
 namespace FPLSP_Tutorial.WASM.Repo.Inplements
@@ -32,11 +31,11 @@ namespace FPLSP_Tutorial.WASM.Repo.Inplements
 
             if (!String.IsNullOrEmpty(request.Email))
             {
-                url = $"/api/MajorUsers/GetBySearch?Email={request.Email}&PageNumber={request.PageNumber}&PageSize={request.PageSize}";
+                url = $"/api/MajorUsers/?Email={request.Email}&PageNumber={request.PageNumber}&PageSize={request.PageSize}";
             }
               if (request.MajorId != null)
             {
-                url = $"/api/MajorUsers/GetBySearchMajor?MajorId={request.MajorId}&PageNumber={request.PageNumber}&PageSize={request.PageSize}";
+                url = $"/api/MajorUsers/?MajorId={request.MajorId}&PageNumber={request.PageNumber}&PageSize={request.PageSize}";
             }
 
             var result = await _httpClient.GetFromJsonAsync<PaginationResponse<MajorUserDto>>(url);

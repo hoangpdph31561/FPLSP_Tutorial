@@ -196,15 +196,15 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ClientPostReadOn
             {
                 if(!String.IsNullOrWhiteSpace(request.StringSearch))
                 {
-                    request.SearchByFields = new List<SearchModel>
-                    {
-                        new()
-                        {
-                            SearchFieldName = nameof(PostEntity.Title),
-                            MatchType = MatchTypes.Contain,
-                            SearchValue = request.StringSearch
-                        }
-                    };
+                    //request.SearchByFields = new List<SearchModel>
+                    //{
+                    //    new()
+                    //    {
+                    //        SearchFieldName = nameof(PostEntity.Title),
+                    //        MatchType = MatchTypes.Contain,
+                    //        SearchValue = request.StringSearch
+                    //    }
+                    //};
                 }
                 IQueryable<PostEntity> query = _readOnlyDbContext.PostEntities.AsNoTracking().Where(x => !x.Deleted);
                 if(request.LstTags != null && request.LstTags!.Count > 0)

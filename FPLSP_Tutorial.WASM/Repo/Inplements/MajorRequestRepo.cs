@@ -24,7 +24,7 @@ namespace FPLSP_Tutorial.WASM.Repo.Inplements
 
             if (!String.IsNullOrEmpty(request.Email))
             {
-                url = $"/api/MajorRequests/GetMajorRequest/searchEmail?Email={request.Email}&PageNumber={request.PageNumber}&PageSize={request.PageSize}";
+                url = $"/api/MajorRequests/majorRequestNotDeleted/?Email={request.Email}&PageNumber={request.PageNumber}&PageSize={request.PageSize}";
             }
             var result = await _httpClient.GetFromJsonAsync<PaginationResponse<MajorRequestDto>>(url);
             if (result == null)

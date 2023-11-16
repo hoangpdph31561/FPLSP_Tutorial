@@ -9,7 +9,6 @@ using System.Text;
 using System.Threading.Tasks;
 using FPLSP_Tutorial.Application.DataTransferObjects.MajorUser;
 using FPLSP_Tutorial.Application.DataTransferObjects.MajorUser.Request;
-using FPLSP_Tutorial.Infrastructure.ViewModels.UserMajors;
 
 namespace FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly
 {
@@ -17,9 +16,6 @@ namespace FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly
     {
         Task<RequestResult<PaginationResponse<MajorUserDto>>> GetMajorUserWithPaginationByAdminAsync(
           ViewMajorUserWithPaginationRequest request, CancellationToken cancellationToken); 
-        Task<RequestResult<PaginationResponse<MajorUserDto>>> GetMajorUserWithPaginationBySearchAsync(
-          ViewMajorUserBySearchRequest request, CancellationToken cancellationToken);
-        Task<RequestResult<PaginationResponse<MajorUserDto>>> GetMajorUserWithPaginationBySearchMajordAsync(
-          ViewMajorUserBySearchRequest request, CancellationToken cancellationToken);
+       
     }
 }

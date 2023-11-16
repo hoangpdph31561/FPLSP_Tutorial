@@ -13,9 +13,6 @@ namespace FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly
             ViewMajorRequestWithPaginationRequest request, CancellationToken cancellationToken); 
         Task<RequestResult<PaginationResponse<MajorRequestDto>>> GetMajorRequestWithPaginationByNotDeletedAsync(
             ViewMajorRequestWithPaginationRequest request, CancellationToken cancellationToken);
-            Task<RequestResult<PaginationResponse<MajorRequestDto>>> GetMajorRequestWithPaginationBySearchEmailAsync(
-            ViewMajorRequestSearchWithPaginationRequest request, CancellationToken cancellationToken);
-          
 
     }
 }

@@ -9,7 +9,7 @@ namespace FPLSP_Tutorial.Application.DataTransferObjects.MajorRequest
         
         public Guid MajorId { get; set; }
         public string MajorName { get; set; } = string.Empty;
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
         public bool IsManager { get; set; }
         public EntityStatus Status { get; set; } = EntityStatus.Active;
         public bool Deleted { get; set; }

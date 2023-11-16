@@ -9,7 +9,7 @@ namespace FPLSP_Tutorial.Application.DataTransferObjects.MajorRequest.Request
 {
     public class ViewMajorRequestSearchWithPaginationRequest : PaginationRequest
     {
-        public string? Email { get; set; }
+       
         public Guid? MajorId  { get; set; }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using ClientPost.Data.DataTransferObject;
 using ClientPost.Data.DataTransferObject.Request;
 using ClientPost.Data.ValueObject.Pagination;
-using ClientPost.Data.ValueObject.Response;
 using ClientPost.Service.Interfaces;
 
 namespace ClientPost.Service.Respositories
@@ -56,6 +55,10 @@ namespace ClientPost.Service.Respositories
         public async Task<PaginationResponse<PostMainDTO>> GetPostsByMajorId(ClientPostGetByMajorIdWithPaginationRequest request)
         {
             string url = $"api/ClientPosts/getPostByMajorId?MajorId={request.MajorId}&PageNumber={request.PageNumber}&PageSize={request.PageSize}";
+            if (string.IsNullOrEmpty(request.MajorId))
+            {
+                url = $"api/ClientPosts/getPostByMajorId?&PageNumber={request.PageNumber}&PageSize={request.PageSize}";
+            }
             var result = await _httpClient.GetFromJsonAsync<PaginationResponse<PostMainDTO>>(url);
             return result;
         }

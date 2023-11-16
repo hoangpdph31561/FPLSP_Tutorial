@@ -1,6 +1,6 @@
 ﻿namespace ClientPost.Data.ValueObject.Pagination
 {
-    public class PaginationResponse <TDataType>
+    public class PaginationResponse<TDataType>
     {
         public int PageNumber { get; set; } = 1;
         public int PageSize { get; set; } = 10;

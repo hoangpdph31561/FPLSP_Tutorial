@@ -54,7 +54,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
 
                 // update trạng thái 
                 majorRequest!.Deleted = true;
-                majorRequest.Status = EntityStatus.Deleted; 
+                majorRequest.Status = EntityStatus.Deleted;
                 _dbContext.MajorRequestEntities.Update(majorRequest);
                 await _dbContext.SaveChangesAsync(cancellationToken);
 

@@ -5,7 +5,6 @@ using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadWrite;
 using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Application.ValueObjects.Pagination;
-using FPLSP_Tutorial.Domain.Enums;
 using FPLSP_Tutorial.Infrastructure.ViewModels.MajorRequests;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,7 +26,7 @@ namespace FPLSP_Tutorial.API.Controllers
             _localizationService = localizationService;
             _mapper = mapper;
         }
-    
+
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] ViewMajorRequestWithPaginationRequest request, CancellationToken cancellationToken)
         {

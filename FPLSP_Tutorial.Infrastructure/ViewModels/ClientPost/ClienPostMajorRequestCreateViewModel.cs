@@ -30,15 +30,6 @@ namespace FPLSP_Tutorial.Infrastructure.ViewModels.ClientPost
             try
             {
                 var createResult = await _clientPostReadWriteRespository.AddMajorRequest(_mapper.Map<MajorRequestEntity>(request), cancellationToken);
-                if (createResult.Success)
-                {
-                    var result = await _clientPostReadOnlyRespository.GetMajorRequestByIdAsync(createResult.Data, cancellationToken);
-                    Data = result.Data!;
-                    Success = result.Success;
-                    ErrorItems = result.Errors;
-                    Message = result.Message;
-                    return;
-                }
                 Success = createResult.Success;
                 ErrorItems = createResult.Errors;
                 Message = createResult.Message;

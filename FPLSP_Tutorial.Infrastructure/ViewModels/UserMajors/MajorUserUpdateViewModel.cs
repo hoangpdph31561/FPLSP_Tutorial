@@ -5,12 +5,6 @@ using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Application.ValueObjects.Common;
 using FPLSP_Tutorial.Application.ViewModels;
 using FPLSP_Tutorial.Domain.Entities;
-using FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FPLSP_Tutorial.Infrastructure.ViewModels.UserMajors
 {

@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Newtonsoft.Json;
-using System.Text.Json.Nodes;
 
 namespace FPLSP_Tutorial.Infrastructure.Database.Configurations
 {

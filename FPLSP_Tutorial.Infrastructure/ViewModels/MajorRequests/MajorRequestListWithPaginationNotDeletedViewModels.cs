@@ -1,15 +1,8 @@
-﻿using FPLSP_Tutorial.Application.DataTransferObjects.Major;
-using FPLSP_Tutorial.Application.DataTransferObjects.MajorRequest.Request;
+﻿using FPLSP_Tutorial.Application.DataTransferObjects.MajorRequest.Request;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly;
 using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Application.ValueObjects.Common;
 using FPLSP_Tutorial.Application.ViewModels;
-using FPLSP_Tutorial.Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FPLSP_Tutorial.Infrastructure.ViewModels.MajorRequests
 {

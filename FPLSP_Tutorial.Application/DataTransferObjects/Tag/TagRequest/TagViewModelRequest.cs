@@ -4,5 +4,5 @@
     {
         public Guid? IdMajor { get; set; }
         public Guid? IdPost { get; set; }
-	}
+    }
 }

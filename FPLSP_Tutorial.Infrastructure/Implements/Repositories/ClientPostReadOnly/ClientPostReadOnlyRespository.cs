@@ -1,7 +1,5 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using Azure.Core;
-using BaseSolution.Infrastructure.Extensions;
 using FPLSP_Tutorial.Application.DataTransferObjects.ClientPost;
 using FPLSP_Tutorial.Application.DataTransferObjects.ClientPost.Request;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ClientPostReadOnly;
@@ -13,8 +11,6 @@ using FPLSP_Tutorial.Domain.Entities;
 using FPLSP_Tutorial.Infrastructure.Database.AppDbContext;
 using FPLSP_Tutorial.Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
-using static FPLSP_Tutorial.Application.ValueObjects.Common.QueryConstant;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ClientPostReadOnly
 {
@@ -92,7 +88,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ClientPostReadOn
                     lstPostId.AddRange(post);
                 }
 
-                var test = await _readOnlyDbContext.PostEntities.AsNoTracking().Where(x => !x.Deleted && lstPostId.Contains(x.Id)  ).PaginateAsync<PostEntity, PostMainDTO>(request, _mapper, cancellationToken);
+                var test = await _readOnlyDbContext.PostEntities.AsNoTracking().Where(x => !x.Deleted && lstPostId.Contains(x.Id)).PaginateAsync<PostEntity, PostMainDTO>(request, _mapper, cancellationToken);
                 foreach (var entity in test.Data!)
                 {
                     var createdName = await _readOnlyDbContext.UserEntities.AsNoTracking().Where(x => x.Id == entity.CreatedBy).Select(x => x.Username).FirstOrDefaultAsync(cancellationToken);
@@ -121,7 +117,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ClientPostReadOn
             }
         }
 
-        public async Task<RequestResult<List<PostMainDTO>>> GetAllPostByMajorId(Guid? id,CancellationToken cancellationToken)
+        public async Task<RequestResult<List<PostMainDTO>>> GetAllPostByMajorId(Guid? id, CancellationToken cancellationToken)
         {
             try
             {
@@ -194,24 +190,34 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ClientPostReadOn
         {
             try
             {
-                if(!String.IsNullOrWhiteSpace(request.StringSearch))
-                {
-                    //request.SearchByFields = new List<SearchModel>
-                    //{
-                    //    new()
-                    //    {
-                    //        SearchFieldName = nameof(PostEntity.Title),
-                    //        MatchType = MatchTypes.Contain,
-                    //        SearchValue = request.StringSearch
-                    //    }
-                    //};
-                }
+
                 IQueryable<PostEntity> query = _readOnlyDbContext.PostEntities.AsNoTracking().Where(x => !x.Deleted);
-                if(request.LstTags != null && request.LstTags!.Count > 0)
+                var queryable = query.ProjectTo<PostMainDTO>(_mapper.ConfigurationProvider);
+                List<Guid>? lstPostId;
+                if (request.LstTags != null && request.LstTags!.Count > 0)
                 {
-                    query = query.Where(x => x.PostTags.Any(pt => request.LstTags.Contains(pt.TagId)));
+                    lstPostId = await _readOnlyDbContext.PostTagEntities.AsNoTracking().Where(x => request.LstTags.Contains(x.TagId)).Select(x => x.PostId).Distinct().ToListAsync(cancellationToken);
+                    if (lstPostId.Count > 0)
+                    {
+                        queryable = queryable.Where(x => lstPostId.Contains(x.Id));
+                    }
+                    else
+                    {
+
+                        return RequestResult<PaginationResponse<PostMainDTO>>.Succeed(new PaginationResponse<PostMainDTO>
+                        {
+                            PageNumber = request.PageNumber,
+                            PageSize = request.PageSize,
+                            HasNext = false,
+                            Data = new List<PostMainDTO>()
+                        });
+                    }
                 }
-                var result = await query.ProjectTo<PostMainDTO>(_mapper.ConfigurationProvider).Where(x => x.CreatedName.Contains(request.StringSearch)).PaginateAsync(request,cancellationToken);
+                if (!string.IsNullOrEmpty(request.StringSearch))
+                {
+                    queryable = queryable.Where(x => x.Title.ToLower().Contains(request.StringSearch!.ToLower()));
+                }
+                var result = await queryable.PaginateAsync(request, cancellationToken);
                 return RequestResult<PaginationResponse<PostMainDTO>>.Succeed(new PaginationResponse<PostMainDTO>
                 {
                     PageNumber = request.PageNumber,
@@ -319,7 +325,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ClientPostReadOn
             try
             {
                 var querry = await _readOnlyDbContext.UserMajorEntities.AsNoTracking().Where(x => x.UserId == request.Id && !x.Deleted).Select(x => x.MajorId).ToListAsync(cancellationToken);
-                var result = await _readOnlyDbContext.MajorEntities.AsNoTracking().Where(x => querry.Contains(x.Id) && !x.Deleted).PaginateAsync<MajorEntity,MajorBaseDTO>(request, _mapper, cancellationToken);
+                var result = await _readOnlyDbContext.MajorEntities.AsNoTracking().Where(x => querry.Contains(x.Id) && !x.Deleted).PaginateAsync<MajorEntity, MajorBaseDTO>(request, _mapper, cancellationToken);
                 return RequestResult<PaginationResponse<MajorBaseDTO>>.Succeed(new PaginationResponse<MajorBaseDTO>
                 {
                     PageNumber = request.PageNumber,
@@ -337,27 +343,6 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ClientPostReadOn
                     {
                         Error = e.Message,
                         FieldName = LocalizationString.Common.FailedToGet + "list of majors"
-                    }
-                });
-            }
-        }
-
-        public async Task<RequestResult<MajorRequestEntity>> GetMajorRequestByIdAsync(Guid id, CancellationToken cancellationToken)
-        {
-            try
-            {
-                var result = await _readOnlyDbContext.MajorRequestEntities.AsNoTracking().Where(x => x.Id == id).FirstOrDefaultAsync(cancellationToken);
-                return RequestResult<MajorRequestEntity>.Succeed(result);
-            }
-            catch (Exception e)
-            {
-
-                return RequestResult<MajorRequestEntity>.Fail(_localizationService["Major Request is not found"], new[]
-                {
-                    new ErrorItem
-                    {
-                        Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToGet + "Major request"
                     }
                 });
             }

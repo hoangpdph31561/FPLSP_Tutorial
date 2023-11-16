@@ -80,7 +80,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
             {
                 var majorUser = await GetMajorUserByIdAsync(entity.Id, cancellationToken);
 
-                majorUser!.Status = entity.Status ;
+                majorUser!.Status = entity.Status;
 
                 _dbContext.UserMajorEntities.Update(majorUser);
                 await _dbContext.SaveChangesAsync(cancellationToken);

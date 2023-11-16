@@ -1,7 +1,6 @@
 ﻿using ClientPost.Data.DataTransferObject;
 using ClientPost.Data.DataTransferObject.Request;
 using ClientPost.Data.ValueObject.Pagination;
-using ClientPost.Data.ValueObject.Response;
 
 namespace ClientPost.Service.Interfaces
 {

@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using BaseSolution.Infrastructure.Extensions;
 using FPLSP_Tutorial.Application.DataTransferObjects.MajorUser;
 using FPLSP_Tutorial.Application.DataTransferObjects.MajorUser.Request;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly;
@@ -10,6 +9,7 @@ using FPLSP_Tutorial.Application.ValueObjects.Pagination;
 using FPLSP_Tutorial.Application.ValueObjects.Response;
 using FPLSP_Tutorial.Domain.Enums;
 using FPLSP_Tutorial.Infrastructure.Database.AppDbContext;
+using FPLSP_Tutorial.Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
@@ -32,9 +32,9 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
                 var query = _dbContext.UserMajorEntities.AsNoTracking().Where(x => x.Deleted == false && x.Status != EntityStatus.Deleted).ProjectTo<MajorUserDto>(_mapper.ConfigurationProvider);
                 if (!string.IsNullOrWhiteSpace(request.Email))
                 {
-                    query = query.Where(x => x.email.ToLower().Contains(request.Email)); 
+                    query = query.Where(x => x.email.ToLower().Contains(request.Email));
                 }
-                if(request.MajorId != null)
+                if (request.MajorId != null)
                 {
                     query = query.Where(x => x.MajorId == request.MajorId);
                 }
@@ -59,6 +59,6 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
                 });
             }
         }
-       
+
     }
 }

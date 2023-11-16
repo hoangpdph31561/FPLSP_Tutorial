@@ -2,7 +2,6 @@
 using FPLSP_Tutorial.Application.DataTransferObjects.Major;
 using FPLSP_Tutorial.Application.DataTransferObjects.Major.Request;
 using FPLSP_Tutorial.Domain.Entities;
-using System.Net;
 
 namespace FPLSP_Tutorial.Infrastructure.Extensions.AutoMapperProfiles
 {
@@ -10,14 +9,10 @@ namespace FPLSP_Tutorial.Infrastructure.Extensions.AutoMapperProfiles
     {
         public MajorProfile()
         {
-            CreateMap<MajorEntity, MajorDTO>();
+            CreateMap<MajorEntity, MajorDTOs>();
             CreateMap<MajorCreateRequest, MajorEntity>();
             CreateMap<MajorUpdateRequest, MajorEntity>();
             CreateMap<MajorDeleteRequest, MajorEntity>();
-            CreateMap<MajorEntity, MajorDTO>()
-                .ForMember(dest => dest.NumberOfLecturer, opt => opt.MapFrom(src => src.UserMajors.Count()));
-            CreateMap<MajorEntity, MajorDTO>()
-                .ForMember(dest => dest.NumberOfRequest, opt => opt.MapFrom(src => src.MajorRequests.Count()));
         }
     }
 }

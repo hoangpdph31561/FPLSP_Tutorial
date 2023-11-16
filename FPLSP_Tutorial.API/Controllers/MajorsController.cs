@@ -1,10 +1,8 @@
 ﻿using AutoMapper;
-using FPLSP_Tutorial.Application.DataTransferObjects.Major;
 using FPLSP_Tutorial.Application.DataTransferObjects.Major.Request;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadWrite;
 using FPLSP_Tutorial.Application.Interfaces.Services;
-using FPLSP_Tutorial.Application.ValueObjects.Pagination;
 using FPLSP_Tutorial.Infrastructure.ViewModels.Major;
 using Microsoft.AspNetCore.Mvc;
 
@@ -35,13 +33,7 @@ namespace FPLSP_Tutorial.API.Controllers
 
             await vm.HandleAsync(request, cancellationToken);
 
-            if (vm.Success)
-            {
-                PaginationResponse<MajorDTO> result = new();
-                result = (PaginationResponse<MajorDTO>)vm.Data;
-                return Ok(result);
-            }
-            return BadRequest(vm);         
+            return Ok(vm);
         }
 
         [HttpGet("{id}")]

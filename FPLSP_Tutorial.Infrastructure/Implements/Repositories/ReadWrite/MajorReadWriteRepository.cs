@@ -23,7 +23,6 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
         {
             try
             {
-                entity.Id = new Guid();
                 await _dbContext.MajorEntities.AddAsync(entity);
                 await _dbContext.SaveChangesAsync(cancellationToken);
 
@@ -31,12 +30,12 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
             }
             catch (Exception e)
             {
-                return RequestResult<Guid>.Fail(_localizationService["Unable to create major"], new[]
+                return RequestResult<Guid>.Fail(_localizationService["Unable to create example"], new[]
                 {
                     new ErrorItem
                     {
                         Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToCreate + "major"
+                        FieldName = LocalizationString.Common.FailedToCreate + "example"
                     }
                 });
             }
@@ -84,9 +83,9 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
             try
             {
                 var major = await GetMajorByIdAsync(entity.Id, cancellationToken);
-                major!.Code = string.IsNullOrWhiteSpace(entity.Code) ? major.Code : entity.Code;
+
                 major!.Name = string.IsNullOrWhiteSpace(entity.Name) ? major.Name : entity.Name;
-                major.Status = entity.Status == EntityStatus.Active ? EntityStatus.Active : EntityStatus.InActive;
+
                 major.ModifiedBy = entity.ModifiedBy;
                 major.ModifiedTime = DateTimeOffset.UtcNow;
 

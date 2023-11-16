@@ -1,0 +1,139 @@
+﻿@using FPLSP_Tutorial.WASM.Data.DTO.Major;
+@using FPLSP_Tutorial.WASM.Data.DTO.Major.Request;
+@using FPLSP_Tutorial.WASM.Enums;
+@using FPLSP_Tutorial.WASM.Service.Interfaces;
+@using FPLSP_Tutorial.WASM.ValueObjects.Pagination;
+@using MudBlazor
+@using System.Net.Http.Json
+@inject HttpClient httpClient
+@inject IDialogService DialogService
+
+@page "/major"
+<MudBreadcrumbs Items="_items" Separator=">"></MudBreadcrumbs>
+
+<MudTable Items="@_majorDTO.Data" Hover="true" >
+    <ToolBarContent>
+        <MudTextField @bind-Value="Listmajors" Placeholder="Tìm kiếm" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium"></MudTextField>
+        <MudSpacer />
+        <MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="@(() => DialogAdd())">Thêm</MudButton>
+    </ToolBarContent>
+
+    <HeaderContent>
+        <MudTh>Id Index</MudTh>
+        <MudTh>Tên chuyên ngành</MudTh>
+        <MudTh>Số lượng giảng viên</MudTh>
+        <MudTh>Số lượng giảng viên chờ duyệt</MudTh>
+        <MudTh>Trạng thái</MudTh>
+    </HeaderContent>
+
+    <RowTemplate>
+        <MudTd>@(Listmajors.IndexOf(context) + 1)</MudTd>
+            <MudTd>@context.Name</MudTd>
+            <MudTd>@context.NumberOfLecturer</MudTd>
+            <MudTd>@context.NumberOfRequest</MudTd>
+            <MudTd>@((EntityStatus)@context.Status)</MudTd>
+            <MudTd>
+                <MudChip Icon="@Icons.Material.Filled.Edit" OnClick="@(() => DialogUpdate())" />
+                <MudChip Icon="@Icons.Material.Filled.Delete" OnClick="@(() => DialogDelete(context.Id))" />
+            </MudTd>
+        </RowTemplate>
+
+        <PagerContent>
+            <CustomPagination Class="my-1" HasNext="@_majorDTO.HasNext" OnPageChange="@(async e => await OnPaginationButtonClick(e))" CurrentPageNumber="@majorRequest.PageNumber"></CustomPagination>
+        </PagerContent>
+    </MudTable>
+
+
+    @code {
+    [Inject]
+    public IMajorRepository majorRepository { get; set; }
+    [Inject]
+    public IDialogService _dialogService { get; set; }
+    [Inject]
+    public ISnackbar _snackbar { get; set; }
+    [Inject]
+    NavigationManager NavigationManager { get; set; }
+
+    #region
+    List<MajorDTO> Listmajors { get; set; }
+    private PaginationResponse<MajorDTO> _majorDTO;
+    private MajorDeleteRequest majorDelete = new();
+    #endregion
+    private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
+    {
+        new BreadcrumbItem("Trang chủ", href: "#"),
+        new BreadcrumbItem("Quản lý chuyên ngành", href: null, disabled: true)
+    };
+    private ViewMajorWithPaginationRequest majorRequest = new();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDataMajor();
+    }
+    private async Task LoadDataMajor()
+    {
+        _majorDTO = await majorRepository.GetListMajor(majorRequest);
+        Listmajors = _majorDTO.Data.ToList();
+        StateHasChanged();
+    }
+
+    private async Task DialogAdd()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        var parameters = new DialogParameters();
+        parameters.Add("OnCloseAdd", EventCallback.Factory.Create(this, OnCloseAdd));
+        var dialog = DialogService.Show<CreateMajor>("Thêm chuyên ngành", parameters, options);
+        await dialog.Result;
+    }
+    private async Task OnCloseAdd()
+    {
+
+        NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
+    }
+
+
+    private async void DialogUpdate()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        var parameters = new DialogParameters();
+        parameters.Add("OnCloseAdd", EventCallback.Factory.Create(this, OnCloseAdd));
+        var dialog = DialogService.Show<UpdateMajor>("Chi tiết chuyên ngành", parameters, options);
+        await dialog.Result;
+    }
+    public async Task DialogDelete(Guid idDelete)
+    {
+        var request = new MajorDeleteRequest
+            {
+                Id = idDelete,
+            };
+        var confirm = await _dialogService.ShowMessageBox
+        (
+            "Thông báo",
+            "Xác nhận xóa chuyên ngành?",
+            "Xác nhận",
+            cancelText: "Hủy"
+        );
+        if (confirm == true)
+        {
+            var removeConfirm = await majorRepository.DeleteMajorAsync(request);
+            if (removeConfirm)
+            {
+                _snackbar.Add("Xóa thành công", Severity.Success);
+            }
+            else
+            {
+                _snackbar.Add("Xóa thất bại", Severity.Error);
+            }
+            await LoadDataMajor();
+        }
+    }
+
+    private async Task OnPaginationButtonClick(int pageNumber)
+    {
+        majorRequest.PageNumber = pageNumber;
+        await LoadDataMajor();
+    }
+
+  
+}

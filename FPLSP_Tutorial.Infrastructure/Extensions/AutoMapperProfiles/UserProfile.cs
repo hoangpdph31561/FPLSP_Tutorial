@@ -14,6 +14,7 @@ namespace FPLSP_Tutorial.Infrastructure.Extensions.AutoMapperProfiles
             CreateMap<UserCreateRequest, UserEntity>();
             CreateMap<UserUpdateRequest, UserEntity>();
 
+
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace FPLSP_Tutorial.Application.DataTransferObjects.Major.Request
+﻿namespace FPLSP_Tutorial.WASM.Data.DTO.Major.Request
 {
     public class MajorDeleteRequest
     {

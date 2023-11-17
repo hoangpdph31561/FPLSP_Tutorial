@@ -32,7 +32,8 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ClientPostReadOn
         {
             try
             {
-                var result = await _readOnlyDbContext.MajorEntities.AsNoTracking().PaginateAsync<MajorEntity, MajorBaseDTO>(request, _mapper, cancellationToken);
+                
+                var result = await _readOnlyDbContext.MajorEntities.AsNoTracking().Where(x => !x.Deleted).ProjectTo<MajorBaseDTO>(_mapper.ConfigurationProvider).Where(x => x.NumberOfPosts > 0).PaginateAsync(request,cancellationToken) ;
                 return RequestResult<PaginationResponse<MajorBaseDTO>>.Succeed(new PaginationResponse<MajorBaseDTO>
                 {
                     PageNumber = request.PageNumber,
@@ -189,6 +190,28 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ClientPostReadOn
                 });
             }
         }
+
+        public async Task<RequestResult<List<TagBaseDTO>>> GetAllTagList(CancellationToken cancellationToken)
+        {
+            try
+            {
+                var result = await _readOnlyDbContext.TagEntities.AsNoTracking().Where(x => !x.Deleted).ProjectTo<TagBaseDTO>(_mapper.ConfigurationProvider).ToListAsync(cancellationToken);
+                return RequestResult<List<TagBaseDTO>>.Succeed(result);
+            }
+            catch (Exception e)
+            {
+
+                return RequestResult<List<TagBaseDTO>>.Fail(_localizationService["List of tags cannot found"], new[]
+               {
+                    new ErrorItem
+                    {
+                        Error = e.Message,
+                        FieldName = LocalizationString.Common.FailedToGet + "list of tags"
+                    }
+                });
+            }
+        }
+
         public async Task<RequestResult<PaginationResponse<PostBaseDTO?>>> GetChildPostsByPostIdAsync(PostIdRequestWithPagination request, CancellationToken cancellationToken)
         {
             try

@@ -13,6 +13,13 @@ namespace ClientPost.Service.Respositories
         {
             _httpClient = httpClient;
         }
+
+        public async Task<List<TagBaseDTO>> GetAllListTags()
+        {
+            var result = await _httpClient.GetFromJsonAsync<List<TagBaseDTO>>("/api/ClientPosts/getAllListTags");
+            return result;
+        }
+
         public async Task<PaginationResponse<PostBaseDTO>?> GetChildByPostId(ClientPostGetChildWithPaginationRequest request)
         {
             string url = $"/api/ClientPosts/getChildPost?Id={request.Id}&PageNumber={request.PageNumber}&PageSize={request.PageSize}";

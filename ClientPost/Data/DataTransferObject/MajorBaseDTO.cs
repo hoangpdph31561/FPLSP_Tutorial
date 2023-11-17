@@ -11,5 +11,6 @@ namespace ClientPost.Data.DataTransferObject
         [JsonPropertyName("name")]
         public string Name { get; set; } = string.Empty;
         public bool ShowDetail { get; set; } = false;
+        public int NumberOfPosts { get; set; }
     }
 }

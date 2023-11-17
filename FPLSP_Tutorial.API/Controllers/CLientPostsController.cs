@@ -143,5 +143,17 @@ namespace FPLSP_Tutorial.API.Controllers
             }
             return BadRequest(vm);
         }
+        [HttpGet("getAllListTags")]
+        public async Task<IActionResult> GetAllListTags(CancellationToken cancellationToken)
+        {
+            ListTagsViewModel vm = new(_clientPostReadOnlyRespository, _localizationService);
+            await vm.HandleAsync(1, cancellationToken);
+            if (vm.Success)
+            {
+                List<TagBaseDTO> lstTags = (List<TagBaseDTO>)vm.Data;
+                return Ok(lstTags);
+            }
+            return BadRequest(vm);
+        }
     }
 }

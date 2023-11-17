@@ -16,8 +16,13 @@ namespace FPLSP_Tutorial.Infrastructure.Extensions.AutoMapperProfiles
             CreateMap<PostEntity, PostBaseDTO>();
             CreateMap<InputMajorRequest, MajorRequestEntity>()
                 .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(src => src.UserId));
-            CreateMap<MajorEntity, MajorBaseDTO>();
+            CreateMap<MajorEntity, MajorBaseDTO>()
+    .ForMember(dest => dest.NumberOfPosts, opt => opt.MapFrom(src =>
+        src.Tags.SelectMany(tag => tag.PostTags.Select(pt => pt.Post))
+            .Count(post => !post.Deleted)));
+
             CreateMap<TagEntity, TagBaseDTO>();
         }
+
     }
 }

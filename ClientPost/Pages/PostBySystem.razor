@@ -1,0 +1,93 @@
+﻿@page "/postbysystem"
+<PageTitle>Bài viết hệ thống</PageTitle>
+<MenuMainPage Label="@($"Hệ thống")" OnSearch="@OnSearch">
+    <BodyContent>
+        @if (lstPosts == null || lstPosts.Count == 0)
+        {
+            <MudText Typo="Typo.h3" Class="mx-2 my-4">Không có bài viết</MudText>
+        }
+        else
+        {
+            <MudText Typo="Typo.h5" Class="ma-4">| Danh sách các bài viết</MudText>
+            <MudGrid Spacing="0">
+                @foreach (var item in lstPosts)
+                {
+                    <MudItem xs="12" sm="6" md="4" Class="pa-3">
+                        <MudPaper Elevation="2" Class="pa-4">
+                            <MudText Typo="Typo.caption">@item.CreatedTime.ToString("hh:MM tt dd/MM/yyyy")</MudText>
+                            <div>
+                                <MudTooltip Text="@item.Title" Arrow="true" Placement="Placement.Top">
+                                    <MudText Typo="Typo.h6" Style="font-weight:bold;" Class="truncated-text">@item.Title</MudText>
+                                </MudTooltip>
+                            </div>
+                            <MudPaper Elevation="0" Class="truncated-inline-text-container">
+                                <MudIcon Icon="@Icons.Material.Filled.Man" />
+                                <MudText Typo="Typo.caption" Class="truncated-inline-text ">@item.CreatedName</MudText>
+                            </MudPaper>
+                            <MudText Typo="Typo.caption">Loại bài viết: @item.PostType</MudText>
+                            <MudPaper Elevation="0" Class="truncated-text">
+                                @if (item.LstTags == null || item.LstTags.Count == 0)
+                                {
+                                    <MudText Typo="Typo.caption">Không có tags</MudText>
+                                }
+                                else
+                                {
+                                    @foreach (var tag in item.LstTags)
+                                    {
+                                        <MudChip Size="Size.Small" Variant="Variant.Outlined" Color="Color.Primary">@tag.Name</MudChip>
+                                    }
+                                }
+                            </MudPaper>
+                            <MudPaper Elevation="0" Class="d-flex align-center justify-end">
+                                <MudButton OnClick="@(() => ButtonClick(item.Id))" Color="Color.Primary">Đọc thêm<MudText Class="mt-1 px-2 align-center" Typo="Typo.caption"><MudIcon Icon="@Icons.Material.Filled.East" /></MudText></MudButton>
+                            </MudPaper>
+                        </MudPaper>
+                    </MudItem>
+                }
+            </MudGrid>
+            <CustomePagination Class="my-1" HasNext="@result.HasNext" OnPageChange="@(async e=> await  OnPaginationButtonClick(e))" CurrentPageNumber="@result.PageNumber"></CustomePagination>
+        }
+
+    </BodyContent>
+</MenuMainPage>
+
+@code {
+    [Inject]
+    public IClientPostService ClientPostService { get; set; }
+    [Inject]
+    public NavigationManager NavigationManager { get; set; }
+    private ClientPostGetByMajorIdWithPaginationRequest request { get; set; } = new()
+        {
+            MajorId = null,
+            PageSize = 30
+        };
+    private PaginationResponse<PostMainDTO> result { get; set; }
+    private List<PostMainDTO> lstPosts { get; set; }
+    private MajorBaseDTO major = new();
+    protected async override Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+    private async Task LoadData()
+    {
+        result = await ClientPostService.GetPostsByMajorId(request);
+        lstPosts = result.Data.ToList();
+    }
+    private async Task OnPaginationButtonClick(int pageNumber)
+    {
+
+        request.PageNumber = pageNumber;
+        await LoadData();
+    }
+    private void ButtonClick(Guid id)
+    {
+        NavigationManager.NavigateTo($"/postdetail/{id}");
+    }
+    private async Task OnSearch(string? searchString)
+    {
+
+        request.PageNumber = 1;
+        request.StringSearch = searchString;
+        await LoadData();
+    }
+}

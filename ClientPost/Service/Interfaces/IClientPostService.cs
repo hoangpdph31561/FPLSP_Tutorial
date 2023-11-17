@@ -12,7 +12,6 @@ namespace ClientPost.Service.Interfaces
         Task<PaginationResponse<TagBaseDTO>> GetTagsByPostId(ClientPostGetTagsByPostIdWithPaginationRequest request);
         Task<PostBaseDTO?> GetParentPostById(string id);
         Task<PaginationResponse<PostBaseDTO>?> GetChildByPostId(ClientPostGetChildWithPaginationRequest request);
-        Task<List<MajorBaseDTO>> GetAllMajorsList();
         Task<MajorBaseDTO> GetMajorsById(string id);
     }
 }

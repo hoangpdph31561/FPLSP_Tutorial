@@ -4,7 +4,8 @@ namespace FPLSP_Tutorial.Application.DataTransferObjects.ClientPost.Request
 {
     public class ClientPostSearchWithPaginationRequest : PaginationRequest
     {
-        public List<Guid>? LstTags { get; set; }
+        public Guid? MajorId { get; set; }
+        public List<Guid>? LstTagsId { get; set; }
         public string? StringSearch { get; set; }
 
     }

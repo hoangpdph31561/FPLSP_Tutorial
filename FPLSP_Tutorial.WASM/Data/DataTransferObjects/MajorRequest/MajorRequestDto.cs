@@ -2,7 +2,7 @@
 
 namespace FPLSP_Tutorial.WASM.Data.MajorRequest
 {
-    public class MajorRequestDto  
+    public class MajorRequestDto
     {
         public Guid Id { get; set; }
 

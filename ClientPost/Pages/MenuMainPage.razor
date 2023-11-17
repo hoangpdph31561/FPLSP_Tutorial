@@ -7,16 +7,24 @@ else
     <MudPaper Elevation="0">
         <MudPaper Class="ma-1" Elevation="0">
             <MudPaper Class="pa-2" Elevation="0">
-                <MudPaper Class="d-flex align-center px-2" Elevation="0">
-                    <MudPaper Class="mr-auto" Elevation="0">
-                        <MudText Typo="Typo.h5" Style="font-weight:500;">@Label</MudText>
-                        @if (LabelHelper != null && LabelHelper != "")
-                        {
-                            <MudText Typo="Typo.caption">@LabelHelper</MudText>
-                        }
-                    </MudPaper>
-                    @HeaderContent
-                </MudPaper>
+                <MudGrid Class="d-flex align-center px-2 justify-space-between">
+                    <MudItem lg="8" md="7" sm="6" xs="12">
+                        <MudPaper Class="mr-auto" Elevation="0">
+                            <MudTooltip Text="@Label" Arrow="true" Placement="Placement.Top">
+                                <MudText Typo="Typo.h6" Style="font-weight:bold;" Class="truncated-text">@Label</MudText>
+                            </MudTooltip>
+                            @if (LabelHelper != null && LabelHelper != "")
+                            {
+                                <MudText Typo="Typo.caption">@LabelHelper</MudText>
+                            }
+                        </MudPaper>
+                    </MudItem>
+                    <MudItem lg="4" md="5" sm="6" xs="12" >
+                        @HeaderContent
+
+                    </MudItem>
+                    
+                </MudGrid>
             </MudPaper>
             @if (ToolbarContent != null)
             {

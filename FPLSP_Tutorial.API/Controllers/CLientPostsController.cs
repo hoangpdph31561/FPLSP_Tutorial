@@ -118,32 +118,17 @@ namespace FPLSP_Tutorial.API.Controllers
             await vm.HandleAsync(request, cancellationToken);
             return Ok(vm);
         }
-        [HttpGet("getAllMajorsList")]
-        public async Task<IActionResult> GetMajorsList(CancellationToken cancellationToken)
-        {
-            GetAllMajorsListViewModel vm = new(_clientPostReadOnlyRespository, _localizationService);
-            await vm.HandleAsync(1, cancellationToken);
-            if (vm.Success)
-            {
-                List<MajorBaseDTO> list = new List<MajorBaseDTO>();
-                list = (List<MajorBaseDTO>)vm.Data;
-                return Ok(list);
-            }
-            return BadRequest(vm);
-        }
         [HttpGet("getAllPostBySearch")]
         public async Task<IActionResult> GetPostBySearchAsync([FromQuery] ClientPostSearchWithPaginationRequest request, CancellationToken cancellationToken)
         {
             GetPostSearchWithPaginationViewModel vm = new(_clientPostReadOnlyRespository, _localizationService);
             await vm.HandleAsync(request, cancellationToken);
-            return Ok(vm);
-        }
-        [HttpGet("getAllTagListByPostId/{id}")]
-        public async Task<IActionResult> GetTagsListByPostId(Guid id, CancellationToken cancellationToken)
-        {
-            GetTagListByPostIdViewModel vm = new(_clientPostReadOnlyRespository, _localizationService);
-            await vm.HandleAsync(id, cancellationToken);
-            return Ok(vm);
+            if (vm.Success)
+            {
+                PaginationResponse<PostMainDTO> result = (PaginationResponse<PostMainDTO>)vm.Data;
+                return Ok(result);
+            }
+            return BadRequest(vm);
         }
         [HttpGet("getMajor/{id}")]
         public async Task<IActionResult> GetMajorById(Guid id, CancellationToken cancellationToken)

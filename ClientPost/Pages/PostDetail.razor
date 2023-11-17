@@ -1,7 +1,7 @@
 ﻿@page "/postdetail/{id}"
 <PageTitle>Bài viết @result.Title</PageTitle>
-<MenuMainPage IsLoading="@(result == null)" Label="@($"Bài viết {result!.Title}")">
-    <HeaderContent><MudText Align="Align.Center">Ngày tạo: @result.CreatedTime.ToString("dd/MM/yyyy")</MudText></HeaderContent>
+<MenuMainPage IsLoading="@(result == null)" Label="@($"Bài viết {result!.Title}")" HideSearch="true">
+    <HeaderContent><MudText Align="Align.Right">Ngày tạo: @result.CreatedTime.ToString("hh:mm tt dd/MM/yyyy")</MudText></HeaderContent>
     <BodyContent>
         <MudPaper Elevation="0">
             @if(result == null)
@@ -10,47 +10,37 @@
             }
             else
             {
-                <MudGrid Justify="Justify.SpaceBetween">
-                    <MudItem>
-                        <MudGrid Justify="Justify.FlexStart">
-                            <MudItem>
-                                <MudText>Tags</MudText>
-                            </MudItem>
-                            @if (lstTags.Count == 0)
-                            {
-                                <MudItem><MudText>Không có tag bài viết của bài viết này</MudText></MudItem>
-                            }
-                            @foreach (var item in lstTags)
-                            {
-                                <MudItem><MudChip Color="Color.Info" Variant="Variant.Filled" DisableElevation="true">@item.Name</MudChip></MudItem>
-                            }
-                        </MudGrid>
-                    </MudItem>
-                    <MudItem>
-                        <MudText Align="Align.Center" Class="pa-2 ma-1 rounded-pill text-white mud-theme-tertiary">@result.Status</MudText>
-                    </MudItem>
-                </MudGrid>
+                <MudPaper Elevation="0" Class="d-flex align-center">
+                    <MudText Typo="Typo.subtitle1">Tags:</MudText>
+                    @if(lstTags.Count == 0)
+                    {
+                        <MudText Typo="Typo.subtitle1" Class="ml-2">Không có tags.</MudText>
+                    }
+                    else
+                    {
+                        @foreach (var tag in lstTags)
+                        {
+                            <MudChip Size="Size.Small" Variant="Variant.Outlined" Color="Color.Primary">@tag.Name</MudChip>
+                        }
+                    }
+                </MudPaper>
                 <MudPaper Class="pa-3" Elevation="0">
                     <MudText Typo="Typo.h6">Người viết: @result.CreatedName</MudText>
                 </MudPaper>
 
-                <MudPaper Class="pa-4">
+                <MudPaper Class="pa-4" Elevation="0">
                     <MudText>@result.Content</MudText>
                 </MudPaper>
-                <MudText Typo="Typo.h5" Class="my-4">|Tham khảo</MudText>
+                <MudText Typo="Typo.h5" Class="my-4">| Tham khảo</MudText>
 
                 @if (lstSuggestPost.Count > 0)
                 {
-                    <MudTable Items="lstSuggestPost">
-                        <HeaderContent>
-                            <MudTh>Tên bài viết</MudTh>
-                            <MudTh>Xem chi tiết</MudTh>
-                        </HeaderContent>
-                        <RowTemplate>
-                            <MudTd><MudText>@context.Title</MudText></MudTd>
-                            <MudTd><MudButton OnClick="@(() => OnClick(context.Id.ToString()))">Xem chi tiết tại đây</MudButton></MudTd>
-                        </RowTemplate>
-                    </MudTable>
+                    <div class="my-3 mx-1">
+                        @foreach (var item in lstSuggestPost)
+                        {
+                            <MudNavLink OnClick="@(async() => await OnClick(item.Id.ToString()))"><MudText>@item.Title</MudText></MudNavLink>
+                        }
+                    </div>
                 }
             }
         </MudPaper>
@@ -109,10 +99,6 @@
             lstSuggestPost.Clear();
             await LoadData();
             StateHasChanged();
-        }
-        else
-        {
-            await LoadData();
         }
 
     }

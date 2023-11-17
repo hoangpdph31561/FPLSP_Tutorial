@@ -4,27 +4,41 @@ using FPLSP_Tutorial.Application.ValueObjects.Pagination;
 using FPLSP_Tutorial.Application.ValueObjects.Response;
 using FPLSP_Tutorial.WASM.Pages.QuanLyBaiViet.ViewModels;
 using Microsoft.AspNetCore.Components;
+using MudBlazor;
 using System.Net.Http.Json;
+using static MudBlazor.CategoryTypes;
 
 namespace FPLSP_Tutorial.WASM.Pages.QuanLyBaiViet
 {
     public partial class QuanLyBaiViet
     {
-        [Inject] HttpClient _http { get; set; }
+        [Parameter]
+        [Inject] public HttpClient _http { get; set; }
         private List<PostListVM> _posts = new List<PostListVM>();
+        private MudTable<PostListVM>? _tableRef;
 
         protected override async Task OnInitializedAsync()
         {
             await GetListPost();
         }
 
+        private TableGroupDefinition<PostListVM> _groupDefinition = new()
+        {
+            GroupName = "",
+            Indentation = false,
+            Expandable = true,
+            IsInitiallyExpanded = false,
+            Selector = (e) => e.Title,
+        };
+
+
         private async Task GetListPost()
         {
             // lấy danh sách bài viết theo IdMajor
-            var postAPI = await _http.GetFromJsonAsync<RequestResult<PaginationResponse<PostMainDTO>>>($"https://localhost:7225/api/CLientPosts/getPostByMajorId?MajorId={null}");
+            var postAPI = await _http.GetFromJsonAsync<PaginationResponse<PostMainDTO>>($"https://localhost:7225/api/CLientPosts/getPostByMajorId?MajorId={null}");
 
             // lấy listPost
-            var post = postAPI!.Data!.Data!.ToList();
+            var post = postAPI!.Data!.ToList();
 
             if (post != null)
             {

@@ -26,9 +26,9 @@ else
                         @if(item.LstTags == null || item.LstTags.Count == 0)
                         {
                             <MudText Typo="Typo.caption">Không có tags</MudText>
-                        }
+        }
                         else
-                        {
+        {
                             @foreach (var tag in item.LstTags)
                             {
                                 <MudChip Size="Size.Small" Variant="Variant.Outlined" Color="Color.Primary">@tag.Name</MudChip>

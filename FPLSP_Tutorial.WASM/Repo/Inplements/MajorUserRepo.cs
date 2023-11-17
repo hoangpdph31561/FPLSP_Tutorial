@@ -33,7 +33,7 @@ namespace FPLSP_Tutorial.WASM.Repo.Inplements
             {
                 url = $"/api/MajorUsers/?Email={request.Email}&PageNumber={request.PageNumber}&PageSize={request.PageSize}";
             }
-              if (request.MajorId != null)
+            if (request.MajorId != null)
             {
                 url = $"/api/MajorUsers/?MajorId={request.MajorId}&PageNumber={request.PageNumber}&PageSize={request.PageSize}";
             }

@@ -10,8 +10,9 @@ namespace FPLSP_Tutorial.Infrastructure.Extensions.AutoMapperProfiles
         public ClientPostProfie()
         {
             CreateMap<PostEntity, PostDetailDTO>();
-            CreateMap<PostEntity, PostMainDTO>().ForMember(
-                dest => dest.ContentShortened, opt => opt.MapFrom(src => StringHandleExtensions.GetStringWithEllipsis(src.Content, 300)));
+            CreateMap<PostEntity, PostMainDTO>()
+                .ForMember(
+                dest => dest.LstTags, opt => opt.MapFrom(src => src.PostTags.Select(pt => pt.Tag).Distinct()));
             CreateMap<PostEntity, PostBaseDTO>();
             CreateMap<InputMajorRequest, MajorRequestEntity>()
                 .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(src => src.UserId));

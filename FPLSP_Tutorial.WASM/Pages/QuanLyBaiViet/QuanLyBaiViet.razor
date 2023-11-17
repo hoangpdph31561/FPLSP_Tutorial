@@ -2,38 +2,50 @@
 
 <h3>PostServices</h3>
 
+<style>
+    .mud-table-cell-custom-group {
+        font-weight: 500;
+    }
 
+    .mud-table-cell-custom-group-footer {
+        padding-bottom: 50px;
+        text-align: right;
+    }
+</style>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">STT</th>
-            <th scope="col">Title</th>
-            <th scope="col">HasTag</th>
-            <th scope="col">Type</th>
-            <th scope="col">Tác vụ</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in _posts)
+<MudTable Hover="true" Breakpoint="Breakpoint.Sm" Height="500px" FixedHeader="true"
+          Items="@_posts"
+          GroupBy="_groupDefinition"
+          GroupHeaderStyle="background-color:var(--mud-palette-background-grey)"
+          GroupFooterClass="mb-4"
+          Dense="true"
+@ref="_tableRef">
+    <ColGroup>
+        <col style="width: 60px;" />
+        <col />
+        <col />
+        <col />
+        <col />
+        <col />
+    </ColGroup>
+    <HeaderContent>
+        <MudTh>STT</MudTh>
+        <MudTh>tiêu đề</MudTh>
+        <MudTh>gán thẻ</MudTh>
+        <MudTh>Thể loại</MudTh>
+        <MudTh>Tác vụ</MudTh>
+    </HeaderContent>
+    <GroupHeaderTemplate> 
+        <MudTh Class="mud-table-cell-custom-group" colspan="5">@($"{context.GroupName}: {context.Key}") </MudTh>
+    </GroupHeaderTemplate>
+    <RowTemplate>
+        <MudTd DataLabel="STT">@context.STT</MudTd>
+        <MudTd DataLabel="Title">@context.Title</MudTd>
+        @foreach (var x in context.tagDtos)
         {
-            <tr>
-                <td>></td>
-                <td>@item.STT</td>
-                <td>@item.Title</td>
-                <td>
-                    @foreach (var x in item.tagDtos)
-                    {
-                        <em>@x.Name,  </em>
-                    }
-                </td>
-                <td>@item.Type</td>
-                <td>
-                    <button class="btn btn-primary"> Sửa </button>
-                    <button class="btn btn-primary"> Xóa </button>
-                </td>
-            </tr>
+                <em>@x.Name,  </em>
         }
-    </tbody>
-</table>
+        <MudTd DataLabel="Type">@context.Type</MudTd>
+    </RowTemplate>
+</MudTable>
+

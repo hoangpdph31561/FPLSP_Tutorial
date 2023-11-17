@@ -1,4 +1,6 @@
 ﻿@page "/majorService"
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major;
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major.Request;
 @using FPLSP_Tutorial.WASM.Data.DataTransferObjects.MajorRequest.Request;
 @using FPLSP_Tutorial.WASM.Data.DataTransferObjects.UserMajor.Request;
 @using FPLSP_Tutorial.WASM.Data.MajorRequest;
@@ -26,9 +28,9 @@
 
               <AdditionalSearchBarColumn>
                  <MudSelect Variant="Variant.Outlined" Class="custom-list-display-border-input" Style="background-color: white;" AnchorOrigin="Origin.BottomCenter" Label="Chuyên ngành" Value="@_idMajor" ValueChanged="@(async (string e) => await OnSelect(e))">
-            @foreach (var i in lstMajorUser.GroupBy(c => c.MajorId).Select(c => c.Key))
+                     @foreach (var i in lstMajor)
             {
-                        <MudSelectItem Value="@i.ToString()">@lstMajorUser.FirstOrDefault(c => c.MajorId == i).TenChuyenNganh</MudSelectItem>
+                        <MudSelectItem Value="@i.Id.ToString()">@i.Name</MudSelectItem>
             }
             </MudSelect>
             </AdditionalSearchBarColumn>
@@ -118,9 +120,9 @@
 @code {
     MudTabs tabs = new();
     [Inject] private IMajorUserRepo majorUserRepo { get; set; }
-    List<MajorUserDto> lstMajorUser;
     [Inject] private IMajorRequestRepo majorRequestRepo { get; set; }
     List<MajorRequestDto> lstMajorRequest { get; set; }
+    List<MajorUserDto> lstMajorUser;
 
     #region 
     private bool _isLoadingAll = true;
@@ -133,9 +135,7 @@
     #region Khai bao MajjorUser
     private string _idMajor ;
     private Guid _idMajorUserDetail = Guid.Empty;
-
     private PaginationResponse<MajorUserDto> _MajorUserVM;
-
     private ViewMajorUserBySearchRequest _MajorUserRequest = new();
     #endregion
 
@@ -144,6 +144,20 @@
     private PaginationResponse<MajorRequestDto> _MajorRequestVM;
     private ViewMajorRequestSearchWithPaginationRequest _MajorRequestRequest = new();
     #endregion
+
+    #region Lấy ra Major Name 
+
+    [Inject] private IMajorRepo majorRepo { get; set; }
+    List<MajorDTO> lstMajor;
+    private PaginationResponse<MajorDTO> _MajorVM;
+    private ViewMajorWithPaginationRequest _MajorRequest = new();
+
+    private async Task LoadDataMajor()
+    {
+        _MajorVM = await majorRepo.GetListMajor(_MajorRequest);
+        lstMajor = _MajorVM.Data.ToList();
+    }
+    #endregion
     protected override async Task OnInitializedAsync()
     {
         _isLoadingAll = true;
@@ -151,6 +165,7 @@
         {
             LoadDataMajorUser();
             LoadDataMajorRequest();
+            LoadDataMajor();
         }
         catch (Exception ex)
         {

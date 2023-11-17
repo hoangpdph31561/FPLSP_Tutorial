@@ -1,0 +1,69 @@
+﻿
+<style>
+    .mud-dialog-title {
+        padding: 0 !important;
+    }
+</style>
+
+<MudDialog Style="width: 50vw;">
+    <TitleContent>
+        <div class="d-flex align-center ps-5 pt-3">
+            <MudIcon Icon="@Icons.Material.Filled.Add" />
+            <MudText Typo="Typo.h6" Style="font-weight: 600">Thêm tag</MudText>
+        </div>
+    </TitleContent>
+    <DialogContent>
+        <div>
+            <MudTextField Variant="Variant.Outlined" T="string" Label="Tìm kiếm"></MudTextField>
+
+            <div class="mt-2">
+                @*Viết đổ list tag khi tìm kiếm...*@
+            </div>
+
+
+            <MudText Typo="Typo.caption">Đã chọn:</MudText>
+            <MudDivider></MudDivider>
+            <div style="overflow: auto; width: 100%;" class="py-2">
+                @foreach (var i in _toggleAllTags ? _lstTag : _lstTag.Take(_maxChipDisplay))
+                {
+                    // Truyền pthc xóa Tag khỏi List<Tag> vào trong OnClose
+                    <MudChip Color="Color.Primary" OnClose="@(() => { _lstTag.Remove(i); })">@i</MudChip>
+                }
+                @if (_toggleAllTags)
+                {
+                    <MudChip Color="Color.Default" OnClick="@(() => _toggleAllTags = false)" Style="font-weight: 500">@("<")</MudChip>
+                }
+                else
+                {
+                    if (_lstTag.Count() > _maxChipDisplay)
+                    {
+                        <MudChip Color="Color.Default" OnClick="@(() => _toggleAllTags = true)">@("+" + (_lstTag.Count() - _maxChipDisplay))</MudChip>
+                    }
+                }
+            </div>
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Hủy</MudButton>
+        <MudButton Color="Color.Primary" OnClick="DeleteServer">Lưu</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public List<string> _lstTag { get; set; }
+
+    private bool _toggleAllTags = false;
+    private int _maxChipDisplay = 5;
+
+    private void Cancel()
+    {
+        MudDialog.Cancel();
+    }
+
+    private void DeleteServer()
+    {
+        MudDialog.Close(DialogResult.Ok(_lstTag));
+    }
+}

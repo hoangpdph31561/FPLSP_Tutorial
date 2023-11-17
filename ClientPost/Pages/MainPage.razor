@@ -1,40 +1,102 @@
 ﻿@page "/mainpage"
+@using ClientPost.Component;
 @using ClientPost.Pages
+
+@inject IDialogService DialogService
+
 <PageTitle>Trang chủ</PageTitle>
-<MenuMainPage Label="Trang chủ" IsLoading="@(_lstMajor == null)" DisableSearch="_isDisableControls">
-    <BodyContent>
+
+@if (_isLoadingAll)
+{
+    <LoadingIndicator />
+}
+else
+{
+    <div Elevation="0" Class="pa-5 mt-3 mx-4 d-flex align-center">
+        <MudIcon Icon="@Icons.Material.Filled.Home" Class="me-2" Size="Size.Large"></MudIcon>
+        <MudText Typo="Typo.h4" Style="font-weight: 500">Trang chủ</MudText>
+    </div>
+    <MudPaper Elevation="0" Class="px-5 mx-5">
+        <MudTextField Immediate Variant="Variant.Outlined" DebounceInterval="200" Label="Tìm kiếm" MaxLength="200" AdornmentIcon="@Icons.Material.Filled.Search" Adornment="Adornment.End" T="string"></MudTextField>
+
+        <div Class="d-flex align-center py-2">
+            <MudText>Tags: </MudText>
+            <div style="overflow: auto; width: 100%;">
+                @foreach (var i in _toggleAllTags ? _lstTag : _lstTag.Take(_maxChipDisplay))
+                {
+                    // Truyền pthc xóa Tag khỏi List<Tag> vào trong OnClose
+                    <MudChip Color="Color.Primary" OnClose="@(() => { _lstTag.Remove(i); })">@i</MudChip>
+                }
+                @if(_toggleAllTags)
+                {
+                    <MudChip Color="Color.Default" OnClick="@(() => _toggleAllTags = false)" Style="font-weight: 500">@("<")</MudChip>
+                }
+                else
+                {
+                    if (_lstTag.Count() > _maxChipDisplay)
+                    {
+                        <MudChip Color="Color.Default" OnClick="@(() => _toggleAllTags = true)">@("+" + (_lstTag.Count() - _maxChipDisplay))</MudChip>
+                    }
+                }
+            </div>
+            <MudSpacer />
+            <MudChip Color="Color.Default" Icon="@Icons.Material.Filled.AddCircle" OnClick="@(async () => { await OnTagSelectionToggle(); })">Thêm</MudChip>
+        </div>
+
         <MudPaper Elevation="0">
-            <MudPaper Class="my-4" Elevation="0">
-                <MudGrid>
-                    <MudItem xs="7" sm="8"  Class="d-flex align-left flex-start">
-                        <MudText Typo="Typo.h6" Class="my-4" Style="font-weight: bold;">Hệ thống</MudText>
-                    </MudItem>
-                    <MudItem xs="5" sm="4"  Class="d-flex justify-end align-center">
-                        <MudText><MudNavLink Href="@($"/postbysystem")">>> Tất cả</MudNavLink></MudText>
-                    </MudItem>
-                </MudGrid>
-            </MudPaper>
-            
-            <PostList isClickNext="@isClickNext" MajorId="@null"></PostList>
-            @foreach (var item in _lstMajor)
-            {
-                <MudPaper Class="my-4" Elevation="0">
-                    <MudGrid>
-                        <MudItem xs="7" sm="8" >
-                            <MudTooltip Text="@item.Name" Arrow="true" Placement="Placement.Top"><MudText Typo="Typo.h6" Class="my-4 truncated-text" Style="font-weight: bold;">Chuyên ngành @item.Name</MudText></MudTooltip>
-                            
-                        </MudItem>
-                        <MudItem xs="5" sm="4"  Class="d-flex justify-end align-center">
-                            <MudText><MudNavLink Href="@($"/postbymajor/{item.Id}")">>> Tất cả</MudNavLink></MudText>
-                        </MudItem>
-                    </MudGrid>
-                </MudPaper>
-                <PostList isClickNext="@isClickNext" MajorId="@item.Id.ToString()"></PostList>
-            }
-            <CustomePagination Class="my-1" HasNext="@_majorDTOS.HasNext" OnPageChange="@(async e=> await  OnPaginationButtonClick(e))" CurrentPageNumber="@_majorDTOS.PageNumber"></CustomePagination>
+            <MudGrid>
+                <MudItem xs="7" sm="8" Class="d-flex align-left flex-start">
+                    <div class="d-flex align-center">
+                        <MudIcon Icon="@Icons.Material.Filled.Newspaper" Class="me-2"></MudIcon>
+                        <MudText Typo="Typo.h5" Class="my-4" Style="font-weight: bold;">Bài viết hệ thống</MudText>
+                    </div>
+                </MudItem>
+                <MudItem xs="5" sm="4" Class="d-flex justify-end align-center">
+                    <MudText><MudNavLink Href="@($"/postbysystem")">>> Tất cả</MudNavLink></MudText>
+                </MudItem>
+            </MudGrid>
         </MudPaper>
-    </BodyContent>
-</MenuMainPage>
+
+        <PostList isClickNext="@isClickNext" MajorId="@null"></PostList>
+
+        <div class="d-flex align-center">
+            <MudIcon Icon="@Icons.Material.Filled.Newspaper" Class="me-2"></MudIcon>
+            <MudText Typo="Typo.h5" Class="my-4" Style="font-weight: bold;">Bài viết chuyên ngành</MudText>
+        </div>
+
+        <div class="ms-2">
+            @if (_isLoadingList)
+            {
+                <MudProgressLinear Color="Color.Primary" Indeterminate="true"></MudProgressLinear>
+            }
+            else
+            {
+                @foreach (var item in _lstMajor)
+                {
+                    <MudPaper Elevation="0">
+                        <MudGrid>
+                            <MudItem xs="7" sm="8">
+                                <MudTooltip Text="@item.Name" Arrow="true" Placement="Placement.Top">
+                                    <div class="d-flex align-center">
+                                        <MudIcon Icon="@Icons.Material.Filled.KeyboardArrowRight" Class="me-2"></MudIcon>
+                                        <MudText Typo="Typo.h6" Class="my-4">@item.Name</MudText>
+                                    </div>
+                                </MudTooltip>
+                            </MudItem>
+                            <MudItem xs="5" sm="4" Class="d-flex justify-end align-center">
+                                <MudText><MudNavLink Href="@($"/postbymajor/{item.Id}")">>> Tất cả</MudNavLink></MudText>
+                            </MudItem>
+                        </MudGrid>
+                    </MudPaper>
+
+                    <PostList isClickNext="@isClickNext" MajorId="@item.Id.ToString()"></PostList>
+                }
+            }
+        </div>
+        <CustomePagination Class="my-1" HasNext="@_majorDTOS.HasNext" OnPageChange="@(async e=> await  OnPaginationButtonClick(e))" CurrentPageNumber="@_majorDTOS.PageNumber"></CustomePagination>
+    </MudPaper>
+}
+
 @code {
     #region Khai báo
     [Inject]
@@ -50,10 +112,45 @@
     private Guid _idMajorDetail = Guid.Empty;
     private bool isClickNext = false;
 
+    private int _maxChipDisplay = 10;
+    private bool _toggleAllTags = false;
+    private List<string> _lstTag = new()
+    {
+        "Tag 1",
+        "Tag 2",
+        "Tag 3",
+        "Tag 4",
+        "Tag 5",
+        "Tag 6",
+        "Tag 7",
+        "Tag 8",
+        "Tag 9",
+        "Tag 10",
+        "Tag 11",
+        "Tag 12",
+        "Tag 13",
+        "Tag 14",
+        "Tag 15",
+        "Tag 16",
+        "Tag 17",
+        "Tag 18",
+        "Tag 19",
+        "Tag 20",
+        "Tag 21",
+        "Tag 22",
+        "Tag 23",
+        "Tag 24",
+    };
     #endregion
+
     protected async override Task OnInitializedAsync()
     {
-        await LoadData();
+        _isLoadingAll = true;
+        await LoadData().ContinueWith((val) =>
+        {
+            _isLoadingAll = false;
+            _isLoadingList = false;
+        });
     }
     private async Task LoadData()
     {
@@ -68,8 +165,33 @@
         _isLoadingList = true;
         _request.PageNumber = pageNumber;
         isClickNext = true;
-        await LoadData();
-        
+        await LoadData().ContinueWith((val) =>
+        {
+            _isLoadingAll = false;
+            _isLoadingList = false;
+        });
     }
-    
+
+    private async Task OnTagSelectionToggle()
+    {
+        List<string> lstBeforeChange = new();
+        foreach (var i in _lstTag) lstBeforeChange.Add(i);
+
+        var parameters = new DialogParameters();
+
+        parameters.Add("_lstTag", _lstTag);
+
+        var dialog = DialogService.Show<CustomTagSelect>("Add Tags", parameters);
+        var result = await dialog.Result;
+
+        if (!result.Cancelled)
+        {
+
+            _lstTag = (List<string>)result.Data;
+        }
+        else
+        {
+            _lstTag = lstBeforeChange;
+        }
+    }
 }

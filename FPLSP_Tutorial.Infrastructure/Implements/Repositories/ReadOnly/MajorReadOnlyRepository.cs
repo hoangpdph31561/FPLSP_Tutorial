@@ -9,8 +9,10 @@ using FPLSP_Tutorial.Application.ValueObjects.Common;
 using FPLSP_Tutorial.Application.ValueObjects.Pagination;
 using FPLSP_Tutorial.Application.ValueObjects.Response;
 using FPLSP_Tutorial.Domain.Entities;
+using FPLSP_Tutorial.Domain.Enums;
 using FPLSP_Tutorial.Infrastructure.Database.AppDbContext;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
 {
@@ -29,7 +31,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
         {
             try
             {
-                var major = await _majorEntities.AsNoTracking().Where(c => c.Id == idMajor && !c.Deleted).ProjectTo<MajorDTO>(_mapper.ConfigurationProvider)
+                var major = await _majorEntities.AsNoTracking().ProjectTo<MajorDTO>(_mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync(cancellationToken);
 
                 return RequestResult<MajorDTO?>.Succeed(major);
@@ -51,9 +53,16 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
         {
             try
             {
-                IQueryable<MajorEntity> queryable = _majorEntities.AsNoTracking().AsQueryable();
-                var result = await _majorEntities.AsNoTracking()
-                    .PaginateAsync<MajorEntity, MajorDTO>(request, _mapper, cancellationToken);
+                var queryable = _majorEntities.AsNoTracking();
+
+                if (!string.IsNullOrWhiteSpace(request.Name))
+                {
+                    queryable = queryable.Where(c => c.Name.Contains(request.Name));
+                }
+
+                queryable = queryable.Where(c => c.Status != EntityStatus.Deleted);
+
+                var result = await queryable.PaginateAsync<MajorEntity, MajorDTO>(request, _mapper, cancellationToken);
 
                 return RequestResult<PaginationResponse<MajorDTO>>.Succeed(new PaginationResponse<MajorDTO>()
                 {

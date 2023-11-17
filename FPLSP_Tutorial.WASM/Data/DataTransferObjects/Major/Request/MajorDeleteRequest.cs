@@ -3,6 +3,7 @@
     public class MajorDeleteRequest
     {
         public Guid Id { get; set; }
+        public bool Deleted { get; set; } = true;
         public Guid? DeletedBy { get; set; }
     }
 }

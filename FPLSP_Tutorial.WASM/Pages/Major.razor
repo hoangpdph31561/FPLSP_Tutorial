@@ -44,8 +44,8 @@
                             <MudTd>@context.NumberOfRequest</MudTd>
                             <MudTd><BadgeEntityStatus Status="@context.Status"></BadgeEntityStatus></MudTd>
                             <MudTd>
-                                <MudChip Icon="@Icons.Material.Filled.Edit" OnClick="@(() => DialogUpdate(context.Id))" Disabled="@_isDisableControls">Chi tiết</MudChip>
-                                <MudChip Icon="@Icons.Material.Filled.Delete" OnClick="@(() => DialogDelete(context.Id))" Disabled="@_isDisableControls">Xóa</MudChip>
+                                <MudChip Color="Color.Info" Icon="@Icons.Material.Filled.Edit" OnClick="@(() => DialogUpdate(context.Id))" Disabled="@_isDisableControls">Chi tiết</MudChip>
+                                <MudChip Color="Color.Secondary" Icon="@Icons.Material.Filled.Delete" OnClick="@(() => DialogDelete(context.Id))" Disabled="@_isDisableControls">Xóa</MudChip>
                             </MudTd>
                         </RowTemplate>
                     </MudTable>

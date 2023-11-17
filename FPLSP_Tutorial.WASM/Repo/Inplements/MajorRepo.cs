@@ -3,7 +3,6 @@ using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major.Request;
 using FPLSP_Tutorial.WASM.Data.Pagination;
 using FPLSP_Tutorial.WASM.Repo.Interfaces;
 using System.Net.Http.Json;
-using System.Threading;
 
 namespace FPLSP_Tutorial.WASM.Repo.Inplements
 {
@@ -39,6 +38,10 @@ namespace FPLSP_Tutorial.WASM.Repo.Inplements
         public async Task<PaginationResponse<MajorDTO>> GetListMajor(ViewMajorWithPaginationRequest request)
         {
             string url = $"/api/Majors?PageNumber={request.PageNumber}&PageSize={request.PageSize}";
+            if (!String.IsNullOrEmpty(request.Name))
+            {
+                url = $"/api/Majors?Name={request.Name}&PageNumber={request.PageNumber}&PageSize={request.PageSize}";
+            }
             var result = await _httpClient.GetFromJsonAsync<PaginationResponse<MajorDTO>>(url);
             if (result == null)
             {

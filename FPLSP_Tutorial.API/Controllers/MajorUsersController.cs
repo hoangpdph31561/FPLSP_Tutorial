@@ -29,7 +29,6 @@ namespace FPLSP_Tutorial.API.Controllers
         public async Task<IActionResult> Get([FromQuery] ViewMajorUserWithPaginationRequest request, CancellationToken cancellationToken)
         {
             MajorUserListWithPaginationViewModel vm = new(_userMajorReadOnlyRespository, _localizationService);
-            vm = new(_userMajorReadOnlyRespository, _localizationService);
 
             await vm.HandleAsync(request, cancellationToken);
             if (vm.Success)

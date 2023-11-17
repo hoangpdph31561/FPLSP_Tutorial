@@ -14,7 +14,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
     {
         private readonly AppReadWriteDbContext _dbContext;
         private readonly ILocalizationService _localizationService;
-        public MajorReadWriteRepository(ILocalizationService localizationService, AppReadWriteDbContext dbContext)
+        public MajorReadWriteRepository(AppReadWriteDbContext dbContext, ILocalizationService localizationService)
         {
             _dbContext = dbContext;
             _localizationService = localizationService;
@@ -30,12 +30,12 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
             }
             catch (Exception e)
             {
-                return RequestResult<Guid>.Fail(_localizationService["Unable to create example"], new[]
+                return RequestResult<Guid>.Fail(_localizationService["Unable to create major"], new[]
                 {
                     new ErrorItem
                     {
                         Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToCreate + "example"
+                        FieldName = LocalizationString.Common.FailedToCreate + "major"
                     }
                 });
             }
@@ -73,9 +73,9 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
 
         private async Task<MajorEntity?> GetMajorByIdAsync(Guid idMajor, CancellationToken cancellationToken)
         {
-            var example = await _dbContext.MajorEntities.FirstOrDefaultAsync(c => c.Id == idMajor && !c.Deleted, cancellationToken);
+            var major = await _dbContext.MajorEntities.FirstOrDefaultAsync(c => c.Id == idMajor && !c.Deleted, cancellationToken);
 
-            return example;
+            return major;
         }
 
         public async Task<RequestResult<int>> UpdateMajorAsync(MajorEntity entity, CancellationToken cancellationToken)
@@ -84,8 +84,9 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
             {
                 var major = await GetMajorByIdAsync(entity.Id, cancellationToken);
 
-                major!.Name = string.IsNullOrWhiteSpace(entity.Name) ? major.Name : entity.Name;
-
+                major!.Name = string.IsNullOrEmpty(entity.Name) ? major.Name :entity.Name;
+                major!.Code = entity.Code;
+                major!.Status = entity.Status;
                 major.ModifiedBy = entity.ModifiedBy;
                 major.ModifiedTime = DateTimeOffset.UtcNow;
 

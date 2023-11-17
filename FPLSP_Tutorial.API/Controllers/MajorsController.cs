@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
+using FPLSP_Tutorial.Application.DataTransferObjects.Major;
 using FPLSP_Tutorial.Application.DataTransferObjects.Major.Request;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadWrite;
 using FPLSP_Tutorial.Application.Interfaces.Services;
+using FPLSP_Tutorial.Application.ValueObjects.Pagination;
 using FPLSP_Tutorial.Infrastructure.ViewModels.Major;
 using Microsoft.AspNetCore.Mvc;
 
@@ -33,7 +35,13 @@ namespace FPLSP_Tutorial.API.Controllers
 
             await vm.HandleAsync(request, cancellationToken);
 
-            return Ok(vm);
+            if (vm.Success)
+            {
+                PaginationResponse<MajorDTO> result = new();
+                result = (PaginationResponse<MajorDTO>)vm.Data;
+                return Ok(result);
+            }
+            return BadRequest(vm);
         }
 
         [HttpGet("{id}")]
@@ -42,8 +50,12 @@ namespace FPLSP_Tutorial.API.Controllers
             MajorViewModel vm = new(_majorReadOnlyRepository, _localizationService);
 
             await vm.HandleAsync(id, cancellationToken);
-
-            return Ok(vm);
+            if (vm.Success)
+            {
+                MajorDTO result = (MajorDTO)vm.Data;
+                return Ok(result);
+            }
+            return BadRequest(vm);
         }
 
         [HttpPost]
@@ -67,7 +79,7 @@ namespace FPLSP_Tutorial.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> Delete(MajorDeleteRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Delete([FromQuery] MajorDeleteRequest request, CancellationToken cancellationToken)
         {
             MajorDeleteViewModel vm = new(_majorReadWriteRepository, _localizationService, _mapper);
 

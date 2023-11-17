@@ -1,6 +1,6 @@
-﻿using FPLSP_Tutorial.Domain.Enums;
+﻿using FPLSP_Tutorial.WASM.Enum;
 
-namespace FPLSP_Tutorial.Application.DataTransferObjects.Major.Request
+namespace FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major.Request
 {
     public class MajorUpdateRequest
     {

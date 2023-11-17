@@ -9,7 +9,6 @@ using FPLSP_Tutorial.Application.ValueObjects.Pagination;
 using FPLSP_Tutorial.Application.ValueObjects.Response;
 using FPLSP_Tutorial.Domain.Entities;
 using FPLSP_Tutorial.Infrastructure.Database.AppDbContext;
-using FPLSP_Tutorial.Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly

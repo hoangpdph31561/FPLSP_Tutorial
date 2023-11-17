@@ -8,9 +8,10 @@ using FPLSP_Tutorial.Application.ValueObjects.Common;
 using FPLSP_Tutorial.Application.ValueObjects.Pagination;
 using FPLSP_Tutorial.Application.ValueObjects.Response;
 using FPLSP_Tutorial.Domain.Entities;
+using FPLSP_Tutorial.Domain.Enums;
 using FPLSP_Tutorial.Infrastructure.Database.AppDbContext;
-using FPLSP_Tutorial.Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
 {
@@ -25,18 +26,18 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
             _mapper = mapper;
             _localizationService = localizationService;
         }
-        public async Task<RequestResult<MajorDTOs?>> GetMajorByIdAsync(Guid idMajor, CancellationToken cancellationToken)
+        public async Task<RequestResult<MajorDTO?>> GetMajorByIdAsync(Guid idMajor, CancellationToken cancellationToken)
         {
             try
             {
-                var major = await _majorEntities.AsNoTracking().Where(c => c.Id == idMajor && !c.Deleted).ProjectTo<MajorDTOs>(_mapper.ConfigurationProvider)
+                var major = await _majorEntities.AsNoTracking().ProjectTo<MajorDTO>(_mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync(cancellationToken);
 
-                return RequestResult<MajorDTOs?>.Succeed(major);
+                return RequestResult<MajorDTO?>.Succeed(major);
             }
             catch (Exception e)
             {
-                return RequestResult<MajorDTOs?>.Fail(_localizationService["Major is not found"], new[]
+                return RequestResult<MajorDTO?>.Fail(_localizationService["Major is not found"], new[]
                 {
                     new ErrorItem
                     {
@@ -47,15 +48,22 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
             }
         }
 
-        public async Task<RequestResult<PaginationResponse<MajorDTOs>>> GetMajorWithPaginationByAdminAsync(ViewMajorWithPaginationRequest request, CancellationToken cancellationToken)
+        public async Task<RequestResult<PaginationResponse<MajorDTO>>> GetMajorWithPaginationByAdminAsync(ViewMajorWithPaginationRequest request, CancellationToken cancellationToken)
         {
             try
             {
-                IQueryable<MajorEntity> queryable = _majorEntities.AsNoTracking().AsQueryable();
-                var result = await _majorEntities.AsNoTracking()
-                    .PaginateAsync<MajorEntity, MajorDTOs>(request, _mapper, cancellationToken);
+                var queryable = _majorEntities.AsNoTracking();
 
-                return RequestResult<PaginationResponse<MajorDTOs>>.Succeed(new PaginationResponse<MajorDTOs>()
+                if (!string.IsNullOrWhiteSpace(request.Name))
+                {
+                    queryable = queryable.Where(c => c.Name.Contains(request.Name));
+                }
+
+                queryable = queryable.Where(c => c.Status != EntityStatus.Deleted);
+
+                var result = await queryable.PaginateAsync<MajorEntity, MajorDTO>(request, _mapper, cancellationToken);
+
+                return RequestResult<PaginationResponse<MajorDTO>>.Succeed(new PaginationResponse<MajorDTO>()
                 {
                     PageNumber = request.PageNumber,
                     PageSize = request.PageSize,
@@ -65,7 +73,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
             }
             catch (Exception e)
             {
-                return RequestResult<PaginationResponse<MajorDTOs>>.Fail(_localizationService["List of Major are not found"], new[]
+                return RequestResult<PaginationResponse<MajorDTO>>.Fail(_localizationService["List of major are not found"], new[]
                 {
                     new ErrorItem
                     {

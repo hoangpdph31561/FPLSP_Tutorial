@@ -1,0 +1,65 @@
+﻿@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major.Request;
+@using FPLSP_Tutorial.WASM.Enum;
+@using FPLSP_Tutorial.WASM.Repo.Interfaces;
+
+
+<MudDialog>
+    <DialogContent>
+        <MudTextField @bind-Value="majorCreate.Name" Label="Tên chuyên ngành"></MudTextField>
+        <MudTextField @bind-Value="majorCreate.Code" Label="Mã chuyên ngành"></MudTextField>
+        <MudSelect T="EntityStatus" @bind-Value="majorCreate.Status" Label="Trạng thái" AnchorOrigin="Origin.BottomCenter">
+            <MudSelectItem Value="EntityStatus.Active">Hoạt động</MudSelectItem>
+            <MudSelectItem Value="EntityStatus.InActive">Không hoạt động</MudSelectItem>
+        </MudSelect>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" Color="Color.Error" @onclick="OnClickCancel">Hủy</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Info" @onclick="Reset">Làm mới</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Success" @onclick="CreateNewMajor">Lưu</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+    [Parameter]
+    public EventCallback OnCloseAdd { get; set; }
+    [Inject]
+    public IMajorRepo MajorRepository { get; set; }
+    [Inject]
+    public IDialogService DialogService { get; set; }
+    [Inject]
+    public ISnackbar Snackbar { get; set; }
+    public MajorCreateRequest majorCreate = new MajorCreateRequest();
+
+
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    void OnClickCancel() => MudDialog.Cancel();
+
+    private async Task CreateNewMajor()
+    {
+        var confirm = await DialogService.ShowMessageBox(
+            "Thông báo",
+            "Xác nhận thêm chuyên ngành?",
+            "Xác nhận",
+            cancelText: "Hủy"
+        );
+        if (confirm == true)
+        {
+            var result = await MajorRepository.AddMajorAsync(majorCreate);
+            if (result == true)
+            {
+                OnClickCancel();
+                Snackbar.Add("Thêm thành công", Severity.Success);
+            }
+            else
+            {
+                Snackbar.Add("Thêm thất bại", Severity.Error);
+            }
+            await Reset();
+        }
+    }
+
+    private async Task Reset()
+    {
+        majorCreate = new MajorCreateRequest();
+    }
+}

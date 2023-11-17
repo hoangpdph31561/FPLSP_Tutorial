@@ -9,10 +9,15 @@ namespace FPLSP_Tutorial.Infrastructure.Extensions.AutoMapperProfiles
     {
         public MajorProfile()
         {
-            CreateMap<MajorEntity, MajorDTOs>();
+            CreateMap<MajorEntity, MajorDTO>();
             CreateMap<MajorCreateRequest, MajorEntity>();
             CreateMap<MajorUpdateRequest, MajorEntity>();
             CreateMap<MajorDeleteRequest, MajorEntity>();
+
+            CreateMap<MajorEntity, MajorDTO>()
+                .ForMember(dest => dest.NumberOfLecturer, opt => opt.MapFrom(src => src.UserMajors.Count()));
+            CreateMap<MajorEntity, MajorDTO>()
+                .ForMember(dest => dest.NumberOfRequest, opt => opt.MapFrom(src => src.MajorRequests.Count()));
         }
     }
 }

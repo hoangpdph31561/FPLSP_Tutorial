@@ -54,8 +54,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
             {
                 var result = await _appDbContext.PostEntities.AsNoTracking().Where(x => x.Id == postId && !x.Deleted)
                     .ProjectTo<ViewPostByIdResponse>(_mapper.ConfigurationProvider).FirstOrDefaultAsync(cancellationToken);
-                result.ChildPostsId = await _appDbContext.PostEntities.AsNoTracking().Where(x => x.Id == postId && !x.Deleted).Select(x => x.Id)
-                    .ToListAsync(cancellationToken);
+                
                 return RequestResult<ViewPostByIdResponse?>.Succeed(result);
 
             }

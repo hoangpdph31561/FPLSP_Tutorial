@@ -1,55 +1,58 @@
 ﻿@page "/postdetail/{id}"
-<PageTitle>Bài viết @result.Title</PageTitle>
-<MenuMainPage IsLoading="@(result == null)" Label="@($"Bài viết {result!.Title}")" HideSearch="true">
-    <HeaderContent><MudText Align="Align.Right">Ngày tạo: @result.CreatedTime.ToString("hh:mm tt dd/MM/yyyy")</MudText></HeaderContent>
-    <BodyContent>
+<PageTitle>@result.Title</PageTitle>
+
+
+<MudCard Elevation="0" Class="ma-5">
+    <MudText>@($"Bài viết")</MudText>
+    <div class="d-flex align-center justify-center">
+        <MudText Class="me-auto" Typo="Typo.h5" Style="font-size: 500">@result!.Title</MudText>
+        <MudText Align="Align.Right">Ngày tạo: @result.CreatedTime.ToString("hh:mm tt dd/MM/yyyy")</MudText>
+    </div>
+    
+        
         <MudPaper Elevation="0">
-            @if(result == null)
-            {
-                <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="m-3" />
-            }
-            else
-            {
-                <MudPaper Elevation="0" Class="d-flex align-center">
-                    <MudText Typo="Typo.subtitle1">Tags:</MudText>
-                    @if(lstTags.Count == 0)
-                    {
-                        <MudText Typo="Typo.subtitle1" Class="ml-2">Không có tags.</MudText>
-                    }
-                    else
-                    {
-                        @foreach (var tag in lstTags)
-                        {
-                            <MudChip Size="Size.Small" Variant="Variant.Outlined" Color="Color.Primary">@tag.Name</MudChip>
-                        }
-                    }
-                </MudPaper>
-                <MudPaper Class="pa-3" Elevation="0">
-                    <MudText Typo="Typo.h6">Người viết: @result.CreatedName</MudText>
-                </MudPaper>
-
-                <MudPaper Class="pa-4" Elevation="0">
-                    <MudText>@result.Content</MudText>
-                </MudPaper>
-                <MudText Typo="Typo.h5" Class="my-4">| Tham khảo</MudText>
-
-                @if (lstSuggestPost.Count > 0)
+            @if (result == null)
+        {
+            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="m-3" />
+        }
+        else
+        {
+            <MudPaper Elevation="0" Class="d-flex align-center">
+                <MudText Typo="Typo.subtitle1">Tags:</MudText>
+                @if (lstTags.Count == 0)
                 {
-                    <div class="my-3 mx-1">
-                        @foreach (var item in lstSuggestPost)
-                        {
-                            <MudNavLink OnClick="@(async() => await OnClick(item.Id.ToString()))"><MudText>@item.Title</MudText></MudNavLink>
-                        }
-                    </div>
+                    <MudText Typo="Typo.subtitle1" Class="ml-2">Không có tags.</MudText>
                 }
+                else
+                {
+                    @foreach (var tag in lstTags)
+                    {
+                        <MudChip Size="Size.Small" Variant="Variant.Outlined" Color="Color.Primary">@tag.Name</MudChip>
+                    }
+                }
+            </MudPaper>
+            <MudPaper Class="pa-3" Elevation="0">
+                <MudText Typo="Typo.h6">Người viết: @result.CreatedName</MudText>
+            </MudPaper>
+
+            <MudPaper Class="pa-4" Elevation="0">
+                <MudText>@result.Content</MudText>
+            </MudPaper>
+            <MudText Typo="Typo.h5" Class="my-4">| Tham khảo</MudText>
+
+            @if (lstSuggestPost.Count > 0)
+            {
+                <div class="my-3 mx-1">
+                    @foreach (var item in lstSuggestPost)
+                    {
+                        <MudNavLink OnClick="@(async() => await OnClick(item.Id.ToString()))"><MudText>@item.Title</MudText></MudNavLink>
+                    }
+                </div>
             }
-        </MudPaper>
-    </BodyContent>
-</MenuMainPage>
-
-
-    
-    
+        }
+    </MudPaper>
+</MudCard>
+        
 
 @code {
     [Parameter]

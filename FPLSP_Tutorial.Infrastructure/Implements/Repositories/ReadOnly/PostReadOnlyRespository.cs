@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using FPLSP_Tutorial.Application.DataTransferObjects.Post;
 using FPLSP_Tutorial.Application.DataTransferObjects.Post.Request;
 using FPLSP_Tutorial.Application.DataTransferObjects.Post.Response;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly;
@@ -25,13 +26,14 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
             _mapper = mapper;
             _localizationService = localizationService;
         }
-        public async Task<RequestResult<PaginationResponse<ViewPostWithPaginationResponse>>> GetExampleWithPaginationByAdminAsync(ViewPostWithPaginationRequest request, CancellationToken cancellationToken)
+        public async Task<RequestResult<PaginationResponse<PostDto>>> GetPostWithPaginationAsync(ViewPostWithPaginationRequest request, CancellationToken cancellationToken)
         {
             try
             {
                 IQueryable<PostEntity> queryable = _appDbContext.PostEntities.AsNoTracking().AsQueryable();
-                var result = await queryable.AsNoTracking().PaginateAsync<PostEntity, ViewPostWithPaginationResponse>(request, _mapper, cancellationToken);
-                return RequestResult<PaginationResponse<ViewPostWithPaginationResponse>>.Succeed(new PaginationResponse<ViewPostWithPaginationResponse>()
+                if(request.PostId != null) { queryable.Where(c => c.PostId == request.PostId); }
+                var result = await queryable.AsNoTracking().PaginateAsync<PostEntity, PostDto>(request, _mapper, cancellationToken);
+                return RequestResult<PaginationResponse<PostDto>>.Succeed(new PaginationResponse<PostDto>()
                 {
                     PageNumber = request.PageNumber,
                     PageSize = request.PageSize,

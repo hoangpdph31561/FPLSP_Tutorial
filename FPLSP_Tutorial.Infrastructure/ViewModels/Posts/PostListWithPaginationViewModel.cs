@@ -19,7 +19,7 @@ namespace FPLSP_Tutorial.Infrastructure.ViewModels.Posts
         {
             try
             {
-                var result = await _postReadOnlyRespository.GetExampleWithPaginationByAdminAsync(request, cancellationToken);
+                var result = await _postReadOnlyRespository.GetPostWithPaginationAsync(request, cancellationToken);
                 Data = result.Data!;
                 Success = result.Success;
                 ErrorItems = result.Errors;

@@ -12,6 +12,7 @@ builder.Services.AddMudServices();
 builder.Services.AddScoped<IMajorRequestRepo, MajorRequestRepo>();
 builder.Services.AddScoped<IMajorUserRepo, MajorUserRepo>();
 builder.Services.AddScoped<IMajorRepo, MajorRepo>();
+builder.Services.AddScoped<IPostRepo, PostRepo>();
 
 builder.Services.AddHttpClient("API", options =>
 {

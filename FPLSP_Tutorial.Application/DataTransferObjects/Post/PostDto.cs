@@ -1,7 +1,7 @@
 ﻿using FPLSP_Tutorial.Application.DataTransferObjects.Tag;
-using FPLSP_Tutorial.WASM.Enum;
+using FPLSP_Tutorial.Domain.Enums;
 
-namespace FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post
+namespace FPLSP_Tutorial.Application.DataTransferObjects.Post
 {
     public class PostDto
     {

@@ -1,105 +1,97 @@
 ﻿@page "/post-manager"
+@layout ManagementLayout
+
 @using FPLSP_Tutorial.Application.DataTransferObjects.ClientPost;
 @using FPLSP_Tutorial.Application.DataTransferObjects.Tag;
 @using FPLSP_Tutorial.Application.ValueObjects.Response;
 @using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post;
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post.Request;
 @using FPLSP_Tutorial.WASM.Data.Pagination;
+@using FPLSP_Tutorial.WASM.Repo.Interfaces;
 
-<h3>PostServices</h3>
+@inject NavigationManager _navManager;
+@inject IPostRepo _repoPost
 
-<style>
-    .mud-table-cell-custom-group {
-        font-weight: 500;
-    }
-
-    .mud-table-cell-custom-group-footer {
-        padding-bottom: 50px;
-        text-align: right;
-    }
-</style>
-
-<MudTable Hover="true" Breakpoint="Breakpoint.Sm" Height="500px" FixedHeader="true"
-          Items="@_posts"
-          GroupBy="_groupDefinition"
-          GroupHeaderStyle="background-color:var(--mud-palette-background-grey)"
-          GroupFooterClass="mb-4"
-          Dense="true"
-@ref="_tableRef">
-    <ColGroup>
-        <col style="width: 60px;" />
-        <col />
-        <col />
-        <col />
-        <col />
-        <col />
-    </ColGroup>
+<CustomListDisplay HideSearch="true" Label="Quản lý bài viết" IsLoading="@_isLoadingAll">
     <HeaderContent>
-        <MudTh>STT</MudTh>
-        <MudTh>tiêu đề</MudTh>
-        <MudTh>gán thẻ</MudTh>
-        <MudTh>Thể loại</MudTh>
-        <MudTh>Tác vụ</MudTh>
+        <MudChip Icon="@Icons.Material.Filled.Add" OnClick="@(async () => { })" Color="Color.Primary">Thêm</MudChip>
     </HeaderContent>
-    <GroupHeaderTemplate> 
-        <MudTh Class="mud-table-cell-custom-group" colspan="5">@($"{context.GroupName}: {context.Key}") </MudTh>
-    </GroupHeaderTemplate>
-    <RowTemplate>
-        <MudTd DataLabel="STT">@context.STT</MudTd>
-        <MudTd DataLabel="Title">@context.Title</MudTd>
-        @foreach (var x in context.tagDtos)
-        {
-                <em>@x.Name,  </em>
-        }
-        <MudTd DataLabel="Type">@context.Type</MudTd>
-    </RowTemplate>
-</MudTable>
+    <BodyContent>
+        <MudTable Items="@_listPost">
+            <HeaderContent>
+                <MudTh>STT</MudTh>
+                <MudTh>Tiêu đề</MudTh>
+                <MudTh>Tag</MudTh>
+                <MudTh>Trạng thái</MudTh>
+                <MudTh>Hành động</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd>@(_listPost.IndexOf(context) + 1)</MudTd>
+                <MudTd Style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap; max-width: 10vw;">@context.Title</MudTd>
+                <MudTd>
+                    @foreach(var i in context.ListTag.Take(3))
+                    {
+                        <MudChip Variant="Variant.Outlined">@i.Name</MudChip>
+                    }
+                    @if(context.ListTag.Count() > 3)
+                    {
+                        string tooltip = "";
+                        foreach(var tag in context.ListTag.Skip(3))
+                        {
+                            if (tooltip != "") tooltip += ", ";
+                            tooltip += tag.Name;
+                        }
+                        <MudTooltip Text="tooltip">
+                            <MudChip Variant="Variant.Outlined">
+                                @("+" + (context.ListTag.Count() - 3))
+                            </MudChip>
+                        </MudTooltip>
+                    }
+                </MudTd>
+                <MudTd><BadgeEntityStatus Status="@context.Status"/></MudTd>
+                <MudTd>
+                    @if(idPost != null)
+                    {
+                        <MudChip OnClick="@(() => _navManager.NavigateTo($"/post-mananger?idPost={context.Id}"))">Xem bài viết con</MudChip>
+                    }
+                    
+                    <MudChip Color="Color.Primary">Chỉnh sửa</MudChip>
+                    <MudChip Color="Color.Error">Xóa</MudChip>
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
+    </BodyContent>
+</CustomListDisplay>
+
 
 @code {
     [Parameter]
-    [Inject] public HttpClient _http { get; set; }
-    private List<PostDto> _posts = new List<PostDto>();
-    private MudTable<PostDto>? _tableRef;
+    [SupplyParameterFromQuery]
+    public string? idPost { get; set; }
+
+    [Inject] 
+    public HttpClient _http { get; set; }
+
+    private bool _isLoadingAll = true;
+
+    List<PostDto> _listPost = new();
+    ViewPostWithPaginationRequest _prPost = new()
+        {
+            PageNumber = 1,
+            PageSize = 10,
+        };
 
     protected override async Task OnInitializedAsync()
     {
-        await GetListPost();
+        _prPost.PostId = idPost == null ? null : Guid.Parse(idPost);
+        await LoadData().ContinueWith((result) =>
+        {
+            _isLoadingAll = false ;
+        });
     }
 
-    private TableGroupDefinition<PostDto> _groupDefinition = new()
-        {
-            GroupName = "",
-            Indentation = false,
-            Expandable = true,
-            IsInitiallyExpanded = false,
-            Selector = (e) => e.Title,
-        };
-
-
-    private async Task GetListPost()
+    private async Task LoadData()
     {
-        // lấy danh sách bài viết theo IdMajor
-        var postAPI = await _http.GetFromJsonAsync<PaginationResponse<PostMainDTO>>($"https://localhost:7225/api/CLientPosts/getPostByMajorId?MajorId={null}");
-
-        // lấy listPost
-        var post = postAPI!.Data!.ToList();
-
-        if (post != null)
-        {
-            foreach (var item in post)
-            {
-                // lấy listTag theo idPost
-                var TagAPI = await _http.GetFromJsonAsync<RequestResult<List<TagDto>>>($"https://localhost:7225/api/Tag?IdMajor={null}&IdPost={item.Id}");
-
-                var result = new PostDto()
-                    {
-                        Id = item.Id,
-                        STT = +1,
-                        tagDtos = TagAPI!.Data!.ToList(),
-                        Title = item.Title,
-                        Type = item.PostType
-                    };
-                _posts.Add(result);
-            }
-        }
+        _listPost = (await _repoPost.GetListWithPaginationAsync(_prPost)).Data.ToList();
     }
 }

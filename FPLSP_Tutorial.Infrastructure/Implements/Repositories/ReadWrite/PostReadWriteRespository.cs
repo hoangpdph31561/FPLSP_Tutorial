@@ -4,6 +4,7 @@ using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Application.ValueObjects.Common;
 using FPLSP_Tutorial.Application.ValueObjects.Response;
 using FPLSP_Tutorial.Domain.Entities;
+using FPLSP_Tutorial.Domain.Enums;
 using FPLSP_Tutorial.Infrastructure.Database.AppDbContext;
 using Microsoft.EntityFrameworkCore;
 
@@ -47,10 +48,11 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
             try
             {
                 var postDeleting = await GetPostByIdAsync(request.Id, cancellationToken);
+
                 postDeleting!.Deleted = true;
                 postDeleting.DeletedBy = request.DeletedBy;
                 postDeleting.DeletedTime = DateTimeOffset.UtcNow;
-                //postDeleting.Status = EntityStatus.Deleted;
+                postDeleting.Status = EntityStatus.Deleted;
                 _appDbContext.PostEntities.Update(postDeleting);
                 await _appDbContext.SaveChangesAsync();
                 return RequestResult<int>.Succeed(1);
@@ -74,8 +76,13 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
             try
             {
                 var postUpdating = await GetPostByIdAsync(entity.Id, cancellationToken);
-                postUpdating.ModifiedTime = DateTimeOffset.UtcNow;
+                postUpdating!.ModifiedTime = DateTimeOffset.UtcNow;
                 postUpdating.ModifiedBy = entity.ModifiedBy;
+                postUpdating.PostId = entity.PostId;
+                postUpdating.PostType = entity.PostType;
+                postUpdating.Title =  entity.Title;
+                postUpdating.Content = entity.Content;
+                postUpdating.Status = entity.Status;
                 _appDbContext.PostEntities.Update(postUpdating);
                 await _appDbContext.SaveChangesAsync();
                 return RequestResult<int>.Succeed(1);

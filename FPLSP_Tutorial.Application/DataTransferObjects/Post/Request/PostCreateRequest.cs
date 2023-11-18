@@ -4,10 +4,10 @@ namespace FPLSP_Tutorial.Application.DataTransferObjects.Post.Request
 {
     public class PostCreateRequest
     {
-        public string Type { get; set; }
-        public string Title { get; set; }
-        public string Content { get; set; }
-        public Guid? ParentPost { get; set; }
-        public EntityStatus Status { get; set; } = EntityStatus.Active;
+        public string PostType { get; set; } = string.Empty;
+        public string Title { get; set; } = string.Empty;
+        public string Content { get; set; } = string.Empty;
+        public Guid? PostId { get; set; }
+        public Guid CreatedBy { get; set; }
     }
 }

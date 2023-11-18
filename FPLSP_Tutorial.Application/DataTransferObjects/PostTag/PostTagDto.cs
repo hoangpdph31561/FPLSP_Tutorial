@@ -4,5 +4,6 @@
     {
         public Guid TagId { get; set; }
         public Guid PostId { get; set; }
+        public Guid CreatedBy { get; set; }
     }
 }

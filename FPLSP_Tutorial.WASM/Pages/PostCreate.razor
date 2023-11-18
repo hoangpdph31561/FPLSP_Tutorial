@@ -1,5 +1,58 @@
-﻿<h3>PostCreate</h3>
+﻿@page "/post-create"
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post.Request;
 
+@layout ManagementLayout
+
+@inject IPostRepo _repoPost;
+@inject ISnackbar _mudSnackbar;
+@inject NavigationManager _nav;
+
+<div class="ma-3">
+    <MudBreadcrumbs 
+        Items="@(new List<BreadcrumbItem>() {
+                        new BreadcrumbItem("Danh sách", "/post-manager"),
+                        new BreadcrumbItem("Thêm bài viết", "/post-add", true)
+    })"></MudBreadcrumbs>
+
+    <MudText Typo="Typo.h5" Style="font-weight: 500">Thêm bài viết</MudText>
+
+    <div class="row mt-3">
+        <div class="col-6"><MudTextField @bind-Value="@_postCreateR.Title" Label="Tiêu đề" Variant="Variant.Outlined"></MudTextField></div>
+        <div class="col-6">
+            <MudSelect @bind-Value="@_postCreateR.PostType" Label="Loại bài viết" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
+                <MudSelectItem Value="@("Hệ thống")">Hệ thống</MudSelectItem>
+                <MudSelectItem Value="@("Chuyên ngành")">Chuyên ngành</MudSelectItem>
+            </MudSelect>
+        </div>
+    </div>
+    
+    <MudText Typo="Typo.h6" Class="pt-3">Nội dung</MudText>
+    <textarea style="width: 100%; height: 50vh; border: 1px lightgrey solid; border-radius: 3px;" class="p-3" @onchange="@((ChangeEventArgs args) => { _postCreateR.Content = args.Value.ToString(); })"></textarea>
+    <div class="row">
+        <div class="col d-flex justify-content-end">
+            <MudChip OnClick="@(() => _nav.NavigateTo("/post-manager" + ((idPost == null) ? "" : "?idPost=" + idPost)))" Color="Color.Error" Icon="@Icons.Material.Filled.ExitToApp">Hủy</MudChip>
+            <MudChip OnClick="@(async () => { await OnSaveAsync(); })" Color="Color.Primary" Icon="@Icons.Material.Filled.Save">Lưu</MudChip>
+        </div>
+    </div>
+</div>
 @code {
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string? idPost { get; set; }
 
+    private PostCreateRequest _postCreateR = new();
+
+    private async Task OnSaveAsync()
+    {
+        var result = await _repoPost.CreatePostAsync(_postCreateR);
+        if(result)
+        {
+            _mudSnackbar.Add("Thêm thành công", Severity.Success);
+            _nav.NavigateTo("/post-manager" + ((idPost == null) ? "" : "?idPost=" + idPost));
+        }
+        else
+        {
+            _mudSnackbar.Add("Thêm thất bại", Severity.Error);
+        }
+    }
 }

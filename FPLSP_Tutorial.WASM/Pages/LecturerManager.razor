@@ -88,11 +88,11 @@
                                 <RowTemplate>
                                     <MudTd>@context.email</MudTd>
                                     <MudTd>@context.majorName</MudTd>
-                                    <MudTd>@context.Status</MudTd>
+                                    <MudTd><BadgeEntityStatus Status="@context.Status" /></MudTd>
                                     <MudTd>
                                         <div class="d-flex" style="margin-top:10px">
-                                            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => OnAdd(context.Id,context.MajorId,context.CreatedBy,context.Status)">Chấp nhận</MudButton>
-                                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="left:10px" OnClick="() => OnDelete(context.Id)">Từ chối</MudButton>
+                                            <MudChip Variant="Variant.Filled" Color="Color.Primary" OnClick="() => OnAdd(context.Id,context.MajorId,context.CreatedBy,context.Status)">Chấp nhận</MudChip>
+                                            <MudChip Variant="Variant.Filled" Color="Color.Primary" Style="left:10px" OnClick="() => OnDelete(context.Id)">Từ chối</MudChip>
                                         </div>
                                     </MudTd>
                                 </RowTemplate>

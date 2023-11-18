@@ -8,9 +8,10 @@ namespace FPLSP_Tutorial.WASM.Repo.Interfaces
     public interface IPostRepo
     {
         Task<PaginationResponse<PostDto>> GetListWithPaginationAsync(ViewPostWithPaginationRequest request);
-        //Task<bool> AddMajorAsync(MajorCreateRequest request);
-        //Task<bool> UpdateMajorAsync(MajorUpdateRequest request);
-        //Task<bool> DeleteMajorAsync(MajorDeleteRequest request);
-        //Task<MajorDTO> GetMajorById(Guid id);
+        Task<PostDto> GetPostById(Guid id);
+        Task<bool> CreatePostAsync(PostCreateRequest request);
+        Task<bool> UpdatePostAsync(PostUpdateRequest request);
+        Task<bool> DeletePostAsync(PostDeleteRequest request);
+        
     }
 }

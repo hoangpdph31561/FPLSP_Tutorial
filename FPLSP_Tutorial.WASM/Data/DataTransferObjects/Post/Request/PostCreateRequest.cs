@@ -1,6 +1,7 @@
-﻿using FPLSP_Tutorial.Domain.Enums;
+﻿using FPLSP_Tutorial.Application.DataTransferObjects.Tag;
+using FPLSP_Tutorial.WASM.Enum;
 
-namespace FPLSP_Tutorial.Application.DataTransferObjects.Post.Request
+namespace FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post.Request
 {
     public class PostCreateRequest
     {

@@ -30,9 +30,9 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
         {
             try
             {
-                IQueryable<PostEntity> queryable = _appDbContext.PostEntities.AsNoTracking().AsQueryable();
+                IQueryable<PostEntity> queryable = _appDbContext.PostEntities.AsNoTracking().AsQueryable().Where(c => !c.Deleted);
                 if(request.PostId != null) { queryable.Where(c => c.PostId == request.PostId); }
-                var result = await queryable.AsNoTracking().PaginateAsync<PostEntity, PostDto>(request, _mapper, cancellationToken);
+                var result = await queryable.PaginateAsync<PostEntity, PostDto>(request, _mapper, cancellationToken);
                 return RequestResult<PaginationResponse<PostDto>>.Succeed(new PaginationResponse<PostDto>()
                 {
                     PageNumber = request.PageNumber,
@@ -48,20 +48,20 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
             }
         }
 
-        public async Task<RequestResult<ViewPostByIdResponse?>> GetPostByIdAsync(Guid postId, CancellationToken cancellationToken)
+        public async Task<RequestResult<PostDto?>> GetPostByIdAsync(Guid postId, CancellationToken cancellationToken)
         {
             try
             {
                 var result = await _appDbContext.PostEntities.AsNoTracking().Where(x => x.Id == postId && !x.Deleted)
-                    .ProjectTo<ViewPostByIdResponse>(_mapper.ConfigurationProvider).FirstOrDefaultAsync(cancellationToken);
+                    .ProjectTo<PostDto>(_mapper.ConfigurationProvider).FirstOrDefaultAsync(cancellationToken);
                 
-                return RequestResult<ViewPostByIdResponse?>.Succeed(result);
+                return RequestResult<PostDto?>.Succeed(result);
 
             }
             catch (Exception e)
             {
 
-                return RequestResult<ViewPostByIdResponse?>.Fail(_localizationService["Post cannot found"], new[]
+                return RequestResult<PostDto?>.Fail(_localizationService["Post cannot found"], new[]
                 {
                     new ErrorItem
                     {

@@ -11,10 +11,12 @@
 
 @inject NavigationManager _navManager;
 @inject IPostRepo _repoPost
+@inject IDialogService _diagService;
+@inject ISnackbar _mudSnackbar;
 
-<CustomListDisplay HideSearch="true" Label="Quản lý bài viết" IsLoading="@_isLoadingAll">
+<CustomListDisplay HideSearch="true" Label="Quản lý bài viết" LabelHelper="" IsLoading="@_isLoadingAll">
     <HeaderContent>
-        <MudChip Icon="@Icons.Material.Filled.Add" OnClick="@(async () => { })" Color="Color.Primary">Thêm</MudChip>
+        <MudChip Icon="@Icons.Material.Filled.Add" OnClick="@(async () => { _navManager.NavigateTo("/post-create" + ((idPost == null) ? "" : "?idPost=" + idPost)); })" Color="Color.Primary">Thêm</MudChip>
     </HeaderContent>
     <BodyContent>
         <MudTable Items="@_listPost">
@@ -22,6 +24,10 @@
                 <MudTh>STT</MudTh>
                 <MudTh>Tiêu đề</MudTh>
                 <MudTh>Tag</MudTh>
+                @if(idPost == null)
+                {
+                    <MudTh>SL Bài viết con</MudTh>
+                }
                 <MudTh>Trạng thái</MudTh>
                 <MudTh>Hành động</MudTh>
             </HeaderContent>
@@ -48,15 +54,19 @@
                         </MudTooltip>
                     }
                 </MudTd>
+                @if (idPost == null)
+                {
+                    <MudTd>
+                        <MudTooltip Text="Xem chi tiết">
+                            <MudChip OnClick="@(() => { _navManager.NavigateTo($"/post-manager?idPost={context.Id}"); })">@context.CountPost</MudChip>
+                        </MudTooltip>
+                    </MudTd>
+                }
+                
                 <MudTd><BadgeEntityStatus Status="@context.Status"/></MudTd>
                 <MudTd>
-                    @if(idPost != null)
-                    {
-                        <MudChip OnClick="@(() => _navManager.NavigateTo($"/post-mananger?idPost={context.Id}"))">Xem bài viết con</MudChip>
-                    }
-                    
-                    <MudChip Color="Color.Primary">Chỉnh sửa</MudChip>
-                    <MudChip Color="Color.Error">Xóa</MudChip>
+                    <MudChip Color="Color.Primary" OnClick="@(async () => { _navManager.NavigateTo("/post-update?idPost=" + context.Id); })">Chỉnh sửa</MudChip>
+                    <MudChip Color="Color.Error" OnClick="@(async () => await OnDelete(context.Id))">Xóa</MudChip>
                 </MudTd>
             </RowTemplate>
         </MudTable>
@@ -68,6 +78,7 @@
     [Parameter]
     [SupplyParameterFromQuery]
     public string? idPost { get; set; }
+
 
     [Inject] 
     public HttpClient _http { get; set; }
@@ -81,17 +92,48 @@
             PageSize = 10,
         };
 
-    protected override async Task OnInitializedAsync()
+
+    protected override async Task OnParametersSetAsync()
     {
+        _isLoadingAll = true;
+        _listPost = new();
         _prPost.PostId = idPost == null ? null : Guid.Parse(idPost);
         await LoadData().ContinueWith((result) =>
         {
-            _isLoadingAll = false ;
+            _isLoadingAll = false;
         });
     }
 
     private async Task LoadData()
     {
         _listPost = (await _repoPost.GetListWithPaginationAsync(_prPost)).Data.ToList();
+    }
+
+    private async Task OnDelete(Guid id)
+    {
+        var request = new PostDeleteRequest
+            {
+                Id = id,
+            };
+        var confirm = await _diagService.ShowMessageBox
+              (
+                  "Thông báo",
+                  "Bạn chắn chắn xóa bài viết này?",
+                  "Xác nhận",
+                  cancelText: "Hủy"
+              );
+        if (confirm == true)
+        {
+            var result = await _repoPost.DeletePostAsync(request);
+            if(result)
+            {
+                _mudSnackbar.Add("Xóa thành công", Severity.Success);
+                await LoadData();
+            }
+            else
+            {
+                _mudSnackbar.Add("Xóa thất bại", Severity.Error);
+            }
+        }
     }
 }

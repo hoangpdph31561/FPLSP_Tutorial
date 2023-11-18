@@ -11,6 +11,7 @@ namespace FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post
         public string Title { get; set; } = string.Empty;
         public string Content { get; set; } = string.Empty;
         public List<TagDto> ListTag { get; set; } = new List<TagDto>();
+        public int CountPost { get; set; } = 0;
         public EntityStatus Status { get; set; } = EntityStatus.Active;
     }
 }

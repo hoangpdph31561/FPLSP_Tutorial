@@ -39,7 +39,20 @@ namespace FPLSP_Tutorial.API.Controllers
             }
             return BadRequest(vm);
         }
-        
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetPostById(Guid id, CancellationToken cancellationToken)
+        {
+            PostViewModel vm = new(_postReadOnlyRespository, _localizationService);
+            await vm.HandleAsync(id, cancellationToken);
+            if (vm.Success)
+            {
+                PostDto result = (PostDto)vm.Data;
+                return Ok(result);
+            }
+            return BadRequest(vm);
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetPosts([FromQuery] ViewPostWithPaginationRequest request, CancellationToken cancellationToken)
         {
@@ -47,15 +60,9 @@ namespace FPLSP_Tutorial.API.Controllers
             await vm.HandleAsync(request, cancellationToken);
             return Ok(vm);
         }
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetPostById(Guid id, CancellationToken cancellationToken)
-        {
-            PostViewModel vm = new(_postReadOnlyRespository, _localizationService);
-            await vm.HandleAsync(id, cancellationToken);
-            return Ok(vm);
-        }
+        
         [HttpPost]
-        public async Task<IActionResult> CreateNewPost(PostCreateRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> CreatePost(PostCreateRequest request, CancellationToken cancellationToken)
         {
             PostCreateViewModel vm = new(_postReadOnlyRespository, _postReadWriteRespository, _localizationService, _mapper);
             await vm.HandleAsync(request, cancellationToken);
@@ -68,8 +75,9 @@ namespace FPLSP_Tutorial.API.Controllers
             await vm.HandleAsync(request, cancellationToken);
             return Ok(vm);
         }
+
         [HttpDelete]
-        public async Task<IActionResult> DeletePost(PostDeleteRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeletePost([FromQuery]PostDeleteRequest request, CancellationToken cancellationToken)
         {
             PostDeleteViewModel vm = new(_postReadWriteRespository, _localizationService);
             await vm.HandleAsync(request, cancellationToken);

@@ -9,7 +9,7 @@ namespace FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly
 {
     public interface IPostReadOnlyRespository
     {
-        Task<RequestResult<ViewPostByIdResponse?>> GetPostByIdAsync(Guid postId, CancellationToken cancellationToken);
+        Task<RequestResult<PostDto?>> GetPostByIdAsync(Guid postId, CancellationToken cancellationToken);
         Task<RequestResult<PaginationResponse<PostDto>>> GetPostWithPaginationAsync(
             ViewPostWithPaginationRequest request, CancellationToken cancellationToken);
     }

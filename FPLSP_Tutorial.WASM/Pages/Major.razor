@@ -1,4 +1,6 @@
 ﻿@page "/major"
+@layout ManagementLayout
+
 @using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major;
 @using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major.Request;
 @using FPLSP_Tutorial.WASM.Enum;
@@ -13,7 +15,7 @@
 
 
 
-<MudBreadcrumbs Items="_items" Separator=">"></MudBreadcrumbs>
+<MudBreadcrumbs Items="_items"></MudBreadcrumbs>
 <CustomListDisplay Label="@("Danh sách chuyên ngành")" IsLoading="_isLoadingAll" DisableSearch="_isDisableControls" OnSearch="@OnSearch">
     <HeaderContent>
         <MudChip Icon="@Icons.Material.Filled.Add" OnClick="@(async () => await DialogAdd())" Color="Color.Success">Thêm</MudChip>
@@ -29,7 +31,7 @@
                 <MudCard Class="p-3" Elevation="2">
                     <MudTable Items="@_majorDTO.Data">
                         <HeaderContent>
-                            <MudTh>Id Index</MudTh>
+                            <MudTh>STT</MudTh>
                             <MudTh>Tên chuyên ngành</MudTh>
                             <MudTh>Số lượng giảng viên</MudTh>
                             <MudTh>Số lượng giảng viên chờ duyệt</MudTh>
@@ -59,7 +61,7 @@
 
 @if (idMajorDetail != Guid.Empty && closeDetail == false)
 {
-    <UpdateMajor idMajor="idMajorDetail" onCloseUpdate="OnCloseDetail"></UpdateMajor>
+    <MajorUpdate idMajor="idMajorDetail" onCloseUpdate="OnCloseDetail"></MajorUpdate>
 }
 
 @code {
@@ -96,16 +98,17 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadDataMajor();
+        await LoadData().ContinueWith((re) =>
+        {
+            _isLoadingAll = false;
+            _isLoadingList = false;
+        });
     }
 
-    private async Task LoadDataMajor()
+    private async Task LoadData()
     {
         _majorDTO = await majorRepository.GetListMajor(majorRequest);
         _lstmajors = _majorDTO.Data.ToList();
-        _isLoadingList = false;
-        _isLoadingAll = false;
-        StateHasChanged();
     }
 
     private async Task OnSearch(string? searchString)
@@ -113,7 +116,11 @@
         _isLoadingList = true;
         majorRequest.PageNumber = 1;
         majorRequest.Name = searchString;
-        await LoadDataMajor();
+        await LoadData().ContinueWith((re) =>
+        {
+            _isLoadingAll = false;
+            _isLoadingList = false;
+        });
     }
 
     private async Task DialogAdd()
@@ -121,9 +128,9 @@
         var options = new DialogOptions { CloseOnEscapeKey = true };
         var parameters = new DialogParameters();
         parameters.Add("OnCloseAdd", EventCallback.Factory.Create(this, OnCloseAdd));
-        var dialog = DialogService.Show<CreateMajor>("Thêm chuyên ngành", parameters, options);
+        var dialog = DialogService.Show<MajorCreate>("Thêm chuyên ngành", parameters, options);
         await dialog.Result;
-        await LoadDataMajor();
+        await LoadData();
     }
     private async Task OnCloseAdd()
     {
@@ -135,15 +142,15 @@
     {
         var options = new DialogOptions { CloseOnEscapeKey = true };
         var parameters = new DialogParameters();
-        parameters.Add(nameof(UpdateMajor.idMajor), idMajor); 
-        var dialog = DialogService.Show<UpdateMajor>("Chi tiết chuyên ngành", parameters, options);
+        parameters.Add(nameof(MajorUpdate.idMajor), idMajor); 
+        var dialog = DialogService.Show<MajorUpdate>("Chi tiết chuyên ngành", parameters, options);
         await dialog.Result; 
-        await LoadDataMajor();
+        await LoadData();
     }
 
     private async Task OnCloseDetail()
     {
-        await LoadDataMajor();
+        await LoadData();
         closeDetail = true;
     }
 
@@ -168,14 +175,19 @@
             {
                 _snackbar.Add("Xóa thất bại", Severity.Error);
             }
-            await LoadDataMajor();
+            await LoadData();
         }
     }
 
     private async Task OnPaginationButtonClick(int pageNumber)
     {
+        _isLoadingList = true;
         majorRequest.PageNumber = pageNumber;
-        await LoadDataMajor();
+        await LoadData().ContinueWith((re) =>
+        {
+            _isLoadingAll = false;
+            _isLoadingList = false;
+        });
     }
 
 

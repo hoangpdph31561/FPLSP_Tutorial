@@ -4,6 +4,7 @@ using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Application.ValueObjects.Common;
 using FPLSP_Tutorial.Application.ValueObjects.Response;
 using FPLSP_Tutorial.Domain.Entities;
+using FPLSP_Tutorial.Domain.Enums;
 using FPLSP_Tutorial.Infrastructure.Database.AppDbContext;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,10 +21,14 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
             _localizationService = localizationService;
         }
 
-        public async Task<RequestResult<int>> AddPostTagAsync(dynamic entity, CancellationToken cancellationToken)
+        public async Task<RequestResult<int>> AddPostTagAsync(List<PostTagEntity> entity, CancellationToken cancellationToken)
         {
             try
             {
+                foreach (var item in entity)
+                {
+                    item.CreatedTime = DateTimeOffset.Now;
+                }
                 await _dbContext.PostTagEntities.AddRangeAsync(entity);
                 await _dbContext.SaveChangesAsync(cancellationToken);
 
@@ -52,7 +57,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
                 posttag.DeletedBy = request.DeletedBy;
                 posttag.DeletedTime = DateTimeOffset.UtcNow;
 
-                //posttag.Status = EntityStatus.Deleted;
+                posttag.Status = EntityStatus.Deleted;
 
                 _dbContext.PostTagEntities.Remove(posttag);
                 await _dbContext.SaveChangesAsync(cancellationToken);
@@ -78,8 +83,8 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
             {
                 var posttag = await GetTagByIdAsync(entity.Id, cancellationToken);
                 posttag!.TagId = entity.TagId;
-                posttag!.PostId = entity.PostId;
-
+                posttag.PostId = entity.PostId;
+     
                 _dbContext.PostTagEntities.Update(posttag);
                 await _dbContext.SaveChangesAsync(cancellationToken);
 

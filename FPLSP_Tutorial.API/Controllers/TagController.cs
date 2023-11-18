@@ -45,12 +45,12 @@ namespace FPLSP_Tutorial.API.Controllers
             return Ok(vm);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetListTag([FromQuery] TagViewModelRequest request, CancellationToken cancellationToken)
+        [HttpGet("getTagsByMajorId")]
+        public async Task<IActionResult> GetListTag([FromQuery]Guid? id, CancellationToken cancellationToken)
         {
             ListTagViewModel vm = new(_tagReadOnlyRepository, _localizationService);
 
-            await vm.HandleAsync(request, cancellationToken);
+            await vm.HandleAsync(id, cancellationToken);
 
             return Ok(vm);
         }

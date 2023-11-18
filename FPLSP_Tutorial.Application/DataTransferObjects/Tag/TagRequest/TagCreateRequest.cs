@@ -2,6 +2,6 @@
 {
     public class TagCreateRequest
     {
-        public List<TagDto>? tasks { get; set; }
+        public List<TagCreateModel>? tasks { get; set; }
     }
 }

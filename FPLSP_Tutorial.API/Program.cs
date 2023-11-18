@@ -29,6 +29,9 @@ builder.Services.AddScoped<IMajorRequestReadWriteRespository, MajorRequestReadWr
 builder.Services.AddScoped<IMajorUserReadWriteResponsitory, MajorUserReadWriteResponsitory>();
 builder.Services.AddScoped<IUserMajorReadOnlyRespository, UserMajorReadOnlyRespository>();
 
+builder.Services.AddScoped<IPostReadOnlyRespository, PostReadOnlyRespository>();
+builder.Services.AddScoped<IPostReadWriteRespository, PostReadWriteRespository>();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy",

@@ -1,8 +1,8 @@
 ﻿using FPLSP_Tutorial.Application.DataTransferObjects.Tag;
 
-namespace FPLSP_Tutorial.WASM.Pages.QuanLyBaiViet.ViewModels
+namespace FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post
 {
-    public class PostListVM
+    public class PostDto
     {
         public Guid? Id { get; set; }
         public string? Title { get; set; }

@@ -6,7 +6,7 @@ using FPLSP_Tutorial.Application.ViewModels;
 
 namespace FPLSP_Tutorial.Infrastructure.ViewModels.TagViewModels
 {
-    public class ListTagViewModel : ViewModelBase<TagViewModelRequest>
+    public class ListTagViewModel : ViewModelBase<Guid?>
     {
         private readonly ITagReadOnlyRepository _tagReadOnlyRepository;
         private readonly ILocalizationService _localizationService;
@@ -17,11 +17,11 @@ namespace FPLSP_Tutorial.Infrastructure.ViewModels.TagViewModels
             _localizationService = localizationService;
         }
 
-        public async override Task HandleAsync(TagViewModelRequest request, CancellationToken cancellationToken)
+        public async override Task HandleAsync(Guid? idMajor, CancellationToken cancellationToken)
         {
             try
             {
-                var result = await _tagReadOnlyRepository.GetTagByIdMajorAsync(request.IdMajor, request.IdPost, cancellationToken);
+                var result = await _tagReadOnlyRepository.GetTagByIdMajorAsync(idMajor,  cancellationToken);
 
                 Data = result.Data!;
                 Success = result.Success;

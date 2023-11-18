@@ -10,9 +10,11 @@ namespace FPLSP_Tutorial.Infrastructure.Extensions.AutoMapperProfiles
     {
         public TagProfile()
         {
-            CreateMap<TagEntity, TagDto>().ReverseMap();
+            CreateMap<TagEntity, TagDto>();
             CreateMap<TagEntity, TagCreateRequest>().ReverseMap();
             CreateMap<TagEntity, TagUpdateRequest>().ReverseMap();
+            CreateMap<TagUpdateRequest, TagEntity>();
+            CreateMap<TagCreateRequest, TagEntity>();
         }
     }
 }

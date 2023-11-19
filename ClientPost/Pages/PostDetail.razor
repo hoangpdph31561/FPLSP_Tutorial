@@ -2,55 +2,66 @@
 <PageTitle>@result.Title</PageTitle>
 
 
-<MudCard Elevation="0" Class="ma-5">
-    <MudText>@($"Bài viết")</MudText>
-    <div class="d-flex align-center justify-center">
-        <MudText Class="me-auto" Typo="Typo.h5" Style="font-size: 500">@result!.Title</MudText>
-        <MudText>Ngày tạo: @result.CreatedTime.ToString("hh:mm tt dd/MM/yyyy")</MudText>
-    </div>
-    
-        
-        <MudPaper Elevation="0">
-            @if (result == null)
-        {
-            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="m-3" />
-        }
-        else
-        {
-            <MudPaper Elevation="0" Class="d-flex align-center">
-                <MudText Typo="Typo.subtitle1">Tags:</MudText>
-                @if (lstTags.Count == 0)
-                {
-                    <MudText Typo="Typo.subtitle1" Class="ml-2">Không có tags.</MudText>
-                }
-                else
-                {
-                    @foreach (var tag in lstTags)
+
+<MudCard Elevation="0" Class="ma-5 pa-2">
+    <MudText Typo="Typo.body2">@($"Bài viết")</MudText>
+    @if (_isLoadingAll)
+    {
+        <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="m-3" />
+    }
+    else
+    {
+        <div class="d-flex align-center justify-center">
+            <div class="me-auto">
+                <MudText Typo="@(result.Title.Length > 25 ? Typo.h6 : Typo.h4)" Style="overflow: hidden;text-overflow: ellipsis;">
+                    <span style="font-weight:500;">@result!.Title</span>
+                </MudText>
+                <MudText Typo="Typo.body2">Tác giả: <span style="font-weight: 500">@result.CreatedName</span></MudText>
+            </div>
+            <div>
+                <div class="d-flex align-center justify-end">
+                    <MudText Typo="Typo.subtitle1">Tag:</MudText>
+                    @if (lstTags.Count == 0)
                     {
-                        <MudChip Size="Size.Small" Variant="Variant.Outlined" Color="Color.Primary">@tag.Name</MudChip>
+                        <MudText Typo="Typo.subtitle1" Class="ml-2">Không có</MudText>
                     }
-                }
-            </MudPaper>
-            <MudPaper Class="pa-3" Elevation="0">
-                <MudText Typo="Typo.h6">Người viết: @result.CreatedName</MudText>
-            </MudPaper>
+                    else
+                    {
+                        @foreach (var tag in lstTags)
+                        {
+                            <MudChip Size="Size.Small" Variant="Variant.Outlined" Color="Color.Primary">@tag.Name</MudChip>
+                        }
+                    }
+                </div>
+                <MudText Typo="Typo.caption">@result.CreatedTime.ToString("hh:mm tt dd/MM/yyyy")</MudText>
+            </div>
+        </div>
 
-            <MudPaper Class="pa-4" Elevation="0">
-                <MudText>@result.Content</MudText>
-            </MudPaper>
-            <MudText Typo="Typo.h5" Class="my-4">| Tham khảo</MudText>
+        <MudDivider Class="my-2"></MudDivider>
 
+        <MudPaper Class="pa-4" Elevation="0">
+            <MudText>@result.Content</MudText>
+        </MudPaper>
+
+        <MudDivider></MudDivider>
+        <div class="d-flex align-center pt-2">
+            <MudIcon Icon="@Icons.Material.Filled.Share" Size="Size.Small"></MudIcon>
+            <MudText Typo="Typo.h6" Class="ms-1">Bài viết tham khảo</MudText>
+        </div>
+        
+
+        <MudNavMenu Dense="true" Margin="Margin.None">
             @if (lstSuggestPost.Count > 0)
             {
                 <div class="my-3 mx-1">
                     @foreach (var item in lstSuggestPost)
                     {
-                        <MudNavLink OnClick="@(async() => await OnClick(item.Id.ToString()))"><MudText>@item.Title</MudText></MudNavLink>
+                        <MudNavLink OnClick="@(async() => await OnClick(item.Id.ToString()))" Class="my-1" Style="border-left: 2px solid black"><MudText>@item.Title</MudText></MudNavLink>
                     }
                 </div>
             }
-        }
-    </MudPaper>
+        </MudNavMenu>
+    }
 </MudCard>
         
 
@@ -70,9 +81,15 @@
     List<PostBaseDTO> lstChildPosts = new();
     ClientPostGetChildWithPaginationRequest requestChild = new();
     private List<PostBaseDTO> lstSuggestPost = new();
+
+    private bool _isLoadingAll = true;
+
     protected override async Task OnInitializedAsync()
     {
-        await LoadData();
+        await LoadData().ContinueWith((re) =>
+        {
+            _isLoadingAll = false;
+        });
     }
     private async Task LoadData()
     {

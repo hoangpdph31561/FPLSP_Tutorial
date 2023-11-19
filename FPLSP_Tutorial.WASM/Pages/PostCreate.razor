@@ -44,6 +44,7 @@
 
     private async Task OnSaveAsync()
     {
+        if(idPost != null) _postCreateR.PostId = Guid.Parse(idPost);
         var result = await _repoPost.CreatePostAsync(_postCreateR);
         if(result)
         {

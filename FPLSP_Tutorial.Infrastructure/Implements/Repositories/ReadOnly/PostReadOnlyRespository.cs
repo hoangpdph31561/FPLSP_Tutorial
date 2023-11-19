@@ -31,7 +31,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
             try
             {
                 IQueryable<PostEntity> queryable = _appDbContext.PostEntities.AsNoTracking().AsQueryable().Where(c => !c.Deleted);
-                if(request.PostId != null) { queryable.Where(c => c.PostId == request.PostId); }
+                if(request.PostId != null) { queryable = queryable.Where(c => c.PostId == request.PostId); }
                 var result = await queryable.PaginateAsync<PostEntity, PostDto>(request, _mapper, cancellationToken);
                 return RequestResult<PaginationResponse<PostDto>>.Succeed(new PaginationResponse<PostDto>()
                 {

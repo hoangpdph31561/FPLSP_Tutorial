@@ -19,7 +19,7 @@ namespace FPLSP_Tutorial.WASM.Repo.Inplements
             string url = $"/api/Posts/GetListWithPaginationAsync?PageNumber={request.PageNumber}&PageSize={request.PageSize}";
             if (request.PostId != null)
             {
-                url += $"?PostId={request.PostId}";
+                url += $"&PostId={request.PostId}";
             }
             var result = await _httpClient.GetFromJsonAsync<PaginationResponse<PostDto>>(url);
             if (result == null)

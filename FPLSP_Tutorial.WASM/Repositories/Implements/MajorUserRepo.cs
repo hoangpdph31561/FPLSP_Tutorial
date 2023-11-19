@@ -1,11 +1,10 @@
-﻿using FPLSP_Tutorial.WASM.Data.DataTransferObjects.UserMajor.Request;
+﻿using FPLSP_Tutorial.WASM.Data.DataTransferObjects.UserMajor;
+using FPLSP_Tutorial.WASM.Data.DataTransferObjects.UserMajor.Request;
 using FPLSP_Tutorial.WASM.Data.Pagination;
-using FPLSP_Tutorial.WASM.Data.UserMajor;
-using FPLSP_Tutorial.WASM.Data.UserMajor.Request;
-using FPLSP_Tutorial.WASM.Repo.Interfaces;
+using FPLSP_Tutorial.WASM.Repositories.Interfaces;
 using System.Net.Http.Json;
 
-namespace FPLSP_Tutorial.WASM.Repo.Inplements
+namespace FPLSP_Tutorial.WASM.Repositories.Implements
 {
     public class MajorUserRepo : IMajorUserRepo
     {
@@ -29,7 +28,7 @@ namespace FPLSP_Tutorial.WASM.Repo.Inplements
         {
             string url = $"/api/MajorUsers?PageNumber={request.PageNumber}&PageSize={request.PageSize}";
 
-            if (!String.IsNullOrEmpty(request.Email))
+            if (!string.IsNullOrEmpty(request.Email))
             {
                 url = $"/api/MajorUsers/?Email={request.Email}&PageNumber={request.PageNumber}&PageSize={request.PageSize}";
             }

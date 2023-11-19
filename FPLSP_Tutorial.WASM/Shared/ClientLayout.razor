@@ -1,0 +1,38 @@
+﻿@inherits LayoutComponentBase
+@inject NavigationManager _navManager;
+
+<MudThemeProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+    <MudAppBar Elevation="0">
+        <MudIconButton Icon="@Icons.Material.Filled.Home" Color="Color.Inherit" Edge="Edge.Start" Title="Trang chủ"/>
+        <MudDivider Vertical="true" Style="height: 50% !important;" DividerType="DividerType.Middle"></MudDivider>
+
+        <MudMenu AnchorOrigin="Origin.BottomLeft" @onclick="@(() => _menuOpen = !_menuOpen)">
+            <ActivatorContent>
+                <MudButton StartIcon="@Icons.Material.Filled.Article" Variant="Variant.Text" Color="Color.Inherit">Bài viết</MudButton>
+            </ActivatorContent>
+            <ChildContent>
+                <MudMenuItem OnClick="@(() => _navManager.NavigateTo("/mainpage"))">Bài viết hệ thống</MudMenuItem>
+                <MudMenuItem OnClick="@(() => _navManager.NavigateTo("/systempost"))">Bài viết chuyên ngành</MudMenuItem>
+            </ChildContent>
+        </MudMenu>
+
+        <MudSpacer/>
+
+        <div>
+            <MudText Typo="Typo.subtitle2">@("<người dùng>")</MudText>
+            <MudText Typo="Typo.caption">@("<email>")</MudText>
+        </div>
+            <MudIconButton Icon="@Icons.Material.Filled.Logout" Color="Color.Inherit" Title="Đăng xuất" />
+    </MudAppBar>
+    <MudMainContent>
+        @Body
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    bool _menuOpen = true;
+}

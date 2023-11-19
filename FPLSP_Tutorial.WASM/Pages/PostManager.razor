@@ -1,13 +1,8 @@
 ﻿@page "/post-manager"
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post.Request;
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post;
 @layout ManagementLayout
 
-@using FPLSP_Tutorial.Application.DataTransferObjects.ClientPost;
-@using FPLSP_Tutorial.Application.DataTransferObjects.Tag;
-@using FPLSP_Tutorial.Application.ValueObjects.Response;
-@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post;
-@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post.Request;
-@using FPLSP_Tutorial.WASM.Data.Pagination;
-@using FPLSP_Tutorial.WASM.Repo.Interfaces;
 
 @inject NavigationManager _navManager;
 @inject IPostRepo _repoPost

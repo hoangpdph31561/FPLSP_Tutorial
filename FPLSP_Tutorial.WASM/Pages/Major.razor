@@ -1,14 +1,9 @@
 ﻿@page "/major"
-@layout ManagementLayout
-
 @using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major;
 @using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major.Request;
-@using FPLSP_Tutorial.WASM.Enum;
-@using FPLSP_Tutorial.WASM.Repo.Interfaces;
 @using FPLSP_Tutorial.WASM.Data.Pagination;
-@using FPLSP_Tutorial.WASM.Shared
-@using MudBlazor
-@using System.Net.Http.Json
+@layout ManagementLayout
+
 
 @inject HttpClient httpClient
 @inject IDialogService DialogService

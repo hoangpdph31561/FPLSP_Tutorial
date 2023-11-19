@@ -1,10 +1,10 @@
 ﻿using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post;
 using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post.Request;
 using FPLSP_Tutorial.WASM.Data.Pagination;
-using FPLSP_Tutorial.WASM.Repo.Interfaces;
+using FPLSP_Tutorial.WASM.Repositories.Interfaces;
 using System.Net.Http.Json;
 
-namespace FPLSP_Tutorial.WASM.Repo.Inplements
+namespace FPLSP_Tutorial.WASM.Repositories.Implements
 {
     public class PostRepo : IPostRepo
     {

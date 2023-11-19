@@ -1,7 +1,7 @@
 ﻿using FPLSP_Tutorial.WASM.Data.Value_Objects.Common;
 using System.Text.Json.Serialization;
 
-namespace MajorService.Response
+namespace FPLSP_Tutorial.WASM.Response
 {
     public class APIResponse
     {

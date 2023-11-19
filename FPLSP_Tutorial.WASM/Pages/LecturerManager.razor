@@ -1,17 +1,13 @@
 ﻿@page "/lecturer-manager"
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major.Request;
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major;
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.MajorRequest;
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.MajorRequest.Request;
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.UserMajor;
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.UserMajor.Request;
+@using FPLSP_Tutorial.WASM.Data.Pagination;
 @layout ManagementLayout
 
-@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major;
-@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major.Request;
-@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.MajorRequest.Request;
-@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.UserMajor.Request;
-@using FPLSP_Tutorial.WASM.Data.MajorRequest;
-@using FPLSP_Tutorial.WASM.Data.MajorRequest.Request;
-@using FPLSP_Tutorial.WASM.Data.Pagination;
-@using FPLSP_Tutorial.WASM.Data.UserMajor;
-@using FPLSP_Tutorial.WASM.Data.UserMajor.Request;
-@using FPLSP_Tutorial.WASM.Enum;
-@using FPLSP_Tutorial.WASM.Repo.Interfaces;
 
 @inject IDialogService _diagService;
 @inject ISnackbar _mudSnackbar;

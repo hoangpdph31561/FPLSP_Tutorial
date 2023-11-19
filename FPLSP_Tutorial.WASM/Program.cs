@@ -1,6 +1,6 @@
 using FPLSP_Tutorial.WASM;
-using FPLSP_Tutorial.WASM.Repo.Inplements;
-using FPLSP_Tutorial.WASM.Repo.Interfaces;
+using FPLSP_Tutorial.WASM.Repositories.Implements;
+using FPLSP_Tutorial.WASM.Repositories.Interfaces;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
@@ -13,7 +13,7 @@ builder.Services.AddScoped<IMajorRequestRepo, MajorRequestRepo>();
 builder.Services.AddScoped<IMajorUserRepo, MajorUserRepo>();
 builder.Services.AddScoped<IMajorRepo, MajorRepo>();
 builder.Services.AddScoped<IPostRepo, PostRepo>();
-
+builder.Services.AddScoped<IClientPostService, ClientPostService>();
 builder.Services.AddHttpClient("API", options =>
 {
     options.BaseAddress = new Uri(builder.Configuration["API:Https"]);

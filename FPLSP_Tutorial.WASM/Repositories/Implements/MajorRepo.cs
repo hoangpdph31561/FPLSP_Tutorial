@@ -1,10 +1,10 @@
 ﻿using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major;
 using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major.Request;
 using FPLSP_Tutorial.WASM.Data.Pagination;
-using FPLSP_Tutorial.WASM.Repo.Interfaces;
+using FPLSP_Tutorial.WASM.Repositories.Interfaces;
 using System.Net.Http.Json;
 
-namespace FPLSP_Tutorial.WASM.Repo.Inplements
+namespace FPLSP_Tutorial.WASM.Repositories.Implements
 {
     public class MajorRepo : IMajorRepo
     {
@@ -38,7 +38,7 @@ namespace FPLSP_Tutorial.WASM.Repo.Inplements
         public async Task<PaginationResponse<MajorDTO>> GetListMajor(ViewMajorWithPaginationRequest request)
         {
             string url = $"/api/Majors?PageNumber={request.PageNumber}&PageSize={request.PageSize}";
-            if (!String.IsNullOrEmpty(request.Name))
+            if (!string.IsNullOrEmpty(request.Name))
             {
                 url = $"/api/Majors?Name={request.Name}&PageNumber={request.PageNumber}&PageSize={request.PageSize}";
             }

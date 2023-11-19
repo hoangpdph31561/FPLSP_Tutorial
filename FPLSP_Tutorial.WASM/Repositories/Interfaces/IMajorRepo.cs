@@ -2,7 +2,7 @@
 using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major.Request;
 using FPLSP_Tutorial.WASM.Data.Pagination;
 
-namespace FPLSP_Tutorial.WASM.Repo.Interfaces
+namespace FPLSP_Tutorial.WASM.Repositories.Interfaces
 {
     public interface IMajorRepo
     {

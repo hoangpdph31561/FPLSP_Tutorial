@@ -1,9 +1,8 @@
-﻿using FPLSP_Tutorial.WASM.Data.DataTransferObjects.UserMajor.Request;
+﻿using FPLSP_Tutorial.WASM.Data.DataTransferObjects.UserMajor;
+using FPLSP_Tutorial.WASM.Data.DataTransferObjects.UserMajor.Request;
 using FPLSP_Tutorial.WASM.Data.Pagination;
-using FPLSP_Tutorial.WASM.Data.UserMajor;
-using FPLSP_Tutorial.WASM.Data.UserMajor.Request;
 
-namespace FPLSP_Tutorial.WASM.Repo.Interfaces
+namespace FPLSP_Tutorial.WASM.Repositories.Interfaces
 {
     public interface IMajorUserRepo
     {

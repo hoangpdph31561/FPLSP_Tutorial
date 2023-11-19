@@ -1,6 +1,6 @@
 ﻿using FPLSP_Tutorial.WASM.Enum;
 
-namespace FPLSP_Tutorial.WASM.Data.MajorRequest
+namespace FPLSP_Tutorial.WASM.Data.DataTransferObjects.MajorRequest
 {
     public class MajorRequestDto
     {

@@ -1,5 +1,5 @@
 ﻿using FPLSP_Tutorial.WASM.Data.DataTransferObjects.MajorRequest.Request;
-using MajorService.Response;
+using FPLSP_Tutorial.WASM.Response;
 
 namespace FPLSP_Tutorial.WASM.ViewModel
 {

@@ -1,6 +1,6 @@
 ﻿using FPLSP_Tutorial.WASM.Enum;
 
-namespace FPLSP_Tutorial.WASM.Data.UserMajor
+namespace FPLSP_Tutorial.WASM.Data.DataTransferObjects.UserMajor
 {
     public class MajorUserDto
     {

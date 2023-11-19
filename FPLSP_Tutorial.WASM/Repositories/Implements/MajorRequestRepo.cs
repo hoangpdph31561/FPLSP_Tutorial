@@ -1,11 +1,10 @@
-﻿using FPLSP_Tutorial.WASM.Data.DataTransferObjects.MajorRequest.Request;
-using FPLSP_Tutorial.WASM.Data.MajorRequest;
-using FPLSP_Tutorial.WASM.Data.MajorRequest.Request;
+﻿using FPLSP_Tutorial.WASM.Data.DataTransferObjects.MajorRequest;
+using FPLSP_Tutorial.WASM.Data.DataTransferObjects.MajorRequest.Request;
 using FPLSP_Tutorial.WASM.Data.Pagination;
-using FPLSP_Tutorial.WASM.Repo.Interfaces;
+using FPLSP_Tutorial.WASM.Repositories.Interfaces;
 using System.Net.Http.Json;
 
-namespace FPLSP_Tutorial.WASM.Repo.Inplements
+namespace FPLSP_Tutorial.WASM.Repositories.Implements
 {
     public class MajorRequestRepo : IMajorRequestRepo
     {
@@ -19,7 +18,7 @@ namespace FPLSP_Tutorial.WASM.Repo.Inplements
         {
             string url = $"/api/MajorRequests/majorRequestNotDeleted?PageNumber={request.PageNumber}&PageSize={request.PageSize}";
 
-            if (!String.IsNullOrEmpty(request.Email))
+            if (!string.IsNullOrEmpty(request.Email))
             {
                 url = $"/api/MajorRequests/majorRequestNotDeleted/?Email={request.Email}&PageNumber={request.PageNumber}&PageSize={request.PageSize}";
             }

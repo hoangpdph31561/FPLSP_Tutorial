@@ -2,12 +2,19 @@
 
 
 @inject NavigationManager _nav;
-
+@inject IJSRuntime _jsRuntime
 
 
 @code {
     protected override async Task OnInitializedAsync()
     {
+
+        
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
         _nav.NavigateTo("/post-manager");
+        await _jsRuntime.InvokeVoidAsync("eval", $"let _discard_ = open(`{"/mainpage"}`, `_blank`)");
     }
 }

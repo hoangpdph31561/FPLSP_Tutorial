@@ -20,7 +20,7 @@ else
         <MudText Typo="Typo.h4" Style="font-weight: 500">Trang chủ</MudText>
     </div>
     <MudPaper Elevation="0" Class="px-5 mx-5">
-        <MudTextField Immediate Variant="Variant.Outlined" @bind-Value="SearchString" OnDebounceIntervalElapsed="@(async () => await OnSearchFunc())" DebounceInterval="200" Label="Tìm kiếm" MaxLength="200" AdornmentIcon="@Icons.Material.Filled.Search" Adornment="Adornment.End" T="string"></MudTextField>
+        <MudTextField Immediate Variant="Variant.Outlined" @bind-Value="SearchString" OnDebounceIntervalElapsed="@(async () => await OnSearchFunc())" DebounceInterval="200" Label="Tìm kiếm" MaxLength="200" AdornmentIcon="@Icons.Material.Filled.Search" Adornment="Adornment.End" T="string" OnAdornmentClick="@(async () => await OnSearchFunc())"></MudTextField>
 
         <div Class="d-flex align-center py-2">
             <MudText>Tags: </MudText>
@@ -82,7 +82,7 @@ else
                                 }
                             </MudPaper>
                             <MudPaper Elevation="0" Class="d-flex align-center justify-end">
-                                <MudButton OnClick="@(() => NavigationManager.NavigateTo($"/postdetail/{item.Id}"))" Color="Color.Primary">Đọc thêm<MudText Class="mt-1 px-2 align-center" Typo="Typo.caption"><MudIcon Icon="@Icons.Material.Filled.East" /></MudText></MudButton>
+                                <MudButton OnClick="@(() => NavigationManager.NavigateTo($"/postdetail/{item.Id}"))" Color="Color.Primary">Chi tiết<MudText Class="mt-1 px-2 align-center" Typo="Typo.caption"><MudIcon Icon="@Icons.Material.Filled.East" /></MudText></MudButton>
                             </MudPaper>
                         </MudPaper>
                     </MudItem>

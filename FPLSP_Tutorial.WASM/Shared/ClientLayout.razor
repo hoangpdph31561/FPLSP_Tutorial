@@ -10,7 +10,7 @@
         <MudIconButton Icon="@Icons.Material.Filled.Home" Color="Color.Inherit" Edge="Edge.Start" Title="Trang chủ"/>
         <MudDivider Vertical="true" Style="height: 50% !important;" DividerType="DividerType.Middle"></MudDivider>
 
-        <MudMenu AnchorOrigin="Origin.BottomLeft" @onclick="@(() => _menuOpen = !_menuOpen)">
+        @*<MudMenu AnchorOrigin="Origin.BottomLeft" @onclick="@(() => _menuOpen = !_menuOpen)">
             <ActivatorContent>
                 <MudButton StartIcon="@Icons.Material.Filled.Article" Variant="Variant.Text" Color="Color.Inherit">Bài viết</MudButton>
             </ActivatorContent>
@@ -18,7 +18,7 @@
                 <MudMenuItem OnClick="@(() => _navManager.NavigateTo("/mainpage"))">Bài viết hệ thống</MudMenuItem>
                 <MudMenuItem OnClick="@(() => _navManager.NavigateTo("/systempost"))">Bài viết chuyên ngành</MudMenuItem>
             </ChildContent>
-        </MudMenu>
+        </MudMenu>*@
 
         <MudSpacer/>
 

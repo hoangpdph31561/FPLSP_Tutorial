@@ -4,16 +4,16 @@
 <div class="row">
     @if(IsLoading)
     {
-        for(int i = 1; i <= 4; i++)
+        for(int i = 1; i <= Convert.ToInt32(12 / CardCol); i++)
         {
-            <PostCard IsSkeleton="true" />
+            <PostCard IsSkeleton="true" Col="@CardCol" />
         }
     }
     else
     {
         @foreach (var i in ListPost)
         {
-            <PostCard Post="@i"/>
+            <PostCard Post="@i" Col="@CardCol" />
         }
     }
 </div>
@@ -28,4 +28,6 @@
     [Parameter]
     public bool IsLoading { get; set; } = true;
 
+    [Parameter]
+    public int CardCol { get; set; } = 3;
 }

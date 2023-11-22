@@ -44,7 +44,7 @@ else
         </div>
         <MudDivider/>
             <div Class=" mx-3">
-                <ListPostCard ListPost="@lstSuggestPost.Take(4).ToList()" IsLoading="false"/>
+                <ListPostCard CardCol="4" ListPost="@lstSuggestPost.Take(3).ToList()" IsLoading="@(lstSuggestPost == null)" />
             </div>
         <MudDivider />
     </div>

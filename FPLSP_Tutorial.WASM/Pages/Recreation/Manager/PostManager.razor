@@ -9,10 +9,11 @@
 @inject IPostRepo _repoPost
 @inject IDialogService _diagService;
 @inject ISnackbar _mudSnackbar;
-<div class="p-2">
+
+    <div class="mx-3 mb-2 px-3 pb-3">
         <MudBreadcrumbs Items="_breadCrumbs"></MudBreadcrumbs>
 
-        <MudPaper Class="mt-3 mx-3 pa-4" Elevation="2">
+        <MudPaper Class="pa-4" Elevation="2">
             <div class="d-flex justify-end mb-3">
                 <MudButton StartIcon="@Icons.Material.Filled.Add" Variant="Variant.Filled" OnClick="@(async () => { _navManager.NavigateTo("/recreation/post-create" + ((idPost == null) ? "" : "?idPost=" + idPost)); })" Color="Color.Primary">Thêm</MudButton>
             </div>

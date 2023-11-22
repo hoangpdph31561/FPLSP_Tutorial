@@ -11,8 +11,8 @@
 }
 else
 {
-    <div class="p-4">
-        <MudPaper Class="mt-5 mx-3 p-3" Elevation="2">
+    <div class="m-2 p-3">
+        <MudPaper Class="py-3 px-5" Elevation="2">
             <div Class="d-flex align-center mb-3">
                 <MudIcon Icon="@Icons.Material.Filled.Home" Class="me-2" Size="Size.Large"></MudIcon>
                 <MudText Typo="Typo.h4" Class="ms-2" Style="font-weight: 500">Trang chủ</MudText>
@@ -22,15 +22,21 @@ else
             <TagSelector ListTag="@_lstTag" ListTagFromDB="@_lstTagFromDB" />
         </MudPaper>
 
-        <MudPaper Class="mt-5 mx-3 px-3 pt-5 pb-3" Elevation="2">
+        <div class="py-3"></div>
+
+        <MudPaper Class="px-3 pt-4 pb-3" Elevation="2">
             <MudText Typo="Typo.h6" Class="ms-2" Style="font-weight: bold;">Bài viết hệ thống</MudText>
-            <MudDivider/>
+
+            <MudDivider Class="mx-2 my-1" DividerType="DividerType.Middle"/>
+
             <div class="ms-3">
                 <ListPostCard ListPost="@_lstPost.FirstOrDefault(c => c.majorId == null).post" IsLoading="@(!_lstMajorPostLoaded.Any(c => c == null))" />
             </div>
         </MudPaper>
 
-        <MudPaper Class="mt-5 mx-3 px-3 pt-5 py-3" Elevation="2">
+        <div class="py-3"></div>
+
+        <MudPaper Class="px-3 pt-4 pb-3" Elevation="2">
             <MudText Typo="Typo.h6" Class="ms-2" Style="font-weight: bold;">Bài viết chuyên ngành</MudText>
             @if (!_isLoadingMajor)
             {
@@ -40,7 +46,9 @@ else
                         <MudIcon Icon="@Icons.Material.Filled.KeyboardArrowRight" Class="me-2 ms-2"></MudIcon>
                         <MudText Typo="Typo.subtitle2" Class="my-1">@i.Name</MudText>
                     </div>
-                    <MudDivider />
+
+                    <MudDivider Class="mx-2  my-1" DividerType="DividerType.Middle" />
+
                     <div class="ms-3">
                         <ListPostCard ListPost="@_lstPost.FirstOrDefault(c => c.majorId == i.Id).post" IsLoading="@(!_lstMajorPostLoaded.Any(c => c == i.Id))" />
                     </div>
@@ -49,7 +57,15 @@ else
             }
             else
             {
-                <h5>is not</h5>
+                <div class="d-flex align-center">
+                    <MudSkeleton Class="me-2 ms-2" Width="20%" />
+                </div>
+
+                <MudDivider Class="mx-2  my-1" DividerType="DividerType.Middle" />
+
+                <div class="ms-3">
+                    <ListPostCard ListPost="new()" IsLoading="@true" />
+                </div>
             }
         </MudPaper>
 

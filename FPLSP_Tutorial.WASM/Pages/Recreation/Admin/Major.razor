@@ -8,16 +8,16 @@
 @inject HttpClient httpClient
 @inject IDialogService DialogService
 
-@if(_isLoadingAll)
+@if (_isLoadingAll)
 {
-    <LoadingIndicator/>
+    <LoadingIndicator />
 }
 else
 {
-    <div class="p-2">
+    <div class="mx-3 mb-2 px-3 pb-3">
         <MudBreadcrumbs Items="_breadCrumbs"></MudBreadcrumbs>
 
-        <MudPaper Class="mt-3 mx-3 pa-4" Elevation="2">
+        <MudPaper Class="pa-4" Elevation="2">
             <div class="d-flex justify-end mb-3">
                 <MudButton StartIcon="@Icons.Material.Filled.Add" OnClick="@(async () => await DialogAdd())" Color="Color.Primary" Variant="Variant.Filled">Thêm</MudButton>
             </div>

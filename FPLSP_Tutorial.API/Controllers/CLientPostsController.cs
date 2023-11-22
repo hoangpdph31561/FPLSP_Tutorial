@@ -32,7 +32,7 @@ namespace FPLSP_Tutorial.API.Controllers
             await vm.HandleAsync(id, cancellationToken);
             if (vm.Success && vm.Data != null)
             {
-                PostBaseDTO result = (PostBaseDTO)vm.Data;
+                PostMainDTO result = (PostMainDTO)vm.Data;
                 return Ok(result);
             }
             return Ok(vm);
@@ -44,7 +44,7 @@ namespace FPLSP_Tutorial.API.Controllers
             await vm.HandleAsync(request, cancellationToken);
             if (vm.Success)
             {
-                PaginationResponse<PostBaseDTO> result = (PaginationResponse<PostBaseDTO>)vm.Data;
+                PaginationResponse<PostMainDTO> result = (PaginationResponse<PostMainDTO>)vm.Data;
                 return Ok(result);
             }
             return BadRequest(vm);

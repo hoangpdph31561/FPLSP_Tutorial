@@ -26,11 +26,12 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
                 entity.Id = Guid.NewGuid();
                 entity.Email = entity.Email;
                 entity.Username = string.IsNullOrWhiteSpace(entity.Username) ? "N/A" : entity.Username;
-                entity.RoleCodes = entity.RoleCodes == null ? JsonConvert.DeserializeObject<List<string>>("[\"N/A\"]") : entity.RoleCodes;
+                entity.RoleCodes = entity.RoleCodes == null ? new List<string>() : entity.RoleCodes;
                 entity.Status = entity.Status == EntityStatus.Active ? EntityStatus.Active : EntityStatus.InActive;
 
                 entity.CreatedTime = DateTime.UtcNow;
                 entity.CreatedBy = entity.CreatedBy;
+
                 await _dbContext.UserEntities.AddAsync(entity);
                 await _dbContext.SaveChangesAsync(cancellationToken);
 
@@ -49,25 +50,17 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
             }
         }
 
-        private async Task<UserEntity> GetUserByIdAsync(Guid idUser, CancellationToken cancellationToken)
-        {
-            var example = await _dbContext.UserEntities.FirstOrDefaultAsync(c => c.Id == idUser, cancellationToken);
-
-            return example;
-        }
-
-        public async Task<RequestResult<int>> UpdateUserAsync(UserEntity entity, CancellationToken cancellationToken)
+        public async Task<RequestResult<int>> UpdateUserAsync(UserEntity entity, CancellationToken cToken)
         {
             try
             {
-                var user = await GetUserByIdAsync(entity.Id, cancellationToken);
+                var user = await _dbContext.UserEntities.FirstOrDefaultAsync(c => c.Id == entity.Id, cToken);
 
-                user.RoleCodes = entity.RoleCodes == null ? JsonConvert.DeserializeObject<List<string>>("[\"N/A\"]") : entity.RoleCodes;
-
-                user.Status = entity.Status == EntityStatus.Active ? EntityStatus.Active : EntityStatus.InActive;
-
-                _dbContext.UserEntities.Update(user);
-                await _dbContext.SaveChangesAsync(cancellationToken);
+                user.Username = entity.Username;
+                user.RoleCodes = entity.RoleCodes;
+                user.Status = entity.Status;
+                
+                await _dbContext.SaveChangesAsync(cToken);
 
                 return RequestResult<int>.Succeed(1);
             }

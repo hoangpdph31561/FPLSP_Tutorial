@@ -1,0 +1,126 @@
+﻿@page "/recreation/loginwithtoken"
+@using System.IdentityModel.Tokens.Jwt;
+@using System.Security.Claims;
+@using System.Text.Json;
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.User;
+
+@inject IUserRepository _repoUser
+@inject NavigationManager _nav
+@inject HttpClient _httpClient
+@inject AuthenticationStateProvider _authProvider
+@inject ISessionStorageService _session
+
+<div style="width: 100%; height: 80vh;">
+    <div class="d-flex justify-center w-100 h-100">
+        <div style="margin-top: 40vh;">
+            @if(!IsErrorWhileLoading)
+            {
+                <div class="d-flex justify-center mb-2">
+                    <MudProgressCircular Value="@Stage" Color="Color.Primary"></MudProgressCircular>
+                </div>
+                <div class="text-center h-25">
+                    <MudText Typo="Typo.h6">@((MarkupString)StageMessage)</MudText>
+                </div>
+            }
+            else
+            {
+                <div class="text-center h-25">
+                    <div class="mb-2">
+                        <MudIcon Icon="@Icons.Material.Filled.Error" Color="Color.Error" Size="Size.Large"></MudIcon>
+                    </div>
+                    <MudText Typo="Typo.h6" Color="Color.Error">@("Có lỗi xảy ra khi xử lý Identity Token")</MudText>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+    @*@foreach(var i in listClaims)
+{
+    <h6>@i.Type - @i.Value</h6>
+}*@
+
+@code {
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "token")]
+    public string JWTToken { get; set; } = "";
+
+    private int Stage = 0;
+    private string StageMessage = "";
+    private bool IsErrorWhileLoading = false;
+
+    List<Claim> listClaims = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        SetStage(10, "Đang xử lý thông tin Identity.");
+        await Task.Delay(50);
+        var handler = new JwtSecurityTokenHandler();
+        var jwtSecurityToken = handler.ReadJwtToken(JWTToken);
+        listClaims = jwtSecurityToken.Claims.ToList();
+
+        SetStage(30, "Lấy thông tin người dùng.");
+
+        var profile = await _repoUser.GetUserByEmailAsync(listClaims.FirstOrDefault(c => c.Type == "email").Value);
+
+        if (profile == null)
+        {
+            SetStage(50, "Hồ sơ người dùng không tồn tại.<br>Tiến hành khởi tạo.");
+
+            var createResult = await _repoUser.CreateUserAsync(new()
+                    {
+                        Email = listClaims.FirstOrDefault(c => c.Type == "email") == null ? "N/A" : listClaims.FirstOrDefault(c => c.Type == "email").Value,
+                        Username = listClaims.FirstOrDefault(c => c.Type == "name") == null ? "N/A" : listClaims.FirstOrDefault(c => c.Type == "name").Value,
+                        RoleCodes = listClaims.FirstOrDefault(c => c.Type == "role") == null ? new List<string>() : listClaims.Where(c => c.Type == "role").Select(c => c.Value).ToList()
+                    });
+            if (createResult)
+            {
+                var profileCreated = await _repoUser.GetUserByEmailAsync(listClaims.FirstOrDefault(c => c.Type == "email").Value);
+                await HandlingAuthentication(profileCreated);
+                SetStage(100, "Khởi tạo thành công.<br>Chuyển hướng tới trang chủ");
+                Redirect(profileCreated.RoleCodes);
+            }
+            else
+            {
+                IsErrorWhileLoading = true;
+            }
+        }
+        else
+        {
+            await HandlingAuthentication(profile);
+            SetStage(100, "Chuyển hướng tới trang chủ");
+            await Task.Delay(1000);
+            Redirect(profile.RoleCodes);
+        }
+    }
+
+    private async Task HandlingAuthentication(UserDTO user)
+    {
+        List<Claim> lstClaim = new()
+        {
+            new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.Name, user.Username),
+        };
+
+        foreach(var i in user.RoleCodes.ToList()) {
+            //if (lstClaim.Any(c => c.Type == ClaimTypes.Role && c.Value == i)) continue;
+            lstClaim.Add(new Claim(ClaimTypes.Role, i)); 
+        }
+
+        var customAuth = (CustomAuthenticationStateProvider)_authProvider;
+        await customAuth.UpdateAuthenticationState(lstClaim);
+    }
+
+    private void Redirect(List<string> lstRole)
+    {
+        _nav.NavigateTo("/recreation/post/client");
+    }
+
+    private void SetStage(int val, string message) { Stage = val; StageMessage = message; StateHasChanged(); }
+}

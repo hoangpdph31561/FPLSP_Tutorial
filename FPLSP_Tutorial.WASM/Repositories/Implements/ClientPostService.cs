@@ -21,10 +21,10 @@ namespace FPLSP_Tutorial.WASM.Repositories.Implements
             return result;
         }
 
-        public async Task<PaginationResponse<PostBaseDTO>?> GetChildByPostId(ClientPostGetChildWithPaginationRequest request)
+        public async Task<PaginationResponse<PostMainDTO>?> GetChildByPostId(ClientPostGetChildWithPaginationRequest request)
         {
             string url = $"/api/ClientPosts/getChildPost?Id={request.Id}&PageNumber={request.PageNumber}&PageSize={request.PageSize}";
-            var result = await _httpClient.GetFromJsonAsync<PaginationResponse<PostBaseDTO>>(url);
+            var result = await _httpClient.GetFromJsonAsync<PaginationResponse<PostMainDTO>>(url);
             return result;
         }
         public async Task<PaginationResponse<MajorBaseDTO>> GetMajorList(ClientPostMajorRequestWithPagination request)
@@ -38,10 +38,10 @@ namespace FPLSP_Tutorial.WASM.Repositories.Implements
             var result = await _httpClient.GetFromJsonAsync<MajorBaseDTO>($"/api/ClientPosts/getMajor/{id}");
             return result!;
         }
-        public async Task<PostBaseDTO?> GetParentPostById(string id)
+        public async Task<PostMainDTO?> GetParentPostById(string id)
         {
             var url = $"/api/ClientPosts/getParentPost/{id}";
-            var result = await _httpClient.GetFromJsonAsync<PostBaseDTO>(url);
+            var result = await _httpClient.GetFromJsonAsync<PostMainDTO>(url);
             return result;
         }
         public async Task<PostDetailDTO?> GetPostDetailById(string id)

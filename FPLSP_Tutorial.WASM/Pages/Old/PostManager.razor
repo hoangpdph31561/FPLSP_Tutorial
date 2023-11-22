@@ -12,7 +12,7 @@
 
 <CustomListDisplay HideSearch="true" Label="Quản lý bài viết" LabelHelper="" IsLoading="@_isLoadingAll">
     <HeaderContent>
-        <MudChip Icon="@Icons.Material.Filled.Add" OnClick="@(async () => { _navManager.NavigateTo("/post-create" + ((idPost == null) ? "" : "?idPost=" + idPost)); })" Color="Color.Primary">Thêm</MudChip>
+       
     </HeaderContent>
     <BodyContent>
         <MudTable Items="@_listPost" Loading="_isLoadingList">

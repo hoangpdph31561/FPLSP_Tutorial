@@ -1,7 +1,7 @@
-﻿using FPLSP_Tutorial.Application.DataTransferObjects.Major;
-using FPLSP_Tutorial.Domain.Enums;
+﻿using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major;
+using FPLSP_Tutorial.WASM.Enum;
 
-namespace FPLSP_Tutorial.Application.DataTransferObjects.User
+namespace FPLSP_Tutorial.WASM.Data.DataTransferObjects.User
 {
     public class UserDTO
     {

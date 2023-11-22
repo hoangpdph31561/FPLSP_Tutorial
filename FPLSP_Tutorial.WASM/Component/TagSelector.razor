@@ -1,0 +1,65 @@
+﻿@using FPLSP_Tutorial.WASM.Data.Client;
+@inject IDialogService DialogService
+
+<div Class="d-flex align-center py-2">
+    <MudText>Tags: </MudText>
+    <div style="overflow: auto;">
+        @foreach (var i in ToggleAllTags ? ListTag : ListTag.Take(MaxChipDisplay))
+        {
+            // Truyền pthc xóa Tag khỏi List<Tag> vào trong OnClose
+            <MudChip Color="Color.Primary" Variant="Variant.Outlined" OnClose="@(() => { ListTag.Remove(i); })">@i.Name</MudChip>
+        }
+        @if (ToggleAllTags)
+        {
+            <MudChip Color="Color.Default" Variant="Variant.Outlined" OnClick="@(() => ToggleAllTags = false)" Style="font-weight: 500">@("<")</MudChip>
+        }
+        else
+        {
+            if (ListTag.Count() > MaxChipDisplay)
+            {
+                <MudChip Color="Color.Default" Variant="Variant.Outlined" OnClick="@(() => ToggleAllTags = true)">@("+" + (ListTag.Count() - MaxChipDisplay))</MudChip>
+            }
+        }
+    </div>
+
+    <MudChip Color="Color.Primary" Icon="@Icons.Material.Filled.AddCircle" OnClick="@(async () => { await OnTagSelectionToggle(); })">Thêm</MudChip>
+</div>
+
+@code {
+    [Parameter]
+    public bool ToggleAllTags { get; set; } = false;
+
+    [Parameter]
+    public int MaxChipDisplay { get; set; } = 10;
+
+    [Parameter]
+    public List<TagBaseDTO> ListTag { get; set; } = new();
+
+    [Parameter]
+    public List<TagBaseDTO> ListTagFromDB { get; set; } = new();
+
+    private async Task OnTagSelectionToggle()
+    {
+        List<TagBaseDTO> lstBeforeChange = new();
+        foreach (var i in ListTag) lstBeforeChange.Add(i);
+
+        var parameters = new DialogParameters();
+
+        parameters.Add("_lstTag", ListTag);
+        parameters.Add("_lstTagFromDB", ListTagFromDB);
+
+
+        var dialog = DialogService.Show<CustomTagSelect>("Add Tags", parameters);
+        var result = await dialog.Result;
+
+        if (!result.Cancelled)
+        {
+
+            ListTag = (List<TagBaseDTO>)result.Data;
+        }
+        else
+        {
+            ListTag = lstBeforeChange;
+        }
+    }
+}

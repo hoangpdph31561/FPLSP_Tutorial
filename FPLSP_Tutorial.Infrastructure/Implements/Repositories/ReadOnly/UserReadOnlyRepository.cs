@@ -25,6 +25,28 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
             _mapper = mapper;
             _localizationService = localizationService;
         }
+
+        public async Task<RequestResult<UserDTO?>> GetUserByEmailAsync(string email, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var user = await _dbcontext.UserEntities.AsNoTracking().Where(c => c.Email == email && c.Status != Domain.Enums.EntityStatus.Deleted).ProjectTo<UserDTO>(_mapper.ConfigurationProvider).FirstOrDefaultAsync(cancellationToken);
+                return RequestResult<UserDTO?>.Succeed(user);
+
+            }
+            catch (Exception e)
+            {
+                return RequestResult<UserDTO?>.Fail(_localizationService["User is not found"], new[]
+                {
+                    new ErrorItem
+                    {
+                        Error = e.Message,
+                        FieldName = LocalizationString.Common.FailedToGet + "User"
+                    }
+                });
+            }
+        }
+
         public async Task<RequestResult<UserDTO?>> GetUserByIdAsync(Guid idUser, CancellationToken cancellationToken)
         {
             try

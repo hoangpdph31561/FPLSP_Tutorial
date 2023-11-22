@@ -26,6 +26,16 @@ namespace FPLSP_Tutorial.API.Controllers
             _mapper = mapper;
         }
 
+
+        [HttpGet("GetUserByEmailAsync")]
+        public async Task<IActionResult> GetUserByEmailAsync([FromQuery] string email, CancellationToken cToken)
+        {
+            UserGetByEmailViewModel vm = new(_localizationService, _userReadOnlyRepository);
+            await vm.HandleAsync(email, cToken);
+            return Ok(vm.Data);
+        }
+
+
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] ViewUserWithPaginationRequest request, CancellationToken cancellationToken)
         {
@@ -35,6 +45,7 @@ namespace FPLSP_Tutorial.API.Controllers
 
             return Ok(vm);
         }
+
         [HttpGet("id")]
         public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
         {
@@ -44,6 +55,8 @@ namespace FPLSP_Tutorial.API.Controllers
 
             return Ok(vm);
         }
+
+
 
         [HttpPost]
         public async Task<IActionResult> Post(UserCreateRequest request, CancellationToken cancellationToken)

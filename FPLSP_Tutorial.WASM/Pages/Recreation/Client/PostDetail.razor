@@ -1,0 +1,112 @@
+﻿@page "/recreation/post/{Id}"
+
+@using FPLSP_Tutorial.WASM.Data.Client;
+@using FPLSP_Tutorial.WASM.Data.Client.Request;
+@using FPLSP_Tutorial.WASM.Data.Pagination;
+@layout ManagementLayout
+
+@if(_isLoadingAll)
+{
+    <LoadingIndicator/>
+}
+else
+{
+    
+    <div class="p-2">
+        <MudBreadcrumbs Items="@(new List<BreadcrumbItem>() {
+                        new BreadcrumbItem("Trang chủ", href: "/recreation/post/client"),
+                        new BreadcrumbItem("Bài viết", href: null, disabled: true)
+    })"></MudBreadcrumbs>
+        <MudPaper Class="mt-3 mx-3 p-3" Elevation="2">
+            <div class="d-flex align-center">
+                <div class="overflow-hidden">
+                    @foreach (var i in lstTags)
+                    {
+                        <span style="font-size: 20px; background-color: lightgray; border-radius: 10px;" class="me-2 pa-2">@i.Name</span>
+                    }
+                </div>
+            </div>
+            <div class="mt-2">
+                <MudText Typo="@(result.Title.Length > 25 ? Typo.h6 : Typo.h4)" Style="overflow: hidden;text-overflow: ellipsis;">
+                    <span style="font-weight:500;">@result!.Title</span>
+                </MudText>
+                <MudText Typo="Typo.body1">Tạo bởi: <span style="font-weight: 500">@result.CreatedName</span><span> | @result.CreatedTime.ToString("dd/MM/yyyy")</span></MudText>
+            </div>
+            <MudDivider Class="my-3"></MudDivider>
+            <div>
+                @result.Content
+            </div>
+        </MudPaper>
+
+        <div class="d-flex align-center justify-center mt-4 mb-2">
+            <MudIcon Icon="@Icons.Material.Filled.Share" Size="Size.Small"></MudIcon>
+            <MudText Typo="Typo.h6" Class="ms-1">Các bài viết tham khảo</MudText>
+        </div>
+        <MudDivider/>
+            <div Class=" mx-3">
+                <ListPostCard ListPost="@lstSuggestPost.Take(4).ToList()" IsLoading="false"/>
+            </div>
+        <MudDivider />
+    </div>
+}
+
+
+
+@code {
+    [Parameter]
+    public string Id { get; set; } = string.Empty;
+    [Inject]
+    public IClientPostService ClientPostService { get; set; }
+    [Inject]
+    public NavigationManager NavigationManager { get; set; }
+    PostDetailDTO result = new();
+    PaginationResponse<TagBaseDTO> tagsResult { get; set; } = new();
+    List<TagBaseDTO> lstTags { get; set; } = new();
+    ClientPostGetTagsByPostIdWithPaginationRequest request = new();
+    PostMainDTO parentPost = new();
+    PaginationResponse<PostMainDTO> childPosts = new();
+    List<PostMainDTO> lstChildPosts = new();
+    ClientPostGetChildWithPaginationRequest requestChild = new();
+    private List<PostMainDTO> lstSuggestPost = new();
+
+    private bool _isLoadingAll = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData().ContinueWith((re) =>
+        {
+            _isLoadingAll = false;
+        });
+    }
+    private async Task LoadData()
+    {
+        request.Id = Id;
+        requestChild.Id = Id;
+        result = await ClientPostService.GetPostDetailById(Id);
+        tagsResult = await ClientPostService.GetTagsByPostId(request);
+        lstTags = tagsResult.Data.ToList();
+        parentPost = await ClientPostService.GetParentPostById(Id);
+        if (parentPost != null && parentPost.Id != Guid.Empty)
+        {
+            lstSuggestPost.Add(parentPost);
+        }
+        childPosts = await ClientPostService.GetChildByPostId(requestChild);
+        lstChildPosts = childPosts.Data.ToList();
+        if (childPosts != null)
+        {
+            lstSuggestPost.AddRange(childPosts.Data.ToList());
+        }
+    }
+    private async Task OnClick(string id)
+    {
+        if (Id != id)
+        {
+            NavigationManager.NavigateTo($"/postdetail/{id}");
+            Id = id;
+            lstSuggestPost.Clear();
+            await LoadData();
+            StateHasChanged();
+        }
+
+    }
+}

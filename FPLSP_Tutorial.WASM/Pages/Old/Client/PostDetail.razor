@@ -81,11 +81,11 @@
     PaginationResponse<TagBaseDTO> tagsResult { get; set; } = new();
     List<TagBaseDTO> lstTags { get; set; } = new();
     ClientPostGetTagsByPostIdWithPaginationRequest request = new();
-    PostBaseDTO parentPost = new();
-    PaginationResponse<PostBaseDTO> childPosts = new();
-    List<PostBaseDTO> lstChildPosts = new();
+    PostMainDTO parentPost = new();
+    PaginationResponse<PostMainDTO> childPosts = new();
+    List<PostMainDTO> lstChildPosts = new();
     ClientPostGetChildWithPaginationRequest requestChild = new();
-    private List<PostBaseDTO> lstSuggestPost = new();
+    private List<PostMainDTO> lstSuggestPost = new();
 
     private bool _isLoadingAll = true;
 

@@ -212,23 +212,23 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ClientPostReadOn
             }
         }
 
-        public async Task<RequestResult<PaginationResponse<PostBaseDTO?>>> GetChildPostsByPostIdAsync(PostIdRequestWithPagination request, CancellationToken cancellationToken)
+        public async Task<RequestResult<PaginationResponse<PostMainDTO?>>> GetChildPostsByPostIdAsync(PostIdRequestWithPagination request, CancellationToken cancellationToken)
         {
             try
             {
                 var post = await _readOnlyDbContext.PostEntities.AsNoTracking().Where(x => x.Id == request.Id && !x.Deleted).FirstOrDefaultAsync(cancellationToken);
-                PaginationResponse<PostBaseDTO> result = new();
+                PaginationResponse<PostMainDTO> result = new();
                 if (post!.PostId == null)
                 {
                     var querry = await _readOnlyDbContext.PostEntities.AsNoTracking().Where(x => x.Id == request.Id && !x.Deleted).Select(x => x.Posts.Select(z => z.Id).ToList()).FirstOrDefaultAsync(cancellationToken);
-                    result = await _readOnlyDbContext.PostEntities.AsNoTracking().Where(x => querry!.Contains(x.Id) && !x.Deleted && x.Id != post.Id).PaginateAsync<PostEntity, PostBaseDTO>(request, _mapper, cancellationToken);
+                    result = await _readOnlyDbContext.PostEntities.AsNoTracking().Where(x => querry!.Contains(x.Id) && !x.Deleted && x.Id != post.Id).PaginateAsync<PostEntity, PostMainDTO>(request, _mapper, cancellationToken);
                 }
                 else
                 {
                     var querry = await _readOnlyDbContext.PostEntities.AsNoTracking().Where(x => x.Id == post.PostId).Select(x => x.Posts.Select(child => child.Id).ToList()).FirstOrDefaultAsync(cancellationToken);
-                    result = await _readOnlyDbContext.PostEntities.AsNoTracking().Where(x => querry!.Contains(x.Id) && !x.Deleted && x.Id != post.Id).PaginateAsync<PostEntity, PostBaseDTO>(request, _mapper, cancellationToken);
+                    result = await _readOnlyDbContext.PostEntities.AsNoTracking().Where(x => querry!.Contains(x.Id) && !x.Deleted && x.Id != post.Id).PaginateAsync<PostEntity, PostMainDTO>(request, _mapper, cancellationToken);
                 }
-                return RequestResult<PaginationResponse<PostBaseDTO?>>.Succeed(new PaginationResponse<PostBaseDTO?>
+                return RequestResult<PaginationResponse<PostMainDTO?>>.Succeed(new PaginationResponse<PostMainDTO?>
                 {
                     PageNumber = request.PageNumber,
                     PageSize = request.PageSize,
@@ -239,7 +239,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ClientPostReadOn
             catch (Exception e)
             {
 
-                return RequestResult<PaginationResponse<PostBaseDTO?>>.Fail(_localizationService["List of post cannot found"], new[]
+                return RequestResult<PaginationResponse<PostMainDTO?>>.Fail(_localizationService["List of post cannot found"], new[]
                {
                     new ErrorItem
                     {
@@ -301,18 +301,18 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ClientPostReadOn
 
 
 
-        public async Task<RequestResult<PostBaseDTO?>> GetParentPostByPostIdAsync(Guid id, CancellationToken cancellationToken)
+        public async Task<RequestResult<PostMainDTO?>> GetParentPostByPostIdAsync(Guid id, CancellationToken cancellationToken)
         {
             try
             {
-                var result = await _readOnlyDbContext.PostEntities.AsNoTracking().Where(x => x.Id == id).Select(x => x.Post).Where(x => !x.Deleted).ProjectTo<PostBaseDTO>(_mapper.ConfigurationProvider).FirstOrDefaultAsync(cancellationToken);
-                return RequestResult<PostBaseDTO?>.Succeed(result);
+                var result = await _readOnlyDbContext.PostEntities.AsNoTracking().Where(x => x.Id == id).Select(x => x.Post).Where(x => !x.Deleted).ProjectTo<PostMainDTO>(_mapper.ConfigurationProvider).FirstOrDefaultAsync(cancellationToken);
+                return RequestResult<PostMainDTO?>.Succeed(result);
 
             }
             catch (Exception e)
             {
 
-                return RequestResult<PostBaseDTO?>.Fail(_localizationService["ParentPost is not found"], new[]
+                return RequestResult<PostMainDTO?>.Fail(_localizationService["ParentPost is not found"], new[]
                {
                     new ErrorItem
                     {

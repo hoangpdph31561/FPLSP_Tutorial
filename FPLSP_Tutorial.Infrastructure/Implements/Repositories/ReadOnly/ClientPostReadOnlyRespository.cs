@@ -2,7 +2,7 @@
 using AutoMapper.QueryableExtensions;
 using FPLSP_Tutorial.Application.DataTransferObjects.ClientPost;
 using FPLSP_Tutorial.Application.DataTransferObjects.ClientPost.Request;
-using FPLSP_Tutorial.Application.Interfaces.Repositories.ClientPostReadOnly;
+using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly;
 using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Application.ValueObjects.Common;
 using FPLSP_Tutorial.Application.ValueObjects.Pagination;
@@ -12,7 +12,7 @@ using FPLSP_Tutorial.Infrastructure.Database.AppDbContext;
 using FPLSP_Tutorial.Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
 
-namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ClientPostReadOnly
+namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
 {
 
     public class ClientPostReadOnlyRespository : IClientPostReadOnlyRespository
@@ -32,8 +32,8 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ClientPostReadOn
         {
             try
             {
-                
-                var result = await _readOnlyDbContext.MajorEntities.AsNoTracking().Where(x => !x.Deleted).ProjectTo<MajorBaseDTO>(_mapper.ConfigurationProvider).Where(x => x.NumberOfPosts > 0).PaginateAsync(request,cancellationToken) ;
+
+                var result = await _readOnlyDbContext.MajorEntities.AsNoTracking().Where(x => !x.Deleted).ProjectTo<MajorBaseDTO>(_mapper.ConfigurationProvider).Where(x => x.NumberOfPosts > 0).PaginateAsync(request, cancellationToken);
                 return RequestResult<PaginationResponse<MajorBaseDTO>>.Succeed(new PaginationResponse<MajorBaseDTO>
                 {
                     PageNumber = request.PageNumber,

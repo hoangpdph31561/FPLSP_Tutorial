@@ -3,7 +3,7 @@ using FPLSP_Tutorial.Application.DataTransferObjects.ClientPost.Request;
 using FPLSP_Tutorial.Application.ValueObjects.Pagination;
 using FPLSP_Tutorial.Application.ValueObjects.Response;
 
-namespace FPLSP_Tutorial.Application.Interfaces.Repositories.ClientPostReadOnly
+namespace FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly
 {
     public interface IClientPostReadOnlyRespository
     {

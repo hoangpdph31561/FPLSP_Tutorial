@@ -1,5 +1,5 @@
 ﻿using FPLSP_Tutorial.Application.DataTransferObjects.ClientPost.Request;
-using FPLSP_Tutorial.Application.Interfaces.Repositories.ClientPostReadOnly;
+using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly;
 using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Application.ValueObjects.Common;
 using FPLSP_Tutorial.Application.ViewModels;

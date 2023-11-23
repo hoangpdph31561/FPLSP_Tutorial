@@ -1,8 +1,7 @@
-﻿
-using FPLSP_Tutorial.Application.ValueObjects.Response;
+﻿using FPLSP_Tutorial.Application.ValueObjects.Response;
 using FPLSP_Tutorial.Domain.Entities;
 
-namespace FPLSP_Tutorial.Application.Interfaces.Repositories.ClientPostReadWrite
+namespace FPLSP_Tutorial.Application.Interfaces.Repositories.ReadWrite
 {
     public interface IClientPostReadWriteRespository
     {

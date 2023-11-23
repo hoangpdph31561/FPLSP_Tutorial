@@ -1,11 +1,11 @@
-﻿using FPLSP_Tutorial.Application.Interfaces.Repositories.ClientPostReadWrite;
+﻿using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadWrite;
 using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Application.ValueObjects.Common;
 using FPLSP_Tutorial.Application.ValueObjects.Response;
 using FPLSP_Tutorial.Domain.Entities;
 using FPLSP_Tutorial.Infrastructure.Database.AppDbContext;
 
-namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ClienPostReadWriteRespository
+namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
 {
     public class ClientPostReadWriteRespository : IClientPostReadWriteRespository
     {

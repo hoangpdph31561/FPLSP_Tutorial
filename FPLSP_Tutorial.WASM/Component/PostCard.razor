@@ -47,11 +47,11 @@
                     </div>
                     <div class="col-12 " style="-webkit-mask-image: linear-gradient(180deg, #000 60%, transparent); overflow: clip; height: 80px;">
 
-                        @Post.Content
+                        @((MarkupString)Post.Content)
                     </div>
 
                     <div class="col-12 d-flex justify-end">
-                        <MudLink Href="@($"/recreation/post/{Post.Id}")">Xem thêm</MudLink>
+                        <MudLink Href="@($"/recreation/post/view/{Post.Id}")">Xem thêm</MudLink>
                     </div>
                 </div>
             </MudCard>

@@ -1,4 +1,4 @@
-﻿@page "/recreation/post/{Id}"
+﻿@page "/recreation/post/view/{Id}"
 
 @using FPLSP_Tutorial.WASM.Data.Client;
 @using FPLSP_Tutorial.WASM.Data.Client.Request;
@@ -27,14 +27,14 @@ else
                 </div>
             </div>
             <div class="mt-2">
-                <MudText Typo="@(result.Title.Length > 25 ? Typo.h6 : Typo.h4)" Style="overflow: hidden;text-overflow: ellipsis;">
+                <MudText Typo="Typo.h4" Style="word-wrap:break-word">
                     <span style="font-weight:500;">@result!.Title</span>
                 </MudText>
                 <MudText Typo="Typo.body1">Tạo bởi: <span style="font-weight: 500">@result.CreatedName</span><span> | @result.CreatedTime.ToString("dd/MM/yyyy")</span></MudText>
             </div>
             <MudDivider Class="my-3"></MudDivider>
             <div>
-                @result.Content
+                @((MarkupString)result.Content)
             </div>
         </MudPaper>
 
@@ -101,7 +101,7 @@ else
     {
         if (Id != id)
         {
-            NavigationManager.NavigateTo($"/postdetail/{id}");
+            NavigationManager.NavigateTo($"/recreation/postdetail/{id}");
             Id = id;
             lstSuggestPost.Clear();
             await LoadData();

@@ -1,0 +1,96 @@
+﻿@page "/recreation/post-update"
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post.Request;
+
+
+@layout ManagementLayout
+
+@inject IPostRepo _repoPost;
+@inject ISnackbar _mudSnackbar;
+@inject NavigationManager _nav;
+
+<div class="ma-3">
+    <MudBreadcrumbs 
+        Items="@(new List<BreadcrumbItem>() {
+                        new BreadcrumbItem("Danh sách", "/recreation/post-manager"),
+                        new BreadcrumbItem("Cập nhật bài viết", "/recreation/post-update", true)
+    })"></MudBreadcrumbs>
+
+    <MudText Typo="Typo.h5" Style="font-weight: 500">Cập nhật bài viết</MudText>
+
+    @if(_isLoadingAll)
+    {
+        <MudProgressLinear Indeterminate Color="Color.Primary" />
+    }
+    else
+    {
+        <div class="row mt-3">
+            <div class="col-6"><MudTextField @bind-Value="@_postUpdateR.Title" Label="Tiêu đề" Variant="Variant.Outlined"></MudTextField></div>
+            <div class="col-6">
+                <MudSelect @bind-Value="@_postUpdateR.PostType" Label="Loại bài viết" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
+                    <MudSelectItem Value="@("Hệ thống")">Hệ thống</MudSelectItem>
+                    <MudSelectItem Value="@("Chuyên ngành")">Chuyên ngành</MudSelectItem>
+                </MudSelect>
+            </div>
+        </div>
+
+        <MudText Typo="Typo.h6" Class="pt-3">Nội dung</MudText>
+
+        <RichTextEditor @ref="@_rteRef" Get="@((string val) => { _postUpdateR.Content =  val; })" Set="@_postUpdateR.Content" />
+
+        <div class="row">
+            <div class="col d-flex justify-content-end">
+                <MudChip OnClick="@(() => _nav.NavigateTo("/recreation/post-manager" + ((_postUpdateR.PostId == null) ? "" : "?idPost=" + idPost)))" Color="Color.Error" Icon="@Icons.Material.Filled.ExitToApp">Hủy</MudChip>
+                <MudChip OnClick="@(async () => { await OnSaveAsync(); })" Color="Color.Primary" Icon="@Icons.Material.Filled.Save">Lưu</MudChip>
+            </div>
+        </div>
+    }
+</div>
+@code {
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string? idPost { get; set; }
+
+    RichTextEditor _rteRef = new();
+
+    private bool _isLoadingAll = true;
+    private PostUpdateRequest _postUpdateR = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData().ContinueWith((result) =>
+        {
+            _isLoadingAll = false;
+        });
+    }
+
+    private async Task LoadData()
+    {
+        var post = await _repoPost.GetPostById(Guid.Parse(idPost));
+        _postUpdateR = new()
+        {
+            Id = post.Id,
+            PostId = post.PostId,
+            PostType = post.PostType,
+            Title = post.Title,
+            Content = post.Content,
+            Status = post.Status,
+            ModifiedBy = Guid.Empty
+        };
+    }
+
+    private async Task OnSaveAsync()
+    {
+        await _rteRef.GetRTEValue();
+
+        var result = await _repoPost.UpdatePostAsync(_postUpdateR);
+        if(result)
+        {
+            _mudSnackbar.Add("Cập nhật thành công", Severity.Success);
+            _nav.NavigateTo("/recreation/post-manager" + ((_postUpdateR.PostId == null) ? "" : "?idPost=" + idPost));
+        }
+        else
+        {
+            _mudSnackbar.Add("Cập nhật thất bại", Severity.Error);
+        }
+    }
+}

@@ -27,10 +27,12 @@
         </div>
 
         <MudText Typo="Typo.h6" Class="pt-3">Nội dung</MudText>
-        <textarea style="width: 100%; height: 50vh; border: 1px lightgrey solid; border-radius: 3px;" class="p-3" @onchange="@((ChangeEventArgs args) => { _postCreateR.Content = args.Value.ToString(); })"></textarea>
+        
+        <RichTextEditor @ref="@_rteRef" Get="@((string val) => { _postCreateR.Content =  val; })" />
+
         <div class="row">
             <div class="col d-flex justify-content-end">
-                <MudChip OnClick="@(() => _nav.NavigateTo("/post-manager" + ((idPost == null) ? "" : "?idPost=" + idPost)))" Color="Color.Error" Icon="@Icons.Material.Filled.ExitToApp">Hủy</MudChip>
+                <MudChip OnClick="@(() => _nav.NavigateTo("/recreation/post-manager" + ((idPost == null) ? "" : "?idPost=" + idPost)))" Color="Color.Error" Icon="@Icons.Material.Filled.ExitToApp">Hủy</MudChip>
                 <MudChip OnClick="@(async () => { await OnSaveAsync(); })" Color="Color.Primary" Icon="@Icons.Material.Filled.Save">Lưu</MudChip>
             </div>
         </div>
@@ -41,16 +43,20 @@
     [SupplyParameterFromQuery]
     public string? idPost { get; set; }
 
+    RichTextEditor _rteRef = new();
+
     private PostCreateRequest _postCreateR = new();
 
     private async Task OnSaveAsync()
     {
+        await _rteRef.GetRTEValue();
+
         if(idPost != null) _postCreateR.PostId = Guid.Parse(idPost);
         var result = await _repoPost.CreatePostAsync(_postCreateR);
         if(result)
         {
             _mudSnackbar.Add("Thêm thành công", Severity.Success);
-            _nav.NavigateTo("/post-manager" + ((idPost == null) ? "" : "?idPost=" + idPost));
+            _nav.NavigateTo("/recreation/post-manager" + ((idPost == null) ? "" : "?idPost=" + idPost));
         }
         else
         {

@@ -1,0 +1,33 @@
+﻿@inject IJSRuntime _js
+<textarea id="inp_editor1" class="@Class">
+ 
+
+</textarea>
+
+<div id="div_editor1"></div>
+@code {
+    [Parameter]
+    public string? Class { get; set; }
+    [Parameter]
+    public EventCallback<string> Get { get; set; }
+    [Parameter]
+    public string? Set { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await _js.InvokeVoidAsync("CreateRTEInstance");
+            if (Set != null)
+            {
+                await _js.InvokeVoidAsync("SetRTEValue", Set);
+            }
+        }
+    }
+
+    public async Task GetRTEValue()
+    {
+        string rteVal = await _js.InvokeAsync<string>("GetRTEValue");
+        await Get.InvokeAsync(rteVal);
+    }
+}

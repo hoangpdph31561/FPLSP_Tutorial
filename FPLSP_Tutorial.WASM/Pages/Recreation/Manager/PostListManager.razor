@@ -57,14 +57,14 @@
                     {
                         <MudTd>
                             <MudTooltip Text="Xem chi tiết">
-                                <MudChip OnClick="@(() => { _navManager.NavigateTo($"/post-manager?idPost={context.Id}"); })">@context.CountPost</MudChip>
+                                <MudChip OnClick="@(() => { _navManager.NavigateTo($"/recreation/post-manager?idPost={context.Id}"); })">@context.CountPost</MudChip>
                             </MudTooltip>
                         </MudTd>
                     }
 
                     <MudTd><BadgeEntityStatus Status="@context.Status" /></MudTd>
                     <MudTd>
-                        <MudChip Color="Color.Primary" OnClick="@(async () => { _navManager.NavigateTo("/post-update?idPost=" + context.Id); })">Chỉnh sửa</MudChip>
+                        <MudChip Color="Color.Primary" OnClick="@(async () => { _navManager.NavigateTo("/recreation/post-update?idPost=" + context.Id); })">Chỉnh sửa</MudChip>
                         <MudChip Color="Color.Error" OnClick="@(async () => await OnDelete(context.Id))">Xóa</MudChip>
                     </MudTd>
                 </RowTemplate>

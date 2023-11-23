@@ -12,6 +12,8 @@
     .custom-layout-color {
         background-color: rgb(255, 255, 255);
     }
+
+
 </style>
 
 <MudLayout>
@@ -25,14 +27,12 @@
         <MudIconButton Icon="@Icons.Material.Filled.Logout" Color="ContentColor" Title="Đăng xuất" />
     </MudAppBar>
         <MudDrawer @bind-Open="@open" Variant="DrawerVariant.Mini" Elevation="0" Class="custom-layout-color">
-        
-            <MudDrawerHeader Class="top-row px-4 d-flex align-center">
-                @if (open)
-                {
-                    <MudText Typo="Typo.h6">FPLSP Tutorial</MudText>
-                }
-            </MudDrawerHeader>
-        
+        <MudDrawerHeader Class="top-row px-4 d-flex align-center" >
+            @if(open)
+            {
+                <MudText Typo="Typo.h6">FPLSP Tutorial</MudText>
+            }
+        </MudDrawerHeader>
         
         <MudNavMenu>
             <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home" Href="/recreation/post/client">Trang chủ</MudNavLink>
@@ -46,9 +46,7 @@
                 background-color: rgba(247, 251, 255, 1); 
                 min-height: calc(100vh - var(--mud-appbar-height));
                 border-top: 1px solid lightgrey; 
-                border-left: 1px solid lightgrey;
-                
-        ">
+                border-left: 1px solid lightgrey;">
             @Body
         </div>
     </MudMainContent>

@@ -6,7 +6,7 @@ using FPLSP_Tutorial.Application.ViewModels;
 
 namespace FPLSP_Tutorial.Infrastructure.ViewModels.User
 {
-    public class UserListWithPaginationViewModel : ViewModelBase<ViewUserWithPaginationRequest>
+    public class UserListWithPaginationViewModel : ViewModelBase<UserViewWithPaginationRequest>
     {
         public readonly IUserReadOnlyRepository _userReadOnlyRepository;
         private readonly ILocalizationService _localizationService;
@@ -15,11 +15,11 @@ namespace FPLSP_Tutorial.Infrastructure.ViewModels.User
             _userReadOnlyRepository = UserReadOnlyRepository;
             _localizationService = localizationService;
         }
-        public override async Task HandleAsync(ViewUserWithPaginationRequest request, CancellationToken cancellationToken)
+        public override async Task HandleAsync(UserViewWithPaginationRequest request, CancellationToken cancellationToken)
         {
             try
             {
-                var result = await _userReadOnlyRepository.GetUserWithPaginationByAdminAsync(request, cancellationToken);
+                var result = await _userReadOnlyRepository.GetUserWithPaginationAsync(request, cancellationToken);
 
                 Data = result.Data!;
                 Success = result.Success;

@@ -9,12 +9,10 @@ namespace FPLSP_Tutorial.Infrastructure.Extensions.AutoMapperProfiles
     {
         public UserMajorProfile()
         {
-            CreateMap<UserMajorEntity, MajorUserDto>().ForMember(des => des.TenChuyenNganh, src => src.MapFrom(src => src.Major.Name))
-                                               .ForMember(des => des.RoleCodes, src => src.MapFrom(src => src.User.RoleCodes))
-                                               .ForMember(des => des.email, src => src.MapFrom(src => src.User.Email));
-            CreateMap<DeleteMajorUserRequest, UserMajorEntity>();
-            CreateMap<UpdateMajorUserRequest, UserMajorEntity>();
-            CreateMap<CreateUserMajorRequest, UserMajorEntity>();
+            CreateMap<UserMajorEntity, UserMajorDTO>();
+            CreateMap<UserMajorDeleteRequest, UserMajorEntity>();
+            CreateMap<UserMajorUpdateRequest, UserMajorEntity>();
+            CreateMap<UserMajorCreateRequest, UserMajorEntity>();
         }
 
     }

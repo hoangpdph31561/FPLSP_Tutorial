@@ -1,10 +1,11 @@
 ﻿using FPLSP_Tutorial.Domain.Enums;
 
-namespace FPLSP_Tutorial.Application.DataTransferObjects.MajorRequest.Request
+namespace FPLSP_Tutorial.Application.DataTransferObjects.MajorUser.Request
 {
-    public class MajorRequestCreateRequest
+    public class UserMajorCreateRequest
     {
         public Guid MajorId { get; set; }
+        public Guid UserId { get; set; }
         public bool IsManager { get; set; }
         public EntityStatus Status { get; set; } = EntityStatus.Active;
 

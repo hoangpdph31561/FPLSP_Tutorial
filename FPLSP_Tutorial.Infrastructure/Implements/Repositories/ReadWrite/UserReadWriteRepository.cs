@@ -23,15 +23,6 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
         {
             try
             {
-                entity.Id = Guid.NewGuid();
-                entity.Email = entity.Email;
-                entity.Username = string.IsNullOrWhiteSpace(entity.Username) ? "N/A" : entity.Username;
-                entity.RoleCodes = entity.RoleCodes == null ? new List<string>() : entity.RoleCodes;
-                entity.Status = entity.Status == EntityStatus.Active ? EntityStatus.Active : EntityStatus.InActive;
-
-                entity.CreatedTime = DateTime.UtcNow;
-                entity.CreatedBy = entity.CreatedBy;
-
                 await _dbContext.UserEntities.AddAsync(entity);
                 await _dbContext.SaveChangesAsync(cancellationToken);
 

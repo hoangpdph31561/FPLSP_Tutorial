@@ -26,11 +26,51 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
             _localizationService = localizationService;
         }
 
+        public Task<RequestResult<PaginationResponse<UserDTO>>> GetUserAsync(UserViewRequest request, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<RequestResult<PaginationResponse<UserDTO>>> GetUserWithPaginationAsync(UserViewWithPaginationRequest request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                IQueryable<UserEntity> queryable = _dbcontext.UserEntities
+                    .AsNoTracking()
+                    .AsQueryable();
+                var result = await queryable
+                    .PaginateAsync<UserEntity, UserDTO>(request, _mapper, cancellationToken);
+
+                return RequestResult<PaginationResponse<UserDTO>>.Succeed(new PaginationResponse<UserDTO>()
+                {
+                    PageNumber = request.PageNumber,
+                    PageSize = request.PageSize,
+                    HasNext = result.HasNext,
+                    Data = result.Data
+                });
+            }
+            catch (Exception e)
+            {
+                return RequestResult<PaginationResponse<UserDTO>>.Fail(_localizationService["List of User is not found"], new[]
+                {
+                    new ErrorItem
+                    {
+                        Error = e.Message,
+                        FieldName = LocalizationString.Common.FailedToGet + "list of User"
+                    }
+                });
+            }
+        }
+
         public async Task<RequestResult<UserDTO?>> GetUserByEmailAsync(string email, CancellationToken cancellationToken)
         {
             try
             {
-                var user = await _dbcontext.UserEntities.AsNoTracking().Where(c => c.Email == email && c.Status != Domain.Enums.EntityStatus.Deleted).ProjectTo<UserDTO>(_mapper.ConfigurationProvider).FirstOrDefaultAsync(cancellationToken);
+                var user = await _dbcontext.UserEntities
+                    .AsNoTracking()
+                    .Where(c => c.Email == email && c.Status != Domain.Enums.EntityStatus.Deleted)
+                    .ProjectTo<UserDTO>(_mapper.ConfigurationProvider)
+                    .FirstOrDefaultAsync(cancellationToken);
                 return RequestResult<UserDTO?>.Succeed(user);
 
             }
@@ -51,9 +91,11 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
         {
             try
             {
-                var user = await _dbcontext.UserEntities.AsNoTracking().Where(c => c.Id == idUser).ProjectTo<UserDTO>(_mapper.ConfigurationProvider)
-                .FirstOrDefaultAsync(cancellationToken);
-
+                var user = await _dbcontext.UserEntities
+                    .AsNoTracking()
+                    .Where(c => c.Id == idUser && c.Status != Domain.Enums.EntityStatus.Deleted)
+                    .ProjectTo<UserDTO>(_mapper.ConfigurationProvider)
+                    .FirstOrDefaultAsync(cancellationToken);
                 return RequestResult<UserDTO?>.Succeed(user);
             }
             catch (Exception e)
@@ -69,33 +111,6 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
             }
         }
 
-        public async Task<RequestResult<PaginationResponse<UserDTO>>> GetUserWithPaginationByAdminAsync(ViewUserWithPaginationRequest request, CancellationToken cancellationToken)
-        {
-            try
-            {
-                IQueryable<UserEntity> queryable = _dbcontext.UserEntities.AsNoTracking().AsQueryable();
-                var result = await _dbcontext.UserEntities.AsNoTracking()
-                    .PaginateAsync<UserEntity, UserDTO>(request, _mapper, cancellationToken);
-
-                return RequestResult<PaginationResponse<UserDTO>>.Succeed(new PaginationResponse<UserDTO>()
-                {
-                    PageNumber = request.PageNumber,
-                    PageSize = request.PageSize,
-                    HasNext = result.HasNext,
-                    Data = result.Data
-                });
-            }
-            catch (Exception e)
-            {
-                return RequestResult<PaginationResponse<UserDTO>>.Fail(_localizationService["List of User are not found"], new[]
-                {
-                    new ErrorItem
-                    {
-                        Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToGet + "list of user"
-                    }
-                });
-            }
-        }
+        
     }
 }

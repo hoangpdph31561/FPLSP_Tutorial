@@ -8,7 +8,7 @@ using FPLSP_Tutorial.Domain.Entities;
 
 namespace FPLSP_Tutorial.Infrastructure.ViewModels.UserMajors
 {
-    public class MajorUserCreateViewModel : ViewModelBase<CreateUserMajorRequest>
+    public class MajorUserCreateViewModel : ViewModelBase<UserMajorCreateRequest>
     {
         private readonly IMajorUserReadWriteResponsitory _majorUserReadWriteResponsitory;
         private readonly ILocalizationService _localizationService;
@@ -20,7 +20,7 @@ namespace FPLSP_Tutorial.Infrastructure.ViewModels.UserMajors
             _localizationService = localizationService;
             _mapper = mapper;
         }
-        public override async Task HandleAsync(CreateUserMajorRequest data, CancellationToken cancellationToken)
+        public override async Task HandleAsync(UserMajorCreateRequest data, CancellationToken cancellationToken)
         {
             try
             {

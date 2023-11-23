@@ -27,14 +27,14 @@ namespace FPLSP_Tutorial.API.Controllers
         }
 
         //nlnt
-        [HttpGet("GetListWithPaginationAsync")]
-        public async Task<IActionResult> GetListWithPaginationAsync([FromQuery] ViewPostWithPaginationRequest request, CancellationToken cancellationToken)
+        [HttpGet]
+        public async Task<IActionResult> GetListWithPaginationAsync([FromQuery] PostViewWithPaginationRequest request, CancellationToken cancellationToken)
         {
             PostListWithPaginationViewModel vm = new(_postReadOnlyRespository, _localizationService);
             await vm.HandleAsync(request, cancellationToken);
             if (vm.Success)
             {
-                PaginationResponse<PostDto> result = (PaginationResponse<PostDto>)vm.Data;
+                PaginationResponse<PostDTO> result = (PaginationResponse<PostDTO>)vm.Data;
                 return Ok(result);
             }
             return BadRequest(vm);
@@ -47,14 +47,14 @@ namespace FPLSP_Tutorial.API.Controllers
             await vm.HandleAsync(id, cancellationToken);
             if (vm.Success)
             {
-                PostDto result = (PostDto)vm.Data;
+                PostDTO result = (PostDTO)vm.Data;
                 return Ok(result);
             }
             return BadRequest(vm);
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetPosts([FromQuery] ViewPostWithPaginationRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetPosts([FromQuery] PostViewWithPaginationRequest request, CancellationToken cancellationToken)
         {
             PostListWithPaginationViewModel vm = new(_postReadOnlyRespository, _localizationService);
             await vm.HandleAsync(request, cancellationToken);

@@ -6,21 +6,21 @@ using FPLSP_Tutorial.Application.ViewModels;
 
 namespace FPLSP_Tutorial.Infrastructure.ViewModels.UserMajors
 {
-    public class MajorUserListWithPaginationViewModel : ViewModelBase<ViewMajorUserWithPaginationRequest>
+    public class MajorUserListViewModel : ViewModelBase<UserMajorViewRequest>
     {
         public readonly IUserMajorReadOnlyRespository _userMajorReadOnlyRespository;
         private readonly ILocalizationService _localizationService;
 
-        public MajorUserListWithPaginationViewModel(IUserMajorReadOnlyRespository userMajorReadOnlyRespository, ILocalizationService localizationService)
+        public MajorUserListViewModel(IUserMajorReadOnlyRespository userMajorReadOnlyRespository, ILocalizationService localizationService)
         {
             _userMajorReadOnlyRespository = userMajorReadOnlyRespository;
             _localizationService = localizationService;
         }
-        public async override Task HandleAsync(ViewMajorUserWithPaginationRequest data, CancellationToken cancellationToken)
+        public async override Task HandleAsync(UserMajorViewRequest data, CancellationToken cancellationToken)
         {
             try
             {
-                var result = await _userMajorReadOnlyRespository.GetMajorUserWithPaginationByAdminAsync(data, cancellationToken);
+                var result = await _userMajorReadOnlyRespository.GetMajorUserAsync(data, cancellationToken);
 
                 Data = result.Data!;
                 Success = result.Success;

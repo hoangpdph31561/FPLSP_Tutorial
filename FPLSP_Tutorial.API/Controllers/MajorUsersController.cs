@@ -26,35 +26,35 @@ namespace FPLSP_Tutorial.API.Controllers
             _userMajorReadOnlyRespository = userMajorReadOnlyRespository;
         }
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] ViewMajorUserWithPaginationRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Get([FromQuery] UserMajorViewRequest request, CancellationToken cancellationToken)
         {
-            MajorUserListWithPaginationViewModel vm = new(_userMajorReadOnlyRespository, _localizationService);
+            MajorUserListViewModel vm = new(_userMajorReadOnlyRespository, _localizationService);
 
             await vm.HandleAsync(request, cancellationToken);
             if (vm.Success)
             {
-                PaginationResponse<MajorUserDto> paginationResponse = new PaginationResponse<MajorUserDto>();
-                paginationResponse = (PaginationResponse<MajorUserDto>)vm.Data;
+                PaginationResponse<UserMajorDTO> paginationResponse = new PaginationResponse<UserMajorDTO>();
+                paginationResponse = (PaginationResponse<UserMajorDTO>)vm.Data;
                 return Ok(paginationResponse);
             }
             return BadRequest();
         }
         [HttpPost]
-        public async Task<IActionResult> CreateNewMajorUserRequest([FromBody] CreateUserMajorRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateNewMajorUserRequest([FromBody] UserMajorCreateRequest request, CancellationToken cancellationToken)
         {
             MajorUserCreateViewModel vm = new(_majorUserReadWriteRespository, _localizationService, _mapper);
             await vm.HandleAsync(request, cancellationToken);
             return Ok(vm);
         }
         [HttpDelete]
-        public async Task<IActionResult> DeleteMajorUserRequest([FromQuery] DeleteMajorUserRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeleteMajorUserRequest([FromQuery] UserMajorDeleteRequest request, CancellationToken cancellationToken)
         {
             MajorUserDeleteViewModel vm = new(_mapper, _majorUserReadWriteRespository, _localizationService);
             await vm.HandleAsync(request, cancellationToken);
             return Ok(vm);
         }
         [HttpPut]
-        public async Task<IActionResult> Put([FromQuery] UpdateMajorUserRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Put([FromQuery] UserMajorUpdateRequest request, CancellationToken cancellationToken)
         {
             MajorUserUpdateViewModel vm = new(_majorUserReadWriteRespository, _localizationService, _mapper);
 

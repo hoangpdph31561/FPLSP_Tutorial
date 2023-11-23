@@ -2,20 +2,19 @@
 
 namespace FPLSP_Tutorial.Application.DataTransferObjects.MajorRequest
 {
-    public class MajorRequestDto
+    public class MajorRequestDTO
     {
         public Guid Id { get; set; }
-
         public Guid MajorId { get; set; }
-        public string MajorName { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
         public bool IsManager { get; set; }
         public EntityStatus Status { get; set; } = EntityStatus.Active;
-        public bool Deleted { get; set; }
 
-        public Guid? CreatedBy { get; set; }
         public DateTimeOffset CreatedTime { get; set; }
-
-
+        public Guid? CreatedBy { get; set; }
+        public DateTimeOffset ModifiedTime { get; set; }
+        public Guid? ModifiedBy { get; set; }
+        public bool Deleted { get; set; }
+        public Guid? DeletedBy { get; set; }
+        public DateTimeOffset DeletedTime { get; set; }
     }
 }

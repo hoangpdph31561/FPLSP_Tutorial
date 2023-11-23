@@ -2,8 +2,7 @@
 
 namespace FPLSP_Tutorial.Application.DataTransferObjects.Post.Request
 {
-    public class ViewPostWithPaginationRequest : PaginationRequest
+    public class PostViewWithPaginationRequest : PaginationRequest
     {
-        public Guid? PostId { get; set; }
     }
 }

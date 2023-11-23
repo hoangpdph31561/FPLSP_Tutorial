@@ -5,12 +5,12 @@ using FPLSP_Tutorial.Application.ViewModels;
 
 namespace FPLSP_Tutorial.Infrastructure.ViewModels.MajorRequests
 {
-    public class MajorRequestViewModels : ViewModelBase<Guid>
+    public class MajorRequestViewModel : ViewModelBase<Guid>
     {
         private readonly IMajorRequestReadOnlyRespository _majorRequestReadOnlyRespository;
         private readonly ILocalizationService _localizationService;
 
-        public MajorRequestViewModels(IMajorRequestReadOnlyRespository majorRequestReadOnlyRespository, ILocalizationService localizationService)
+        public MajorRequestViewModel(IMajorRequestReadOnlyRespository majorRequestReadOnlyRespository, ILocalizationService localizationService)
         {
             _majorRequestReadOnlyRespository = majorRequestReadOnlyRespository;
             _localizationService = localizationService;

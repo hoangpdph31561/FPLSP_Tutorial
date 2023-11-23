@@ -6,7 +6,7 @@ using FPLSP_Tutorial.Application.ViewModels;
 
 namespace FPLSP_Tutorial.Infrastructure.ViewModels.Major
 {
-    public class MajorListWithPaginationViewModel : ViewModelBase<ViewMajorWithPaginationRequest>
+    public class MajorListWithPaginationViewModel : ViewModelBase<MajorViewWithPaginationRequest>
     {
         public readonly IMajorReadOnlyRepository _majorReadOnlyRepository;
         private readonly ILocalizationService _localizationService;
@@ -17,11 +17,11 @@ namespace FPLSP_Tutorial.Infrastructure.ViewModels.Major
             _localizationService = localizationService;
         }
 
-        public override async Task HandleAsync(ViewMajorWithPaginationRequest request, CancellationToken cancellationToken)
+        public override async Task HandleAsync(MajorViewWithPaginationRequest request, CancellationToken cancellationToken)
         {
             try
             {
-                var result = await _majorReadOnlyRepository.GetMajorWithPaginationByAdminAsync(request, cancellationToken);
+                var result = await _majorReadOnlyRepository.GetMajorWithPaginationAsync(request, cancellationToken);
 
                 Data = result.Data!;
                 Success = result.Success;

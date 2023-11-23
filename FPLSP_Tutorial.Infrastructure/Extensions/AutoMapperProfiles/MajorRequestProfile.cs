@@ -9,8 +9,7 @@ namespace FPLSP_Tutorial.Infrastructure.Extensions.AutoMapperProfiles
     {
         public MajorRequestProfile()
         {
-            CreateMap<MajorRequestEntity, MajorRequestDto>().ForMember(des => des.MajorName, opt => opt.MapFrom(src => src.Major.Name))
-                                                           .ForMember(des => des.Email, opt => opt.MapFrom(src => src.Major.UserMajors.Select(x => x.User.Email).FirstOrDefault()));
+            CreateMap<MajorRequestEntity, MajorRequestDTO>();
             CreateMap<MajorRequestCreateRequest, MajorRequestEntity>();
             CreateMap<MajorRequestDeleteRequest, MajorRequestEntity>();
             CreateMap<MajorRequestUpdateRequest, MajorRequestEntity>();

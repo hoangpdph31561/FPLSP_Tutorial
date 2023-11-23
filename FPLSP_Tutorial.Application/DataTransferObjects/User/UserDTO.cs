@@ -11,6 +11,9 @@ namespace FPLSP_Tutorial.Application.DataTransferObjects.User
         public List<string> RoleCodes { get; set; } = new List<string>();
         public EntityStatus Status { get; set; } = EntityStatus.Active;
 
+        public DateTimeOffset CreatedTime { get; set; }
+        public Guid? CreatedBy { get; set; }
+
         public List<MajorDTO> ListJoinedMajors { get; set; } = new();
     }
 }

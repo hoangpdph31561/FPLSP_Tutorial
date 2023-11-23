@@ -44,7 +44,34 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
             }
         }
 
-        public async Task<RequestResult<int>> DeleteMajorUserAsync(DeleteMajorUserRequest request, CancellationToken cancellationToken)
+        
+
+        public async Task<RequestResult<int>> UpdateMajorUserAsync(UserMajorEntity entity, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var majorUser = await GetMajorUserByIdAsync(entity.Id, cancellationToken);
+
+                majorUser!.Status = entity.Status;
+
+                _dbContext.UserMajorEntities.Update(majorUser);
+                await _dbContext.SaveChangesAsync(cancellationToken);
+                return RequestResult<int>.Succeed(1);
+            }
+            catch (Exception e)
+            {
+                return RequestResult<int>.Fail(_localizationService["Unable to update UserMajor"], new[]
+                {
+                    new ErrorItem
+                    {
+                        Error = e.Message,
+                        FieldName = LocalizationString.Common.FailedToUpdate + "UserMajor"
+                    }
+                });
+            }
+        }
+
+        public async Task<RequestResult<int>> DeleteMajorUserAsync(UserMajorDeleteRequest request, CancellationToken cancellationToken)
         {
             try
             {
@@ -72,31 +99,6 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
                 });
             }
 
-        }
-
-        public async Task<RequestResult<int>> UpdateMajorUserAsync(UserMajorEntity entity, CancellationToken cancellationToken)
-        {
-            try
-            {
-                var majorUser = await GetMajorUserByIdAsync(entity.Id, cancellationToken);
-
-                majorUser!.Status = entity.Status;
-
-                _dbContext.UserMajorEntities.Update(majorUser);
-                await _dbContext.SaveChangesAsync(cancellationToken);
-                return RequestResult<int>.Succeed(1);
-            }
-            catch (Exception e)
-            {
-                return RequestResult<int>.Fail(_localizationService["Unable to update UserMajor"], new[]
-                {
-                    new ErrorItem
-                    {
-                        Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToUpdate + "UserMajor"
-                    }
-                });
-            }
         }
 
         private async Task<UserMajorEntity?> GetMajorUserByIdAsync(Guid idMajorUser, CancellationToken cancellationToken)

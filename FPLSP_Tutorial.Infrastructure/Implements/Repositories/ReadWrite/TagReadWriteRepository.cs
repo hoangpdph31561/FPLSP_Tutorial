@@ -21,16 +21,11 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
             _localizationService = localizationService;
         }
 
-        public async Task<RequestResult<int>> AddTagAsync(List<TagEntity> lstTagCreate, CancellationToken cancellationToken)
+        public async Task<RequestResult<int>> AddTagAsync(TagEntity entity, CancellationToken cancellationToken)
         {
             try
             {
-                foreach (var item in lstTagCreate)
-                {
-                    item.CreatedTime = DateTimeOffset.Now;
-                    item.Status = EntityStatus.Active;
-                }
-                await _dbContext.TagEntities.AddRangeAsync(lstTagCreate);
+                await _dbContext.TagEntities.AddAsync(entity);
                 await _dbContext.SaveChangesAsync(cancellationToken);
 
                 return RequestResult<int>.Succeed(1);
@@ -43,6 +38,35 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
                     {
                         Error = e.Message,
                         FieldName = LocalizationString.Common.FailedToCreate + "Tags"
+                    }
+                });
+            }
+        }
+
+        public async Task<RequestResult<int>> UpdateTagAsync(TagEntity entity, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var tag = await GetTagByIdAsync(entity.Id, cancellationToken);
+                tag!.Name = entity.Name;
+                tag.MajorId = entity.MajorId;
+                tag.Status = entity.Status;
+                tag.ModifiedBy = entity.ModifiedBy;
+                tag.ModifiedTime = DateTimeOffset.UtcNow;
+
+                _dbContext.TagEntities.Update(tag);
+                await _dbContext.SaveChangesAsync(cancellationToken);
+
+                return RequestResult<int>.Succeed(1);
+            }
+            catch (Exception e)
+            {
+                return RequestResult<int>.Fail(_localizationService["Unable to update tag"], new[]
+                {
+                    new ErrorItem
+                    {
+                        Error = e.Message,
+                        FieldName = LocalizationString.Common.FailedToUpdate + "tag"
                     }
                 });
             }
@@ -73,35 +97,6 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
                     {
                         Error = e.Message,
                         FieldName = LocalizationString.Common.FailedToDelete + "tag"
-                    }
-                });
-            }
-        }
-
-        public async Task<RequestResult<int>> UpdateTagAsync(TagEntity entity, CancellationToken cancellationToken)
-        {
-            try
-            {
-                var tag = await GetTagByIdAsync(entity.Id, cancellationToken);
-                tag!.Name = entity.Name;
-                tag.MajorId = entity.MajorId;
-                tag.Status = entity.Status;
-                tag.ModifiedBy = entity.ModifiedBy;
-                tag.ModifiedTime = DateTimeOffset.UtcNow;
-
-                _dbContext.TagEntities.Update(tag);
-                await _dbContext.SaveChangesAsync(cancellationToken);
-
-                return RequestResult<int>.Succeed(1);
-            }
-            catch (Exception e)
-            {
-                return RequestResult<int>.Fail(_localizationService["Unable to update tag"], new[]
-                {
-                    new ErrorItem
-                    {
-                        Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToUpdate + "tag"
                     }
                 });
             }

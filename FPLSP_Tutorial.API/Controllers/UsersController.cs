@@ -30,14 +30,14 @@ namespace FPLSP_Tutorial.API.Controllers
         [HttpGet("GetUserByEmailAsync")]
         public async Task<IActionResult> GetUserByEmailAsync([FromQuery] string email, CancellationToken cToken)
         {
-            UserGetByEmailViewModel vm = new(_localizationService, _userReadOnlyRepository);
+            UserViewByEmailViewModel vm = new(_localizationService, _userReadOnlyRepository);
             await vm.HandleAsync(email, cToken);
             return Ok(vm.Data);
         }
 
 
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] ViewUserWithPaginationRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Get([FromQuery] UserViewWithPaginationRequest request, CancellationToken cancellationToken)
         {
             UserListWithPaginationViewModel vm = new(_userReadOnlyRepository, _localizationService);
 

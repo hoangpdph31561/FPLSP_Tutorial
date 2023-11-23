@@ -25,7 +25,7 @@ namespace FPLSP_Tutorial.Infrastructure.ViewModels.TagViewModels
         {
             try
             {
-                var createResult = await _tagReadWriteRepository.AddTagAsync(_mapper.Map<List<TagCreateModel>,List<TagEntity>>(request.tasks!), cancellationToken);
+                var createResult = await _tagReadWriteRepository.AddTagAsync(_mapper.Map<TagEntity>(request), cancellationToken);
 
                 Success = createResult.Success;
                 ErrorItems = createResult.Errors;

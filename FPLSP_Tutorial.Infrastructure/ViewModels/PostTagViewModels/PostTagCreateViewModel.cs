@@ -25,7 +25,7 @@ namespace FPLSP_Tutorial.Infrastructure.ViewModels.PostTagViewModels
         {
             try
             {
-                var createResult = await _postTagReadWriteRespository.AddPostTagAsync(_mapper.Map<List<PostTagEntity>>(request.PostTags), cancellationToken);
+                var createResult = await _postTagReadWriteRespository.AddPostTagAsync(_mapper.Map<PostTagEntity>(request), cancellationToken);
 
                 Success = createResult.Success;
                 ErrorItems = createResult.Errors;

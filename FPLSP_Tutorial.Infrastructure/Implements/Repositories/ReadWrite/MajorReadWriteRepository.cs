@@ -19,6 +19,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
             _dbContext = dbContext;
             _localizationService = localizationService;
         }
+
         public async Task<RequestResult<Guid>> AddMajorAsync(MajorEntity entity, CancellationToken cancellationToken)
         {
             try
@@ -41,16 +42,46 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
             }
         }
 
+        public async Task<RequestResult<int>> UpdateMajorAsync(MajorEntity entity, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var major = await GetMajorByIdAsync(entity.Id, cancellationToken);
+
+                major!.Code = entity.Code;
+                major!.Name = string.IsNullOrEmpty(entity.Name) ? major.Name :entity.Name;
+                major!.Status = entity.Status;
+
+                major.ModifiedBy = entity.ModifiedBy;
+                major.ModifiedTime = DateTimeOffset.UtcNow;
+
+                await _dbContext.SaveChangesAsync(cancellationToken);
+
+                return RequestResult<int>.Succeed(1);
+            }
+            catch (Exception e)
+            {
+                return RequestResult<int>.Fail(_localizationService["Unable to update major"], new[]
+                {
+                    new ErrorItem
+                    {
+                        Error = e.Message,
+                        FieldName = LocalizationString.Common.FailedToUpdate + "major"
+                    }
+                });
+            }
+        }
+
         public async Task<RequestResult<int>> DeleteMajorAsync(MajorDeleteRequest request, CancellationToken cancellationToken)
         {
             try
             {
                 var major = await GetMajorByIdAsync(request.Id, cancellationToken);
 
+                major.Status = EntityStatus.Deleted;
                 major!.Deleted = true;
                 major.DeletedBy = request.DeletedBy;
                 major.DeletedTime = DateTimeOffset.UtcNow;
-                major.Status = EntityStatus.Deleted;
 
                 _dbContext.MajorEntities.Update(major);
                 await _dbContext.SaveChangesAsync(cancellationToken);
@@ -74,38 +105,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
         private async Task<MajorEntity?> GetMajorByIdAsync(Guid idMajor, CancellationToken cancellationToken)
         {
             var major = await _dbContext.MajorEntities.FirstOrDefaultAsync(c => c.Id == idMajor && !c.Deleted, cancellationToken);
-
             return major;
-        }
-
-        public async Task<RequestResult<int>> UpdateMajorAsync(MajorEntity entity, CancellationToken cancellationToken)
-        {
-            try
-            {
-                var major = await GetMajorByIdAsync(entity.Id, cancellationToken);
-
-                major!.Name = string.IsNullOrEmpty(entity.Name) ? major.Name :entity.Name;
-                major!.Code = entity.Code;
-                major!.Status = entity.Status;
-                major.ModifiedBy = entity.ModifiedBy;
-                major.ModifiedTime = DateTimeOffset.UtcNow;
-
-                _dbContext.MajorEntities.Update(major);
-                await _dbContext.SaveChangesAsync(cancellationToken);
-
-                return RequestResult<int>.Succeed(1);
-            }
-            catch (Exception e)
-            {
-                return RequestResult<int>.Fail(_localizationService["Unable to update major"], new[]
-                {
-                    new ErrorItem
-                    {
-                        Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToUpdate + "major"
-                    }
-                });
-            }
         }
     }
 }

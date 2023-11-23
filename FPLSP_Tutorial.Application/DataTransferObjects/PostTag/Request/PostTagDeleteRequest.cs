@@ -3,6 +3,7 @@
     public class PostTagDeleteRequest
     {
         public Guid Id { get; set; }
-        public Guid DeletedBy { get; set; }
+
+        public Guid? DeletedBy { get; set; }
     }
 }

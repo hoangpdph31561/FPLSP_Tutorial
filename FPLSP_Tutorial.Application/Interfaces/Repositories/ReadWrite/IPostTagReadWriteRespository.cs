@@ -6,7 +6,7 @@ namespace FPLSP_Tutorial.Application.Interfaces.Repositories.ReadWrite
 {
     public interface IPostTagReadWriteRespository
     {
-        Task<RequestResult<int>> AddPostTagAsync(List<PostTagEntity> entity, CancellationToken cancellationToken);
+        Task<RequestResult<int>> AddPostTagAsync(PostTagEntity entity, CancellationToken cancellationToken);
         Task<RequestResult<int>> UpdatePostTagAsync(PostTagEntity entity, CancellationToken cancellationToken);
         Task<RequestResult<int>> DeletePostTagAsync(PostTagDeleteRequest request, CancellationToken cancellationToken);
     }

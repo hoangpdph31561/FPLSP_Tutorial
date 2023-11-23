@@ -7,7 +7,7 @@ using FPLSP_Tutorial.Application.ViewModels;
 
 namespace FPLSP_Tutorial.Infrastructure.ViewModels.UserMajors
 {
-    public class MajorUserDeleteViewModel : ViewModelBase<DeleteMajorUserRequest>
+    public class MajorUserDeleteViewModel : ViewModelBase<UserMajorDeleteRequest>
     {
         public readonly IMajorUserReadWriteResponsitory _majorUserReadWriteResponsitory;
         private readonly ILocalizationService _localizationService;
@@ -18,7 +18,7 @@ namespace FPLSP_Tutorial.Infrastructure.ViewModels.UserMajors
             _majorUserReadWriteResponsitory = majorUserReadWriteResponsitory;
             _localizationService = localizationService;
         }
-        public override async Task HandleAsync(DeleteMajorUserRequest data, CancellationToken cancellationToken)
+        public override async Task HandleAsync(UserMajorDeleteRequest data, CancellationToken cancellationToken)
         {
             try
             {

@@ -2,8 +2,7 @@
 
 namespace FPLSP_Tutorial.Application.DataTransferObjects.MajorRequest.Request
 {
-    public class ViewMajorRequestWithPaginationRequest : PaginationRequest
+    public class MajorRequestViewWithPaginationRequest : PaginationRequest
     {
-        public string? Email { get; set; }
     }
 }

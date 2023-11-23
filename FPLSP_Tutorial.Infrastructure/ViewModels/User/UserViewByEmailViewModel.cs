@@ -5,12 +5,12 @@ using FPLSP_Tutorial.Application.ViewModels;
 
 namespace FPLSP_Tutorial.Infrastructure.ViewModels.User
 {
-    public class UserGetByEmailViewModel : ViewModelBase<string>
+    public class UserViewByEmailViewModel : ViewModelBase<string>
     {
         private readonly IUserReadOnlyRepository _repoUserReadOnly;
         private readonly ILocalizationService _svLocalization;
 
-        public UserGetByEmailViewModel(ILocalizationService svLocalization, IUserReadOnlyRepository repoUserReadOnly)
+        public UserViewByEmailViewModel(ILocalizationService svLocalization, IUserReadOnlyRepository repoUserReadOnly)
         {
             _svLocalization = svLocalization;
             _repoUserReadOnly = repoUserReadOnly;

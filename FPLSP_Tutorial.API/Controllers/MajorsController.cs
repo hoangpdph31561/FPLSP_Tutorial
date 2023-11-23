@@ -29,7 +29,7 @@ namespace FPLSP_Tutorial.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] ViewMajorWithPaginationRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Get([FromQuery] MajorViewWithPaginationRequest request, CancellationToken cancellationToken)
         {
             MajorListWithPaginationViewModel vm = new(_majorReadOnlyRepository, _localizationService);
 

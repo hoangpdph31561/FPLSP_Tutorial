@@ -2,7 +2,7 @@
 
 namespace FPLSP_Tutorial.Application.DataTransferObjects.User.Request
 {
-    public class ViewUserWithPaginationRequest : PaginationRequest
+    public class UserViewWithPaginationRequest : PaginationRequest
     {
     }
 }

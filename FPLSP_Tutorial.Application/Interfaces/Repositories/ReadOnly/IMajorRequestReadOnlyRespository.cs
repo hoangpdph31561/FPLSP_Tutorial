@@ -7,11 +7,11 @@ namespace FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly
 {
     public interface IMajorRequestReadOnlyRespository
     {
-        Task<RequestResult<MajorRequestDto?>> GetMajorRequestByIdAsync(Guid idMajorRequest, CancellationToken cancellationToken);
-        Task<RequestResult<PaginationResponse<MajorRequestDto>>> GetMajorRequestWithPaginationByAdminAsync(
-            ViewMajorRequestWithPaginationRequest request, CancellationToken cancellationToken);
-        Task<RequestResult<PaginationResponse<MajorRequestDto>>> GetMajorRequestWithPaginationByNotDeletedAsync(
-            ViewMajorRequestWithPaginationRequest request, CancellationToken cancellationToken);
+        Task<RequestResult<List<MajorRequestDTO>>> GetMajorRequestAsync(
+            MajorRequestViewRequest request, CancellationToken cancellationToken);
+        Task<RequestResult<PaginationResponse<MajorRequestDTO>>> GetMajorRequestWithPaginationAsync(
+            MajorRequestViewWithPaginationRequest request, CancellationToken cancellationToken);
+        Task<RequestResult<MajorRequestDTO?>> GetMajorRequestByIdAsync(Guid idMajorRequest, CancellationToken cancellationToken);
 
     }
 }

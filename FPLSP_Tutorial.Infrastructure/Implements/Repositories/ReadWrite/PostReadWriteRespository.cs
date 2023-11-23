@@ -19,7 +19,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
             _appDbContext = appDbContext;
             _localizationService = localizationService;
         }
-        public async Task<RequestResult<Guid>> CreateNewPost(PostEntity entity, CancellationToken cancellationToken)
+        public async Task<RequestResult<Guid>> AddPostAsync(PostEntity entity, CancellationToken cancellationToken)
         {
             try
             {
@@ -43,35 +43,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
             }
         }
 
-        public async Task<RequestResult<int>> DeletePost(PostDeleteRequest request, CancellationToken cancellationToken)
-        {
-            try
-            {
-                var postDeleting = await GetPostByIdAsync(request.Id, cancellationToken);
-
-                postDeleting!.Deleted = true;
-                postDeleting.DeletedBy = request.DeletedBy;
-                postDeleting.DeletedTime = DateTimeOffset.UtcNow;
-                postDeleting.Status = EntityStatus.Deleted;
-                _appDbContext.PostEntities.Update(postDeleting);
-                await _appDbContext.SaveChangesAsync();
-                return RequestResult<int>.Succeed(1);
-            }
-            catch (Exception e)
-            {
-
-                return RequestResult<int>.Fail(_localizationService["Unable to delete post"], new[]
-               {
-                    new ErrorItem
-                    {
-                        Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToDelete + "post"
-                    }
-                });
-            }
-        }
-
-        public async Task<RequestResult<int>> UpdatePost(PostEntity entity, CancellationToken cancellationToken)
+        public async Task<RequestResult<int>> UpdatePostAsync(PostEntity entity, CancellationToken cancellationToken)
         {
             try
             {
@@ -100,6 +72,35 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
                 });
             }
         }
+
+        public async Task<RequestResult<int>> DeletePostAsync(PostDeleteRequest request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var postDeleting = await GetPostByIdAsync(request.Id, cancellationToken);
+
+                postDeleting!.Deleted = true;
+                postDeleting.DeletedBy = request.DeletedBy;
+                postDeleting.DeletedTime = DateTimeOffset.UtcNow;
+                postDeleting.Status = EntityStatus.Deleted;
+                _appDbContext.PostEntities.Update(postDeleting);
+                await _appDbContext.SaveChangesAsync();
+                return RequestResult<int>.Succeed(1);
+            }
+            catch (Exception e)
+            {
+
+                return RequestResult<int>.Fail(_localizationService["Unable to delete post"], new[]
+               {
+                        new ErrorItem
+                        {
+                            Error = e.Message,
+                            FieldName = LocalizationString.Common.FailedToDelete + "post"
+                        }
+                    });
+            }
+        }
+
         private async Task<PostEntity?> GetPostByIdAsync(Guid postId, CancellationToken cancellationToken)
         {
             var post = await _appDbContext.PostEntities.FirstOrDefaultAsync(x => x.Id == postId && !x.Deleted, cancellationToken);

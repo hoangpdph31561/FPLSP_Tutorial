@@ -7,6 +7,7 @@ using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Application.ValueObjects.Common;
 using FPLSP_Tutorial.Application.ValueObjects.Pagination;
 using FPLSP_Tutorial.Application.ValueObjects.Response;
+using FPLSP_Tutorial.Domain.Entities;
 using FPLSP_Tutorial.Domain.Enums;
 using FPLSP_Tutorial.Infrastructure.Database.AppDbContext;
 using FPLSP_Tutorial.Infrastructure.Extensions;
@@ -25,21 +26,44 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
             _localizationService = localizationService;
             _dbContext = dbContext;
         }
-        public async Task<RequestResult<PaginationResponse<MajorUserDto>>> GetMajorUserWithPaginationByAdminAsync(ViewMajorUserWithPaginationRequest request, CancellationToken cancellationToken)
+
+        public async Task<RequestResult<List<UserMajorDTO>>> GetMajorUserAsync(UserMajorViewRequest request, CancellationToken cancellationToken)
         {
             try
             {
-                var query = _dbContext.UserMajorEntities.AsNoTracking().Where(x => x.Deleted == false && x.Status != EntityStatus.Deleted).ProjectTo<MajorUserDto>(_mapper.ConfigurationProvider);
-                if (!string.IsNullOrWhiteSpace(request.Email))
+                var queryable = await _dbContext.UserMajorEntities
+                    .AsNoTracking()
+                    .Where(c => c.Status != EntityStatus.Deleted && !c.Deleted)
+                    .ProjectTo<UserMajorDTO>(_mapper.ConfigurationProvider)
+                    .ToListAsync(cancellationToken); ;
+
+
+                return RequestResult<List<UserMajorDTO>>.Succeed(queryable);
+            }
+            catch (Exception e)
+            {
+                return RequestResult<List<UserMajorDTO>>.Fail(_localizationService["List of UserMajor are not found"], new[]
                 {
-                    query = query.Where(x => x.email.ToLower().Contains(request.Email));
-                }
-                if (request.MajorId != null)
-                {
-                    query = query.Where(x => x.MajorId == request.MajorId);
-                }
-                var result = await query.PaginateAsync(request, cancellationToken);
-                return RequestResult<PaginationResponse<MajorUserDto>>.Succeed(new PaginationResponse<MajorUserDto>()
+                    new ErrorItem
+                    {
+                        Error = e.Message,
+                        FieldName = LocalizationString.Common.FailedToGet + "list of UserMajor"
+                    }
+                });
+            }
+        }
+
+        public async Task<RequestResult<PaginationResponse<UserMajorDTO>>> GetMajorUserWithPaginationAsync(UserMajorViewWithPaginationRequest request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var queryable = _dbContext.UserMajorEntities
+                    .AsNoTracking()
+                    .Where(c => c.Status != EntityStatus.Deleted && !c.Deleted);
+                    
+
+                var result = await queryable.PaginateAsync<UserMajorEntity, UserMajorDTO>(request, _mapper, cancellationToken);
+                return RequestResult<PaginationResponse<UserMajorDTO>>.Succeed(new PaginationResponse<UserMajorDTO>()
                 {
                     PageNumber = request.PageNumber,
                     PageSize = request.PageSize,
@@ -49,7 +73,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
             }
             catch (Exception e)
             {
-                return RequestResult<PaginationResponse<MajorUserDto>>.Fail(_localizationService["List of UserMajor are not found"], new[]
+                return RequestResult<PaginationResponse<UserMajorDTO>>.Fail(_localizationService["List of UserMajor are not found"], new[]
                 {
                     new ErrorItem
                     {

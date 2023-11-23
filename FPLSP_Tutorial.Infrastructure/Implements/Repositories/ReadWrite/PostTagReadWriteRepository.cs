@@ -21,14 +21,10 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
             _localizationService = localizationService;
         }
 
-        public async Task<RequestResult<int>> AddPostTagAsync(List<PostTagEntity> entity, CancellationToken cancellationToken)
+        public async Task<RequestResult<int>> AddPostTagAsync(PostTagEntity entity, CancellationToken cancellationToken)
         {
             try
             {
-                foreach (var item in entity)
-                {
-                    item.CreatedTime = DateTimeOffset.Now;
-                }
                 await _dbContext.PostTagEntities.AddRangeAsync(entity);
                 await _dbContext.SaveChangesAsync(cancellationToken);
 
@@ -42,6 +38,32 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
                     {
                         Error = e.Message,
                         FieldName = LocalizationString.Common.FailedToCreate + "PostTags"
+                    }
+                });
+            }
+        }
+
+        public async Task<RequestResult<int>> UpdatePostTagAsync(PostTagEntity entity, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var posttag = await GetTagByIdAsync(entity.Id, cancellationToken);
+                posttag!.TagId = entity.TagId;
+                posttag.PostId = entity.PostId;
+     
+                _dbContext.PostTagEntities.Update(posttag);
+                await _dbContext.SaveChangesAsync(cancellationToken);
+
+                return RequestResult<int>.Succeed(1);
+            }
+            catch (Exception e)
+            {
+                return RequestResult<int>.Fail(_localizationService["Unable to update PostTag"], new[]
+                {
+                    new ErrorItem
+                    {
+                        Error = e.Message,
+                        FieldName = LocalizationString.Common.FailedToUpdate + "PostTag"
                     }
                 });
             }
@@ -72,32 +94,6 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
                     {
                         Error = e.Message,
                         FieldName = LocalizationString.Common.FailedToDelete + "PostTags"
-                    }
-                });
-            }
-        }
-
-        public async Task<RequestResult<int>> UpdatePostTagAsync(PostTagEntity entity, CancellationToken cancellationToken)
-        {
-            try
-            {
-                var posttag = await GetTagByIdAsync(entity.Id, cancellationToken);
-                posttag!.TagId = entity.TagId;
-                posttag.PostId = entity.PostId;
-     
-                _dbContext.PostTagEntities.Update(posttag);
-                await _dbContext.SaveChangesAsync(cancellationToken);
-
-                return RequestResult<int>.Succeed(1);
-            }
-            catch (Exception e)
-            {
-                return RequestResult<int>.Fail(_localizationService["Unable to update PostTag"], new[]
-                {
-                    new ErrorItem
-                    {
-                        Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToUpdate + "PostTag"
                     }
                 });
             }

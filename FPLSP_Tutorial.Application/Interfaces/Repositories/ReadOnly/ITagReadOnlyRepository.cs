@@ -7,9 +7,8 @@ namespace FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly
 {
     public interface ITagReadOnlyRepository
     {
-        Task<RequestResult<TagDto?>> GetTagByIdAsync(Guid idTag, CancellationToken cancellationToken);
-        Task<RequestResult<List<TagDto>>> GetTagByIdMajorAsync(Guid? idMajor, CancellationToken cancellationToken);
-        Task<RequestResult<PaginationResponse<TagDto>>> GetTagWithPaginationByAdminAsync(
-            ViewTagWithPaginationRequest request, CancellationToken cancellationToken);
+        Task<RequestResult<List<TagDTO>>> GetTagAsync(TagViewRequest request, CancellationToken cancellationToken);
+        Task<RequestResult<PaginationResponse<TagDTO>>> GetTagWithPaginationAsync(TagViewWithPaginationRequest request, CancellationToken cancellationToken);
+        Task<RequestResult<TagDTO?>> GetTagByIdAsync(Guid idTag, CancellationToken cancellationToken);
     }
 }

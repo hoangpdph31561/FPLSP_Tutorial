@@ -2,10 +2,13 @@
 
 namespace FPLSP_Tutorial.Application.DataTransferObjects.MajorUser.Request
 {
-    public class CreateUserMajorRequest
+    public class UserMajorUpdateRequest
     {
-        public Guid MajorId { get; set; }
-        public Guid UserId { get; set; }
+        public Guid Id { get; set; }
+
+        public bool IsManager { get; set; }
         public EntityStatus Status { get; set; } = EntityStatus.Active;
+
+        public Guid? ModifiedBy { get; set; }
     }
 }

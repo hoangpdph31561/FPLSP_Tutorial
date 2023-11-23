@@ -2,7 +2,7 @@
 
 namespace FPLSP_Tutorial.Application.DataTransferObjects.Tag.TagRequest
 {
-    public class ViewTagWithPaginationRequest : PaginationRequest
+    public class TagViewWithPaginationRequest : PaginationRequest
     {
 
     }

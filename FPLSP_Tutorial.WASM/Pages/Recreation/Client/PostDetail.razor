@@ -17,7 +17,7 @@ else
                         new BreadcrumbItem("Trang chủ", href: "/recreation/post/client"),
                         new BreadcrumbItem("Bài viết", href: null, disabled: true)
     })"></MudBreadcrumbs>
-        <MudPaper Class="mt-3 mx-3 p-3" Elevation="2">
+        <MudPaper Class="mt-4 mx-5 p-3" Elevation="2">
             <div class="d-flex align-center">
                 <div class="overflow-hidden">
                     @foreach (var i in lstTags)
@@ -73,11 +73,22 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadData().ContinueWith((re) =>
-        {
-            _isLoadingAll = false;
-        });
+
     }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(Id != result.Id.ToString())
+        {
+            await LoadData().ContinueWith((re) =>
+            {
+                _isLoadingAll = false;
+                StateHasChanged();
+            });
+        }
+
+    }
+
     private async Task LoadData()
     {
         request.Id = Id;

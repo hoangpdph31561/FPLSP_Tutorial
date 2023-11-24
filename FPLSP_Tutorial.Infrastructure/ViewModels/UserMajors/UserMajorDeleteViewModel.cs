@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using FPLSP_Tutorial.Application.DataTransferObjects.MajorUser.Request;
+using FPLSP_Tutorial.Application.DataTransferObjects.UserMajor.Request;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadWrite;
 using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Application.ValueObjects.Common;
@@ -7,12 +7,12 @@ using FPLSP_Tutorial.Application.ViewModels;
 
 namespace FPLSP_Tutorial.Infrastructure.ViewModels.UserMajors
 {
-    public class MajorUserDeleteViewModel : ViewModelBase<UserMajorDeleteRequest>
+    public class UserMajorDeleteViewModel : ViewModelBase<UserMajorDeleteRequest>
     {
         public readonly IUserMajorReadWriteRepository _majorUserReadWriteResponsitory;
         private readonly ILocalizationService _localizationService;
         private readonly IMapper _mapper;
-        public MajorUserDeleteViewModel(IMapper mapper, IUserMajorReadWriteRepository majorUserReadWriteResponsitory, ILocalizationService localizationService)
+        public UserMajorDeleteViewModel(IMapper mapper, IUserMajorReadWriteRepository majorUserReadWriteResponsitory, ILocalizationService localizationService)
         {
             _mapper = mapper;
             _majorUserReadWriteResponsitory = majorUserReadWriteResponsitory;

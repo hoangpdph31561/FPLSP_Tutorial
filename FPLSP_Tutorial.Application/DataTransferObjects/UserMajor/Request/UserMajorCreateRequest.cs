@@ -1,6 +1,6 @@
 ﻿using FPLSP_Tutorial.Domain.Enums;
 
-namespace FPLSP_Tutorial.Application.DataTransferObjects.MajorUser.Request
+namespace FPLSP_Tutorial.Application.DataTransferObjects.UserMajor.Request
 {
     public class UserMajorCreateRequest
     {

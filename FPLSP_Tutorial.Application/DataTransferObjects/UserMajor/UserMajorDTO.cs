@@ -1,6 +1,6 @@
 ﻿using FPLSP_Tutorial.Domain.Enums;
 
-namespace FPLSP_Tutorial.Application.DataTransferObjects.MajorUser
+namespace FPLSP_Tutorial.Application.DataTransferObjects.UserMajor
 {
     public class UserMajorDTO
     {

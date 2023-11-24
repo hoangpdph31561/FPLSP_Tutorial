@@ -26,8 +26,16 @@ namespace FPLSP_Tutorial.API.Controllers
             _postReadWriteRespository = postReadWriteRespository;
         }
 
+        [HttpGet("GetLists")]
+        public async Task<IActionResult> GetLists([FromQuery] PostViewWithPaginationRequest request, CancellationToken cancellationToken)
+        {
+            PostListWithPaginationViewModel vm = new(_postReadOnlyRespository, _localizationService);
+            await vm.HandleAsync(request, cancellationToken);
+            return Ok(vm);
+        }
+
         //nlnt
-        [HttpGet]
+        [HttpGet("GetListWithPaginationAsync")]
         public async Task<IActionResult> GetListWithPaginationAsync([FromQuery] PostViewWithPaginationRequest request, CancellationToken cancellationToken)
         {
             PostListWithPaginationViewModel vm = new(_postReadOnlyRespository, _localizationService);
@@ -53,13 +61,7 @@ namespace FPLSP_Tutorial.API.Controllers
             return BadRequest(vm);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetPosts([FromQuery] PostViewWithPaginationRequest request, CancellationToken cancellationToken)
-        {
-            PostListWithPaginationViewModel vm = new(_postReadOnlyRespository, _localizationService);
-            await vm.HandleAsync(request, cancellationToken);
-            return Ok(vm);
-        }
+        
         
         [HttpPost]
         public async Task<IActionResult> CreatePost(PostCreateRequest request, CancellationToken cancellationToken)

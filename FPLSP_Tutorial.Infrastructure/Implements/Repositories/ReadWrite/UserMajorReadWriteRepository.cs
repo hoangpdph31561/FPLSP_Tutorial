@@ -1,4 +1,4 @@
-﻿using FPLSP_Tutorial.Application.DataTransferObjects.MajorUser.Request;
+﻿using FPLSP_Tutorial.Application.DataTransferObjects.UserMajor.Request;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadWrite;
 using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Application.ValueObjects.Common;

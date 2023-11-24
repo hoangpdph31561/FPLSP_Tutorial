@@ -1,5 +1,5 @@
-﻿using FPLSP_Tutorial.Application.DataTransferObjects.MajorUser;
-using FPLSP_Tutorial.Application.DataTransferObjects.MajorUser.Request;
+﻿using FPLSP_Tutorial.Application.DataTransferObjects.UserMajor;
+using FPLSP_Tutorial.Application.DataTransferObjects.UserMajor.Request;
 using FPLSP_Tutorial.Application.ValueObjects.Pagination;
 using FPLSP_Tutorial.Application.ValueObjects.Response;
 

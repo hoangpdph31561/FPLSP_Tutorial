@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using FPLSP_Tutorial.Application.DataTransferObjects.MajorUser.Request;
+using FPLSP_Tutorial.Application.DataTransferObjects.UserMajor.Request;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadWrite;
 using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Application.ValueObjects.Common;
@@ -8,13 +8,13 @@ using FPLSP_Tutorial.Domain.Entities;
 
 namespace FPLSP_Tutorial.Infrastructure.ViewModels.UserMajors
 {
-    public class MajorUserCreateViewModel : ViewModelBase<UserMajorCreateRequest>
+    public class UserMajorCreateViewModel : ViewModelBase<UserMajorCreateRequest>
     {
         private readonly IUserMajorReadWriteRepository _majorUserReadWriteResponsitory;
         private readonly ILocalizationService _localizationService;
         private readonly IMapper _mapper;
 
-        public MajorUserCreateViewModel(IUserMajorReadWriteRepository majorUserReadWriteResponsitory, ILocalizationService localizationService, IMapper mapper)
+        public UserMajorCreateViewModel(IUserMajorReadWriteRepository majorUserReadWriteResponsitory, ILocalizationService localizationService, IMapper mapper)
         {
             _majorUserReadWriteResponsitory = majorUserReadWriteResponsitory;
             _localizationService = localizationService;

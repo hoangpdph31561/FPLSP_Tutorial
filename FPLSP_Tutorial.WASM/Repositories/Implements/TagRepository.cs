@@ -14,7 +14,7 @@ namespace FPLSP_Tutorial.WASM.Repositories.Implements
             _httpClient = httpClient;
         }
 
-        public async Task<PaginationResponse<TagDTO>> GetListWithPagination(TagViewWithPaginationRequest request)
+        public async Task<PaginationResponse<TagDTO>> GetListWithPaginationAsync(TagViewWithPaginationRequest request)
         {
             string url = $"/api/Tags/GetListWithPagination?PageNumber={request.PageNumber}&PageSize={request.PageSize}";
 
@@ -28,7 +28,7 @@ namespace FPLSP_Tutorial.WASM.Repositories.Implements
             return result;
         }
 
-        public async Task<TagDTO> GetById(Guid id)
+        public async Task<TagDTO> GetByIdAsync(Guid id)
         {
             var result = await _httpClient.GetFromJsonAsync<TagDTO>($"api/Tags/{id}");
             return result;

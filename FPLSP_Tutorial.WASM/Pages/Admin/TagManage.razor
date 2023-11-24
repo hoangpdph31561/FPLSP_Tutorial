@@ -1,7 +1,5 @@
 ﻿@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Tag;
 @using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Tag.TagRequest;
-@using FPLSP_Tutorial.WASM.Data.Pagination;
-@layout ManagementLayout
 
 @inject AuthenticationStateProvider _authProvider
 
@@ -90,7 +88,7 @@ else
 
     private async Task LoadData()
     {
-        _presTag = await _repoTag.GetListWithPagination(_preqRequestTag);
+        _presTag = await _repoTag.GetListWithPaginationAsync(_preqRequestTag);
         if(_presTag.Data != null)
         {
             _listTag = (List<TagDTO>)_presTag.Data;

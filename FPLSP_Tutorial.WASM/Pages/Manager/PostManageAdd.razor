@@ -1,11 +1,11 @@
-﻿@page "/recreation/post-create"
+﻿@page "/post/manage/add"
 @using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post.Request;
 
 @layout ManagementLayout
 
-@inject IPostRepo _repoPost;
-@inject ISnackbar _mudSnackbar;
-@inject NavigationManager _nav;
+@inject IPostRepository _repoPost
+@inject ISnackbar _mudSnackbar
+@inject NavigationManager _nav
 
 <div class="pa-2">
     <MudBreadcrumbs 
@@ -52,7 +52,7 @@
         await _rteRef.GetRTEValue();
 
         if(idPost != null) _postCreateR.PostId = Guid.Parse(idPost);
-        var result = await _repoPost.CreatePostAsync(_postCreateR);
+        var result = await _repoPost.AddAsync(_postCreateR);
         if(result)
         {
             _mudSnackbar.Add("Thêm thành công", Severity.Success);

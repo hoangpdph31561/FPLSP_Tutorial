@@ -1,7 +1,7 @@
-﻿@page "/major-manager"
+﻿@page "/major/manage/list"
 @using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major;
 @using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major.Request;
-@using FPLSP_Tutorial.WASM.Data.Pagination;
+
 @layout ManagementLayout
 
 @inject AuthenticationStateProvider _authProvider
@@ -119,7 +119,7 @@ else
 
     private async Task LoadData()
     {
-        _majorDTO = await majorRepository.GetListWithPagination(majorRequest);
+        _majorDTO = await majorRepository.GetListWithPaginationAsync(majorRequest);
         _lstmajors = _majorDTO.Data.ToList();
     }
 
@@ -139,7 +139,7 @@ else
         var options = new DialogOptions { CloseOnEscapeKey = true };
         var parameters = new DialogParameters();
         parameters.Add("OnCloseAdd", EventCallback.Factory.Create(this, OnCloseAdd));
-        var dialog = _dialog.Show<MajorCreate>("Thêm chuyên ngành", parameters, options);
+        var dialog = _dialog.Show<MajorManageAdd>("Thêm chuyên ngành", parameters, options);
         await dialog.Result;
         await LoadData();
     }
@@ -153,8 +153,8 @@ else
     {
         var options = new DialogOptions { CloseOnEscapeKey = true };
         var parameters = new DialogParameters();
-        parameters.Add(nameof(MajorUpdate.idMajor), idMajor); 
-        var dialog = _dialog.Show<MajorUpdate>("Chi tiết chuyên ngành", parameters, options);
+        parameters.Add(nameof(MajorManageUpdate.idMajor), idMajor); 
+        var dialog = _dialog.Show<MajorManageUpdate>("Chi tiết chuyên ngành", parameters, options);
         await dialog.Result; 
         await LoadData();
     }
@@ -206,10 +206,10 @@ else
         var options = new DialogOptions { CloseOnEscapeKey = true };
         var parameters = new DialogParameters();
 
-        parameters.Add(nameof(TagManager.MajorId), idMajor);
-        parameters.Add(nameof(TagManager.UserId), _idUser);
+        parameters.Add(nameof(TagManage.MajorId), idMajor);
+        parameters.Add(nameof(TagManage.UserId), _idUser);
 
-        var dialog = _dialog.Show<TagManager>("Quản lý Tag", parameters, options);
+        var dialog = _dialog.Show<TagManage>("Quản lý Tag", parameters, options);
         await dialog.Result;
         await LoadData();
     }

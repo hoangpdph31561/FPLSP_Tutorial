@@ -1,4 +1,4 @@
-﻿@page "/recreation/post-manager"
+﻿@page "/post/manage/list"
 @using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post.Request;
 @using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post;
 @using FPLSP_Tutorial.WASM.Data.Pagination;
@@ -6,7 +6,7 @@
 
 
 @inject NavigationManager _navManager;
-@inject IPostRepo _repoPost
+@inject IPostRepository _repoPost
 @inject IDialogService _diagService;
 @inject ISnackbar _mudSnackbar;
 
@@ -31,33 +31,32 @@
                     <MudTh>Hành động</MudTh>
                 </HeaderContent>
                 <RowTemplate>
-                    <MudTd>@(_listPost.IndexOf(context) + 1 + _responsePostDto.PageSize * (_responsePostDto.PageNumber - 1))</MudTd>
-                        <MudTd Style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap; max-width: 10vw;">@context.Title</MudTd>
-                        <MudTd>
-                            @foreach (var i in context.ListTag.Take(3))
+                    <MudTd Style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap; max-width: 10vw;">@context.Title</MudTd>
+                    <MudTd>
+                        @foreach (var i in context.ListTag.Take(3))
+                    {
+                        <MudChip Variant="Variant.Outlined">@i.Name</MudChip>
+                    }
+                    @if (context.ListTag.Count() > 3)
+                    {
+                        string tooltip = "";
+                        foreach (var tag in context.ListTag.Skip(3))
                         {
-                            <MudChip Variant="Variant.Outlined">@i.Name</MudChip>
+                            if (tooltip != "") tooltip += ", ";
+                            tooltip += tag.Name;
                         }
-                        @if (context.ListTag.Count() > 3)
-                        {
-                            string tooltip = "";
-                            foreach (var tag in context.ListTag.Skip(3))
-                            {
-                                if (tooltip != "") tooltip += ", ";
-                                tooltip += tag.Name;
-                            }
-                            <MudTooltip Text="tooltip">
-                                <MudChip Variant="Variant.Outlined">
-                                    @("+" + (context.ListTag.Count() - 3))
-                                </MudChip>
-                            </MudTooltip>
+                        <MudTooltip Text="tooltip">
+                            <MudChip Variant="Variant.Outlined">
+                                @("+" + (context.ListTag.Count() - 3))
+                            </MudChip>
+                        </MudTooltip>
                         }
                     </MudTd>
                     @if (idPost == null)
                     {
                         <MudTd>
                             <MudTooltip Text="Xem chi tiết">
-                                <MudChip OnClick="@(() => { _navManager.NavigateTo($"/recreation/post-manager?idPost={context.Id}"); })">@context.CountPost</MudChip>
+                                <MudChip OnClick="@(() => { _navManager.NavigateTo($"/recreation/post-manager?idPost={context.Id}"); })">@context.CountChildPost</MudChip>
                             </MudTooltip>
                         </MudTd>
                     }
@@ -91,11 +90,11 @@
     private bool _isLoadingAll = true;
     private bool _isLoadingList = true;
 
-    PaginationResponse<PostDto> _responsePostDto = new();
-    List<PostDto> _listPost = new();
+    PaginationResponse<PostDTO> _responsePostDto = new();
+    List<PostDTO> _listPost = new();
 
 
-    ViewPostWithPaginationRequest _prPost = new()
+    PostViewWithPaginationRequest _prPost = new()
         {
             PageNumber = 1,
             PageSize = 10,
@@ -135,7 +134,7 @@
               );
         if (confirm == true)
         {
-            var result = await _repoPost.DeletePostAsync(request);
+            var result = await _repoPost.DeleteAsync(request);
             if(result)
             {
                 _mudSnackbar.Add("Xóa thành công", Severity.Success);

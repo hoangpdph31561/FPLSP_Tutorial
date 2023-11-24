@@ -7,31 +7,28 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Pages\Client\**" />
-    <Compile Remove="Pages\Manager\**" />
     <Compile Remove="Pages\Old\**" />
-    <Content Remove="Pages\Client\**" />
-    <Content Remove="Pages\Manager\**" />
     <Content Remove="Pages\Old\**" />
-    <EmbeddedResource Remove="Pages\Client\**" />
-    <EmbeddedResource Remove="Pages\Manager\**" />
     <EmbeddedResource Remove="Pages\Old\**" />
-    <None Remove="Pages\Client\**" />
-    <None Remove="Pages\Manager\**" />
     <None Remove="Pages\Old\**" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Remove="Repositories\Implements\MajorRequestRepo.cs" />
     <Compile Remove="Repositories\Implements\MajorUserRepo.cs" />
-    <Compile Remove="Repositories\Implements\PostRepo.cs" />
     <Compile Remove="Repositories\Interfaces\IMajorRequestRepo.cs" />
     <Compile Remove="Repositories\Interfaces\IMajorUserRepo.cs" />
-    <Compile Remove="Repositories\Interfaces\IPostRepo.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Remove="Pages\Admin\LecturerManager.razor" />
+    <Content Remove="Pages\Client\Home.razor" />
+    <Content Remove="Pages\Client\PostDetail.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Pages\Manager\PostManageAdd.razor" />
+    <None Include="Pages\Manager\PostManageUpdate.razor" />
   </ItemGroup>
 
   <ItemGroup>

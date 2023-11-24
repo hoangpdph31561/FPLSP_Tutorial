@@ -37,6 +37,11 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
                     .AsQueryable()
                     .Where(c => c.Status != EntityStatus.Deleted && !c.Deleted);
 
+                if(request.UserId != null)
+                {
+                    queryable = queryable.Where(m => m.UserMajors.Where(um => um.UserId == request.UserId).Any(um => um.MajorId == m.Id));
+                }
+
                 var result = await queryable
                     .ProjectTo<MajorDTO>(_mapper.ConfigurationProvider)
                     .ToListAsync();
@@ -63,6 +68,14 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
                     .AsNoTracking()
                     .AsQueryable()
                     .Where(c => c.Status != EntityStatus.Deleted && !c.Deleted);
+
+                if (request.UserId != null)
+                {
+                    queryable = queryable
+                        .Where(m => m.UserMajors
+                            .Where(um => um.UserId == request.UserId && um.Status != EntityStatus.Deleted && !um.Deleted)
+                            .Any(um => um.MajorId == m.Id));
+                }
 
                 var result = await queryable.PaginateAsync<MajorEntity, MajorDTO>(request, _mapper, cancellationToken);
 

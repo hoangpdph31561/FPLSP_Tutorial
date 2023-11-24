@@ -14,7 +14,7 @@ namespace FPLSP_Tutorial.WASM.Repositories.Implements
             _httpClient = httpClient;
         }
 
-        public async Task<PaginationResponse<MajorDTO>> GetListWithPagination(MajorViewWithPaginationRequest request)
+        public async Task<PaginationResponse<MajorDTO>> GetListWithPaginationAsync(MajorViewWithPaginationRequest request)
         {
             string url = $"/api/Majors/GetListWithPagination?PageNumber={request.PageNumber}&PageSize={request.PageSize}";
 
@@ -27,7 +27,7 @@ namespace FPLSP_Tutorial.WASM.Repositories.Implements
             return result;
         }
 
-        public async Task<MajorDTO> GetById(Guid id)
+        public async Task<MajorDTO> GetByIdAsync(Guid id)
         {
             var result = await _httpClient.GetFromJsonAsync<MajorDTO>($"api/Majors/{id}");
             return result;

@@ -51,7 +51,7 @@ else
 
     private async Task LoadData()
     {
-        major = await majorRepository.GetById(idMajor);
+        major = await majorRepository.GetByIdAsync(idMajor);
         majorUpdate.Id = major.Id;
         majorUpdate.Name = major.Name;
         majorUpdate.Code = major.Code;

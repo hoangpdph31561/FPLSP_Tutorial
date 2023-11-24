@@ -6,8 +6,8 @@ namespace FPLSP_Tutorial.WASM.Repositories.Interfaces
 {
     public interface ITagRepository
     {
-        Task<PaginationResponse<TagDTO>> GetListWithPagination(TagViewWithPaginationRequest request);
-        Task<TagDTO> GetById(Guid id);
+        Task<PaginationResponse<TagDTO>> GetListWithPaginationAsync(TagViewWithPaginationRequest request);
+        Task<TagDTO> GetByIdAsync(Guid id);
         Task<bool> AddAsync(TagCreateRequest request);
         Task<bool> UpdateAsync(TagUpdateRequest request);
         Task<bool> DeleteAsync(TagDeleteRequest request);

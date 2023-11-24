@@ -26,18 +26,8 @@ namespace FPLSP_Tutorial.API.Controllers
             _mapper = mapper;
         }
 
-
-        [HttpGet("GetUserByEmailAsync")]
-        public async Task<IActionResult> GetUserByEmailAsync([FromQuery] string email, CancellationToken cToken)
-        {
-            UserViewByEmailViewModel vm = new(_localizationService, _userReadOnlyRepository);
-            await vm.HandleAsync(email, cToken);
-            return Ok(vm.Data);
-        }
-
-
-        [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] UserViewWithPaginationRequest request, CancellationToken cancellationToken)
+        [HttpGet("GetListWithPagination")]
+        public async Task<IActionResult> GetListWithPaginationAsync([FromQuery] UserViewWithPaginationRequest request, CancellationToken cancellationToken)
         {
             UserListWithPaginationViewModel vm = new(_userReadOnlyRepository, _localizationService);
 
@@ -46,8 +36,16 @@ namespace FPLSP_Tutorial.API.Controllers
             return Ok(vm);
         }
 
-        [HttpGet("id")]
-        public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
+        [HttpGet("GetByEmailAsync")]
+        public async Task<IActionResult> GetByEmailAsync([FromQuery] string email, CancellationToken cToken)
+        {
+            UserViewByEmailViewModel vm = new(_localizationService, _userReadOnlyRepository);
+            await vm.HandleAsync(email, cToken);
+            return Ok(vm.Data);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
             UserViewModel vm = new(_userReadOnlyRepository, _localizationService);
 
@@ -59,7 +57,7 @@ namespace FPLSP_Tutorial.API.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> Post(UserCreateRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateAsync(UserCreateRequest request, CancellationToken cancellationToken)
         {
             UserCreateViewModel vm = new(_userReadOnlyRepository, _userReadWriteRepository, _localizationService, _mapper);
 
@@ -69,7 +67,7 @@ namespace FPLSP_Tutorial.API.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Put(UserUpdateRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateAsync(UserUpdateRequest request, CancellationToken cancellationToken)
         {
             UserUpdateViewModel vm = new(_userReadWriteRepository, _localizationService, _mapper);
 
@@ -77,7 +75,5 @@ namespace FPLSP_Tutorial.API.Controllers
 
             return Ok(vm);
         }
-
-
     }
 }

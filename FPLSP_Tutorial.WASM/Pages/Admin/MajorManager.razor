@@ -1,0 +1,216 @@
+﻿@page "/major-manager"
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major;
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major.Request;
+@using FPLSP_Tutorial.WASM.Data.Pagination;
+@layout ManagementLayout
+
+@inject AuthenticationStateProvider _authProvider
+
+@inject NavigationManager _nav
+@inject IDialogService _dialog
+
+@if (_isLoadingAll)
+{
+    <LoadingIndicator />
+}
+else
+{
+    <div class="mx-3 mb-2 px-3 pb-3">
+        <MudBreadcrumbs Items="_breadCrumbs"></MudBreadcrumbs>
+
+        <MudPaper Class="pa-4" Elevation="2">
+            <div class="d-flex justify-end mb-3">
+                <MudButton StartIcon="@Icons.Material.Filled.Add" OnClick="@(async () => await DialogAdd())" Color="Color.Primary" Variant="Variant.Filled">Thêm</MudButton>
+            </div>
+            @if (_isLoadingList)
+            {
+                <MudProgressLinear Color="Color.Primary" Indeterminate="true"></MudProgressLinear>
+            }
+            else
+            {
+                <MudTable Items="@_majorDTO.Data" Elevation="3">
+                    <HeaderContent>
+                        <MudTh>STT</MudTh>
+                        <MudTh>Tên chuyên ngành</MudTh>
+                        <MudTh>SL Giảng viên</MudTh>
+                        <MudTh>SL Giảng viên chờ duyệt</MudTh>
+                        <MudTh>SL Tag</MudTh>
+                        <MudTh>Trạng thái</MudTh>
+                        <MudTh>Hành động</MudTh>
+                    </HeaderContent>
+
+                    <RowTemplate>
+                        <MudTd>@(_lstmajors.IndexOf(context) + 1)</MudTd>
+                            <MudTd>@context.Name</MudTd>
+                            <MudTd>@context.NumberOfLecturer</MudTd>
+                            <MudTd>@context.NumberOfLecturerRequest</MudTd>
+                            <MudTd>@context.ListTag.Count()</MudTd>
+                            <MudTd><BadgeEntityStatus Status="@context.Status"></BadgeEntityStatus></MudTd>
+                            <MudTd>
+                                <MudFab Color="Color.Primary" Class="mx-1" Size="Size.Small" Icon="@Icons.Material.Filled.LabelImportant" OnClick="@(async () => await OnClickTagManager(context.Id))" Title="Quản lý Tag" DisableElevation="true"></MudFab>
+                                <MudFab Color="Color.Primary" Class="mx-1" Size="Size.Small" Icon="@Icons.Material.Filled.Edit" OnClick="@(() => DialogUpdate(context.Id))" Title="Chi tiết" DisableElevation="true"></MudFab>
+                                <MudFab Color="Color.Error" Class="mx-1" Size="Size.Small" Icon="@Icons.Material.Filled.Delete" OnClick="@(() => DialogDelete(context.Id))" Title="Xóa" DisableElevation="true">Xóa</MudFab>
+                            </MudTd>
+                        </RowTemplate>
+                    </MudTable>
+                    <MudDivider />
+                    <CustomPagination Class="my-1" HasNext="@_majorDTO.HasNext" OnPageChange="@(async e => await OnPaginationButtonClick(e))" CurrentPageNumber="@_majorDTO.PageNumber"></CustomPagination>
+            }
+        </MudPaper>
+    </div>
+}
+
+@if (idMajorDetail != Guid.Empty && closeDetail == false)
+{
+    <MajorUpdate idMajor="idMajorDetail" onCloseUpdate="OnCloseDetail"></MajorUpdate>
+}
+
+@code {
+    private List<BreadcrumbItem> _breadCrumbs = new List<BreadcrumbItem>
+    {
+        new BreadcrumbItem("Trang chủ", href: "/post/client"),
+        new BreadcrumbItem("Quản lý giảng viên", href: null, disabled: true)
+    };
+
+    private Guid? _idUser = null;
+
+    [Inject]
+    public IMajorRepository majorRepository { get; set; }
+    [Inject]
+    public IDialogService _dialogService { get; set; }
+    [Inject]
+    public ISnackbar _snackbar { get; set; }
+    [Inject]
+    NavigationManager NavigationManager { get; set; }
+    private Guid idMajorDetail = Guid.Empty;
+
+    #region Major 
+    List<MajorDTO> _lstmajors;
+    private PaginationResponse<MajorDTO> _majorDTO;
+    private MajorDeleteRequest majorDelete = new(); 
+    private MajorViewWithPaginationRequest majorRequest = new();
+    #endregion
+
+    #region 
+    private bool _isLoadingAll = true;
+    private bool _isLoadingList = true;
+    private bool closeDetail = true;
+    #endregion
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await _authProvider.GetAuthenticationStateAsync();
+        var lstClaim = state.User.Claims;
+        var userIdClaim = lstClaim.FirstOrDefault(c => c.Type == "UserId");
+        if (_idUser != null)
+        {
+            _idUser = Guid.Parse(userIdClaim.Value);
+        }
+        else { }
+
+        await LoadData().ContinueWith((re) =>
+        {
+            _isLoadingAll = false;
+            _isLoadingList = false;
+        });
+    }
+
+    private async Task LoadData()
+    {
+        _majorDTO = await majorRepository.GetListWithPagination(majorRequest);
+        _lstmajors = _majorDTO.Data.ToList();
+    }
+
+    private async Task OnSearch(string? searchString)
+    {
+        _isLoadingList = true;
+        majorRequest.PageNumber = 1;
+        await LoadData().ContinueWith((re) =>
+        {
+            _isLoadingAll = false;
+            _isLoadingList = false;
+        });
+    }
+
+    private async Task DialogAdd()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        var parameters = new DialogParameters();
+        parameters.Add("OnCloseAdd", EventCallback.Factory.Create(this, OnCloseAdd));
+        var dialog = _dialog.Show<MajorCreate>("Thêm chuyên ngành", parameters, options);
+        await dialog.Result;
+        await LoadData();
+    }
+    private async Task OnCloseAdd()
+    {
+        NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
+    }
+
+
+    private async void DialogUpdate(Guid idMajor)
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        var parameters = new DialogParameters();
+        parameters.Add(nameof(MajorUpdate.idMajor), idMajor); 
+        var dialog = _dialog.Show<MajorUpdate>("Chi tiết chuyên ngành", parameters, options);
+        await dialog.Result; 
+        await LoadData();
+    }
+
+    private async Task OnCloseDetail()
+    {
+        await LoadData();
+        closeDetail = true;
+    }
+
+    public async Task DialogDelete(Guid idDelete)
+    {
+        var confirm = await _dialogService.ShowMessageBox
+        (
+            "Thông báo",
+            "Xác nhận xóa chuyên ngành?",
+            "Xác nhận",
+            cancelText: "Hủy"
+        );
+        if (confirm == true)
+        {
+            majorDelete.Id = idDelete;
+            var removeConfirm = await majorRepository.DeleteAsync(majorDelete);
+            if (removeConfirm)
+            {
+                _snackbar.Add("Xóa thành công", Severity.Success);
+            }
+            else
+            {
+                _snackbar.Add("Xóa thất bại", Severity.Error);
+            }
+            await LoadData();
+        }
+    }
+
+    private async Task OnPaginationButtonClick(int pageNumber)
+    {
+        _isLoadingList = true;
+        majorRequest.PageNumber = pageNumber;
+        await LoadData().ContinueWith((re) =>
+        {
+            _isLoadingAll = false;
+            _isLoadingList = false;
+        });
+    }
+
+    private async Task OnClickTagManager(Guid idMajor)
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        var parameters = new DialogParameters();
+
+        parameters.Add(nameof(TagManager.MajorId), idMajor);
+        parameters.Add(nameof(TagManager.UserId), _idUser);
+
+        var dialog = _dialog.Show<TagManager>("Quản lý Tag", parameters, options);
+        await dialog.Result;
+        await LoadData();
+    }
+}

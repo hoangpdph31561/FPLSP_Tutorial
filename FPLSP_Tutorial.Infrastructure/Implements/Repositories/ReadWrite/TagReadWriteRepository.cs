@@ -84,7 +84,6 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
 
                 tag.Status = EntityStatus.Deleted;
 
-                _dbContext.TagEntities.Remove(tag);
                 await _dbContext.SaveChangesAsync(cancellationToken);
 
                 return RequestResult<int>.Succeed(1);

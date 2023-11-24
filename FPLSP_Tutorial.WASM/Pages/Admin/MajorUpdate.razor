@@ -1,0 +1,101 @@
+﻿@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major;
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major.Request;
+
+
+@if (major == null)
+{
+    <LoadingIndicator></LoadingIndicator>
+}
+else
+{
+    <MudDialog>
+    <DialogContent>
+        <MudTextField @bind-Value="majorUpdate.Name" For="() => majorUpdate.Name" Label="Tên chuyên ngành"></MudTextField>
+        <MudTextField @bind-Value="majorUpdate.Code" For="() => majorUpdate.Code" Label="Mã chuyên ngành"></MudTextField>
+            <MudSelect T="EntityStatus" @bind-Value="majorUpdate.Status" Label="Trạng thái" For="() => majorUpdate.Status" AnchorOrigin="Origin.BottomCenter">
+            <MudSelectItem Value="EntityStatus.Active">Hoạt động</MudSelectItem>
+            <MudSelectItem Value="EntityStatus.InActive">Không hoạt động</MudSelectItem>
+        </MudSelect>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="OnClickCancel">Hủy</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Info" @onclick="Reset">Làm mới</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Success" @onclick="Updatemajor">Lưu</MudButton>
+    </DialogActions>
+</MudDialog>
+}
+
+@code {
+    [Parameter]
+    public Guid idMajor { get; set; }
+    [Parameter]
+    public EventCallback onCloseUpdate { get; set; }
+    [Inject]
+    public IMajorRepository majorRepository { get; set; }
+    [Inject]
+    public IDialogService dialogService { get; set; }
+    [Inject]
+    public ISnackbar snackbar { get; set; }
+
+    private MajorUpdateRequest majorUpdate = new();
+    private MajorDTO major;
+
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    void OnClickCancel() => MudDialog.Cancel();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        major = await majorRepository.GetById(idMajor);
+        majorUpdate.Id = major.Id;
+        majorUpdate.Name = major.Name;
+        majorUpdate.Code = major.Code;
+        majorUpdate.Status = major.Status;
+    }
+
+
+    private bool CheckChangeData()
+    {
+        return major.Name != majorUpdate.Name || major.Code != majorUpdate.Code || major.Status != majorUpdate.Status;
+    }
+    private async Task Updatemajor()
+    {
+        var confirm = await dialogService.ShowMessageBox
+        (
+            "Thông báo",
+            "Xác nhận sửa chuyên ngành",
+            "Xác nhận",
+            cancelText: "Hủy"
+        );
+        if (confirm == true)
+        {
+            var result = await majorRepository.UpdateAsync(majorUpdate);
+            if (result)
+            {
+                if (CheckChangeData())
+                {
+                    OnClickCancel();
+                    snackbar.Add("Sửa thành công", Severity.Success);
+                }
+                else
+                {
+                    OnClickCancel();
+                    snackbar.Add("Không có thay đổi dữ liệu để cập nhật", Severity.Warning);
+                }
+            }
+            else
+            {
+                snackbar.Add("Sửa thất bại", Severity.Error);
+            }
+        }
+    }
+    private async Task Reset()
+    {
+        await LoadData();
+    }
+}

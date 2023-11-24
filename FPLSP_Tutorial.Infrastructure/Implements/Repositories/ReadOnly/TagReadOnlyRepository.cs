@@ -33,14 +33,18 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
         {
             try
             {
-                var result = await _dbContext.TagEntities
+                var query = _dbContext.TagEntities
                     .AsNoTracking()
                     .AsQueryable()
-                    .Where(c => c.Status != EntityStatus.Deleted && !c.Deleted)
-                    .ProjectTo<TagDTO>(_mapper.ConfigurationProvider)
-                    .ToListAsync(cancellationToken);
+                    .Where(c => c.Status != EntityStatus.Deleted && !c.Deleted);
 
-                return RequestResult<List<TagDTO>>.Succeed(result);
+                query = query.Where(c => c.MajorId == request.MajorId);
+                if (request.Name != null) { query = query.Where(c => c.Name.ToLower().Contains(request.Name)); }
+
+                return RequestResult<List<TagDTO>>.Succeed(
+                    await query
+                        .ProjectTo<TagDTO>(_mapper.ConfigurationProvider)
+                        .ToListAsync(cancellationToken));
             }
             catch (Exception e)
             {
@@ -59,14 +63,15 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
         {
             try
             {
-                var result = await _dbContext.TagEntities
+                var query = _dbContext.TagEntities
                     .AsNoTracking()
                     .AsQueryable()
-                    .Where(c => !c.Deleted && c.MajorId == MajorId)
-                    .ProjectTo<TagDTO>(_mapper.ConfigurationProvider)
-                    .ToListAsync(cancellationToken);
+                    .Where(c => !c.Deleted && c.MajorId == MajorId);
 
-                return RequestResult<List<TagDTO>>.Succeed(result);
+                return RequestResult<List<TagDTO>>.Succeed(
+                    await query
+                    .ProjectTo<TagDTO>(_mapper.ConfigurationProvider)
+                    .ToListAsync(cancellationToken));
             }
             catch (Exception e)
             {
@@ -85,12 +90,15 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
         {
             try
             {
-                var result = await _dbContext.TagEntities
+                var query = _dbContext.TagEntities
                     .AsNoTracking()
                     .AsQueryable()
-                    .Where(c => c.Status != EntityStatus.Deleted && !c.Deleted)
-                    .PaginateAsync<TagEntity, TagDTO>(request, _mapper, cancellationToken);
+                    .Where(c => c.Status != EntityStatus.Deleted && !c.Deleted);
 
+                query = query.Where(c => c.MajorId == request.MajorId);
+                if (request.Name != null) { query = query.Where(c => c.Name.ToLower().Contains(request.Name)); }
+
+                var result = await query.PaginateAsync<TagEntity, TagDTO>(request, _mapper, cancellationToken);
                 return RequestResult<PaginationResponse<TagDTO>>.Succeed(new PaginationResponse<TagDTO>()
                 {
                     PageNumber = request.PageNumber,

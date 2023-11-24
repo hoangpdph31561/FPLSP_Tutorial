@@ -2,5 +2,7 @@
 {
     public class TagViewRequest
     {
+        public string? Name { get; set; } = null;
+        public Guid? MajorId { get; set; } = null;
     }
 }

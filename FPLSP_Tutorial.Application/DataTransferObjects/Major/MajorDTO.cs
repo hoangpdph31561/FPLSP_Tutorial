@@ -1,4 +1,5 @@
-﻿using FPLSP_Tutorial.Domain.Enums;
+﻿using FPLSP_Tutorial.Application.DataTransferObjects.Tag;
+using FPLSP_Tutorial.Domain.Enums;
 
 namespace FPLSP_Tutorial.Application.DataTransferObjects.Major
 {
@@ -19,6 +20,6 @@ namespace FPLSP_Tutorial.Application.DataTransferObjects.Major
 
         public int NumberOfLecturer { get; set; }
         public int NumberOfLecturerRequest { get; set; }
-        public int NumberOfRequest { get; set; }
+        public List<TagDTO> ListTag { get; set; } = new();
     }
 }

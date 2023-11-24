@@ -2,8 +2,6 @@
 using FPLSP_Tutorial.WASM.Data.DataTransferObjects.User.Request;
 using FPLSP_Tutorial.WASM.Repositories.Interfaces;
 using System.Net.Http.Json;
-using System.Text.Json;
-using static FPLSP_Tutorial.Application.ValueObjects.Common.LocalizationString;
 
 namespace FPLSP_Tutorial.WASM.Repositories.Implements
 {
@@ -15,11 +13,11 @@ namespace FPLSP_Tutorial.WASM.Repositories.Implements
             _httpClient = httpClient;
         }
 
-        public async Task<UserDTO?> GetUserByEmailAsync(string email)
+        public async Task<UserDTO?> GetByEmailAsync(string email)
         {
             try
             {
-                var url = $"/api/Users/GetUserByEmailAsync?email={email}";
+                var url = $"/api/Users/GetByEmailAsync?email={email}";
                 var response = await _httpClient.GetFromJsonAsync<UserDTO?>(url);
                 return response;
             }
@@ -29,7 +27,7 @@ namespace FPLSP_Tutorial.WASM.Repositories.Implements
             }
         }
 
-        public async Task<bool> CreateUserAsync(UserCreateRequest request)
+        public async Task<bool> AddAsync(UserCreateRequest request)
         {
             try
             {

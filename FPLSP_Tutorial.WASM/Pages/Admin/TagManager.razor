@@ -1,0 +1,141 @@
+﻿@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Tag;
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Tag.TagRequest;
+@using FPLSP_Tutorial.WASM.Data.Pagination;
+@layout ManagementLayout
+
+@inject AuthenticationStateProvider _authProvider
+
+@inject ITagRepository _repoTag
+@inject IDialogService _dialog
+@inject ISnackbar _mudSnackbar
+
+@if (_isLoadingAll == null)
+{
+    <LoadingIndicator></LoadingIndicator>
+}
+else
+{
+    <MudDialog>
+        <DialogContent>
+            @if (_isLoadingList)
+            {
+                <MudProgressLinear Color="Color.Primary" Indeterminate="true"></MudProgressLinear>
+            }
+            else
+            {
+                <MudTextField @bind-Value="@_createRequestTag.Name" Variant="Variant.Outlined" Class="w-100" Placeholder="Nhập tên Tag mới" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.AddCircle" OnAdornmentClick="@(async () => await OnAdd())" AdornmentColor="Color.Primary"></MudTextField>
+                
+
+                <MudTable Items="@_listTag" Elevation="3" Class="mt-2">
+                    <HeaderContent>
+                        <MudTh>STT</MudTh>
+                        <MudTh>Tên</MudTh>
+                        <MudTh>Hành động</MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd>@(_listTag.IndexOf(context) + 1)</MudTd>
+                            <MudTd>@context.Name</MudTd>
+                            <MudTd>
+                                <MudIconButton Color="Color.Error" Class="mx-1" Size="Size.Small" Icon="@Icons.Material.Filled.Delete" OnClick="@(() => OnClickDelete(context.Id))" Title="Xóa" DisableElevation="true">Xóa</MudIconButton>
+                            </MudTd>
+                        </RowTemplate>
+                    </MudTable>
+
+                <div class="float-end my-2">
+                    <MudButton OnClick="@(() => MudDialog.Cancel())">Đóng</MudButton>
+                </div>
+            }
+        </DialogContent>
+    </MudDialog>
+}
+
+@code {
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; } = new();
+
+    [Parameter]
+    public Guid? MajorId { get; set; }
+
+    [Parameter]
+    public Guid? UserId { get; set; }
+
+    private TagViewWithPaginationRequest _preqRequestTag = new()
+    {
+        PageSize = 20
+    };
+    private PaginationResponse<TagDTO> _presTag = new();
+    private List<TagDTO> _listTag = new();
+
+    private bool _isLoadingAll = true;
+    private bool _isLoadingList = true;
+
+    private TagCreateRequest _createRequestTag = new()
+    {
+        Status = EntityStatus.Active
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        _createRequestTag.CreatedBy = UserId;
+        _createRequestTag.MajorId = MajorId;
+
+
+        _preqRequestTag.MajorId = MajorId;
+        await LoadData().ContinueWith((re) =>
+        {
+            _isLoadingAll = false;
+            _isLoadingList = false;
+        });
+    }
+
+    private async Task LoadData()
+    {
+        _presTag = await _repoTag.GetListWithPagination(_preqRequestTag);
+        if(_presTag.Data != null)
+        {
+            _listTag = (List<TagDTO>)_presTag.Data;
+        }
+    }
+
+    private async Task OnAdd()
+    {
+        var result = await _repoTag.AddAsync(_createRequestTag);
+        if(result)
+        {
+            _mudSnackbar.Add("Thêm thành công", Severity.Success);
+            await LoadData();
+        }
+        else
+        {
+            _mudSnackbar.Add("Thêm thất bại", Severity.Error);
+        }
+    }
+
+    public async Task OnClickDelete(Guid idDelete)
+    {
+        var confirm = await _dialog.ShowMessageBox
+        (
+            "Thông báo",
+            "Xác nhận xóa?",
+            "Xác nhận",
+            cancelText: "Hủy"
+        );
+        if (confirm == true)
+        {
+            var removeConfirm = await _repoTag.DeleteAsync(new()
+            {
+                Id = idDelete,
+                DeletedBy = UserId
+            });
+            if (removeConfirm)
+            {
+                _mudSnackbar.Add("Xóa thành công", Severity.Success);
+            }
+            else
+            {
+                _mudSnackbar.Add("Xóa thất bại", Severity.Error);
+            }
+            await LoadData();
+        }
+    }
+}

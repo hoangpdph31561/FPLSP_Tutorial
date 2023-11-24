@@ -4,5 +4,6 @@ namespace FPLSP_Tutorial.Application.DataTransferObjects.Post.Request
 {
     public class PostViewWithPaginationRequest : PaginationRequest
     {
+        public Guid? MajorId { get; set; } = null;
     }
 }

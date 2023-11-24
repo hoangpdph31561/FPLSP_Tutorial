@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor.Services;
-using FPLSP_Tutorial.WASM.Pages.Recreation;
 using Blazored.SessionStorage;
 using Microsoft.AspNetCore.Authorization;
+using FPLSP_Tutorial.WASM.Pages;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -21,13 +21,10 @@ builder.Services.AddHttpClient("API", options =>
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7225") });
 
-builder.Services.AddScoped<IMajorRequestRepo, MajorRequestRepo>();
-builder.Services.AddScoped<IMajorUserRepo, MajorUserRepo>();
-builder.Services.AddScoped<IMajorRepo, MajorRepo>();
-builder.Services.AddScoped<IPostRepo, PostRepo>();
 builder.Services.AddScoped<IClientPostService, ClientPostService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-
+builder.Services.AddScoped<IMajorRepository, MajorRepository>();
+builder.Services.AddScoped<ITagRepository, TagRepository>();
 
 builder.Services.AddBlazoredSessionStorage();
 

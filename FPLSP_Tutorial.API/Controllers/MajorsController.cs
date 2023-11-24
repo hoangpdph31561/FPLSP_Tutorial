@@ -28,8 +28,8 @@ namespace FPLSP_Tutorial.API.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] MajorViewWithPaginationRequest request, CancellationToken cancellationToken)
+        [HttpGet("GetListWithPagination")]
+        public async Task<IActionResult> GetListWithPagination([FromQuery] MajorViewWithPaginationRequest request, CancellationToken cancellationToken)
         {
             MajorListWithPaginationViewModel vm = new(_majorReadOnlyRepository, _localizationService);
 
@@ -45,7 +45,7 @@ namespace FPLSP_Tutorial.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
         {
             MajorViewModel vm = new(_majorReadOnlyRepository, _localizationService);
 
@@ -59,7 +59,7 @@ namespace FPLSP_Tutorial.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post(MajorCreateRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Create(MajorCreateRequest request, CancellationToken cancellationToken)
         {
             MajorCreateViewModel vm = new(_majorReadOnlyRepository, _majorReadWriteRepository, _localizationService, _mapper);
 
@@ -69,7 +69,7 @@ namespace FPLSP_Tutorial.API.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Put(MajorUpdateRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Update(MajorUpdateRequest request, CancellationToken cancellationToken)
         {
             MajorUpdateViewModel vm = new(_majorReadWriteRepository, _localizationService, _mapper);
 

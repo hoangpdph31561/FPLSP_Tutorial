@@ -9,10 +9,10 @@ namespace FPLSP_Tutorial.Infrastructure.ViewModels.UserMajors
 {
     public class MajorUserDeleteViewModel : ViewModelBase<UserMajorDeleteRequest>
     {
-        public readonly IMajorUserReadWriteResponsitory _majorUserReadWriteResponsitory;
+        public readonly IUserMajorReadWriteRepository _majorUserReadWriteResponsitory;
         private readonly ILocalizationService _localizationService;
         private readonly IMapper _mapper;
-        public MajorUserDeleteViewModel(IMapper mapper, IMajorUserReadWriteResponsitory majorUserReadWriteResponsitory, ILocalizationService localizationService)
+        public MajorUserDeleteViewModel(IMapper mapper, IUserMajorReadWriteRepository majorUserReadWriteResponsitory, ILocalizationService localizationService)
         {
             _mapper = mapper;
             _majorUserReadWriteResponsitory = majorUserReadWriteResponsitory;
@@ -22,7 +22,7 @@ namespace FPLSP_Tutorial.Infrastructure.ViewModels.UserMajors
         {
             try
             {
-                var result = await _majorUserReadWriteResponsitory.DeleteMajorUserAsync(data, cancellationToken);
+                var result = await _majorUserReadWriteResponsitory.DeleteUserMajorAsync(data, cancellationToken);
 
                 Success = result.Success;
                 ErrorItems = result.Errors;

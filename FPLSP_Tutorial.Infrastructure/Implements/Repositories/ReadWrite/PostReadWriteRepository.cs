@@ -10,11 +10,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
 {
-    public class PostReadWriteRespository : IPostReadWriteRespository
+    public class PostReadWriteRepository : IPostReadWriteRepository
     {
         private readonly AppReadOnlyDbContext _appDbContext;
         private readonly ILocalizationService _localizationService;
-        public PostReadWriteRespository(AppReadOnlyDbContext appDbContext, ILocalizationService localizationService)
+        public PostReadWriteRepository(AppReadOnlyDbContext appDbContext, ILocalizationService localizationService)
         {
             _appDbContext = appDbContext;
             _localizationService = localizationService;

@@ -14,12 +14,12 @@ namespace FPLSP_Tutorial.API.Controllers
     [ApiController]
     public class MajorRequestsController : ControllerBase
     {
-        public readonly IMajorRequestReadOnlyRespository _majorRequestReadOnlyRespository;
-        public readonly IMajorRequestReadWriteRespository _majorRequestReadWriteRespository;
+        public readonly IMajorRequestReadOnlyRepository _majorRequestReadOnlyRespository;
+        public readonly IMajorRequestReadWriteRepository _majorRequestReadWriteRespository;
         private readonly ILocalizationService _localizationService;
         private readonly IMapper _mapper;
 
-        public MajorRequestsController(IMajorRequestReadOnlyRespository majorRequestReadOnlyRespository, IMajorRequestReadWriteRespository majorRequestReadWriteRespository, IConfiguration configuration, ILocalizationService localizationService, IMapper mapper)
+        public MajorRequestsController(IMajorRequestReadOnlyRepository majorRequestReadOnlyRespository, IMajorRequestReadWriteRepository majorRequestReadWriteRespository, IConfiguration configuration, ILocalizationService localizationService, IMapper mapper)
         {
             _majorRequestReadOnlyRespository = majorRequestReadOnlyRespository;
             _majorRequestReadWriteRespository = majorRequestReadWriteRespository;

@@ -10,11 +10,11 @@ namespace FPLSP_Tutorial.Infrastructure.ViewModels.PostTagViewModels
 {
     public class PostTagCreateViewModel : ViewModelBase<PostTagCreateRequest>
     {
-        private readonly IPostTagReadWriteRespository _postTagReadWriteRespository;
+        private readonly IPostTagReadWriteRepository _postTagReadWriteRespository;
         private readonly ILocalizationService _localizationService;
         private readonly IMapper _mapper;
 
-        public PostTagCreateViewModel(IPostTagReadWriteRespository postTagReadWriteRespository, ILocalizationService localizationService, IMapper mapper)
+        public PostTagCreateViewModel(IPostTagReadWriteRepository postTagReadWriteRespository, ILocalizationService localizationService, IMapper mapper)
         {
             _postTagReadWriteRespository = postTagReadWriteRespository;
             _localizationService = localizationService;

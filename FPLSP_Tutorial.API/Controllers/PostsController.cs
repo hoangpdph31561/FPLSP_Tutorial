@@ -15,10 +15,10 @@ namespace FPLSP_Tutorial.API.Controllers
     public class PostsController : ControllerBase
     {
         private readonly IPostReadOnlyRespository _postReadOnlyRespository;
-        private readonly IPostReadWriteRespository _postReadWriteRespository;
+        private readonly IPostReadWriteRepository _postReadWriteRespository;
         private readonly ILocalizationService _localizationService;
         private readonly IMapper _mapper;
-        public PostsController(IPostReadOnlyRespository postReadOnlyRespository, IPostReadWriteRespository postReadWriteRespository, ILocalizationService localizationService, IMapper mapper)
+        public PostsController(IPostReadOnlyRespository postReadOnlyRespository, IPostReadWriteRepository postReadWriteRespository, ILocalizationService localizationService, IMapper mapper)
         {
             _localizationService = localizationService;
             _mapper = mapper;

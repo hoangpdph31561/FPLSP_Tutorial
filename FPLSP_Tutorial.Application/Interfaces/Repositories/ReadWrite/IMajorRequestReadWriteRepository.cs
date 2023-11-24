@@ -4,7 +4,7 @@ using FPLSP_Tutorial.Domain.Entities;
 
 namespace FPLSP_Tutorial.Application.Interfaces.Repositories.ReadWrite
 {
-    public interface IMajorRequestReadWriteRespository
+    public interface IMajorRequestReadWriteRepository
     {
         Task<RequestResult<Guid>> AddMajorRequestAsync(MajorRequestEntity entity, CancellationToken cancellationToken);
         Task<RequestResult<int>> UpdateMajorRequestAsync(MajorRequestEntity entity, CancellationToken cancellationToken);

@@ -16,12 +16,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
 {
-    public class PostReadOnlyRespository : IPostReadOnlyRespository
+    public class PostReadOnlyRepository : IPostReadOnlyRespository
     {
         private readonly AppReadOnlyDbContext _dbContext;
         private readonly IMapper _mapper;
         private readonly ILocalizationService _localizationService;
-        public PostReadOnlyRespository(AppReadOnlyDbContext dbContext, IMapper mapper, ILocalizationService localizationService)
+        public PostReadOnlyRepository(AppReadOnlyDbContext dbContext, IMapper mapper, ILocalizationService localizationService)
         {
             _dbContext = dbContext;
             _mapper = mapper;

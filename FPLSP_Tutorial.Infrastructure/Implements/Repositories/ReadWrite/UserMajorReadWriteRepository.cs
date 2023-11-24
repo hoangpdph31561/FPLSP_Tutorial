@@ -10,17 +10,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
 {
-    public class MajorUserReadWriteResponsitory : IMajorUserReadWriteResponsitory
+    public class UserMajorReadWriteRepository : IUserMajorReadWriteRepository
     {
         private readonly ILocalizationService _localizationService;
         private readonly AppReadOnlyDbContext _dbContext;
 
-        public MajorUserReadWriteResponsitory(ILocalizationService localizationService, AppReadOnlyDbContext dbContext)
+        public UserMajorReadWriteRepository(ILocalizationService localizationService, AppReadOnlyDbContext dbContext)
         {
             _localizationService = localizationService;
             _dbContext = dbContext;
         }
-        public async Task<RequestResult<Guid>> AddMajorUserAsync(UserMajorEntity entity, CancellationToken cancellationToken)
+        public async Task<RequestResult<Guid>> AddUserMajorAsync(UserMajorEntity entity, CancellationToken cancellationToken)
         {
             try
             {
@@ -46,11 +46,11 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
 
         
 
-        public async Task<RequestResult<int>> UpdateMajorUserAsync(UserMajorEntity entity, CancellationToken cancellationToken)
+        public async Task<RequestResult<int>> UpdateUserMajorAsync(UserMajorEntity entity, CancellationToken cancellationToken)
         {
             try
             {
-                var majorUser = await GetMajorUserByIdAsync(entity.Id, cancellationToken);
+                var majorUser = await GetUserMajorByIdAsync(entity.Id, cancellationToken);
 
                 majorUser!.Status = entity.Status;
 
@@ -71,11 +71,11 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
             }
         }
 
-        public async Task<RequestResult<int>> DeleteMajorUserAsync(UserMajorDeleteRequest request, CancellationToken cancellationToken)
+        public async Task<RequestResult<int>> DeleteUserMajorAsync(UserMajorDeleteRequest request, CancellationToken cancellationToken)
         {
             try
             {
-                var userMajor = await GetMajorUserByIdAsync(request.Id, cancellationToken);
+                var userMajor = await GetUserMajorByIdAsync(request.Id, cancellationToken);
 
                 userMajor!.Deleted = true;
                 userMajor.DeletedBy = request.DeletedBy;
@@ -101,7 +101,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
 
         }
 
-        private async Task<UserMajorEntity?> GetMajorUserByIdAsync(Guid idMajorUser, CancellationToken cancellationToken)
+        private async Task<UserMajorEntity?> GetUserMajorByIdAsync(Guid idMajorUser, CancellationToken cancellationToken)
         {
             var userMajor = await _dbContext.UserMajorEntities.FirstOrDefaultAsync(c => c.Id == idMajorUser && !c.Deleted, cancellationToken);
 

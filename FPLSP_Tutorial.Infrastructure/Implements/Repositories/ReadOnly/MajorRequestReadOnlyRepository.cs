@@ -15,7 +15,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
 {
-    public class MajorRequestReadOnlyRepository : IMajorRequestReadOnlyRespository
+    public class MajorRequestReadOnlyRepository : IMajorRequestReadOnlyRepository
     {
         private readonly IMapper _mapper;
         private readonly ILocalizationService _localizationService;

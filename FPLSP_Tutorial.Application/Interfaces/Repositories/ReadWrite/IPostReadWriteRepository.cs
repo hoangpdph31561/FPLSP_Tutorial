@@ -4,7 +4,7 @@ using FPLSP_Tutorial.Domain.Entities;
 
 namespace FPLSP_Tutorial.Application.Interfaces.Repositories.ReadWrite
 {
-    public interface IPostReadWriteRespository
+    public interface IPostReadWriteRepository
     {
         Task<RequestResult<Guid>> AddPostAsync(PostEntity entity, CancellationToken cancellationToken);
         Task<RequestResult<int>> UpdatePostAsync(PostEntity entity, CancellationToken cancellationToken);

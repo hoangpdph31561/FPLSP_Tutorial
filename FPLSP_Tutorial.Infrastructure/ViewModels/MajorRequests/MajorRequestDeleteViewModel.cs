@@ -9,11 +9,11 @@ namespace FPLSP_Tutorial.Infrastructure.ViewModels.MajorRequests
 {
     public class MajorRequestDeleteViewModel : ViewModelBase<MajorRequestDeleteRequest>
     {
-        private readonly IMajorRequestReadWriteRespository _majorRequestReadWriteRespository;
+        private readonly IMajorRequestReadWriteRepository _majorRequestReadWriteRespository;
         private readonly ILocalizationService _localizationService;
         private readonly IMapper _mapper;
 
-        public MajorRequestDeleteViewModel(IMajorRequestReadWriteRespository majorRequestReadWriteRespository, ILocalizationService localizationService, IMapper mapper)
+        public MajorRequestDeleteViewModel(IMajorRequestReadWriteRepository majorRequestReadWriteRespository, ILocalizationService localizationService, IMapper mapper)
         {
             _majorRequestReadWriteRespository = majorRequestReadWriteRespository;
             _localizationService = localizationService;

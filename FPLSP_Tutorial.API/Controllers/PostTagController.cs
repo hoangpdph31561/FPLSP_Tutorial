@@ -11,11 +11,11 @@ namespace FPLSP_Tutorial.API.Controllers
     [ApiController]
     public class PostTagController : ControllerBase
     {
-        private readonly IPostTagReadWriteRespository _postTagReadWriteRespository;
+        private readonly IPostTagReadWriteRepository _postTagReadWriteRespository;
         private readonly ILocalizationService _localizationService;
         private readonly IMapper _mapper;
 
-        public PostTagController(IPostTagReadWriteRespository postTagReadWriteRespository, ILocalizationService localizationService, IMapper mapper)
+        public PostTagController(IPostTagReadWriteRepository postTagReadWriteRespository, ILocalizationService localizationService, IMapper mapper)
         {
             _postTagReadWriteRespository = postTagReadWriteRespository;
             _localizationService = localizationService;

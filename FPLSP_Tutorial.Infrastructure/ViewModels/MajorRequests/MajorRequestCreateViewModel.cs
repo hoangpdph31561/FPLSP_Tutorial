@@ -11,12 +11,12 @@ namespace FPLSP_Tutorial.Infrastructure.ViewModels.MajorRequests
 {
     public class MajorRequestCreateViewModel : ViewModelBase<MajorRequestCreateRequest>
     {
-        private readonly IMajorRequestReadOnlyRespository _majorRequestReadOnlyRespository;
-        private readonly IMajorRequestReadWriteRespository _majorRequestReadWriteRespository;
+        private readonly IMajorRequestReadOnlyRepository _majorRequestReadOnlyRespository;
+        private readonly IMajorRequestReadWriteRepository _majorRequestReadWriteRespository;
         private readonly ILocalizationService _localizationService;
         private readonly IMapper _mapper;
 
-        public MajorRequestCreateViewModel(IMajorRequestReadOnlyRespository majorRequestReadOnlyRespository, IMajorRequestReadWriteRespository majorRequestReadWriteRespository, ILocalizationService localizationService, IMapper mapper)
+        public MajorRequestCreateViewModel(IMajorRequestReadOnlyRepository majorRequestReadOnlyRespository, IMajorRequestReadWriteRepository majorRequestReadWriteRespository, ILocalizationService localizationService, IMapper mapper)
         {
             _majorRequestReadOnlyRespository = majorRequestReadOnlyRespository;
             _majorRequestReadWriteRespository = majorRequestReadWriteRespository;

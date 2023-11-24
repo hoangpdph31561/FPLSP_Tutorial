@@ -12,10 +12,10 @@ namespace FPLSP_Tutorial.Infrastructure.ViewModels.Posts
     public class PostCreateViewModel : ViewModelBase<PostCreateRequest>
     {
         private readonly IPostReadOnlyRespository _postReadOnlyRespository;
-        private readonly IPostReadWriteRespository _postReadWriteRespository;
+        private readonly IPostReadWriteRepository _postReadWriteRespository;
         private readonly ILocalizationService _localizationService;
         private readonly IMapper _mapper;
-        public PostCreateViewModel(IPostReadOnlyRespository postReadOnlyRespository, IPostReadWriteRespository postReadWriteRespository, ILocalizationService localizationService, IMapper mapper)
+        public PostCreateViewModel(IPostReadOnlyRespository postReadOnlyRespository, IPostReadWriteRepository postReadWriteRespository, ILocalizationService localizationService, IMapper mapper)
         {
             _localizationService = localizationService;
             _mapper = mapper;

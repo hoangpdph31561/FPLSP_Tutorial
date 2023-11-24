@@ -12,13 +12,13 @@ namespace FPLSP_Tutorial.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MajorUsersController : ControllerBase
+    public class UserMajorsController : ControllerBase
     {
-        private readonly IMajorUserReadWriteResponsitory _majorUserReadWriteRespository;
-        private readonly IUserMajorReadOnlyRespository _userMajorReadOnlyRespository;
+        private readonly IUserMajorReadWriteRepository _majorUserReadWriteRespository;
+        private readonly IUserMajorReadOnlyRepository _userMajorReadOnlyRespository;
         private readonly ILocalizationService _localizationService;
         private readonly IMapper _mapper;
-        public MajorUsersController(IMajorUserReadWriteResponsitory majorUserReadWriteRespository, IUserMajorReadOnlyRespository userMajorReadOnlyRespository, ILocalizationService localizationService, IMapper mapper)
+        public UserMajorsController(IUserMajorReadWriteRepository majorUserReadWriteRespository, IUserMajorReadOnlyRepository userMajorReadOnlyRespository, ILocalizationService localizationService, IMapper mapper)
         {
             _localizationService = localizationService;
             _mapper = mapper;

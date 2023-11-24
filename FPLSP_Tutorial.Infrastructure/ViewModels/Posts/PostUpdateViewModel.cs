@@ -10,10 +10,10 @@ namespace FPLSP_Tutorial.Infrastructure.ViewModels.Posts
 {
     public class PostUpdateViewModel : ViewModelBase<PostUpdateRequest>
     {
-        private readonly IPostReadWriteRespository _postReadWriteRespository;
+        private readonly IPostReadWriteRepository _postReadWriteRespository;
         private readonly ILocalizationService _localizationService;
         private readonly IMapper _mapper;
-        public PostUpdateViewModel(IPostReadWriteRespository postReadWriteRespository, ILocalizationService localizationService, IMapper mapper)
+        public PostUpdateViewModel(IPostReadWriteRepository postReadWriteRespository, ILocalizationService localizationService, IMapper mapper)
         {
             _postReadWriteRespository = postReadWriteRespository;
             _localizationService = localizationService;

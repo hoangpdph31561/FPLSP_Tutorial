@@ -8,10 +8,10 @@ namespace FPLSP_Tutorial.Infrastructure.ViewModels.UserMajors
 {
     public class MajorUserListViewModel : ViewModelBase<UserMajorViewRequest>
     {
-        public readonly IUserMajorReadOnlyRespository _userMajorReadOnlyRespository;
+        public readonly IUserMajorReadOnlyRepository _userMajorReadOnlyRespository;
         private readonly ILocalizationService _localizationService;
 
-        public MajorUserListViewModel(IUserMajorReadOnlyRespository userMajorReadOnlyRespository, ILocalizationService localizationService)
+        public MajorUserListViewModel(IUserMajorReadOnlyRepository userMajorReadOnlyRespository, ILocalizationService localizationService)
         {
             _userMajorReadOnlyRespository = userMajorReadOnlyRespository;
             _localizationService = localizationService;

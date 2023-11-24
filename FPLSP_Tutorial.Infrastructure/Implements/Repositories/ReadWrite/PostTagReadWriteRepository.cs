@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
 {
-    public class PostTagReadWriteRepository : IPostTagReadWriteRespository
+    public class PostTagReadWriteRepository : IPostTagReadWriteRepository
     {
         private readonly AppReadWriteDbContext _dbContext;
         private readonly ILocalizationService _localizationService;

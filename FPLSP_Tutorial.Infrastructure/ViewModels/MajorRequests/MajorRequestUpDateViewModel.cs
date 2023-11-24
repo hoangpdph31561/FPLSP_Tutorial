@@ -10,11 +10,11 @@ namespace FPLSP_Tutorial.Infrastructure.ViewModels.MajorRequests
 {
     public class MajorRequestUpdateViewModel : ViewModelBase<MajorRequestUpdateRequest>
     {
-        private readonly IMajorRequestReadWriteRespository _majorRequestReadWriteRespository;
+        private readonly IMajorRequestReadWriteRepository _majorRequestReadWriteRespository;
         private readonly ILocalizationService _localizationService;
         private readonly IMapper _mapper;
 
-        public MajorRequestUpdateViewModel(IMajorRequestReadWriteRespository majorRequestReadWriteRespository, ILocalizationService localizationService, IMapper mapper)
+        public MajorRequestUpdateViewModel(IMajorRequestReadWriteRepository majorRequestReadWriteRespository, ILocalizationService localizationService, IMapper mapper)
         {
             _majorRequestReadWriteRespository = majorRequestReadWriteRespository;
             _localizationService = localizationService;

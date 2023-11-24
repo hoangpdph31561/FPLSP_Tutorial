@@ -7,11 +7,11 @@ using FPLSP_Tutorial.Infrastructure.Database.AppDbContext;
 
 namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
 {
-    public class ClientPostReadWriteRespository : IClientPostReadWriteRespository
+    public class ClientPostReadWriteRepository : IClientPostReadWriteRespository
     {
         private readonly AppReadWriteDbContext _dbContext;
         private readonly ILocalizationService _localizationService;
-        public ClientPostReadWriteRespository(AppReadWriteDbContext dbContext, ILocalizationService localizationService)
+        public ClientPostReadWriteRepository(AppReadWriteDbContext dbContext, ILocalizationService localizationService)
         {
             _dbContext = dbContext;
             _localizationService = localizationService;

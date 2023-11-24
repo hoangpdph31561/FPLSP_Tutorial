@@ -10,11 +10,11 @@ namespace FPLSP_Tutorial.Infrastructure.ViewModels.UserMajors
 {
     public class MajorUserUpdateViewModel : ViewModelBase<UserMajorUpdateRequest>
     {
-        private readonly IMajorUserReadWriteResponsitory _majorUserReadWriteRespository;
+        private readonly IUserMajorReadWriteRepository _majorUserReadWriteRespository;
         private readonly ILocalizationService _localizationService;
         private readonly IMapper _mapper;
 
-        public MajorUserUpdateViewModel(IMajorUserReadWriteResponsitory majorUserReadWriteRespository, ILocalizationService localizationService, IMapper mapper)
+        public MajorUserUpdateViewModel(IUserMajorReadWriteRepository majorUserReadWriteRespository, ILocalizationService localizationService, IMapper mapper)
         {
             _majorUserReadWriteRespository = majorUserReadWriteRespository;
             _localizationService = localizationService;
@@ -24,7 +24,7 @@ namespace FPLSP_Tutorial.Infrastructure.ViewModels.UserMajors
         {
             try
             {
-                var result = await _majorUserReadWriteRespository.UpdateMajorUserAsync(_mapper.Map<UserMajorEntity>(data), cancellationToken);
+                var result = await _majorUserReadWriteRespository.UpdateUserMajorAsync(_mapper.Map<UserMajorEntity>(data), cancellationToken);
 
                 Success = result.Success;
                 ErrorItems = result.Errors;

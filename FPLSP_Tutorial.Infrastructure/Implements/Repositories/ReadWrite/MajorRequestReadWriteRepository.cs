@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
 {
-    public class MajorRequestReadWriteRepository : IMajorRequestReadWriteRespository
+    public class MajorRequestReadWriteRepository : IMajorRequestReadWriteRepository
     {
         private readonly ILocalizationService _localizationService;
         private readonly AppReadWriteDbContext _dbContext;
@@ -46,6 +46,32 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
             }
         }
 
+        public async Task<RequestResult<int>> UpdateMajorRequestAsync(MajorRequestEntity entity, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var majorRequest = await GetMajorRequestByIdAsync(entity.Id, cancellationToken);
+
+                majorRequest!.Status = entity.Status;
+                majorRequest.ModifiedBy = entity.ModifiedBy;
+                majorRequest.ModifiedTime = DateTimeOffset.UtcNow;
+                _dbContext.MajorRequestEntities.Update(majorRequest);
+                await _dbContext.SaveChangesAsync(cancellationToken);
+                return RequestResult<int>.Succeed(1);
+            }
+            catch (Exception e)
+            {
+                return RequestResult<int>.Fail(_localizationService["Unable to update majorRequest"], new[]
+                {
+                    new ErrorItem
+                    {
+                        Error = e.Message,
+                        FieldName = LocalizationString.Common.FailedToUpdate + "majorRequest"
+                    }
+                });
+            }
+        }
+
         public async Task<RequestResult<int>> DeleteMajorRequestAsync(MajorRequestDeleteRequest request, CancellationToken cancellationToken)
         {
             try
@@ -73,31 +99,6 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
             }
         }
 
-        public async Task<RequestResult<int>> UpdateMajorRequestAsync(MajorRequestEntity entity, CancellationToken cancellationToken)
-        {
-            try
-            {
-                var majorRequest = await GetMajorRequestByIdAsync(entity.Id, cancellationToken);
-
-                majorRequest!.Status = entity.Status;
-                majorRequest.ModifiedBy = entity.ModifiedBy;
-                majorRequest.ModifiedTime = DateTimeOffset.UtcNow;
-                _dbContext.MajorRequestEntities.Update(majorRequest);
-                await _dbContext.SaveChangesAsync(cancellationToken);
-                return RequestResult<int>.Succeed(1);
-            }
-            catch (Exception e)
-            {
-                return RequestResult<int>.Fail(_localizationService["Unable to update majorRequest"], new[]
-                {
-                    new ErrorItem
-                    {
-                        Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToUpdate + "majorRequest"
-                    }
-                });
-            }
-        }
         private async Task<MajorRequestEntity?> GetMajorRequestByIdAsync(Guid idMajorRequest, CancellationToken cancellationToken)
         {
             var majorRequest = await _dbContext.MajorRequestEntities.FirstOrDefaultAsync(c => c.Id == idMajorRequest && !c.Deleted, cancellationToken);

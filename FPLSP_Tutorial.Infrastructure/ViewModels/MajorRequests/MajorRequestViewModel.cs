@@ -7,10 +7,10 @@ namespace FPLSP_Tutorial.Infrastructure.ViewModels.MajorRequests
 {
     public class MajorRequestViewModel : ViewModelBase<Guid>
     {
-        private readonly IMajorRequestReadOnlyRespository _majorRequestReadOnlyRespository;
+        private readonly IMajorRequestReadOnlyRepository _majorRequestReadOnlyRespository;
         private readonly ILocalizationService _localizationService;
 
-        public MajorRequestViewModel(IMajorRequestReadOnlyRespository majorRequestReadOnlyRespository, ILocalizationService localizationService)
+        public MajorRequestViewModel(IMajorRequestReadOnlyRepository majorRequestReadOnlyRespository, ILocalizationService localizationService)
         {
             _majorRequestReadOnlyRespository = majorRequestReadOnlyRespository;
             _localizationService = localizationService;

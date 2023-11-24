@@ -5,7 +5,7 @@ using FPLSP_Tutorial.Application.ValueObjects.Response;
 
 namespace FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly
 {
-    public interface IMajorRequestReadOnlyRespository
+    public interface IMajorRequestReadOnlyRepository
     {
         Task<RequestResult<List<MajorRequestDTO>>> GetMajorRequestAsync(
             MajorRequestViewRequest request, CancellationToken cancellationToken);

@@ -8,10 +8,10 @@ namespace FPLSP_Tutorial.Infrastructure.ViewModels.PostTagViewModels
 {
     public class PostTagDeleteViewModel : ViewModelBase<PostTagDeleteRequest>
     {
-        public readonly IPostTagReadWriteRespository _postTagReadWriteRespository;
+        public readonly IPostTagReadWriteRepository _postTagReadWriteRespository;
         private readonly ILocalizationService _localizationService;
 
-        public PostTagDeleteViewModel(IPostTagReadWriteRespository postTagReadWriteRespository, ILocalizationService localizationService)
+        public PostTagDeleteViewModel(IPostTagReadWriteRepository postTagReadWriteRespository, ILocalizationService localizationService)
         {
             _postTagReadWriteRespository = postTagReadWriteRespository;
             _localizationService = localizationService;

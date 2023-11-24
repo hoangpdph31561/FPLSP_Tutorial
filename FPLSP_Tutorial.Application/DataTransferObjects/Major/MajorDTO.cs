@@ -18,6 +18,7 @@ namespace FPLSP_Tutorial.Application.DataTransferObjects.Major
         public DateTimeOffset DeletedTime { get; set; }
 
         public int NumberOfLecturer { get; set; }
+        public int NumberOfLecturerRequest { get; set; }
         public int NumberOfRequest { get; set; }
     }
 }

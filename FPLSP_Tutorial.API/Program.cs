@@ -22,15 +22,15 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<IMajorRequestReadOnlyRespository, MajorRequestReadOnlyRepository>();
-builder.Services.AddScoped<IMajorRequestReadWriteRespository, MajorRequestReadWriteRepository>();
+builder.Services.AddScoped<IMajorRequestReadOnlyRepository, MajorRequestReadOnlyRepository>();
+builder.Services.AddScoped<IMajorRequestReadWriteRepository, MajorRequestReadWriteRepository>();
 
 
-builder.Services.AddScoped<IMajorUserReadWriteResponsitory, MajorUserReadWriteResponsitory>();
-builder.Services.AddScoped<IUserMajorReadOnlyRespository, UserMajorReadOnlyRespository>();
+builder.Services.AddScoped<IUserMajorReadWriteRepository, UserMajorReadWriteRepository>();
+builder.Services.AddScoped<IUserMajorReadOnlyRepository, UserMajorReadOnlyRepository>();
 
-builder.Services.AddScoped<IPostReadOnlyRespository, PostReadOnlyRespository>();
-builder.Services.AddScoped<IPostReadWriteRespository, PostReadWriteRespository>();
+builder.Services.AddScoped<IPostReadOnlyRespository, PostReadOnlyRepository>();
+builder.Services.AddScoped<IPostReadWriteRepository, PostReadWriteRepository>();
 
 builder.Services.AddCors(options =>
 {

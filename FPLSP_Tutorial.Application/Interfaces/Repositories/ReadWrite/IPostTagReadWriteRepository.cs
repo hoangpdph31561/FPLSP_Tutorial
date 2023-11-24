@@ -4,7 +4,7 @@ using FPLSP_Tutorial.Domain.Entities;
 
 namespace FPLSP_Tutorial.Application.Interfaces.Repositories.ReadWrite
 {
-    public interface IPostTagReadWriteRespository
+    public interface IPostTagReadWriteRepository
     {
         Task<RequestResult<int>> AddPostTagAsync(PostTagEntity entity, CancellationToken cancellationToken);
         Task<RequestResult<int>> UpdatePostTagAsync(PostTagEntity entity, CancellationToken cancellationToken);

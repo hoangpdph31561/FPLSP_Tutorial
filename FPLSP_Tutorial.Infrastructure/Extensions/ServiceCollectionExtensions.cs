@@ -51,11 +51,11 @@ namespace FPLSP_Tutorial.Infrastructure.Extensions
             services.AddTransient<ITagReadWriteRepository, TagReadWriteRepository>();
             services.AddTransient<IMajorReadOnlyRepository, MajorReadOnlyRepository>();
             services.AddTransient<IMajorReadWriteRepository, MajorReadWriteRepository>();
-            services.AddTransient<IPostTagReadWriteRespository, PostTagReadWriteRepository>();
+            services.AddTransient<IPostTagReadWriteRepository, PostTagReadWriteRepository>();
             services.AddTransient<IUserReadOnlyRepository, UserReadOnlyRepository>();
             services.AddTransient<IUserReadWriteRepository, UserReadWriteRepository>();
-            services.AddTransient<IClientPostReadOnlyRespository, ClientPostReadOnlyRespository>();
-            services.AddTransient<IClientPostReadWriteRespository, ClientPostReadWriteRespository>();
+            services.AddTransient<IClientPostReadOnlyRespository, ClientPostReadOnlyRepository>();
+            services.AddTransient<IClientPostReadWriteRespository, ClientPostReadWriteRepository>();
             #endregion
             return services;
         }

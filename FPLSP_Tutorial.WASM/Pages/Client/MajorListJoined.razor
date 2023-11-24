@@ -17,7 +17,13 @@ else
 {
     <div class="mx-3 mb-2 px-3 pb-3">
         <MudBreadcrumbs Items="_breadCrumbs"></MudBreadcrumbs>
+        
         <MudPaper Class="pa-4" Elevation="2">
+            <div class="d-flex justify-center">
+                <div class="mr-auto"></div>
+                <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="@(async () => await OnClickJoinMajor())">Thêm chuyên ngành</MudButton>
+            </div>
+
             <MudTable Items="@_listMajor" Elevation="3">
                 <HeaderContent>
                     <MudTh>STT</MudTh>
@@ -57,9 +63,9 @@ else
     protected override async Task OnInitializedAsync()
     {
         var state = await _authProvider.GetAuthenticationStateAsync();
-        var lstClaim = state.User.Claims;
-        var userIdClaim = lstClaim.FirstOrDefault(c => c.Type == "UserId");
-        if (_idUser != null)
+        var userIdClaim = state.User.FindAll("UserId").FirstOrDefault();
+
+        if (userIdClaim != null)
         {
             _idUser = Guid.Parse(userIdClaim.Value);
         }
@@ -78,5 +84,17 @@ else
     private async Task LoadData()
     {
         _presMajor = await _repoMajor.GetListWithPaginationAsync(_preqMajor);
+    }
+
+    private async Task OnClickJoinMajor()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        var parameters = new DialogParameters();
+
+        parameters.Add(nameof(MajorRequestAdd.UserId), _idUser);
+
+        var dialog = _dialog.Show<MajorRequestAdd>("Yêu cầu gia nhập chuyên ngành", parameters, options);
+        await dialog.Result;
+        await LoadData();
     }
 }

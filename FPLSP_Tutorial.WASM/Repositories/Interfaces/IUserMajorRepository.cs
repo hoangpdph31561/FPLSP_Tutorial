@@ -4,10 +4,10 @@ using FPLSP_Tutorial.WASM.Data.Pagination;
 
 namespace FPLSP_Tutorial.WASM.Repositories.Interfaces
 {
-    public interface IMajorUserRepo
+    public interface IUserMajorRepository
     {
-        public Task<PaginationResponse<MajorUserDto>> GetListMajorUser(ViewMajorUserBySearchRequest request);
-        public Task<bool> CreateMajorUser(CreateUserMajorRequest request);
+        public Task<PaginationResponse<UserMajorDTO>> GetListWithPaginationAsync(UserMajorViewWithPaginationRequest request);
+        public Task<bool> CreateAsync(UserMajorCreateRequest request);
 
     }
 }

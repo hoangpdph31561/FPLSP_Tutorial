@@ -1,0 +1,87 @@
+﻿@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major;
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major.Request;
+
+@inject IMajorRepository _repoMajor
+@inject IMajorRequestRepository _repoMajorRequest
+
+@inject ISnackbar _mudSnackbar
+
+<MudDialog>
+    <DialogContent>
+        <MudTable Items="@_listMajor" FixedHeader="true" Height="50vh">
+            <HeaderContent>
+                <MudTh>STT</MudTh>
+                <MudTh>Mã</MudTh>
+                <MudTh>Tên</MudTh>
+                <MudTh>Hành động</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd>@(_listMajor.IndexOf(context) + 1 + _presMajor.PageSize * (_presMajor.PageNumber - 1))</MudTd>
+                <MudTd>@context.Code</MudTd>
+                <MudTd>@context.Name</MudTd>
+                <MudTd>
+                    <MudFab Color="Color.Primary" Class="mx-1" Size="Size.Small" Icon="@Icons.Material.Filled.Add" OnClick="@(() => OnClickAdd(context.Id))" Title="Gửi yêu cầu" DisableElevation="true"></MudFab>
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
+        <CustomPagination Class="my-1" HasNext="@_presMajor.HasNext" OnPageChange="@(async e => await OnPaginationButtonClick(e))" CurrentPageNumber="@_presMajor.PageNumber"></CustomPagination>
+    </DialogContent>
+</MudDialog>
+
+    @code {
+    [Parameter]
+    public Guid? UserId { get; set; }
+
+    private MajorViewWithPaginationRequest _preqMajor = new();
+    private PaginationResponse<MajorDTO> _presMajor = new();
+    private List<MajorDTO> _listMajor = new();
+
+    private bool _isLoadingAll = true;
+    private bool _isLoadingList = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _preqMajor.UserId = UserId;
+        _preqMajor.NotJoined = true;
+
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        _presMajor = await _repoMajor.GetListWithPaginationAsync(_preqMajor);
+        if (_presMajor.Data != null)
+        {
+            _listMajor = (List<MajorDTO>)_presMajor.Data;
+        }
+    }
+
+    private async Task OnPaginationButtonClick(int pageNumber)
+    {
+        _isLoadingList = true;
+        _preqMajor.PageNumber = pageNumber;
+        await LoadData().ContinueWith((re) =>
+        {
+            _isLoadingAll = false;
+            _isLoadingList = false;
+        });
+    } 
+
+    private async Task OnClickAdd(Guid idMajor)
+    {
+        var result =await _repoMajorRequest.AddAsync(new()
+        {
+            MajorId = idMajor,
+            CreatedBy = UserId
+        });
+        if(result)
+        {
+            _mudSnackbar.Add("Gửi yêu cầu thành công", Severity.Success);
+            await LoadData();
+        }
+        else
+        {
+            _mudSnackbar.Add("Gửi yêu cầu thất bại", Severity.Error);
+        }
+    }
+}

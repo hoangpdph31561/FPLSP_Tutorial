@@ -18,6 +18,8 @@ namespace FPLSP_Tutorial.WASM.Repositories.Implements
         {
             string url = $"/api/Majors/GetListWithPagination?PageNumber={request.PageNumber}&PageSize={request.PageSize}";
 
+            if(request.UserId != null) { url += $"&UserId={request.UserId}"; }
+            if(request.NotJoined != null) { url += $"&NotJoined={request.NotJoined}"; }
             
             var result = await _httpClient.GetFromJsonAsync<PaginationResponse<MajorDTO>>(url);
             if (result == null)

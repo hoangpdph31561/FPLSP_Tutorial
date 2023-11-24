@@ -27,19 +27,8 @@ namespace FPLSP_Tutorial.API.Controllers
             _mapper = mapper;
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> Get([FromQuery] MajorRequestViewRequest request, CancellationToken cancellationToken)
-        //{
-        //    MajorRequestListViewModel vm = new(_majorRequestReadOnlyRespository, _localizationService);
-        //    vm = new(_majorRequestReadOnlyRespository, _localizationService);
-
-        //    await vm.HandleAsync(request, cancellationToken);
-
-        //    return Ok(vm);
-        //}
-
-        [HttpGet] // lấy ra cá majorRequest chưa bị xóa
-        public async Task<IActionResult> GetMajorRequest([FromQuery] MajorRequestViewWithPaginationRequest request, CancellationToken cancellationToken)
+        [HttpGet("GetListWithPagination")]
+        public async Task<IActionResult> GetListWithPagination([FromQuery] MajorRequestViewWithPaginationRequest request, CancellationToken cancellationToken)
         {
             MajorRequestListWithPaginationViewModel vm = new(_majorRequestReadOnlyRespository, _localizationService);
 
@@ -54,7 +43,7 @@ namespace FPLSP_Tutorial.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromQuery] MajorRequestCreateRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Create(MajorRequestCreateRequest request, CancellationToken cancellationToken)
         {
             MajorRequestCreateViewModel vm = new(_majorRequestReadOnlyRespository, _majorRequestReadWriteRespository, _localizationService, _mapper);
 
@@ -65,7 +54,7 @@ namespace FPLSP_Tutorial.API.Controllers
 
 
         [HttpPut]
-        public async Task<IActionResult> Put([FromQuery] MajorRequestUpdateRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Update(MajorRequestUpdateRequest request, CancellationToken cancellationToken)
         {
             MajorRequestUpdateViewModel vm = new(_majorRequestReadWriteRespository, _localizationService, _mapper);
 

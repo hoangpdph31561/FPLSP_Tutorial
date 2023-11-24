@@ -25,6 +25,7 @@ builder.Services.AddScoped<IClientPostService, ClientPostService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IMajorRepository, MajorRepository>();
 builder.Services.AddScoped<ITagRepository, TagRepository>();
+builder.Services.AddScoped<IMajorRequestRepository, MajorRequestRepository>();
 
 builder.Services.AddBlazoredSessionStorage();
 

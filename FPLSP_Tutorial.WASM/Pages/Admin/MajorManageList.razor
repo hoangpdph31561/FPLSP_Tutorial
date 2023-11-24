@@ -96,9 +96,8 @@ else
     protected override async Task OnInitializedAsync()
     {
         var state = await _authProvider.GetAuthenticationStateAsync();
-        var lstClaim = state.User.Claims;
-        var userIdClaim = lstClaim.FirstOrDefault(c => c.Type == "UserId");
-        if (_idUser != null)
+        var userIdClaim = state.User.FindAll("UserId").FirstOrDefault();
+        if (userIdClaim != null)
         {
             _idUser = Guid.Parse(userIdClaim.Value);
         }

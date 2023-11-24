@@ -24,10 +24,10 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
         {
             try
             {
-                entity.Id = new Guid();
                 entity.CreatedTime = DateTimeOffset.UtcNow;
                 entity.ModifiedTime = DateTimeOffset.UtcNow;
-                entity.DeletedTime = DateTimeOffset.UtcNow;
+
+
                 await _dbContext.MajorRequestEntities.AddAsync(entity);
                 await _dbContext.SaveChangesAsync(cancellationToken);
 

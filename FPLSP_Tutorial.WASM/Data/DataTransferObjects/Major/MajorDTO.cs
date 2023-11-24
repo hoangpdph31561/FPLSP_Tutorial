@@ -21,5 +21,6 @@ namespace FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major
         public int NumberOfLecturer { get; set; }
         public int NumberOfLecturerRequest { get; set; }
         public List<TagDTO> ListTag { get; set; } = new();
+        public bool HasSentRequest { get; set; } = new();
     }
 }

@@ -14,19 +14,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Repositories\Implements\MajorRequestRepo.cs" />
-    <Compile Remove="Repositories\Implements\MajorUserRepo.cs" />
-    <Compile Remove="Repositories\Interfaces\IMajorRequestRepo.cs" />
-    <Compile Remove="Repositories\Interfaces\IMajorUserRepo.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Remove="Pages\Admin\LecturerManager.razor" />
-    <Content Remove="Pages\Client\Home.razor" />
     <Content Remove="Pages\Client\PostDetail.razor" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="Pages\Client\Home.razor" />
+    <None Include="Pages\Client\MajorListJoined.razor" />
     <None Include="Pages\Manager\PostManageAdd.razor" />
     <None Include="Pages\Manager\PostManageUpdate.razor" />
   </ItemGroup>

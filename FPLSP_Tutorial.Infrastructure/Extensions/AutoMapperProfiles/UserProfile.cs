@@ -2,6 +2,7 @@
 using FPLSP_Tutorial.Application.DataTransferObjects.User;
 using FPLSP_Tutorial.Application.DataTransferObjects.User.Request;
 using FPLSP_Tutorial.Domain.Entities;
+using FPLSP_Tutorial.Domain.Enums;
 
 namespace FPLSP_Tutorial.Infrastructure.Extensions.AutoMapperProfiles
 {
@@ -9,7 +10,11 @@ namespace FPLSP_Tutorial.Infrastructure.Extensions.AutoMapperProfiles
     {
         public UserProfile()
         {
-            CreateMap<UserEntity, UserDTO>();
+            CreateMap<UserEntity, UserDTO>()
+                .ForMember(des => des.ListJoinedMajors, from => from
+                    .MapFrom(u => u.UserMajors
+                        .Where(um => um.Status != EntityStatus.Deleted && !um.Deleted)
+                        .Select(um => um.Major).Where(m => m.Status != EntityStatus.Deleted && !m.Deleted)));
             CreateMap<UserCreateRequest, UserEntity>();
             CreateMap<UserUpdateRequest, UserEntity>();
 

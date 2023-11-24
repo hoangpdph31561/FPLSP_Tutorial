@@ -23,6 +23,7 @@ namespace FPLSP_Tutorial.Infrastructure.Extensions.AutoMapperProfiles
                 .ForMember(des => des.ListTag, from => from
                     .MapFrom(m => m.Tags
                         .Where(t => t.Status != EntityStatus.Deleted && !t.Deleted)));
+
             CreateMap<MajorCreateRequest, MajorEntity>();
             CreateMap<MajorUpdateRequest, MajorEntity>();
             CreateMap<MajorDeleteRequest, MajorEntity>();

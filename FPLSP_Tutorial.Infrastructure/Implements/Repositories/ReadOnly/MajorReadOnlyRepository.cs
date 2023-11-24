@@ -39,7 +39,18 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
 
                 if(request.UserId != null)
                 {
-                    queryable = queryable.Where(m => m.UserMajors.Where(um => um.UserId == request.UserId).Any(um => um.MajorId == m.Id));
+                    if(request.NotJoined)
+                    {
+                        //NotJoined
+                        queryable = queryable.Where(m => !m.UserMajors.Any(um => um.UserId == request.UserId && um.Status != EntityStatus.Deleted && !um.Deleted));
+                        //NotHavingRequest
+                        queryable = queryable.Where(m => !m.MajorRequests.Any(mr => mr.CreatedBy == request.UserId && mr.Status != EntityStatus.Deleted && !mr.Deleted));
+                    }
+                    else
+                    {
+                        queryable = queryable.Where(m => m.UserMajors.Where(um => um.UserId == request.UserId && um.Status != EntityStatus.Deleted && !um.Deleted).Any(um => um.MajorId == m.Id));
+                    }
+                    
                 }
 
                 var result = await queryable
@@ -71,10 +82,18 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
 
                 if (request.UserId != null)
                 {
-                    queryable = queryable
-                        .Where(m => m.UserMajors
-                            .Where(um => um.UserId == request.UserId && um.Status != EntityStatus.Deleted && !um.Deleted)
-                            .Any(um => um.MajorId == m.Id));
+                    if (request.NotJoined)
+                    {
+                        //NotJoined
+                        queryable = queryable.Where(m => !m.UserMajors.Any(um => um.UserId == request.UserId && um.Status != EntityStatus.Deleted && !um.Deleted));
+                        //NotHavingRequest
+                        queryable = queryable.Where(m => !m.MajorRequests.Any(mr => mr.CreatedBy == request.UserId && mr.Status != EntityStatus.Deleted && !mr.Deleted));
+                    }
+                    else
+                    {
+                        queryable = queryable.Where(m => m.UserMajors.Where(um => um.UserId == request.UserId && um.Status != EntityStatus.Deleted && !um.Deleted).Any(um => um.MajorId == m.Id));
+                    }
+
                 }
 
                 var result = await queryable.PaginateAsync<MajorEntity, MajorDTO>(request, _mapper, cancellationToken);

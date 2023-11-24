@@ -4,5 +4,6 @@ namespace FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major.Request
 {
     public class MajorViewWithPaginationRequest : PaginationRequest
     {
+        public Guid? UserId { get; set; } = null;
     }
 }

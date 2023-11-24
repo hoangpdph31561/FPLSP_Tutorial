@@ -2,6 +2,6 @@
 {
     public class MajorViewRequest
     {
-        
+        public Guid? UserId { get; set; } = null;
     }
 }

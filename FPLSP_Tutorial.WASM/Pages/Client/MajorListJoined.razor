@@ -1,5 +1,82 @@
 ﻿@page "/major/joined"
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major.Request;
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major;
+@layout ManagementLayout
 
+@inject AuthenticationStateProvider _authProvider
+@inject NavigationManager _nav
+@inject IDialogService _dialog
+
+@inject IMajorRepository _repoMajor
+
+@if (_isLoadingAll)
+{
+    <LoadingIndicator />
+}
+else
+{
+    <div class="mx-3 mb-2 px-3 pb-3">
+        <MudBreadcrumbs Items="_breadCrumbs"></MudBreadcrumbs>
+        <MudPaper Class="pa-4" Elevation="2">
+            <MudTable Items="@_listMajor" Elevation="3">
+                <HeaderContent>
+                    <MudTh>STT</MudTh>
+                    <MudTh>Mã CN</MudTh>
+                    <MudTh>Tên CN</MudTh>
+                    <MudTh><div class="text-center">SL bài viết<br>đã tạo</div></MudTh>
+                    <MudTh>Hành động</MudTh>
+                </HeaderContent>    
+                <RowTemplate>
+                    <MudTh>@(_listMajor.IndexOf(context) + 1)</MudTh>
+                    <MudTh>@context.Code</MudTh>
+                    <MudTh>@context.Name</MudTh>
+                    <MudTh>@("")</MudTh>
+                </RowTemplate>
+            </MudTable>
+        </MudPaper>
+    </div>
+}
 @code {
+    private List<BreadcrumbItem> _breadCrumbs = new List<BreadcrumbItem>
+    {
+        new BreadcrumbItem("Trang chủ", href: "/post/client"),
+        new BreadcrumbItem("Quản lý giảng viên", href: null, disabled: true)
+    };
+    private Guid? _idUser = null;
 
+    private MajorViewWithPaginationRequest _preqMajor = new()
+    {
+        PageSize = 20
+    };
+    private PaginationResponse<MajorDTO> _presMajor = new();
+    List<MajorDTO> _listMajor = new();
+
+    private bool _isLoadingAll = true;
+    private bool _isLoadingList = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await _authProvider.GetAuthenticationStateAsync();
+        var lstClaim = state.User.Claims;
+        var userIdClaim = lstClaim.FirstOrDefault(c => c.Type == "UserId");
+        if (_idUser != null)
+        {
+            _idUser = Guid.Parse(userIdClaim.Value);
+        }
+        else { }
+        _preqMajor.UserId = _idUser;
+
+
+        await LoadData().ContinueWith((re) =>
+        {
+            _isLoadingAll = false;
+            _isLoadingList = false;
+        });
+    }
+
+
+    private async Task LoadData()
+    {
+        _presMajor = await _repoMajor.GetListWithPaginationAsync(_preqMajor);
+    }
 }

@@ -60,11 +60,6 @@ else
     </div>
 }
 
-@if (idMajorDetail != Guid.Empty && closeDetail == false)
-{
-    <MajorUpdate idMajor="idMajorDetail" onCloseUpdate="OnCloseDetail"></MajorUpdate>
-}
-
 @code {
     private List<BreadcrumbItem> _breadCrumbs = new List<BreadcrumbItem>
     {
@@ -94,7 +89,6 @@ else
     #region 
     private bool _isLoadingAll = true;
     private bool _isLoadingList = true;
-    private bool closeDetail = true;
     #endregion
 
 
@@ -157,12 +151,6 @@ else
         var dialog = _dialog.Show<MajorManageUpdate>("Chi tiết chuyên ngành", parameters, options);
         await dialog.Result; 
         await LoadData();
-    }
-
-    private async Task OnCloseDetail()
-    {
-        await LoadData();
-        closeDetail = true;
     }
 
     public async Task DialogDelete(Guid idDelete)

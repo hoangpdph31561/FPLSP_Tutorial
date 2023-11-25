@@ -15,6 +15,7 @@
 	<ItemGroup>
 		<Folder Include="DataTransferObjects\ClientPost\Response\" />
 		<Folder Include="DataTransferObjects\Example\Response\" />
+		<Folder Include="DataTransferObjects\MajorRequest\Response\" />
 		<Folder Include="DataTransferObjects\Major\Response\" />
 	</ItemGroup>
 

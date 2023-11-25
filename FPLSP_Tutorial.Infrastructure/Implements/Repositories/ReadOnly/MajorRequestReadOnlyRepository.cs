@@ -62,8 +62,8 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
             {
                 IQueryable<MajorRequestEntity> queryable = _dbContext.MajorRequestEntities
                     .AsNoTracking()
-                    .AsQueryable();
-
+                    .AsQueryable()
+                    .Where(c => c.Status != EntityStatus.Deleted && !c.Deleted);
                 var result = await queryable
                     .PaginateAsync<MajorRequestEntity, MajorRequestDTO>(request, _mapper, cancellationToken);
 

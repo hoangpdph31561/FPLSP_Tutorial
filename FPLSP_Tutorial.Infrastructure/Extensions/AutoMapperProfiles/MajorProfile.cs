@@ -14,15 +14,20 @@ namespace FPLSP_Tutorial.Infrastructure.Extensions.AutoMapperProfiles
                 .ForMember(des => des.NumberOfLecturer, from => from
                     .MapFrom(m => m.UserMajors
                         .Where(m => m.Status != EntityStatus.Deleted && !m.Deleted)
-                    .Select(um => um.User).Where(u => u.Status != EntityStatus.Deleted)
-                        .Count()))
+                        .Select(um => um.User).Where(u => u.Status != EntityStatus.Deleted)
+                        .Distinct().Count()))
                 .ForMember(des => des.NumberOfLecturerRequest, from => from
                     .MapFrom(m => m.MajorRequests
                         .Where(mr => mr.Status != EntityStatus.Deleted && !mr.Deleted)
-                        .Count()))
+                        .Distinct().Count()))
                 .ForMember(des => des.ListTag, from => from
                     .MapFrom(m => m.Tags
-                        .Where(t => t.Status != EntityStatus.Deleted && !t.Deleted)));
+                        .Where(t => t.Status != EntityStatus.Deleted && !t.Deleted)))
+                .ForMember(des => des.NumberOfPost, from => from
+                    .MapFrom(m => m.Tags
+                        .Where(t => t.Status != EntityStatus.Deleted && !t.Deleted)
+                            .SelectMany(t => t.PostTags)
+                                .Where(pt => pt.Status != EntityStatus.Deleted && !pt.Deleted).Count()));
 
             CreateMap<MajorCreateRequest, MajorEntity>();
             CreateMap<MajorUpdateRequest, MajorEntity>();

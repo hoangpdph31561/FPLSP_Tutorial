@@ -19,7 +19,7 @@ else
         <MudBreadcrumbs Items="_breadCrumbs"></MudBreadcrumbs>
         
         <MudPaper Class="pa-4" Elevation="2">
-            <div class="d-flex justify-center">
+            <div class="d-flex justify-center mb-2">
                 <div class="mr-auto"></div>
                 <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="@(async () => await OnClickJoinMajor())">Thêm chuyên ngành</MudButton>
             </div>
@@ -29,14 +29,17 @@ else
                     <MudTh>STT</MudTh>
                     <MudTh>Mã CN</MudTh>
                     <MudTh>Tên CN</MudTh>
-                    <MudTh><div class="text-center">SL bài viết<br>đã tạo</div></MudTh>
+                    <MudTh>SL bài viết đã tạo</MudTh>
                     <MudTh>Hành động</MudTh>
                 </HeaderContent>    
                 <RowTemplate>
                     <MudTh>@(_listMajor.IndexOf(context) + 1)</MudTh>
                     <MudTh>@context.Code</MudTh>
                     <MudTh>@context.Name</MudTh>
-                    <MudTh>@("")</MudTh>
+                    <MudTh>@context.NumberOfPostByUser</MudTh>
+                    <MudTh>
+                        <MudFab Color="Color.Primary" Class="mx-1" Size="Size.Small" StartIcon="@Icons.Material.Filled.Edit" OnClick="@(() => _nav.NavigateTo("/post/manage/self?idMajor=" + context.Id))" Title="Quản lý bài viết" DisableElevation="true"></MudFab>
+                    </MudTh>
                 </RowTemplate>
             </MudTable>
         </MudPaper>
@@ -84,6 +87,7 @@ else
     private async Task LoadData()
     {
         _presMajor = await _repoMajor.GetListWithPaginationAsync(_preqMajor);
+        _listMajor = (List<MajorDTO>)_presMajor.Data;
     }
 
     private async Task OnClickJoinMajor()

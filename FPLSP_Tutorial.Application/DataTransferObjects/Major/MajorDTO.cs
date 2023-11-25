@@ -6,7 +6,7 @@ namespace FPLSP_Tutorial.Application.DataTransferObjects.Major
     public class MajorDTO
     {
         public Guid Id { get; set; }
-        public string Code { get; set; }
+        public string Code { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public EntityStatus Status { get; set; } = EntityStatus.Active;
 
@@ -21,5 +21,9 @@ namespace FPLSP_Tutorial.Application.DataTransferObjects.Major
         public int NumberOfLecturer { get; set; }
         public int NumberOfLecturerRequest { get; set; }
         public List<TagDTO> ListTag { get; set; } = new();
+
+        public bool HasSentRequest { get; set; } = new();
+        public int NumberOfPost { get; set; }
+        public int NumberOfPostByUser { get; set; }
     }
 }

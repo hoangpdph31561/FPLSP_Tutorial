@@ -1,5 +1,6 @@
 ﻿using FPLSP_Tutorial.WASM.Data.DataTransferObjects.User;
 using FPLSP_Tutorial.WASM.Data.DataTransferObjects.User.Request;
+using FPLSP_Tutorial.WASM.Data.Pagination;
 using FPLSP_Tutorial.WASM.Repositories.Interfaces;
 using System.Net.Http.Json;
 
@@ -11,6 +12,18 @@ namespace FPLSP_Tutorial.WASM.Repositories.Implements
         public UserRepository(HttpClient httpClient)
         {
             _httpClient = httpClient;
+        }
+
+        public async Task<PaginationResponse<UserDTO>> GetListWithPaginationAsync(UserViewWithPaginationRequest request)
+        {
+            string url = $"/api/Users/GetListWithPagination?PageNumber={request.PageNumber}&PageSize={request.PageSize}";
+
+            var result = await _httpClient.GetFromJsonAsync<PaginationResponse<UserDTO>>(url);
+            if (result == null)
+            {
+                return new();
+            }
+            return result;
         }
 
         public async Task<UserDTO?> GetByEmailAsync(string email)
@@ -40,5 +53,7 @@ namespace FPLSP_Tutorial.WASM.Repositories.Implements
                 return false;
             }
         }
+
+        
     }
 }

@@ -37,6 +37,26 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
                     .AsQueryable()
                     .Where(c => c.Status != EntityStatus.Deleted && !c.Deleted);
 
+                if(request.UserId != null) { queryable = queryable.Where(c => c.CreatedBy == request.UserId); }
+                if(request.PostId != null) { queryable = queryable.Where(c => c.PostId == request.PostId); }
+                if (request.MajorId != null)
+                {
+                    queryable = queryable
+                        .Where(m => m.PostTags
+                            .Where(pt => pt.Status != EntityStatus.Deleted && !pt.Deleted)
+                                .Select(pt => pt.Tag)
+                                    .Any(t => t.MajorId == request.MajorId && t.Status != EntityStatus.Deleted && !t.Deleted));
+                }
+                if (request.IsGetSystemPost)
+                {
+                    queryable = queryable
+                        .Where(m => m.PostTags
+                            .Where(pt => pt.Status != EntityStatus.Deleted && !pt.Deleted)
+                                .Select(pt => pt.Tag)
+                                    .Any(t => t.MajorId == null && t.Status != EntityStatus.Deleted && !t.Deleted));
+                }
+
+
                 var result = await queryable
                     .ProjectTo<PostDTO>(_mapper.ConfigurationProvider)
                     .ToListAsync();
@@ -63,6 +83,25 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
                     .AsNoTracking()
                     .AsQueryable()
                     .Where(c => c.Status != EntityStatus.Deleted && !c.Deleted);
+
+                if (request.UserId != null) { queryable = queryable.Where(c => c.CreatedBy == request.UserId); }
+                if (request.PostId != null) { queryable = queryable.Where(c => c.PostId == request.PostId); }
+                if (request.MajorId != null)
+                {
+                    queryable = queryable
+                        .Where(m => m.PostTags
+                            .Where(pt => pt.Status != EntityStatus.Deleted && !pt.Deleted)
+                                .Select(pt => pt.Tag)
+                                    .Any(t => t.MajorId == request.MajorId && t.Status != EntityStatus.Deleted && !t.Deleted));
+                }
+                if (request.IsGetSystemPost)
+                {
+                    queryable = queryable
+                        .Where(m => m.PostTags
+                            .Where(pt => pt.Status != EntityStatus.Deleted && !pt.Deleted)
+                                .Select(pt => pt.Tag)
+                                    .Any(t => t.MajorId == null && t.Status != EntityStatus.Deleted && !t.Deleted));
+                }
 
                 var result = await queryable.PaginateAsync<PostEntity, PostDTO>(request, _mapper, cancellationToken);
                 return RequestResult<PaginationResponse<PostDTO>>.Succeed(new PaginationResponse<PostDTO>()

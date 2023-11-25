@@ -98,6 +98,16 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
 
                 var result = await queryable.PaginateAsync<MajorEntity, MajorDTO>(request, _mapper, cancellationToken);
 
+                #warning MAINTAIN: Phải tách pthuc + DTO (CountPostByUser)
+
+                if(request.UserId != null && result.Data != null)
+                {
+                    foreach (var dto in result.Data)
+                    {
+                        dto.NumberOfPostByUser = _dbContext.PostEntities.AsNoTracking().AsQueryable().Where(c => c.CreatedBy == request.UserId).Count();
+                    }
+                }
+
                 return RequestResult<PaginationResponse<MajorDTO>>.Succeed(new PaginationResponse<MajorDTO>()
                 {
                     PageNumber = request.PageNumber,

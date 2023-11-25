@@ -1,8 +1,9 @@
-﻿@page "/lecturer-manager"
+﻿@page "/user/manage/list"
 @using FPLSP_Tutorial.WASM.Data.DataTransferObjects.MajorRequest.Request;
 @using FPLSP_Tutorial.WASM.Data.DataTransferObjects.MajorRequest;
 @using FPLSP_Tutorial.WASM.Data.DataTransferObjects.User;
 @using FPLSP_Tutorial.WASM.Data.DataTransferObjects.User.Request;
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.UserMajor.Request;
 @layout ManagementLayout
 
 @inject IMajorRequestRepository _repoMajorRequest
@@ -31,15 +32,32 @@ else
                     {
                         <MudTable Items="@_listUser" Style="position:relative;" Elevation="2" Class="m-3">
                             <HeaderContent>
-                                
+                                <MudTh>STT</MudTh>
+                                <MudTh>Email</MudTh>
+                                <MudTh>Tên</MudTh>
+                                <MudTh>Chức vụ</MudTh>
+                                <MudTh>Chuyên ngành đã tham gia</MudTh>
                             </HeaderContent>
                             <RowTemplate>
-                                
+                                <MudTd>@(_listUser.IndexOf(context) + 1)</MudTd>
+                                <MudTd>@context.Email</MudTd>
+                                <MudTd>@context.Username</MudTd>
+                                <MudTd>
+                                        @{
+                                        string roles = "";
+                                        foreach(var i in context.RoleCodes)
+                                        {
+                                            if (roles != "") roles += ", ";
+                                            roles += i;
+                                        }
+                                    }
+                                    @roles
+                                </MudTd>
+                                <MudTd>@context.ListJoinedMajors.Count()</MudTd>
                             </RowTemplate>
                         </MudTable>
                         <CustomPagination Class="my-1" HasNext="@_presUser.HasNext" OnPageChange="@(async e => await OnPaginationButtonClickTab1(e))" CurrentPageNumber="@_presUser.PageNumber"></CustomPagination>
                         <MudDivider />
-                    }
                     }
                 </MudTabPanel>
                 @*  View danh sách giảng viên chờ duyệt  *@
@@ -51,7 +69,20 @@ else
                     else
                     {
                         <MudTable Items="@_listMajorRequest" Style="position:relative;" Elevation="2" Class="m-3">
-                            
+                            <HeaderContent>
+                                <MudTh>STT</MudTh>
+                                <MudTh>Tên GV</MudTh>
+                                <MudTh>Chuyên ngành</MudTh>
+                                <MudTh>Hành động</MudTh>
+                            </HeaderContent>
+                            <RowTemplate>
+                                <MudTd>@(_listMajorRequest.IndexOf(context) + 1)</MudTd>
+                                <MudTd>@_listUser.FirstOrDefault(c => c.Id == context.CreatedBy).Username</MudTd>
+                                <MudTd>@context.MajorName</MudTd>
+                                <MudTd>
+                                        <MudFab Color="Color.Primary" Class="mx-1" Size="Size.Small" Icon="@Icons.Material.Filled.Check" OnClick="@(async () => await OnAddToMajor(context))" Title="Quản lý Tag" DisableElevation="true"></MudFab>
+                                </MudTd>
+                            </RowTemplate>
                         </MudTable>
                         <CustomPagination Class="my-1" HasNext="@_presMajorRequest.HasNext" OnPageChange="@(async e => await OnPaginationButtonClickTab2(e))" CurrentPageNumber="@_presMajorRequest.PageNumber"></CustomPagination>
                         <MudDivider />
@@ -85,26 +116,20 @@ else
     private bool _isLoadingTab1 = true;
     private bool _isLoadingTab2 = true;
 
-    private async Task LoadDataMajor()
-    {
-       
-    }
     #endregion
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            await Task.Run(async () =>
+            await LoadDataTab1().ContinueWith((result) =>
             {
-                await LoadDataMajorUser();
-                await LoadDataMajor();
-            }).ContinueWith((result) =>
-            {
-                _isLoadingTab1 = false;   
+                _isLoadingTab1 = false;
+                StateHasChanged();
             });
-            await LoadDataMajorRequest().ContinueWith((result) =>
+            await LoadDataTab2().ContinueWith((result) =>
             {
                 _isLoadingTab2 = false;
+                StateHasChanged();
             });
             _isLoadingAll = false;
         }
@@ -113,13 +138,21 @@ else
             throw ex;
         }
     }
-    private async Task LoadDataMajorRequest()
+
+    private async Task LoadDataTab1()
     {
-        
+        _presUser = await _repoUser.GetListWithPaginationAsync(_preqUser);
+        _listUser = (List<UserDTO>)_presUser.Data;
     }
-    private async Task LoadDataMajorUser()
+
+    private async Task LoadDataTab2()
     {
-        
+        _presMajorRequest = await _repoMajorRequest.GetListWithPaginationAsync(_preqMajorRequest);
+        if(_presMajorRequest.Data != null)
+        {
+            _listMajorRequest = (List<MajorRequestDTO>)_presMajorRequest.Data;
+        }
+
     }
 
     private async Task OnDelete(Guid id)
@@ -138,20 +171,18 @@ else
         if (confirm == true)
         {
             var removeConfirm = await _repoMajorRequest.DeleteAsync(request);
-            await LoadDataMajorRequest();
         }
     }
-    private async Task OnAdd(Guid id, Guid MajorID, Guid? UserId, EntityStatus status)
+    private async Task OnAddToMajor(MajorRequestDTO req)
     {
         var requestDelete = new MajorRequestDeleteRequest
             {
-                Id = id,
+                Id = req.Id,
             };
-        var requestCreateUser = new Ma
+        var requestCreateUser = new UserMajorCreateRequest
             {
-                MajorId = MajorID,
-                UserId = UserId,
-                Status = status
+                MajorId = req.MajorId,
+                UserId = req.CreatedBy ?? Guid.Empty,
             };
 
         var confirm = await _diagService.ShowMessageBox
@@ -163,26 +194,17 @@ else
               );
         if (confirm == true)
         {
-            var createConfirm = await _repoUserMajor.CreateMajorUser(requestCreateUser);
+            var createConfirm = await _repoUserMajor.CreateAsync(requestCreateUser);
             if (!createConfirm)
             {
-                var messageErro = await _diagService.ShowMessageBox
-             (
-                 "Thông báo",
-                 "Thêm thất bại !"
-             );
+                _mudSnackbar.Add("Duyệt thất bại", Severity.Error);
+
             }
             else
             {
-                var message = await _diagService.ShowMessageBox
-           (
-               "Thông báo",
-               "Thêm thành công !"
-           );
-                var removeConfirm = await majorRequestRepo.DeleteMajorRequest(requestDelete);
-                await LoadDataMajorRequest();
-                await LoadDataMajorUser();
-
+                _mudSnackbar.Add("Duyệt thành công", Severity.Success);
+                var removeConfirm = await _repoMajorRequest.DeleteAsync(requestDelete);
+                await LoadDataTab2();
             }
 
         }
@@ -191,39 +213,35 @@ else
     private async Task OnPaginationButtonClickTab1(int pageNumber)
     {
         _isLoadingTab1 = true;
-        _MajorUserRequest.PageNumber = pageNumber;
-        await LoadDataMajorUser();
-        await LoadDataMajorRequest();
+        _preqUser.PageNumber = pageNumber;
     }
 
     private async Task OnPaginationButtonClickTab2(int pageNumber)
     {
         _isLoadingTab2 = true;
-        _MajorUserRequest.PageNumber = pageNumber;
-        await LoadDataMajorUser();
-        await LoadDataMajorRequest();
+        _preqMajorRequest.PageNumber = pageNumber;
     }
 
-    private async Task OnSearchTab1(string searchString)
-    {
-        _isLoadingTab1 = true;
-        _MajorUserRequest.PageNumber = 1;
-        _MajorUserRequest.Email = searchString;
-        await LoadDataMajorUser();
-    }
-    private async Task OnSearchTab2(string searchString)
-    {
-        _isLoadingTab2 = true;
-        _MajorRequestRequest.PageNumber = 1;
-        _MajorRequestRequest.Email = searchString;
-        await LoadDataMajorRequest();
-    }
-    private async Task OnSelect(string idMajor )
-    {
-        _idMajor = idMajor;
-        _isLoadingTab1 = true;
-        _MajorUserRequest.PageNumber = 1;
-        _MajorUserRequest.MajorId = new Guid(idMajor);
-        await LoadDataMajorUser();
-    }
+    //private async Task OnSearchTab1(string searchString)
+    //{
+    //    _isLoadingTab1 = true;
+    //    _MajorUserRequest.PageNumber = 1;
+    //    _MajorUserRequest.Email = searchString;
+    //    await LoadDataMajorUser();
+    //}
+    //private async Task OnSearchTab2(string searchString)
+    //{
+    //    _isLoadingTab2 = true;
+    //    _MajorRequestRequest.PageNumber = 1;
+    //    _MajorRequestRequest.Email = searchString;
+    //    await LoadDataMajorRequest();
+    //}
+    //private async Task OnSelect(string idMajor )
+    //{
+    //    _idMajor = idMajor;
+    //    _isLoadingTab1 = true;
+    //    _MajorUserRequest.PageNumber = 1;
+    //    _MajorUserRequest.MajorId = new Guid(idMajor);
+    //    await LoadDataMajorUser();
+    //}
 }

@@ -18,7 +18,7 @@ namespace FPLSP_Tutorial.WASM.Repositories.Implements
         
         public async Task<PaginationResponse<UserMajorDTO>> GetListWithPaginationAsync(UserMajorViewWithPaginationRequest request)
         {
-            string url = $"/api/MajorUsers?PageNumber={request.PageNumber}&PageSize={request.PageSize}";
+            string url = $"/api/UserMajors?PageNumber={request.PageNumber}&PageSize={request.PageSize}";
 
             var result = await _httpClient.GetFromJsonAsync<PaginationResponse<UserMajorDTO>>(url);
             return result;
@@ -27,7 +27,7 @@ namespace FPLSP_Tutorial.WASM.Repositories.Implements
 
         public async Task<bool> CreateAsync(UserMajorCreateRequest request)
         {
-            var resultCreate = await _httpClient.PostAsJsonAsync("/api/MajorUsers", request);
+            var resultCreate = await _httpClient.PostAsJsonAsync("/api/UserMajors", request);
             if (resultCreate.IsSuccessStatusCode)
             {
                 return true;

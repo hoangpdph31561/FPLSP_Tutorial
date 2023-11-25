@@ -16,5 +16,7 @@ namespace FPLSP_Tutorial.WASM.Data.DataTransferObjects.MajorRequest
         public bool Deleted { get; set; }
         public Guid? DeletedBy { get; set; }
         public DateTimeOffset DeletedTime { get; set; }
+
+        public string MajorName { get; set; } = string.Empty;
     }
 }

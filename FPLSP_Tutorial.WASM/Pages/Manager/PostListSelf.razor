@@ -1,8 +1,127 @@
-﻿@page "/recreation/post/self"
+﻿@page "/post/manage/self"
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post;
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post.Request;
 
+@inject AuthenticationStateProvider _authProvider
+@inject NavigationManager _nav
 
+@inject IPostRepository _repoPost
+
+@if (_isLoadingAll)
+{
+    <LoadingIndicator />
+}
+else
+{
+    <div class="mx-3 mb-2 px-3 pb-3">
+        <MudBreadcrumbs Items="_breadCrumbs"></MudBreadcrumbs>
+        <MudPaper Class="pa-4" Elevation="2">
+            <MudTable Items="@_listPost" Loading="_isLoadingList" Elevation="3">
+                <HeaderContent>
+                    <MudTh>STT</MudTh>
+                    <MudTh>Tiêu đề</MudTh>
+                    <MudTh>Tag</MudTh>
+                    @if (idPost == null)
+                    {
+                        <MudTh>SL Bài viết con</MudTh>
+                    }
+                    <MudTh>Trạng thái</MudTh>
+                    <MudTh>Hành động</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd Style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap; max-width: 10vw;">@context.Title</MudTd>
+                    <MudTd>
+                        @foreach (var i in context.ListTag.Take(3))
+                        {
+                            <MudChip Variant="Variant.Outlined">@i.Name</MudChip>
+                        }
+                        @if (context.ListTag.Count() > 3)
+                        {
+                            string tooltip = "";
+                            foreach (var tag in context.ListTag.Skip(3))
+                            {
+                                if (tooltip != "") tooltip += ", ";
+                                tooltip += tag.Name;
+                            }
+                            <MudTooltip Text="tooltip">
+                                <MudChip Variant="Variant.Outlined">
+                                    @("+" + (context.ListTag.Count() - 3))
+                                </MudChip>
+                            </MudTooltip>
+                        }
+                    </MudTd>
+                    @if (idPost == null)
+                    {
+                        <MudTd>
+                            <MudTooltip Text="Xem chi tiết">
+                                <MudChip OnClick="@(() => { _nav.NavigateTo($"/recreation/post-manager?idPost={context.Id}"); })">@context.CountChildPost</MudChip>
+                            </MudTooltip>
+                        </MudTd>
+                    }
+
+                    <MudTd><BadgeEntityStatus Status="@context.Status" /></MudTd>
+                    <MudTd>
+                        <MudChip Color="Color.Primary" OnClick="@(async () => { _nav.NavigateTo("/recreation/post-update?idPost=" + context.Id); })">Chỉnh sửa</MudChip>
+                        <MudChip Color="Color.Error" OnClick="@(async () => {})">Xóa</MudChip>
+                    </MudTd>
+                </RowTemplate>
+            </MudTable>
+        </MudPaper>
+    </div>
+}
 
 
 @code {
+    private List<BreadcrumbItem> _breadCrumbs = new List<BreadcrumbItem>
+    {
+        new BreadcrumbItem("Trang chủ", href: "/post/client"),
+        new BreadcrumbItem("Quản lý giảng viên", href: null, disabled: true)
+    };
 
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public Guid? idPost { get; set; }
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public Guid? idMajor { get; set; }
+
+    private Guid _idUser;
+
+    private bool _isLoadingAll = true;
+    private bool _isLoadingList = true;
+
+    private PostViewWithPaginationRequest _preqPost { get; set; } = new();
+    private PaginationResponse<PostDTO> _presPost { get; set; } = new();
+    private List<PostDTO> _listPost = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        var state = await _authProvider.GetAuthenticationStateAsync();
+        var userIdClaim = state.User.FindAll("UserId").FirstOrDefault();
+
+        if (userIdClaim != null)
+        {
+            _idUser = Guid.Parse(userIdClaim.Value);
+        }
+        else { }
+        _preqPost.UserId = _idUser;
+        _preqPost.MajorId = idMajor;
+        _preqPost.PostId = idPost;
+
+        await LoadData().ContinueWith((re) =>
+        {
+            _isLoadingAll = false;
+            _isLoadingList = false;
+        });
+    }
+
+    private async Task LoadData()
+    {
+        _presPost = await _repoPost.GetListWithPaginationAsync(_preqPost);
+        if(_presPost.Data != null)
+        {
+            _listPost = (List<PostDTO>)_presPost.Data;
+        }
+    }
 }

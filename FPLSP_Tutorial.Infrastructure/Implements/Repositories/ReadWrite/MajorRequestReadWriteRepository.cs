@@ -79,9 +79,9 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
                 var majorRequest = await GetMajorRequestByIdAsync(request.Id, cancellationToken);
 
                 // update trạng thái 
-                majorRequest!.Deleted = true;
+                majorRequest.Deleted = true;
                 majorRequest.Status = EntityStatus.Deleted;
-                _dbContext.MajorRequestEntities.Update(majorRequest);
+
                 await _dbContext.SaveChangesAsync(cancellationToken);
 
                 return RequestResult<int>.Succeed(1);

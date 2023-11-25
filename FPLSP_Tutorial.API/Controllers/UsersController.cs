@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
+using FPLSP_Tutorial.Application.DataTransferObjects.User;
 using FPLSP_Tutorial.Application.DataTransferObjects.User.Request;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadWrite;
 using FPLSP_Tutorial.Application.Interfaces.Services;
+using FPLSP_Tutorial.Application.ValueObjects.Pagination;
 using FPLSP_Tutorial.Infrastructure.ViewModels.User;
 using Microsoft.AspNetCore.Mvc;
 
@@ -32,7 +34,12 @@ namespace FPLSP_Tutorial.API.Controllers
             UserListWithPaginationViewModel vm = new(_userReadOnlyRepository, _localizationService);
 
             await vm.HandleAsync(request, cancellationToken);
-
+            if (vm.Success)
+            {
+                PaginationResponse<UserDTO> paginationResponse = new PaginationResponse<UserDTO>();
+                paginationResponse = (PaginationResponse<UserDTO>)vm.Data;
+                return Ok(paginationResponse);
+            }
             return Ok(vm);
         }
 

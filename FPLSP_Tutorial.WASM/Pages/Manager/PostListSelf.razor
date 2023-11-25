@@ -1,4 +1,6 @@
 ﻿@page "/post/manage/self"
+@layout ManagementLayout
+
 @using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post;
 @using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post.Request;
 
@@ -16,6 +18,12 @@ else
     <div class="mx-3 mb-2 px-3 pb-3">
         <MudBreadcrumbs Items="_breadCrumbs"></MudBreadcrumbs>
         <MudPaper Class="pa-4" Elevation="2">
+            <div class="mb-2 d-flex justify-center">
+                <div class="mr-auto"></div>
+                <div>
+                    <MudButton StartIcon="@Icons.Material.Filled.Add" Variant="Variant.Filled" OnClick="@(async () => { await OnClickCreatePost(); })" Color="Color.Primary">Tạo bài viết</MudButton>
+                </div>
+            </div>
             <MudTable Items="@_listPost" Loading="_isLoadingList" Elevation="3">
                 <HeaderContent>
                     <MudTh>STT</MudTh>
@@ -29,6 +37,7 @@ else
                     <MudTh>Hành động</MudTh>
                 </HeaderContent>
                 <RowTemplate>
+                    <MudTd>@(_listPost.IndexOf(context) + 1)</MudTd>
                     <MudTd Style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap; max-width: 10vw;">@context.Title</MudTd>
                     <MudTd>
                         @foreach (var i in context.ListTag.Take(3))
@@ -54,7 +63,7 @@ else
                     {
                         <MudTd>
                             <MudTooltip Text="Xem chi tiết">
-                                <MudChip OnClick="@(() => { _nav.NavigateTo($"/recreation/post-manager?idPost={context.Id}"); })">@context.CountChildPost</MudChip>
+                                <MudChip OnClick="@(() => { _nav.NavigateTo($"/recreation/post-manager?idPost={context.Id}"); })">@context.NumberOfChildPost</MudChip>
                             </MudTooltip>
                         </MudTd>
                     }
@@ -95,7 +104,7 @@ else
     private PaginationResponse<PostDTO> _presPost { get; set; } = new();
     private List<PostDTO> _listPost = new();
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnInitializedAsync()
     {
         var state = await _authProvider.GetAuthenticationStateAsync();
         var userIdClaim = state.User.FindAll("UserId").FirstOrDefault();
@@ -113,6 +122,7 @@ else
         {
             _isLoadingAll = false;
             _isLoadingList = false;
+            StateHasChanged();
         });
     }
 
@@ -123,5 +133,15 @@ else
         {
             _listPost = (List<PostDTO>)_presPost.Data;
         }
+    }
+
+    private async Task OnClickCreatePost()
+    {
+        var url = $"/post/manage/self/add?fallBackUrl={_nav.Uri}";
+
+        if (idMajor != null) url += $"&idMajor={idMajor}";
+        if (idPost != null) url += $"&idPost={idPost}";
+
+        _nav.NavigateTo(url);
     }
 }

@@ -3,6 +3,9 @@ using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post.Request;
 using FPLSP_Tutorial.WASM.Data.Pagination;
 using FPLSP_Tutorial.WASM.Repositories.Interfaces;
 using System.Net.Http.Json;
+using System.Net.WebSockets;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace FPLSP_Tutorial.WASM.Repositories.Implements
 {
@@ -14,13 +17,32 @@ namespace FPLSP_Tutorial.WASM.Repositories.Implements
             _httpClient = httpClient;
         }
 
+        public async Task<PaginationResponse<PostDTO>> GetListAsync(PostViewWithPaginationRequest request)
+        {
+            string url = $"/api/Posts/GetListAsync?";
+
+            if (request.PostId != null) { url += $"&PostId={request.PostId}"; }
+            if (request.MajorId != null) { url += $"&MajorId={request.MajorId}"; }
+            if (request.UserId != null) { url += $"&UserId={request.UserId}"; }
+            if (request.IsGetSystemPost) { url += $"&IsGetSystemPost={request.IsGetSystemPost}"; }
+
+            var result = await _httpClient.GetFromJsonAsync<PaginationResponse<PostDTO>>(url);
+            if (result == null)
+            {
+                return new();
+            }
+            return result;
+        }
+
         public async Task<PaginationResponse<PostDTO>> GetListWithPaginationAsync(PostViewWithPaginationRequest request)
         {
             string url = $"/api/Posts/GetListWithPaginationAsync?PageNumber={request.PageNumber}&PageSize={request.PageSize}";
-            if (request.PostId != null)
-            {
-                url += $"&PostId={request.PostId}";
-            }
+
+            if (request.PostId != null) { url += $"&PostId={request.PostId}"; }
+            if (request.MajorId != null) { url += $"&MajorId={request.MajorId}"; }
+            if (request.UserId != null) { url += $"&UserId={request.UserId}"; }
+            if (request.IsGetSystemPost) { url += $"&IsGetSystemPost={request.IsGetSystemPost}"; }
+
             var result = await _httpClient.GetFromJsonAsync<PaginationResponse<PostDTO>>(url);
             if (result == null)
             {
@@ -35,14 +57,19 @@ namespace FPLSP_Tutorial.WASM.Repositories.Implements
             return result;
         }
 
-        public async Task<bool> AddAsync(PostCreateRequest request)
+        public async Task<PostDTO?> AddAsync(PostCreateRequest request)
         {
             var resultCreate = await _httpClient.PostAsJsonAsync($"/api/Posts", request);
             if (resultCreate.IsSuccessStatusCode)
             {
-                return true;
+                var contentAsString = await resultCreate.Content.ReadAsStringAsync();
+                var resultDTO = JsonSerializer.Deserialize<PostDTO>(contentAsString, new JsonSerializerOptions()
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+                return resultDTO;
             }
-            return false;
+            return null;
         }
 
         public async Task<bool> UpdateAsync(PostUpdateRequest request)

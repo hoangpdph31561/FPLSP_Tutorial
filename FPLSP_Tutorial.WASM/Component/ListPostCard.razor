@@ -1,6 +1,4 @@
-﻿@using FPLSP_Tutorial.WASM.Data.Client;
-@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post;
-
+﻿@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post;
 <div class="row">
     @if(IsLoading)
     {
@@ -20,7 +18,7 @@
 
 @code {
     [Parameter]
-    public List<PostMainDTO> ListPost { get; set; } = new();
+    public List<PostDTO> ListPost { get; set; } = new();
 
     [Parameter]
     public Guid? MajorId { get; set; } = null;

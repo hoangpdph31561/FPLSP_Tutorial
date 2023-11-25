@@ -64,7 +64,7 @@ namespace FPLSP_Tutorial.API.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> CreateAsync(UserCreateRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> AddAsync(UserCreateRequest request, CancellationToken cancellationToken)
         {
             UserCreateViewModel vm = new(_userReadOnlyRepository, _userReadWriteRepository, _localizationService, _mapper);
 

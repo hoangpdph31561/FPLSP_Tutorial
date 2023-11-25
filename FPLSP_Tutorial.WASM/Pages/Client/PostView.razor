@@ -1,0 +1,90 @@
+﻿@page "/post/view/{Id}"
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post;
+
+@layout ManagementLayout
+
+@inject IPostRepository _repoPost
+
+@if(_isLoadingAll)
+{
+    <LoadingIndicatorOverlay/>
+}
+else
+{
+
+    <div class="mx-3 mb-2 px-3 pb-3">
+        <MudBreadcrumbs Items="@(new List<BreadcrumbItem>() {
+                        new BreadcrumbItem("Trang chủ", href: "/recreation/post/client"),
+                        new BreadcrumbItem("Bài viết", href: null, disabled: true)
+    })"></MudBreadcrumbs>
+        <MudPaper Class="p-4" Elevation="2">
+            <div class="d-flex align-center">
+                <div class="overflow-hidden">
+                    @foreach (var i in _detailPost.ListTag)
+                    {
+                        <span style="font-size: 20px; background-color: lightgray; border-radius: 10px;" class="me-2 pa-2">@i.Name</span>
+                    }
+                </div>
+            </div>
+            <div class="mt-2">
+                <MudText Typo="Typo.h4" Style="word-wrap:break-word">
+                    <span style="font-weight:500;">@_detailPost!.Title</span>
+                </MudText>
+                <MudText Typo="Typo.body1">Tạo bởi: <span style="font-weight: 500">@_detailPost.CreatedByName</span><span> | @_detailPost.CreatedTime.ToString("dd/MM/yyyy")</span></MudText>
+            </div>
+            <MudDivider Class="my-3"></MudDivider>
+            <div>
+                @((MarkupString)_detailPost.Content)
+            </div>
+        </MudPaper>
+
+        <div class="d-flex align-center justify-center mt-4 mb-2">
+            <MudIcon Icon="@Icons.Material.Filled.Share" Size="Size.Small"></MudIcon>
+            <MudText Typo="Typo.h6" Class="ms-1">Các bài viết tham khảo</MudText>
+        </div>
+        <MudDivider/>
+            <div Class="mx-1">
+                
+            </div>
+        <MudDivider />
+    </div>
+}
+
+
+
+@code {
+    [Parameter]
+    public string Id { get; set; } = string.Empty;
+
+    private PostDTO _detailPost = new();
+
+    private List<PostDTO> _listChildPost = new();
+
+    private bool _isLoadingAll = true;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (Id != _detailPost.Id.ToString())
+        {
+            await LoadData().ContinueWith((re) =>
+            {
+                _isLoadingAll = false;
+                StateHasChanged();
+            });
+        }
+
+    }
+
+    private async Task LoadData()
+    {
+        _detailPost = await _repoPost.GetByIdAsync(Guid.Parse(Id));
+        var presPost = await _repoPost.GetListAsync(new()
+        {
+            MajorId = _detailPost.Id,
+        });
+        if(presPost.Data != null)
+        {
+            _listChildPost = presPost.Data.ToList();
+        }
+    }
+}

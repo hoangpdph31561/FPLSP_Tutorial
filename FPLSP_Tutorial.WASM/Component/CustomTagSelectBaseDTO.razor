@@ -1,4 +1,4 @@
-﻿@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Tag;
+﻿@using FPLSP_Tutorial.WASM.Data.Client;
 
 <style>
     .mud-dialog-title {
@@ -18,10 +18,10 @@
             <MudTextField Variant="Variant.Outlined" T="string" @bind-Value="SearchString" Label="Tìm kiếm" DebounceInterval="200" OnDebounceIntervalElapsed="@(async () => await OnSearchFunc())" Immediate></MudTextField>
 
             <div class="mt-2">
-                @foreach (var i in _lstTagDisPlay.Where(c => ListTag.Any(d => d.Id == c.Id) == false))
+                 @foreach (var i in _lstTagDisPlay.Where(c => _lstTag.Any(d => d.Id == c.Id) == false))
                 {
                     // Truyền pthc thêm Tag khỏi List<Tag> vào trong OnClose
-                    <MudChip Color="Color.Primary" Variant="Variant.Outlined" CloseIcon="@Icons.Material.Filled.AddCircle" OnClose="@(() => { if(!ListTag.Any(c => c.Id == i.Id)) {ListTag.Add(i); }})">@i.Name</MudChip>
+                    <MudChip Color="Color.Primary" Variant="Variant.Outlined" CloseIcon="@Icons.Material.Filled.AddCircle" OnClose="@(() => { if(!_lstTag.Any(c => c.Id == i.Id)) {_lstTag.Add(i); }})">@i.Name</MudChip>
                 }
             </div>
 
@@ -29,10 +29,10 @@
             <MudText Typo="Typo.caption">Đã chọn:</MudText>
             <MudDivider></MudDivider>
             <div style="overflow: auto; width: 100%;" class="py-2">
-                @foreach (var i in _toggleAllTags ? ListTag : ListTag.Take(_maxChipDisplay))
+                @foreach (var i in _toggleAllTags ? _lstTag : _lstTag.Take(_maxChipDisplay))
                 {
                     // Truyền pthc xóa Tag khỏi List<Tag> vào trong OnClose
-                    <MudChip Color="Color.Primary" Variant="Variant.Outlined" OnClose="@(() => { ListTag.Remove(i); })">@i.Name</MudChip>
+                    <MudChip Color="Color.Primary" Variant="Variant.Outlined" OnClose="@(() => { _lstTag.Remove(i); })">@i.Name</MudChip>
                 }
                 @if (_toggleAllTags)
                 {
@@ -40,9 +40,9 @@
                 }
                 else
                 {
-                    if (ListTag.Count() > _maxChipDisplay)
+                    if (_lstTag.Count() > _maxChipDisplay)
                     {
-                        <MudChip Color="Color.Default" Variant="Variant.Outlined" OnClick="@(() => _toggleAllTags = true)">@("+" + (ListTag.Count() - _maxChipDisplay))</MudChip>
+                        <MudChip Color="Color.Default" Variant="Variant.Outlined" OnClick="@(() => _toggleAllTags = true)">@("+" + (_lstTag.Count() - _maxChipDisplay))</MudChip>
                     }
                 }
             </div>
@@ -57,11 +57,11 @@
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
     [Parameter]
-    public List<TagDTO> ListTag { get; set; }
+    public List<TagBaseDTO> _lstTag { get; set; }
     [Parameter]
-    public List<TagDTO> ListTagFromDB { get; set; }
+    public List<TagBaseDTO> _lstTagFromDB { get; set; }
     private string SearchString;
-    private List<TagDTO> _lstTagDisPlay = new();
+    private List<TagBaseDTO> _lstTagDisPlay = new();
     private bool _toggleAllTags = false;
     private int _maxChipDisplay = 5;
 
@@ -72,22 +72,22 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _lstTagDisPlay = ListTagFromDB.Take(10).ToList();
+        _lstTagDisPlay = _lstTagFromDB.Take(10).ToList();
     }
 
     private void DeleteServer()
     {
-        MudDialog.Close(DialogResult.Ok(ListTag));
+        MudDialog.Close(DialogResult.Ok(_lstTag));
     }
     private async Task OnSearchFunc()
     {
         if(string.IsNullOrWhiteSpace(SearchString))
         {
-            _lstTagDisPlay = ListTagFromDB.Take(10).ToList();
+            _lstTagDisPlay = _lstTagFromDB.Take(10).ToList();
         }
         else
         {
-            _lstTagDisPlay = ListTagFromDB.Where(x => x.Name.Contains(SearchString)).ToList();
+            _lstTagDisPlay = _lstTagFromDB.Where(x => x.Name.Contains(SearchString)).ToList();
         }
     }
     

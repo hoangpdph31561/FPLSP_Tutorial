@@ -24,7 +24,7 @@ namespace FPLSP_Tutorial.Infrastructure.ViewModels.Posts
         {
             try
             {
-                var result = await _postReadWriteRespository.UpdatePostAsync(_mapper.Map<PostEntity>(request), cancellationToken);
+                var result = await _postReadWriteRespository.UpdateAsync(_mapper.Map<PostEntity>(request), cancellationToken);
                 Success = result.Success;
                 ErrorItems = result.Errors;
                 Message = result.Message;

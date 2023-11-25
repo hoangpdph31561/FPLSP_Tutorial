@@ -4,7 +4,7 @@ using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Application.ValueObjects.Common;
 using FPLSP_Tutorial.Application.ViewModels;
 
-namespace FPLSP_Tutorial.Infrastructure.ViewModels.TagViewModels
+namespace FPLSP_Tutorial.Infrastructure.ViewModels.Tag
 {
     public class TagDeleteViewModel : ViewModelBase<TagDeleteRequest>
     {

@@ -19,7 +19,7 @@ namespace FPLSP_Tutorial.Infrastructure.ViewModels.Posts
         {
             try
             {
-                var result = await _postReadWriteRespository.DeletePostAsync(request, cancellationToken);
+                var result = await _postReadWriteRespository.DeleteAsync(request, cancellationToken);
                 Success = result.Success;
                 ErrorItems = result.Errors;
                 Message = result.Message;

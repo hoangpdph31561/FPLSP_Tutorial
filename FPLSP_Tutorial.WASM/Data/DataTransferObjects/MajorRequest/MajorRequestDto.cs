@@ -18,5 +18,7 @@ namespace FPLSP_Tutorial.WASM.Data.DataTransferObjects.MajorRequest
         public DateTimeOffset DeletedTime { get; set; }
 
         public string MajorName { get; set; } = string.Empty;
+        public string CreatedByEmail { get; set; } = string.Empty;
+        public string CreatedByName { get; set; } = string.Empty;
     }
 }

@@ -4,7 +4,7 @@ using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Application.ValueObjects.Common;
 using FPLSP_Tutorial.Application.ViewModels;
 
-namespace FPLSP_Tutorial.Infrastructure.ViewModels.PostTagViewModels
+namespace FPLSP_Tutorial.Infrastructure.ViewModels.PostTag
 {
     public class PostTagDeleteViewModel : ViewModelBase<PostTagDeleteRequest>
     {
@@ -21,7 +21,7 @@ namespace FPLSP_Tutorial.Infrastructure.ViewModels.PostTagViewModels
         {
             try
             {
-                var result = await _postTagReadWriteRespository.DeletePostTagAsync(request, cancellationToken);
+                var result = await _postTagReadWriteRespository.DeleteAsync(request, cancellationToken);
 
                 Success = result.Success;
                 ErrorItems = result.Errors;

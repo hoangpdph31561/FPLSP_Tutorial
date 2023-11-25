@@ -21,7 +21,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
             _localizationService = localizationService;
         }
 
-        public async Task<RequestResult<int>> AddPostTagAsync(PostTagEntity entity, CancellationToken cancellationToken)
+        public async Task<RequestResult<int>> AddRangeAsync(List<PostTagEntity> entity, CancellationToken cancellationToken)
         {
             try
             {
@@ -32,18 +32,40 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
             }
             catch (Exception e)
             {
-                return RequestResult<int>.Fail(_localizationService["Unable to create PostTags"], new[]
+                return RequestResult<int>.Fail(_localizationService["Unable to create List of PostTag"], new[]
                 {
                     new ErrorItem
                     {
                         Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToCreate + "PostTags"
+                        FieldName = LocalizationString.Common.FailedToCreate + "List of PostTag"
                     }
                 });
             }
         }
 
-        public async Task<RequestResult<int>> UpdatePostTagAsync(PostTagEntity entity, CancellationToken cancellationToken)
+        public async Task<RequestResult<int>> AddAsync(PostTagEntity entity, CancellationToken cancellationToken)
+        {
+            try
+            {
+                await _dbContext.PostTagEntities.AddAsync(entity);
+                await _dbContext.SaveChangesAsync(cancellationToken);
+
+                return RequestResult<int>.Succeed(1);
+            }
+            catch (Exception e)
+            {
+                return RequestResult<int>.Fail(_localizationService["Unable to create PostTag"], new[]
+                {
+                    new ErrorItem
+                    {
+                        Error = e.Message,
+                        FieldName = LocalizationString.Common.FailedToCreate + "PostTag"
+                    }
+                });
+            }
+        }
+
+        public async Task<RequestResult<int>> UpdateAsync(PostTagEntity entity, CancellationToken cancellationToken)
         {
             try
             {
@@ -69,7 +91,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
             }
         }
 
-        public async Task<RequestResult<int>> DeletePostTagAsync(PostTagDeleteRequest request, CancellationToken cancellationToken)
+        public async Task<RequestResult<int>> DeleteAsync(PostTagDeleteRequest request, CancellationToken cancellationToken)
         {
             try
             {

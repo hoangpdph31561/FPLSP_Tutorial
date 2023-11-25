@@ -5,7 +5,7 @@ using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadWrite;
 using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Application.ValueObjects.Pagination;
-using FPLSP_Tutorial.Infrastructure.ViewModels.TagViewModels;
+using FPLSP_Tutorial.Infrastructure.ViewModels.Tag;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FPLSP_Tutorial.API.Controllers
@@ -27,8 +27,22 @@ namespace FPLSP_Tutorial.API.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("GetListWithPagination")]
-        public async Task<IActionResult> GetListWithPagination([FromQuery] TagViewWithPaginationRequest request, CancellationToken cancellationToken)
+        [HttpGet("GetListAsync")]
+        public async Task<IActionResult> GetListAsync([FromQuery] TagViewRequest request, CancellationToken cancellationToken)
+        {
+            TagListViewModel vm = new(_tagReadOnlyRepository, _localizationService);
+
+            await vm.HandleAsync(request, cancellationToken);
+
+            if (vm.Success)
+            {
+                return Ok(vm.Data);
+            }
+            return BadRequest(vm);
+        }
+
+        [HttpGet("GetListWithPaginationAsync")]
+        public async Task<IActionResult> GetListWithPaginationAsync([FromQuery] TagViewWithPaginationRequest request, CancellationToken cancellationToken)
         {
             TagListWithPaginationViewModel vm = new(_tagReadOnlyRepository, _localizationService);
 
@@ -54,7 +68,7 @@ namespace FPLSP_Tutorial.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(TagCreateRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> AddAsync(TagCreateRequest request, CancellationToken cancellationToken)
         {
             TagCreateViewModel vm = new(_tagReadWriteRepository, _localizationService, _mapper);
 
@@ -65,7 +79,7 @@ namespace FPLSP_Tutorial.API.Controllers
 
 
         [HttpPut]
-        public async Task<IActionResult> Update(TagUpdateRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateAsync(TagUpdateRequest request, CancellationToken cancellationToken)
         {
             TagUpdateViewModel vm = new(_tagReadWriteRepository, _localizationService, _mapper);
 
@@ -75,7 +89,7 @@ namespace FPLSP_Tutorial.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> Delete([FromQuery] TagDeleteRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeleteAsync([FromQuery] TagDeleteRequest request, CancellationToken cancellationToken)
         {
             TagDeleteViewModel vm = new(_tagReadWriteRepository, _localizationService);
 

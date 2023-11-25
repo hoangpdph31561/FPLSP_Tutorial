@@ -14,10 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Remove="Pages\Client\PostDetail.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="Pages\Client\Home.razor" />
     <None Include="Pages\Client\MajorListJoined.razor" />
     <None Include="Pages\Manager\PostManageAdd.razor" />

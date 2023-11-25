@@ -1,31 +1,31 @@
 ﻿using AutoMapper;
-using FPLSP_Tutorial.Application.DataTransferObjects.Tag.TagRequest;
+using FPLSP_Tutorial.Application.DataTransferObjects.PostTag.Request;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadWrite;
 using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Application.ValueObjects.Common;
 using FPLSP_Tutorial.Application.ViewModels;
 using FPLSP_Tutorial.Domain.Entities;
 
-namespace FPLSP_Tutorial.Infrastructure.ViewModels.TagViewModels
+namespace FPLSP_Tutorial.Infrastructure.ViewModels.PostTag
 {
-    public class TagCreateViewModel : ViewModelBase<TagCreateRequest>
+    public class PostTagCreateViewModel : ViewModelBase<PostTagCreateRequest>
     {
-        private readonly ITagReadWriteRepository _tagReadWriteRepository;
+        private readonly IPostTagReadWriteRepository _postTagReadWriteRespository;
         private readonly ILocalizationService _localizationService;
         private readonly IMapper _mapper;
 
-        public TagCreateViewModel(ITagReadWriteRepository tagReadWriteRepository, ILocalizationService localizationService, IMapper mapper)
+        public PostTagCreateViewModel(IPostTagReadWriteRepository postTagReadWriteRespository, ILocalizationService localizationService, IMapper mapper)
         {
-            _tagReadWriteRepository = tagReadWriteRepository;
+            _postTagReadWriteRespository = postTagReadWriteRespository;
             _localizationService = localizationService;
             _mapper = mapper;
         }
 
-        public override async Task HandleAsync(TagCreateRequest request, CancellationToken cancellationToken)
+        public async override Task HandleAsync(PostTagCreateRequest request, CancellationToken cancellationToken)
         {
             try
             {
-                var createResult = await _tagReadWriteRepository.AddTagAsync(_mapper.Map<TagEntity>(request), cancellationToken);
+                var createResult = await _postTagReadWriteRespository.AddAsync(_mapper.Map<PostTagEntity>(request), cancellationToken);
 
                 Success = createResult.Success;
                 ErrorItems = createResult.Errors;
@@ -38,8 +38,8 @@ namespace FPLSP_Tutorial.Infrastructure.ViewModels.TagViewModels
                     {
                     new ErrorItem
                     {
-                        Error = _localizationService["Error occurred while create tags"],
-                        FieldName = string.Concat(LocalizationString.Common.FailedToGet, "Tags")
+                        Error = _localizationService["Error occurred while create posttags"],
+                        FieldName = string.Concat(LocalizationString.Common.FailedToGet, "PostTags")
                     }
                 };
             }

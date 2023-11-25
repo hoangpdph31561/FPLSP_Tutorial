@@ -10,8 +10,8 @@ namespace FPLSP_Tutorial.Infrastructure.Extensions.AutoMapperProfiles
         public PostTagProfile()
         {
             CreateMap<PostTagEntity, PostTagDTO>();
-            CreateMap<PostTagEntity, PostTagCreateRequest>();
-            CreateMap<PostTagEntity, PostTagUpdateRequest>();
+            CreateMap<PostTagCreateRequest, PostTagEntity>();
+            CreateMap<PostTagUpdateRequest, PostTagEntity>();
         }
     }
 }

@@ -6,26 +6,26 @@ using FPLSP_Tutorial.Application.ValueObjects.Common;
 using FPLSP_Tutorial.Application.ViewModels;
 using FPLSP_Tutorial.Domain.Entities;
 
-namespace FPLSP_Tutorial.Infrastructure.ViewModels.PostTagViewModels
+namespace FPLSP_Tutorial.Infrastructure.ViewModels.PostTag
 {
-    public class PostTagCreateViewModel : ViewModelBase<PostTagCreateRequest>
+    public class PostTagCreateRangeViewModel : ViewModelBase<List<PostTagCreateRequest>>
     {
         private readonly IPostTagReadWriteRepository _postTagReadWriteRespository;
         private readonly ILocalizationService _localizationService;
         private readonly IMapper _mapper;
 
-        public PostTagCreateViewModel(IPostTagReadWriteRepository postTagReadWriteRespository, ILocalizationService localizationService, IMapper mapper)
+        public PostTagCreateRangeViewModel(IPostTagReadWriteRepository postTagReadWriteRespository, ILocalizationService localizationService, IMapper mapper)
         {
             _postTagReadWriteRespository = postTagReadWriteRespository;
             _localizationService = localizationService;
             _mapper = mapper;
         }
 
-        public async override Task HandleAsync(PostTagCreateRequest request, CancellationToken cancellationToken)
+        public async override Task HandleAsync(List<PostTagCreateRequest> request, CancellationToken cancellationToken)
         {
             try
             {
-                var createResult = await _postTagReadWriteRespository.AddPostTagAsync(_mapper.Map<PostTagEntity>(request), cancellationToken);
+                var createResult = await _postTagReadWriteRespository.AddRangeAsync(_mapper.Map<List<PostTagEntity>>(request), cancellationToken);
 
                 Success = createResult.Success;
                 ErrorItems = createResult.Errors;

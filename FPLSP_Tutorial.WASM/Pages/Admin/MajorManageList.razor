@@ -35,6 +35,7 @@ else
                         <MudTh>SL Giảng viên</MudTh>
                         <MudTh>SL Giảng viên chờ duyệt</MudTh>
                         <MudTh>SL Tag</MudTh>
+                        <MudTh>SL Bài viết</MudTh>
                         <MudTh>Trạng thái</MudTh>
                         <MudTh>Hành động</MudTh>
                     </HeaderContent>
@@ -45,6 +46,7 @@ else
                             <MudTd>@context.NumberOfLecturer</MudTd>
                             <MudTd>@context.NumberOfLecturerRequest</MudTd>
                             <MudTd>@context.ListTag.Count()</MudTd>
+                            <MudTd>@context.NumberOfPost</MudTd>
                             <MudTd><BadgeEntityStatus Status="@context.Status"></BadgeEntityStatus></MudTd>
                             <MudTd>
                                 <MudFab Color="Color.Primary" Class="mx-1" Size="Size.Small" Icon="@Icons.Material.Filled.LabelImportant" OnClick="@(async () => await OnClickTagManager(context.Id))" Title="Quản lý Tag" DisableElevation="true"></MudFab>

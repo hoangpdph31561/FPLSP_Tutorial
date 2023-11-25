@@ -1,62 +1,134 @@
-﻿@page "/post/manage/add"
+﻿@page "/post/manage/self/add"
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major;
 @using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post.Request;
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.PostTag.Request;
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Tag;
 
 @layout ManagementLayout
 
 @inject IPostRepository _repoPost
+@inject IPostTagRepository _repoPostTag
+@inject IMajorRepository _repoMajor
 @inject ISnackbar _mudSnackbar
 @inject NavigationManager _nav
+@inject AuthenticationStateProvider _authProvider
 
-<div class="pa-2">
-    <MudBreadcrumbs 
-        Items="@(new List<BreadcrumbItem>() {
+@if(_isLoadingAll)
+{
+    <LoadingIndicatorOverlay/>
+}
+else
+{
+    <div class="pa-2">
+        <MudBreadcrumbs Items="@(new List<BreadcrumbItem>() {
                         new BreadcrumbItem("Trang chủ", href: "/post/client"),
                         new BreadcrumbItem("Danh sách", href: "/post-manager"),
                         new BreadcrumbItem("Tạo bài viết", href: null, disabled: true)
     })"></MudBreadcrumbs>
 
-    <MudPaper Class="mt-3 mx-3 pa-4" Elevation="2">
-        <div class="row mt-3">
-            <div class="col-6"><MudTextField @bind-Value="@_postCreateR.Title" Label="Tiêu đề" Variant="Variant.Outlined"></MudTextField></div>
-            <div class="col-6">
-                <MudSelect @bind-Value="@_postCreateR.PostType" Label="Loại bài viết" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
-                    <MudSelectItem Value="@("Hệ thống")">Hệ thống</MudSelectItem>
-                    <MudSelectItem Value="@("Chuyên ngành")">Chuyên ngành</MudSelectItem>
-                </MudSelect>
+        <MudPaper Class="mt-3 mx-3 pa-4" Elevation="2">
+            <div class="row mt-3">
+                <div class="col-12"><MudTextField @bind-Value="@_postCreateR.Title" Label="Tiêu đề" Variant="Variant.Outlined"></MudTextField></div>
+                <div class="col-12">
+                    <TagSelector ListTag="@_listTagSelected" ListTagFromDB="@_listTagFromDB" ToggleAllTags="true" />
+                </div>
             </div>
-        </div>
 
-        <MudText Typo="Typo.h6" Class="pt-3">Nội dung</MudText>
-        
-        <RichTextEditor @ref="@_rteRef" Get="@((string val) => { _postCreateR.Content =  val; })" />
+            <MudText Typo="Typo.h6" Class="pt-3">Nội dung</MudText>
 
-        <div class="row">
-            <div class="col d-flex justify-content-end">
-                <MudChip OnClick="@(() => _nav.NavigateTo("/recreation/post-manager" + ((idPost == null) ? "" : "?idPost=" + idPost)))" Color="Color.Error" Icon="@Icons.Material.Filled.ExitToApp">Hủy</MudChip>
-                <MudChip OnClick="@(async () => { await OnSaveAsync(); })" Color="Color.Primary" Icon="@Icons.Material.Filled.Save">Lưu</MudChip>
+            <RichTextEditor @ref="@_rteRef" Get="@((string val) => { _postCreateR.Content =  val; })" />
+
+            <div class="row">
+                <div class="col d-flex justify-content-end">
+                    <MudChip OnClick="@(() => _nav.NavigateTo("/post-manager" + ((idPost == null) ? "" : "?idPost=" + idPost)))" Color="Color.Error" Icon="@Icons.Material.Filled.ExitToApp">Hủy</MudChip>
+                    <MudChip OnClick="@(async () => { await OnSaveAsync(); })" Color="Color.Primary" Icon="@Icons.Material.Filled.Save">Lưu</MudChip>
+                </div>
             </div>
-        </div>
-    </MudPaper>
-</div>
+        </MudPaper>
+    </div>
+}
+
+
 @code {
     [Parameter]
     [SupplyParameterFromQuery]
     public string? idPost { get; set; }
 
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string? idMajor { get; set; }
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string? fallBackUrl { get; set; }
+
+    private bool _isLoadingAll = true;
+
+    private Guid _idUser;
+
+    private List<TagDTO> _listTagFromDB = new();
+    private List<TagDTO> _listTagSelected = new();
+
     RichTextEditor _rteRef = new();
 
     private PostCreateRequest _postCreateR = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await _authProvider.GetAuthenticationStateAsync();
+        var userIdClaim = state.User.FindAll("UserId").FirstOrDefault();
+
+        if (userIdClaim != null)
+        {
+            _idUser = Guid.Parse(userIdClaim.Value);
+        }
+        else { }
+        _postCreateR.CreatedBy = _idUser;
+
+        await LoadData().ContinueWith((re) =>
+        {
+            _isLoadingAll = false;
+            StateHasChanged();
+        });
+    }
+
+    private async Task LoadData()
+    {
+        if (idMajor != null)
+        {
+            var majorDTO = await _repoMajor.GetByIdAsync(Guid.Parse(idMajor));
+            _listTagFromDB = majorDTO.ListTag;
+        }
+    }
 
     private async Task OnSaveAsync()
     {
         await _rteRef.GetRTEValue();
 
         if(idPost != null) _postCreateR.PostId = Guid.Parse(idPost);
-        var result = await _repoPost.AddAsync(_postCreateR);
-        if(result)
+        var resultPost = await _repoPost.AddAsync(_postCreateR);
+
+        if (resultPost != null)
         {
-            _mudSnackbar.Add("Thêm thành công", Severity.Success);
-            _nav.NavigateTo("/post-manager" + ((idPost == null) ? "" : "?idPost=" + idPost));
+            var resultPostTag = await _repoPostTag.AddRangeAsync(_listTagSelected.AsEnumerable().Select(t =>
+            {
+                return new PostTagCreateRequest()
+                {
+                    PostId = resultPost.Id,
+                    TagId = t.Id,
+                    CreatedBy = _idUser
+                };
+            }).ToList());
+            if(resultPostTag)
+            {
+                _mudSnackbar.Add("Thêm thành công", Severity.Success);
+                _nav.NavigateTo(fallBackUrl);
+            }
+            else
+            {
+                _mudSnackbar.Add("Thêm bài viết thành công. Thêm tag thất bại", Severity.Warning);
+                _nav.NavigateTo(fallBackUrl);
+            }
         }
         else
         {

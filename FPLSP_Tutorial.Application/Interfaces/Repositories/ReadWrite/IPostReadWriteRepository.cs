@@ -6,8 +6,8 @@ namespace FPLSP_Tutorial.Application.Interfaces.Repositories.ReadWrite
 {
     public interface IPostReadWriteRepository
     {
-        Task<RequestResult<Guid>> AddPostAsync(PostEntity entity, CancellationToken cancellationToken);
-        Task<RequestResult<int>> UpdatePostAsync(PostEntity entity, CancellationToken cancellationToken);
-        Task<RequestResult<int>> DeletePostAsync(PostDeleteRequest request, CancellationToken cancellationToken);
+        Task<RequestResult<Guid>> AddAsync(PostEntity entity, CancellationToken cancellationToken);
+        Task<RequestResult<int>> UpdateAsync(PostEntity entity, CancellationToken cancellationToken);
+        Task<RequestResult<int>> DeleteAsync(PostDeleteRequest request, CancellationToken cancellationToken);
     }
 }

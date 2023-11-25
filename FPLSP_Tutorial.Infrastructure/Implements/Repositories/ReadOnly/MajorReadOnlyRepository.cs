@@ -11,6 +11,7 @@ using FPLSP_Tutorial.Domain.Entities;
 using FPLSP_Tutorial.Domain.Enums;
 using FPLSP_Tutorial.Infrastructure.Database.AppDbContext;
 using FPLSP_Tutorial.Infrastructure.Extensions;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
@@ -50,7 +51,11 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
                     {
                         queryable = queryable.Where(m => m.UserMajors.Where(um => um.UserId == request.UserId && um.Status != EntityStatus.Deleted && !um.Deleted).Any(um => um.MajorId == m.Id));
                     }
-                    
+                }
+
+                if(request.ContainPostOnly)
+                {
+                    queryable = queryable.Where(m => m.Tags.Where(t => t.Status != 0 && !t.Deleted).SelectMany(t => t.PostTags).Select(pt => pt.Post).Any(p => p.Status != 0 && !p.Deleted));
                 }
 
                 var result = await queryable
@@ -93,7 +98,11 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
                     {
                         queryable = queryable.Where(m => m.UserMajors.Where(um => um.UserId == request.UserId && um.Status != EntityStatus.Deleted && !um.Deleted).Any(um => um.MajorId == m.Id));
                     }
+                }
 
+                if (request.ContainPostOnly)
+                {
+                    queryable = queryable.Where(m => m.Tags.Where(t => t.Status != 0 && !t.Deleted).SelectMany(t => t.PostTags).Select(pt => pt.Post).Any(p => p.Status != 0 && !p.Deleted));
                 }
 
                 var result = await queryable.PaginateAsync<MajorEntity, MajorDTO>(request, _mapper, cancellationToken);
@@ -104,7 +113,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
                 {
                     foreach (var dto in result.Data)
                     {
-                        dto.NumberOfPostByUser = _dbContext.PostEntities.AsNoTracking().AsQueryable().Where(c => c.CreatedBy == request.UserId).Count();
+                        dto.NumberOfPostByUser = _dbContext.PostEntities.AsNoTracking().AsQueryable().Where(c => c.CreatedBy == request.UserId && c.PostTags.Select(pt => pt.Tag).Any(t => t.MajorId == c.Id)).Count();
                     }
                 }
 

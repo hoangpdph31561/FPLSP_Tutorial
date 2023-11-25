@@ -56,7 +56,7 @@
                     {
                         <MudTd>
                             <MudTooltip Text="Xem chi tiết">
-                                <MudChip OnClick="@(() => { _navManager.NavigateTo($"/recreation/post-manager?idPost={context.Id}"); })">@context.CountChildPost</MudChip>
+                                <MudChip OnClick="@(() => { _navManager.NavigateTo($"/recreation/post-manager?idPost={context.Id}"); })">@context.NumberOfChildPost</MudChip>
                             </MudTooltip>
                         </MudTd>
                     }

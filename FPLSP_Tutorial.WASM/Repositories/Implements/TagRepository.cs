@@ -14,9 +14,23 @@ namespace FPLSP_Tutorial.WASM.Repositories.Implements
             _httpClient = httpClient;
         }
 
+        public async Task<List<TagDTO>> GetListAsync(TagViewRequest request)
+        {
+            string url = $"/api/Tags/GetListAsync?";
+
+            if (request.MajorId != null) { url += $"&MajorId={request.MajorId}"; }
+
+            var result = await _httpClient.GetFromJsonAsync<List<TagDTO>>(url);
+            if (result == null)
+            {
+                return new();
+            }
+            return result;
+        }
+
         public async Task<PaginationResponse<TagDTO>> GetListWithPaginationAsync(TagViewWithPaginationRequest request)
         {
-            string url = $"/api/Tags/GetListWithPagination?PageNumber={request.PageNumber}&PageSize={request.PageSize}";
+            string url = $"/api/Tags/GetListWithPaginationAsync?PageNumber={request.PageNumber}&PageSize={request.PageSize}";
 
             if(request.MajorId != null) { url += $"&MajorId={request.MajorId}"; }
 

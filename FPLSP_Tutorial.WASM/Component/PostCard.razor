@@ -1,4 +1,5 @@
 ﻿@using FPLSP_Tutorial.WASM.Data.Client;
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post;
 
 <style>
     .hover-zoom:hover {
@@ -24,7 +25,7 @@
                 <div class="row">
                     <div class="col-12 d-flex">
                         <MudIcon Icon="@Icons.Material.Filled.Person" Size="Size.Small"></MudIcon>
-                        <MudText Typo="Typo.caption" Style="font-weight: 500">@((Post.CreatedName == null || Post.CreatedName == "") ? "N/A" : Post.CreatedName)</MudText>
+                        <MudText Typo="Typo.caption" Style="font-weight: 500">@((Post.CreatedByName == null || Post.CreatedByName == "") ? "N/A" : Post.CreatedByName)</MudText>
                         <MudText Typo="Typo.caption"> | @Post.CreatedTime.ToString("dd/MM/yyyy")</MudText>
                     </div>
 
@@ -32,26 +33,33 @@
                         <div class="overflow-text-1">
                             <MudText Typo="Typo.h5" Style="font-weight: 500">@Post.Title</MudText>
                         </div>
-                        <MudDivider></MudDivider>
                     </div>
-                    <div class="col-12 pt-1">
+
+                    <div class="col-12">
                         <div class="d-flex align-center">
                             <MudText Typo="Typo.caption">Tags: </MudText>
                             <div class="overflow-hidden">
-                                @foreach (var i in Post.LstTags)
+                                @foreach (var i in Post.ListTag)
                                 {
                                     <span style="background-color: lightgray; border-radius: 5px;" class="me-1 pa-1">@i.Name</span>
                                 }
                             </div>
                         </div>
+                        <MudDivider Class="my-2"></MudDivider>
                     </div>
+
                     <div class="col-12 " style="-webkit-mask-image: linear-gradient(180deg, #000 60%, transparent); overflow: clip; height: 80px;">
 
                         @((MarkupString)Post.Content)
                     </div>
 
-                    <div class="col-12 d-flex justify-end">
-                        <MudLink Href="@($"/recreation/post/view/{Post.Id}")">Xem thêm</MudLink>
+                    <div class="col-12 d-flex align-center">
+                        @if(Post.NumberOfChildPost > 0)
+                        {
+                            <MudText Typo="Typo.caption">@("Gồm: " + Post.NumberOfChildPost + " bài viết con")</MudText>
+                        }
+                        <div class="mr-auto"></div>
+                        <MudLink Href="@($"/post/view/{Post.Id}")">Xem thêm</MudLink>
                     </div>
                 </div>
             </MudCard>
@@ -73,16 +81,14 @@
                     <div class="overflow-text-1">
                         <MudSkeleton />
                     </div>
-                    <MudDivider></MudDivider>
                 </div>
-                <div class="col-12 pt-1">
+                <div class="col-12">
                     <div class="d-flex align-center">
-                        <MudText Typo="Typo.caption">Tags: </MudText>
-                        @for(int i = 1; i<= 3; i++)
+                        @for(int i = 1; i<= 4; i++)
                         {
-                            <MudSkeleton Width="30%" Class="me-1 pa-1" />
+                            <MudSkeleton Width="25%" Class="me-1 pa-1" />
                         }
-                        
+                        <MudDivider Class="my-2"></MudDivider>
                     </div>
                 </div>
                 <div class="col-12 " style="-webkit-mask-image: linear-gradient(180deg, #000 60%, transparent); overflow: clip; height: 80px;">
@@ -104,7 +110,7 @@
     public int Col { get; set; } = 3;
 
     [Parameter]
-    public PostMainDTO? Post { get; set; }
+    public PostDTO? Post { get; set; }
 
     [Parameter]
     public bool IsSkeleton { get; set; }

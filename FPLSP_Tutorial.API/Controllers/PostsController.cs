@@ -26,15 +26,14 @@ namespace FPLSP_Tutorial.API.Controllers
             _postReadWriteRespository = postReadWriteRespository;
         }
 
-        [HttpGet("GetLists")]
-        public async Task<IActionResult> GetLists([FromQuery] PostViewWithPaginationRequest request, CancellationToken cancellationToken)
+        [HttpGet("GetList")]
+        public async Task<IActionResult> GetList([FromQuery] PostViewWithPaginationRequest request, CancellationToken cancellationToken)
         {
             PostListWithPaginationViewModel vm = new(_postReadOnlyRespository, _localizationService);
             await vm.HandleAsync(request, cancellationToken);
             return Ok(vm);
         }
 
-        //nlnt
         [HttpGet("GetListWithPaginationAsync")]
         public async Task<IActionResult> GetListWithPaginationAsync([FromQuery] PostViewWithPaginationRequest request, CancellationToken cancellationToken)
         {
@@ -64,14 +63,19 @@ namespace FPLSP_Tutorial.API.Controllers
         
         
         [HttpPost]
-        public async Task<IActionResult> CreatePost(PostCreateRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> AddAsync(PostCreateRequest request, CancellationToken cancellationToken)
         {
             PostCreateViewModel vm = new(_postReadOnlyRespository, _postReadWriteRespository, _localizationService, _mapper);
             await vm.HandleAsync(request, cancellationToken);
-            return Ok(vm);
+            if (vm.Success)
+            {
+                PostDTO result = (PostDTO)vm.Data;
+                return Ok(result);
+            }
+            return BadRequest(vm);
         }
         [HttpPut]
-        public async Task<IActionResult> UpdatePost(PostUpdateRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateAsync(PostUpdateRequest request, CancellationToken cancellationToken)
         {
             PostUpdateViewModel vm = new(_postReadWriteRespository, _localizationService, _mapper);
             await vm.HandleAsync(request, cancellationToken);
@@ -79,7 +83,7 @@ namespace FPLSP_Tutorial.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeletePost([FromQuery]PostDeleteRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeleteAsync([FromQuery]PostDeleteRequest request, CancellationToken cancellationToken)
         {
             PostDeleteViewModel vm = new(_postReadWriteRespository, _localizationService);
             await vm.HandleAsync(request, cancellationToken);

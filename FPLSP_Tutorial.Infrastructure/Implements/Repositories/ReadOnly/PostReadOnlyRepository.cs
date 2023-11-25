@@ -60,6 +60,13 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
                 var result = await queryable
                     .ProjectTo<PostDTO>(_mapper.ConfigurationProvider)
                     .ToListAsync();
+
+                foreach(var i in result)
+                {
+                    var user = await _dbContext.UserEntities.AsNoTracking().Where(c => c.Id == i.CreatedBy).Select(c => c.Username).FirstOrDefaultAsync();
+                    i.CreatedByName = user ?? "N/A";
+                }
+
                 return RequestResult<List<PostDTO>>.Succeed(result);
             }
             catch (Exception e)
@@ -93,6 +100,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
                             .Where(pt => pt.Status != EntityStatus.Deleted && !pt.Deleted)
                                 .Select(pt => pt.Tag)
                                     .Any(t => t.MajorId == request.MajorId && t.Status != EntityStatus.Deleted && !t.Deleted));
+
                 }
                 if (request.IsGetSystemPost)
                 {
@@ -104,6 +112,16 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
                 }
 
                 var result = await queryable.PaginateAsync<PostEntity, PostDTO>(request, _mapper, cancellationToken);
+
+                if(result.Data != null)
+                {
+                    foreach (var i in result.Data)
+                    {
+                        var user = await _dbContext.UserEntities.AsNoTracking().Where(c => c.Id == i.CreatedBy).Select(c => c.Username).FirstOrDefaultAsync();
+                        i.CreatedByName = user ?? "N/A";
+                    }
+                }
+
                 return RequestResult<PaginationResponse<PostDTO>>.Succeed(new PaginationResponse<PostDTO>()
                 {
                     PageNumber = request.PageNumber,

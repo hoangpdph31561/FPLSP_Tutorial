@@ -19,7 +19,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
             _appDbContext = appDbContext;
             _localizationService = localizationService;
         }
-        public async Task<RequestResult<Guid>> AddPostAsync(PostEntity entity, CancellationToken cancellationToken)
+        public async Task<RequestResult<Guid>> AddAsync(PostEntity entity, CancellationToken cancellationToken)
         {
             try
             {
@@ -43,7 +43,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
             }
         }
 
-        public async Task<RequestResult<int>> UpdatePostAsync(PostEntity entity, CancellationToken cancellationToken)
+        public async Task<RequestResult<int>> UpdateAsync(PostEntity entity, CancellationToken cancellationToken)
         {
             try
             {
@@ -73,7 +73,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
             }
         }
 
-        public async Task<RequestResult<int>> DeletePostAsync(PostDeleteRequest request, CancellationToken cancellationToken)
+        public async Task<RequestResult<int>> DeleteAsync(PostDeleteRequest request, CancellationToken cancellationToken)
         {
             try
             {

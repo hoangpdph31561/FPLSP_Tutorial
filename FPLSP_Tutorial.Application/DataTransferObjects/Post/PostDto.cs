@@ -21,6 +21,7 @@ namespace FPLSP_Tutorial.Application.DataTransferObjects.Post
         public DateTimeOffset DeletedTime { get; set; }
 
         public List<TagDTO> ListTag { get; set; } = new List<TagDTO>();
-        public int CountChildPost { get; set; } = 0;
+        public int NumberOfChildPost { get; set; } = 0;
+        public string CreatedByName { get; set; } = string.Empty;
     }
 }

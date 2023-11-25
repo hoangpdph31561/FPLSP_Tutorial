@@ -26,7 +26,7 @@ namespace FPLSP_Tutorial.Infrastructure.ViewModels.Posts
         {
             try
             {
-                var createPostResult = await _postReadWriteRespository.AddPostAsync(_mapper.Map<PostEntity>(request), cancellationToken);
+                var createPostResult = await _postReadWriteRespository.AddAsync(_mapper.Map<PostEntity>(request), cancellationToken);
                 if (createPostResult.Success)
                 {
                     var result = await _postReadOnlyRespository.GetPostByIdAsync(createPostResult.Data, cancellationToken);

@@ -14,7 +14,10 @@
 @inject NavigationManager _nav
 @inject AuthenticationStateProvider _authProvider
 
-<FileImportPopover Enable="@_isEnableFileImport" ReturnString="@((string s) => _rteRef.SetRTEValue(s))" OnClose="@(() => _isEnableFileImport = false)"/>
+@if (_isEnableFileImport)
+{
+    <FileImportPopover Enable="@_isEnableFileImport" ReturnString="@((string s) => _rteRef.SetRTEValue(s))" OnClose="@(() => _isEnableFileImport = false)" />
+}
 
 @if(_isLoadingAll)
 {

@@ -12,7 +12,10 @@
 @inject ISnackbar _mudSnackbar;
 @inject NavigationManager _nav;
 
-<FileImportPopover Enable="@_isEnableFileImport" ReturnString="@((string s) => _rteRef.SetRTEValue(s))" OnClose="@(() => _isEnableFileImport = false)" />
+@if(_isEnableFileImport)
+{
+    <FileImportPopover Enable="@_isEnableFileImport" ReturnString="@((string s) => _rteRef.SetRTEValue(s))" OnClose="@(() => _isEnableFileImport = false)" />
+}
 
 <div class="ma-3">
     <MudBreadcrumbs 
@@ -20,8 +23,6 @@
                         new BreadcrumbItem("Danh sách", "/recreation/post-manager"),
                         new BreadcrumbItem("Cập nhật bài viết", "/recreation/post-update", true)
     })"></MudBreadcrumbs>
-
-    <MudText Typo="Typo.h5" Style="font-weight: 500">Cập nhật bài viết</MudText>
 
     @if(_isLoadingAll)
     {

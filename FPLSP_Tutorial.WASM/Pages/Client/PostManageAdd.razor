@@ -14,6 +14,8 @@
 @inject NavigationManager _nav
 @inject AuthenticationStateProvider _authProvider
 
+<FileImportPopover Enable="@_isEnableFileImport" ReturnString="@((string s) => _rteRef.SetRTEValue(s))" OnClose="@(() => _isEnableFileImport = false)"/>
+
 @if(_isLoadingAll)
 {
     <LoadingIndicatorOverlay/>
@@ -35,7 +37,10 @@ else
                 </div>
             </div>
 
-            <MudText Typo="Typo.h6" Class="pt-3">Nội dung</MudText>
+            <div class="d-flex align-center">
+                <MudText Typo="Typo.h6" Class="mr-auto">Nội dung</MudText>
+                <MudChip Icon="@Icons.Material.Filled.FileUpload" title="Nhập nội dung bằng file truyền vào(.xlsx, .docs)" Color="Color.Success" OnClick="@(() => _isEnableFileImport = true)">Nhập file</MudChip>
+            </div>
 
             <RichTextEditor @ref="@_rteRef" Get="@((string val) => { _postCreateR.Content =  val; })" />
 
@@ -64,6 +69,7 @@ else
     public string? fallBackUrl { get; set; }
 
     private bool _isLoadingAll = true;
+    private bool _isEnableFileImport = false;
 
     private Guid _idUser;
 

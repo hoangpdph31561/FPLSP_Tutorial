@@ -1,5 +1,10 @@
-﻿@inject ISnackbar _mudSnackbar
+﻿@using DocumentFormat.OpenXml.Packaging;
+@using System.Xml.Linq;
+@using OpenXmlPowerTools;
+@inject ISnackbar _mudSnackbar
 @inject IJSRuntime _jsRuntime;
+
+@inject ISnackbar _mudSnackbar;
 
 <style>
     .file-hover:hover {
@@ -9,24 +14,36 @@
 
 <MudOverlay @bind-Visible="@Enable" ZIndex="1301" LightBackground="true">
     <MudCard Class="p-3">
-        <div>
-            <div class="d-flex align-items-center">
-                <MudText Typo="Typo.h6" Class="mr-auto" Style="font-weight: 600;">Tải lên tài liệu</MudText>
-                <MudIconButton Icon="@Icons.Material.Filled.Close" Size="Size.Small" OnClick="@(async () => { await OnClose.InvokeAsync(); })"></MudIconButton>
-            </div>
+        @if (!IsLoading)
+        {
             <div>
-                <MudFileUpload T="IBrowserFile" FilesChanged="@(async (IBrowserFile f) => await UploadFile(f))" Hidden="false" Class="flex-1" InputClass="absolute mud-width-full mud-height-full overflow-hidden z-20" InputStyle="opacity:0" @ondragenter="@SetDragClass" @ondragleave="@ClearDragClass" @ondragend="@ClearDragClass">
-                    <ButtonTemplate>
-                        <MudPaper Outlined="true" Class="@(DragClass)">
-                            <div class="w-100 d-flex justify-content-center">
-                                <MudIcon Icon="@Icons.Material.Filled.DriveFileMove" Style="font-size: 10rem;" Color="Color.Default"></MudIcon>
-                            </div>
-                            <MudText Typo="Typo.h6" Color="Color.Default">Kéo thả hoặc nhấn vào đây để chọn</MudText>
-                        </MudPaper>
-                    </ButtonTemplate>
-                </MudFileUpload>
+                <div class="d-flex align-items-center">
+                    <MudText Typo="Typo.h6" Class="mr-auto" Style="font-weight: 600;">Tải lên tài liệu</MudText>
+                    <MudIconButton Icon="@Icons.Material.Filled.Close" Size="Size.Small" OnClick="@(async () => { await OnClose.InvokeAsync(); })"></MudIconButton>
+                </div>
+                <div>
+                    <MudFileUpload T="IBrowserFile" FilesChanged="@(async (IBrowserFile f) => await UploadFile(f))" Hidden="false" Class="flex-1" InputClass="absolute mud-width-full mud-height-full overflow-hidden z-20" InputStyle="opacity:0" @ondragenter="@SetDragClass" @ondragleave="@ClearDragClass" @ondragend="@ClearDragClass">
+                        <ButtonTemplate>
+                            <MudPaper Outlined="true" Class="@(DragClass)">
+                                <div class="w-100 d-flex justify-content-center">
+                                    <MudIcon Icon="@Icons.Material.Filled.DriveFileMove" Style="font-size: 10rem;" Color="Color.Default"></MudIcon>
+                                </div>
+                                <MudText Typo="Typo.h6" Color="Color.Default">Kéo thả hoặc nhấn vào đây để chọn</MudText>
+                            </MudPaper>
+                        </ButtonTemplate>
+                    </MudFileUpload>
+                </div>
             </div>
-        </div>
+        }
+        else
+        {
+            <div class="d-flex align-center">
+                <MudText Class="mr-auto">Đang xử lý file...</MudText>
+                <MudText @onclick="@(() => OnClose.InvokeAsync())">Hủy</MudText>
+            </div>
+            
+            <MudProgressLinear Value="@LoadingProgress" Color="Color.Info" Style="width: 30vw"></MudProgressLinear>
+        }
     </MudCard>
 </MudOverlay>
 
@@ -40,21 +57,79 @@
     [Parameter]
     public EventCallback<string> ReturnString { get; set; }
 
+    private bool IsLoading = false;
+    private int LoadingProgress = 0;
+
+    private string Result = "";
+
+    private List<string> ListAcceptedExtensions = new()
+    {
+        "docx"
+    };
+
     private static string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mud-width-full mud-height-full z-10";
     private string DragClass = DefaultDragClass;
 
     protected override async Task OnInitializedAsync()
     {
+        IsLoading = false;
     }
 
     private async Task UploadFile(IBrowserFile browserFile)
     {
-        //FileServices _sv = new();
+        IsLoading = true;
 
-        //var result = await _sv.HandleFile(browserFile);
+        var fileExtension = browserFile.Name.Split(".").Last();
+        if(!ListAcceptedExtensions.Any(c => c.ToLower() == fileExtension))
+        {
+            _mudSnackbar.Add("Định dạng file không được hỗ trợ", Severity.Error);
+            return;
+        }
 
-        //await ReturnString.InvokeAsync(result);
-        //await OnClose.InvokeAsync();
+        const long maxFileSize = 1024L * 1024L * 1024L;
+
+        Stream stream = browserFile.OpenReadStream(maxFileSize);
+        int bufferSize = 512;
+        byte[] buffer = System.Buffers.ArrayPool<byte>.Shared.Rent(bufferSize);
+        int bytesRead = 0;
+        long totalBytesRead = 0;
+
+        using var timer = new Timer(_ => InvokeAsync(() => StateHasChanged()));
+        timer.Change(TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(500));
+
+        using (MemoryStream memStream = new MemoryStream())
+        {
+            try
+            {
+                int offset = 0;
+
+                while ((bytesRead = await stream.ReadAsync(buffer)) != 0)
+                {
+                    totalBytesRead += bytesRead;
+                    await memStream.WriteAsync(buffer, 0, bytesRead);
+                    LoadingProgress =  (int)(100 * totalBytesRead / browserFile.Size);
+                }
+            }
+            finally
+            {
+                System.Buffers.ArrayPool<byte>.Shared.Return(buffer);
+            }
+        
+            using (WordprocessingDocument doc = WordprocessingDocument.Open(memStream, true))
+            {
+                HtmlConverterSettings settings = new HtmlConverterSettings()
+                    {
+                        PageTitle = "My Page Title"
+                    };
+                XElement html = HtmlConverter.ConvertToHtml(doc, settings);
+
+                Result = html.ToStringNewLineOnAttributes();
+            }
+        }
+
+        timer.Change(Timeout.Infinite, Timeout.Infinite);
+        await ReturnString.InvokeAsync(Result);
+        await OnClose.InvokeAsync();
     }
 
     private void SetDragClass()

@@ -12,6 +12,8 @@
 @inject ISnackbar _mudSnackbar;
 @inject NavigationManager _nav;
 
+<FileImportPopover Enable="@_isEnableFileImport" ReturnString="@((string s) => _rteRef.SetRTEValue(s))" OnClose="@(() => _isEnableFileImport = false)" />
+
 <div class="ma-3">
     <MudBreadcrumbs 
         Items="@(new List<BreadcrumbItem>() {
@@ -35,7 +37,10 @@
                 </div>
             </div>
 
-            <MudText Typo="Typo.h6" Class="pt-3">Nội dung</MudText>
+            <div class="d-flex align-center">
+                <MudText Typo="Typo.h6" Class="mr-auto">Nội dung</MudText>
+                <MudChip Icon="@Icons.Material.Filled.FileUpload" title="Nhập nội dung bằng file truyền vào(.xlsx, .docs)" Color="Color.Success" OnClick="@(() => _isEnableFileImport = true)">Nhập file</MudChip>
+            </div>
 
             <RichTextEditor @ref="@_rteRef" Get="@((string val) => { _postUpdateRequest.Content =  val; })" Set="@_postUpdateRequest.Content" />
 
@@ -70,6 +75,8 @@
     RichTextEditor _rteRef = new();
 
     private bool _isLoadingAll = true;
+    private bool _isEnableFileImport = false;
+
     private PostUpdateRequest _postUpdateRequest = new();
 
     protected override async Task OnInitializedAsync()

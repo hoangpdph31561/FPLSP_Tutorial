@@ -25,13 +25,16 @@
                 <div class="row">
                     <div class="col-12 d-flex">
                         <MudIcon Icon="@Icons.Material.Filled.Person" Size="Size.Small"></MudIcon>
-                        <MudText Typo="Typo.caption" Style="font-weight: 500">@((Post.CreatedByName == null || Post.CreatedByName == "") ? "N/A" : Post.CreatedByName)</MudText>
+                        @{
+                            var disName = (Post.CreatedByName == null || Post.CreatedByName == "") ? "N/A" : Post.CreatedByName;
+                        }
+                        <MudText Typo="Typo.caption" Style="font-weight: 500; max-width: 50%" Class="overflow-text-1" title="@disName">@(disName)</MudText>
                         <MudText Typo="Typo.caption"> | @Post.CreatedTime.ToString("dd/MM/yyyy")</MudText>
                     </div>
 
                     <div class="col-12">
                         <div class="overflow-text-1">
-                            <MudText Typo="Typo.h5" Style="font-weight: 500">@Post.Title</MudText>
+                            <MudText Typo="Typo.h5" Style="font-weight: 500" title="@Post.Title">@Post.Title</MudText>
                         </div>
                     </div>
 
@@ -71,33 +74,38 @@
     }
     else
     {
-        <MudCard Class="p-3 hover-zoom" Elevation="3">
+        <MudCard Class="p-3 hover-zoom" Elevation="2">
             <div class="row">
                 <div class="col-12 d-flex">
-                    <MudSkeleton Width="50%" />
+                    <MudSkeleton Width="60%" />
                 </div>
 
                 <div class="col-12">
                     <div class="overflow-text-1">
-                        <MudSkeleton />
+                        <MudSkeleton Width="100%" />
                     </div>
                 </div>
+
                 <div class="col-12">
-                    <div class="d-flex align-center">
-                        @for(int i = 1; i<= 4; i++)
+                    <div class="d-flex align-center  w-100">
+                        @for (int i = 1; i <= 4; i++)
                         {
-                            <MudSkeleton Width="25%" Class="me-1 pa-1" />
+                            <div class="me-1" style="width: 20%">
+                                <MudSkeleton Width="100%" />
+                            </div>
+                                
                         }
-                        <MudDivider Class="my-2"></MudDivider>
                     </div>
+                    <MudDivider Class="my-2"></MudDivider>
                 </div>
+
                 <div class="col-12 " style="-webkit-mask-image: linear-gradient(180deg, #000 60%, transparent); overflow: clip; height: 80px;">
-
-                    <MudSkeleton SkeletonType="SkeletonType.Rectangle" Width="100%" Height="100%"/>
+                    <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="80px" />
                 </div>
 
-                <div class="col-12 d-flex justify-end">
-                    <MudSkeleton Width="40%"/>
+                <div class="col-12 d-flex align-center">
+                    <div class="mr-auto"></div>
+                    <MudSkeleton Width="30%" />
                 </div>
             </div>
         </MudCard>

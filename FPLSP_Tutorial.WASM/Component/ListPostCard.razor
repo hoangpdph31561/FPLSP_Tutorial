@@ -1,8 +1,8 @@
 ﻿@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post;
 <div class="row">
-    @if(IsLoading)
+    @if (IsLoading)
     {
-        for(int i = 1; i <= Convert.ToInt32(12 / CardCol); i++)
+        for (int i = 1; i <= Convert.ToInt32(12 / CardCol); i++)
         {
             <PostCard IsSkeleton="true" Col="@CardCol" />
         }
@@ -15,6 +15,7 @@
         }
     }
 </div>
+
 
 @code {
     [Parameter]

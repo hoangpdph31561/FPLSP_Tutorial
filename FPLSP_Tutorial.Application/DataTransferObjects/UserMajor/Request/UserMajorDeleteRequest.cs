@@ -2,8 +2,8 @@
 {
     public class UserMajorDeleteRequest
     {
-        public Guid Id { get; set; }
-
+        public Guid MajorId { get; set; }
+        public Guid UserId { get; set; }
         public Guid? DeletedBy { get; set; }
     }
 }

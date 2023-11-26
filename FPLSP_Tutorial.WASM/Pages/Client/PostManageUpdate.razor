@@ -1,4 +1,4 @@
-﻿@page "/post/update"
+﻿@page "/post/manage/self/update"
 @using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post.Request;
 @using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post;
 
@@ -40,13 +40,18 @@
 
         <div class="row">
             <div class="col d-flex justify-content-end">
-                <MudChip OnClick="@(() => _nav.NavigateTo("/recreation/post-manager" + ((_post.PostId == null) ? "" : "?idPost=" + idPost)))" Color="Color.Error" Icon="@Icons.Material.Filled.ExitToApp">Hủy</MudChip>
+                <MudChip OnClick="@(() => _nav.NavigateTo(fallBackUrl))" Color="Color.Error" Icon="@Icons.Material.Filled.ExitToApp">Hủy</MudChip>
                 <MudChip OnClick="@(async () => { await OnSaveAsync(); })" Color="Color.Primary" Icon="@Icons.Material.Filled.Save">Lưu</MudChip>
             </div>
         </div>
     }
 </div>
 @code {
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string? fallBackUrl { get; set; }
+
+
     [Parameter]
     [SupplyParameterFromQuery]
     public string? idPost { get; set; }

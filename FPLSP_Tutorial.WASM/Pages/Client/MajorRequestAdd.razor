@@ -24,7 +24,10 @@
                 </MudTd>
             </RowTemplate>
         </MudTable>
-        <CustomPagination Class="my-1" HasNext="@_presMajor.HasNext" OnPageChange="@(async e => await OnPaginationButtonClick(e))" CurrentPageNumber="@_presMajor.PageNumber"></CustomPagination>
+        @*<CustomPagination Class="my-1" HasNext="@_presMajor.HasNext" OnPageChange="@(async e => await OnPaginationButtonClick(e))" CurrentPageNumber="@_presMajor.PageNumber"></CustomPagination>*@
+        <div class="d-flex justify-end">
+            <MudButton>Đóng</MudButton>
+        </div>
     </DialogContent>
 </MudDialog>
 
@@ -49,6 +52,8 @@
 
     private async Task LoadData()
     {
+
+
         _presMajor = await _repoMajor.GetListWithPaginationAsync(_preqMajor);
         if (_presMajor.Data != null)
         {

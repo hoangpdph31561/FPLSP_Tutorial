@@ -15,49 +15,50 @@
 }
 else
 {
+    <MudBreadcrumbs Items="_breadCrumbs" Class="ms-3"></MudBreadcrumbs>
+
     <div class="mx-3 mb-2 px-3 pb-3">
-        <MudBreadcrumbs Items="_breadCrumbs"></MudBreadcrumbs>
-
-        <MudPaper Class="pa-4" Elevation="2">
-            <div class="d-flex justify-end mb-3">
-                <MudButton StartIcon="@Icons.Material.Filled.Add" OnClick="@(async () => await DialogAdd())" Color="Color.Primary" Variant="Variant.Filled">Thêm</MudButton>
-            </div>
-            @if (_isLoadingList)
-            {
-                <MudProgressLinear Color="Color.Primary" Indeterminate="true"></MudProgressLinear>
-            }
-            else
-            {
-                <MudTable Items="@_majorDTO.Data" Elevation="3">
-                    <HeaderContent>
-                        <MudTh>STT</MudTh>
-                        <MudTh>Tên chuyên ngành</MudTh>
-                        <MudTh>SL Giảng viên</MudTh>
-                        <MudTh>SL Giảng viên chờ duyệt</MudTh>
-                        <MudTh>SL Tag</MudTh>
-                        <MudTh>SL Bài viết</MudTh>
-                        <MudTh>Trạng thái</MudTh>
-                        <MudTh>Hành động</MudTh>
-                    </HeaderContent>
-
-                    <RowTemplate>
-                        <MudTd>@(_lstmajors.IndexOf(context) + 1)</MudTd>
-                            <MudTd>@context.Name</MudTd>
-                            <MudTd>@context.NumberOfLecturer</MudTd>
-                            <MudTd>@context.NumberOfLecturerRequest</MudTd>
-                            <MudTd>@context.ListTag.Count()</MudTd>
-                            <MudTd>@context.NumberOfPost</MudTd>
-                            <MudTd><BadgeEntityStatus Status="@context.Status"></BadgeEntityStatus></MudTd>
-                            <MudTd>
-                                <MudFab Color="Color.Primary" Class="mx-1" Size="Size.Small" Icon="@Icons.Material.Filled.LabelImportant" OnClick="@(async () => await OnClickTagManager(context.Id))" Title="Quản lý Tag" DisableElevation="true"></MudFab>
-                                <MudFab Color="Color.Primary" Class="mx-1" Size="Size.Small" Icon="@Icons.Material.Filled.Edit" OnClick="@(() => DialogUpdate(context.Id))" Title="Chi tiết" DisableElevation="true"></MudFab>
-                                <MudFab Color="Color.Error" Class="mx-1" Size="Size.Small" Icon="@Icons.Material.Filled.Delete" OnClick="@(() => DialogDelete(context.Id))" Title="Xóa" DisableElevation="true">Xóa</MudFab>
-                            </MudTd>
-                        </RowTemplate>
-                    </MudTable>
-                    <MudDivider />
+        <MudPaper Elevation="2" Class="px-1">
+            <div class="mx-5 pt-4">
+                <div class="d-flex justify-end mb-3">
+                    <MudButton StartIcon="@Icons.Material.Filled.Add" OnClick="@(async () => await DialogAdd())" Color="Color.Primary" Variant="Variant.Filled">Thêm</MudButton>
+                </div>
+                @if (_isLoadingList)
+                {
+                    <MudProgressLinear Color="Color.Primary" Indeterminate="true"></MudProgressLinear>
+                }
+                else
+                {
+                    <MudTable Items="@_majorDTO.Data" Elevation="3">
+                        <HeaderContent>
+                            <MudTh>STT</MudTh>
+                            <MudTh>Tên chuyên ngành</MudTh>
+                            <MudTh>SL Giảng viên</MudTh>
+                            <MudTh>SL Giảng viên chờ duyệt</MudTh>
+                            <MudTh>SL Tag</MudTh>
+                            <MudTh>SL Bài viết</MudTh>
+                            <MudTh>Trạng thái</MudTh>
+                            <MudTh>Hành động</MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd>@(_lstmajors.IndexOf(context) + 1)</MudTd>
+                                <MudTd>@context.Name</MudTd>
+                                <MudTd>@context.NumberOfLecturer</MudTd>
+                                <MudTd>@context.NumberOfLecturerRequest</MudTd>
+                                <MudTd>@context.ListTag.Count()</MudTd>
+                                <MudTd>@context.NumberOfPost</MudTd>
+                                <MudTd><BadgeEntityStatus Status="@context.Status"></BadgeEntityStatus></MudTd>
+                                <MudTd>
+                                    <MudFab Size="Size.Small" Color="Color.Primary" Class="m-1" Icon="@Icons.Material.Filled.LabelImportant" OnClick="@(async () => await OnClickTagManager(context.Id))" Title="Quản lý Tag" DisableElevation="true"></MudFab>
+                                    <MudFab Size="Size.Small" Color="Color.Primary" Class="m-1" Icon="@Icons.Material.Filled.Edit" OnClick="@(() => DialogUpdate(context.Id))" Title="Chi tiết" DisableElevation="true"></MudFab>
+                                    <MudFab Size="Size.Small" Color="Color.Error" Class="m-1" Icon="@Icons.Material.Filled.Delete" OnClick="@(() => DialogDelete(context.Id))" Title="Xóa" DisableElevation="true">Xóa</MudFab>
+                                </MudTd>
+                            </RowTemplate>
+                        </MudTable>
                     <CustomPagination Class="my-1" HasNext="@_majorDTO.HasNext" OnPageChange="@(async e => await OnPaginationButtonClick(e))" CurrentPageNumber="@_majorDTO.PageNumber"></CustomPagination>
-            }
+                }
+            </div>
+                
         </MudPaper>
     </div>
 }

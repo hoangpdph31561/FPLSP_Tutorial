@@ -12,17 +12,22 @@
 
 @inject IDialogService _diagService;
 @inject ISnackbar _mudSnackbar;
+
+<style>
+
+</style>
+
 @if (_isLoadingAll)
 {
     <LoadingIndicator />
 }
 else
 {
-    <div class="mx-3 mb-2 px-3 pb-3">
-        <MudBreadcrumbs Items="_breadCrumbs"></MudBreadcrumbs>
+    <MudBreadcrumbs Items="_breadCrumbs" Class="ms-3"></MudBreadcrumbs>
 
+    <div class="mx-3 mb-2 px-3 pb-3">
         <MudPaper Class="" Elevation="2">
-            <MudTabs @ref="tabs">
+            <MudTabs @ref="tabs" Rounded="true">
                 <MudTabPanel Text="Đang hoạt động">
                     @if (_isLoadingTab1)
                     {
@@ -30,34 +35,35 @@ else
                     }
                     else
                     {
-                        <MudTable Items="@_listUser" Style="position:relative;" Elevation="2" Class="m-3">
-                            <HeaderContent>
-                                <MudTh>STT</MudTh>
-                                <MudTh>Email</MudTh>
-                                <MudTh>Tên</MudTh>
-                                <MudTh>Chức vụ</MudTh>
-                                <MudTh>Chuyên ngành đã tham gia</MudTh>
-                            </HeaderContent>
-                            <RowTemplate>
-                                <MudTd>@(_listUser.IndexOf(context) + 1)</MudTd>
-                                <MudTd>@context.Email</MudTd>
-                                <MudTd>@context.Username</MudTd>
-                                <MudTd>
-                                        @{
-                                        string roles = "";
-                                        foreach(var i in context.RoleCodes)
-                                        {
-                                            if (roles != "") roles += ", ";
-                                            roles += i;
+                        <div class="mx-2 mt-2">
+                            <MudTable Items="@_listUser" Style="position:relative;" Elevation="2" Class="mx-4 mt-5">
+                                <HeaderContent>
+                                    <MudTh>STT</MudTh>
+                                    <MudTh>Email</MudTh>
+                                    <MudTh>Tên</MudTh>
+                                    <MudTh>Chức vụ</MudTh>
+                                    <MudTh>Chuyên ngành đã tham gia</MudTh>
+                                </HeaderContent>
+                                <RowTemplate>
+                                    <MudTd>@(_listUser.IndexOf(context) + 1)</MudTd>
+                                        <MudTd>@context.Email</MudTd>
+                                        <MudTd>@context.Username</MudTd>
+                                        <MudTd>
+                                            @{
+                                            string roles = "";
+                                            foreach (var i in context.RoleCodes)
+                                            {
+                                                if (roles != "") roles += ", ";
+                                                roles += i;
+                                            }
                                         }
-                                    }
-                                    @roles
-                                </MudTd>
-                                <MudTd>@context.ListJoinedMajors.Count()</MudTd>
-                            </RowTemplate>
-                        </MudTable>
-                        <CustomPagination Class="my-1" HasNext="@_presUser.HasNext" OnPageChange="@(async e => await OnPaginationButtonClickTab1(e))" CurrentPageNumber="@_presUser.PageNumber"></CustomPagination>
-                        <MudDivider />
+                                        @roles
+                                    </MudTd>
+                                    <MudTd>@context.ListJoinedMajors.Count()</MudTd>
+                                </RowTemplate>
+                            </MudTable>
+                            <CustomPagination Class="my-1" HasNext="@_presUser.HasNext" OnPageChange="@(async e => await OnPaginationButtonClickTab1(e))" CurrentPageNumber="@_presUser.PageNumber"></CustomPagination>
+                        </div>
                     }
                 </MudTabPanel>
                 @*  View danh sách giảng viên chờ duyệt  *@
@@ -68,24 +74,26 @@ else
                     }
                     else
                     {
-                        <MudTable Items="@_listMajorRequest" Style="position:relative;" Elevation="2" Class="m-3">
-                            <HeaderContent>
-                                <MudTh>STT</MudTh>
-                                <MudTh>Tên GV</MudTh>
-                                <MudTh>Chuyên ngành</MudTh>
-                                <MudTh>Hành động</MudTh>
-                            </HeaderContent>
-                            <RowTemplate>
-                                <MudTd>@(_listMajorRequest.IndexOf(context) + 1)</MudTd>
-                                <MudTd>@_listUser.FirstOrDefault(c => c.Id == context.CreatedBy).Username</MudTd>
-                                <MudTd>@context.MajorName</MudTd>
-                                <MudTd>
+                        <div class="mx-2 mt-2">
+                            <MudTable Items="@_listMajorRequest" Style="position:relative;" Elevation="2" Class="mx-4 mt-5">
+                                <HeaderContent>
+                                    <MudTh>STT</MudTh>
+                                    <MudTh>Tên GV</MudTh>
+                                    <MudTh>Chuyên ngành</MudTh>
+                                    <MudTh>Hành động</MudTh>
+                                </HeaderContent>
+                                <RowTemplate>
+                                    <MudTd>@(_listMajorRequest.IndexOf(context) + 1)</MudTd>
+                                    <MudTd>@_listUser.FirstOrDefault(c => c.Id == context.CreatedBy).Username</MudTd>
+                                    <MudTd>@context.MajorName</MudTd>
+                                    <MudTd>
                                         <MudFab Color="Color.Primary" Class="mx-1" Size="Size.Small" Icon="@Icons.Material.Filled.Check" OnClick="@(async () => await OnAddToMajor(context))" Title="Quản lý Tag" DisableElevation="true"></MudFab>
-                                </MudTd>
-                            </RowTemplate>
-                        </MudTable>
-                        <CustomPagination Class="my-1" HasNext="@_presMajorRequest.HasNext" OnPageChange="@(async e => await OnPaginationButtonClickTab2(e))" CurrentPageNumber="@_presMajorRequest.PageNumber"></CustomPagination>
-                        <MudDivider />
+                                    </MudTd>
+                                </RowTemplate>
+                            </MudTable>
+                            <CustomPagination Class="my-1" HasNext="@_presMajorRequest.HasNext" OnPageChange="@(async e => await OnPaginationButtonClickTab2(e))" CurrentPageNumber="@_presMajorRequest.PageNumber"></CustomPagination>
+                        </div>
+                        
                     }
                 </MudTabPanel>
             </MudTabs>

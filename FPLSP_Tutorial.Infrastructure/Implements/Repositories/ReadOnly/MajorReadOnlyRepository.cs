@@ -113,7 +113,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
                 {
                     foreach (var dto in result.Data)
                     {
-                        dto.NumberOfPostByUser = _dbContext.PostEntities.AsNoTracking().AsQueryable().Where(c => c.CreatedBy == request.UserId && c.PostTags.Select(pt => pt.Tag).Any(t => t.MajorId == c.Id)).Count();
+                        dto.NumberOfPostByUser = _dbContext.PostEntities.AsNoTracking().AsQueryable().Where(c => c.CreatedBy == request.UserId && c.PostTags.Select(pt => pt.Tag).Any(t => t.MajorId == dto.Id)).Count();
                     }
                 }
 

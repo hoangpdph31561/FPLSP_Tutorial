@@ -34,5 +34,18 @@ namespace FPLSP_Tutorial.WASM.Repositories.Implements
             }
             return false;
         }
+
+        public async Task<bool> DeleteAsync(UserMajorDeleteRequest request)
+        {
+            var url = $"/api/UserMajors?MajorId={request.MajorId}&UserId={request.UserId}";
+            if(request.DeletedBy != null) { url += $"&DeletedBy={request.DeletedBy}";  }
+
+            var result = await _httpClient.DeleteAsync(url);
+            if (result.IsSuccessStatusCode)
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }

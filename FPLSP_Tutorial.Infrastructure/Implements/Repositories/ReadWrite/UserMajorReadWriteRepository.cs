@@ -75,7 +75,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
         {
             try
             {
-                var userMajor = await GetUserMajorByIdAsync(request.Id, cancellationToken);
+                var userMajor = await _dbContext.UserMajorEntities.FirstOrDefaultAsync(c => c.UserId == request.UserId && c.MajorId == request.MajorId && c.Status != EntityStatus.Deleted && !c.Deleted, cancellationToken);
 
                 userMajor!.Deleted = true;
                 userMajor.DeletedBy = request.DeletedBy;

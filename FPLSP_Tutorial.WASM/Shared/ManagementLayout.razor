@@ -13,8 +13,13 @@
     .custom-layout-color {
         background-color: rgb(255, 255, 255);
     }
+    :root {
+        --mud-default-borderradius: 8px;
+    }
 
-
+    .mud-breadcrumb-item > a {
+        font-weight: 500;
+    }
 </style>
 
 <MudLayout>
@@ -38,14 +43,13 @@
         <MudNavMenu>
             <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home" Href="/post/home">Trang chủ</MudNavLink>
             <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.List" Href="/major/manage/list">Quản lý chuyên ngành</MudNavLink>
-            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Notes" Href="/major/joined">Quản lý bài viết</MudNavLink>
-            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.List" Href="/user/manage/list">Quản lý người dùng</MudNavLink>
-            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Newspaper" Href="/recreation/post-manager">Quản lý bài viết</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Newspaper" Href="/major/joined">Quản lý bài viết</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.SupervisorAccount" Href="/user/manage/list">Quản lý người dùng</MudNavLink>
         </MudNavMenu>
     </MudDrawer>
     <MudMainContent >
         <div style="
-                background-color: rgba(247, 251, 255, 1); 
+                background-color: rgba(235, 235, 235, 0.5); 
                 min-height: calc(100vh - var(--mud-appbar-height));
                 border-top: 1px solid lightgrey; 
                 border-left: 1px solid lightgrey;">
@@ -56,6 +60,8 @@
 
 @code {
     bool open = false;
+
+
 
     private string _displayName = "";
     private string _displayEmail = "";

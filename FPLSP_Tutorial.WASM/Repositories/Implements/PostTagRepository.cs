@@ -25,7 +25,7 @@ namespace FPLSP_Tutorial.WASM.Repositories.Implements
 
         public async Task<bool> AddRangeAsync(List<PostTagCreateRequest> request)
         {
-            var resultDelete = await _httpClient.PostAsJsonAsync($"/api/PostTags/AddRange", request);
+            var resultDelete = await _httpClient.PostAsJsonAsync($"/api/PostTags/AddRangeAsync", request);
             if (resultDelete.IsSuccessStatusCode)
             {
                 return true;

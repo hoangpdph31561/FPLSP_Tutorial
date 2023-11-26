@@ -26,12 +26,12 @@ namespace FPLSP_Tutorial.API.Controllers
             _postReadWriteRespository = postReadWriteRespository;
         }
 
-        [HttpGet("GetList")]
-        public async Task<IActionResult> GetList([FromQuery] PostViewWithPaginationRequest request, CancellationToken cancellationToken)
+        [HttpGet("GetListAsync")]
+        public async Task<IActionResult> GetList([FromQuery] PostViewRequest request, CancellationToken cancellationToken)
         {
-            PostListWithPaginationViewModel vm = new(_postReadOnlyRespository, _localizationService);
+            PostListViewModel vm = new(_postReadOnlyRespository, _localizationService);
             await vm.HandleAsync(request, cancellationToken);
-            return Ok(vm);
+            return Ok(vm.Data);
         }
 
         [HttpGet("GetListWithPaginationAsync")]

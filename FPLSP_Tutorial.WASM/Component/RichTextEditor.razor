@@ -30,4 +30,9 @@
         string rteVal = await _js.InvokeAsync<string>("GetRTEValue");
         await Get.InvokeAsync(rteVal);
     }
+
+    public async Task SetRTEValue(string val)
+    {
+        await _js.InvokeVoidAsync("SetRTEValue", val);
+    }
 }

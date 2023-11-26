@@ -17,7 +17,7 @@ namespace FPLSP_Tutorial.WASM.Repositories.Implements
             _httpClient = httpClient;
         }
 
-        public async Task<PaginationResponse<PostDTO>> GetListAsync(PostViewWithPaginationRequest request)
+        public async Task<List<PostDTO>> GetListAsync(PostViewRequest request)
         {
             string url = $"/api/Posts/GetListAsync?";
 
@@ -25,8 +25,9 @@ namespace FPLSP_Tutorial.WASM.Repositories.Implements
             if (request.MajorId != null) { url += $"&MajorId={request.MajorId}"; }
             if (request.UserId != null) { url += $"&UserId={request.UserId}"; }
             if (request.IsGetSystemPost) { url += $"&IsGetSystemPost={request.IsGetSystemPost}"; }
+            if (request.IsGetTopLevel) { url += $"&IsGetTopLevel={request.IsGetTopLevel}"; }
 
-            var result = await _httpClient.GetFromJsonAsync<PaginationResponse<PostDTO>>(url);
+            var result = await _httpClient.GetFromJsonAsync<List<PostDTO>>(url);
             if (result == null)
             {
                 return new();
@@ -42,6 +43,7 @@ namespace FPLSP_Tutorial.WASM.Repositories.Implements
             if (request.MajorId != null) { url += $"&MajorId={request.MajorId}"; }
             if (request.UserId != null) { url += $"&UserId={request.UserId}"; }
             if (request.IsGetSystemPost) { url += $"&IsGetSystemPost={request.IsGetSystemPost}"; }
+            if (request.IsGetTopLevel) { url += $"&IsGetTopLevel={request.IsGetTopLevel}"; }
 
             var result = await _httpClient.GetFromJsonAsync<PaginationResponse<PostDTO>>(url);
             if (result == null)

@@ -87,7 +87,8 @@ else
                                     <MudTd>@_listUser.FirstOrDefault(c => c.Id == context.CreatedBy).Username</MudTd>
                                     <MudTd>@context.MajorName</MudTd>
                                     <MudTd>
-                                        <MudFab Color="Color.Primary" Class="mx-1" Size="Size.Small" Icon="@Icons.Material.Filled.Check" OnClick="@(async () => await OnAddToMajor(context))" Title="Quản lý Tag" DisableElevation="true"></MudFab>
+                                        <MudFab Color="Color.Primary" Class="mx-1" Size="Size.Small" Icon="@Icons.Material.Filled.Check" OnClick="@(async () => await OnAddToMajor(context))" Title="Xác nhận" DisableElevation="true"></MudFab>
+                                            <MudFab Size="Size.Small" Color="Color.Error" Class="m-1" Icon="@Icons.Material.Filled.Delete" OnClick="@(async () => await OnDelete(context.Id))" Title="Hủy yêu cầu" DisableElevation="true">Xóa</MudFab>
                                     </MudTd>
                                 </RowTemplate>
                             </MudTable>
@@ -172,15 +173,25 @@ else
         var confirm = await _diagService.ShowMessageBox
               (
                   "Thông báo",
-                  "Bạn chắn chắn xóa giảng viên này?",
+                  "Bạn chắn chắn muốn hủy yêu cầu này?",
                   "Xác nhận",
                   cancelText: "Hủy"
               );
         if (confirm == true)
         {
-            var removeConfirm = await _repoMajorRequest.DeleteAsync(request);
+            var result = await _repoMajorRequest.DeleteAsync(request);
+            if(result)
+            {
+                _mudSnackbar.Add("Hủy yêu cầu thành công", Severity.Success);
+            }
+            else
+            {
+                _mudSnackbar.Add("Hủy yêu cầu thất bại", Severity.Error);
+                await LoadDataTab2();
+            }
         }
     }
+
     private async Task OnAddToMajor(MajorRequestDTO req)
     {
         var requestDelete = new MajorRequestDeleteRequest

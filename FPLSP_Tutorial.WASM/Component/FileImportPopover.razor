@@ -1,0 +1,69 @@
+﻿@inject ISnackbar _mudSnackbar
+@inject IJSRuntime _jsRuntime;
+
+<style>
+    .file-hover:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<MudOverlay @bind-Visible="@Enable" ZIndex="1301" LightBackground="true">
+    <MudCard Class="p-3">
+        <div>
+            <div class="d-flex align-items-center">
+                <MudText Typo="Typo.h6" Class="mr-auto" Style="font-weight: 600;">Tải lên tài liệu</MudText>
+                <MudIconButton Icon="@Icons.Material.Filled.Close" Size="Size.Small" OnClick="@(async () => { await OnClose.InvokeAsync(); })"></MudIconButton>
+            </div>
+            <div>
+                <MudFileUpload T="IBrowserFile" FilesChanged="@(async (IBrowserFile f) => await UploadFile(f))" Hidden="false" Class="flex-1" InputClass="absolute mud-width-full mud-height-full overflow-hidden z-20" InputStyle="opacity:0" @ondragenter="@SetDragClass" @ondragleave="@ClearDragClass" @ondragend="@ClearDragClass">
+                    <ButtonTemplate>
+                        <MudPaper Outlined="true" Class="@(DragClass)">
+                            <div class="w-100 d-flex justify-content-center">
+                                <MudIcon Icon="@Icons.Material.Filled.DriveFileMove" Style="font-size: 10rem;" Color="Color.Default"></MudIcon>
+                            </div>
+                            <MudText Typo="Typo.h6" Color="Color.Default">Kéo thả hoặc nhấn vào đây để chọn</MudText>
+                        </MudPaper>
+                    </ButtonTemplate>
+                </MudFileUpload>
+            </div>
+        </div>
+    </MudCard>
+</MudOverlay>
+
+@code {
+    [Parameter]
+    public bool Enable { get; set; } = false;
+
+    [Parameter]
+    public EventCallback OnClose { get; set; }
+
+    [Parameter]
+    public EventCallback<string> ReturnString { get; set; }
+
+    private static string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mud-width-full mud-height-full z-10";
+    private string DragClass = DefaultDragClass;
+
+    protected override async Task OnInitializedAsync()
+    {
+    }
+
+    private async Task UploadFile(IBrowserFile browserFile)
+    {
+        //FileServices _sv = new();
+
+        //var result = await _sv.HandleFile(browserFile);
+
+        //await ReturnString.InvokeAsync(result);
+        //await OnClose.InvokeAsync();
+    }
+
+    private void SetDragClass()
+    {
+        DragClass = $"{DefaultDragClass} mud-border-primary";
+    }
+
+    private void ClearDragClass()
+    {
+        DragClass = DefaultDragClass;
+    }
+}

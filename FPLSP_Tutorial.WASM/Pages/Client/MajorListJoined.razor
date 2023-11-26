@@ -22,11 +22,24 @@ else
     <div class="mx-3 mb-2 px-3 pb-3">
         <MudPaper Elevation="2" Class="px-1">
             <div class="mx-5 pt-4">
-                <div class="d-flex justify-center mb-3">
-                    <div class="mr-auto"></div>
-                    <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="@(async () => await OnClickJoinMajor())">Thêm chuyên ngành</MudButton>
+                <div class="d-flex align-center mb-3">
+                    <MudText Typo="Typo.h5" Class="mr-auto" Style="font-weight: 500">Quản lý bài viết</MudText>
+                    <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled">
+                        <AuthorizeView Roles="ADMIN, CNBM">
+                            <MudIconButton Icon="@Icons.Material.Filled.PostAdd" OnClick="@(async () => _nav.NavigateTo($"/post/manage/self/add?fallBackUrl={_nav.Uri}"))" Title="Thêm bài viết hệ thống" Style="border-right: 2px solid white;"></MudIconButton>
+                        </AuthorizeView>
+                        
+                        <MudIconButton Icon="@Icons.Material.Filled.Add" OnClick="@(async () => await OnClickJoinMajor())" Title="Thêm chuyên ngành" Style="border-right: 2px solid white;"></MudIconButton>
+                        <MudIconButton Icon="@Icons.Material.Filled.Search" Title="Tìm kiếm" OnClick="@(() => _isShowSearch = !_isShowSearch)"></MudIconButton>
+                    </MudButtonGroup>
+                    
                 </div>
-
+                @if(_isShowSearch)
+                {
+                    <div class="mb-4">
+                        <MudTextField T="string" Label="Tìm kiếm" Placeholder="Nhập tên, mã cần tìm kiếm..."></MudTextField>
+                    </div>
+                }
                 <MudTable Items="@_listMajor" Elevation="3">
                     <HeaderContent>
                         <MudTh>STT</MudTh>
@@ -41,7 +54,7 @@ else
                         <MudTh>@context.Name</MudTh>
                         <MudTh>@context.NumberOfPostByUser</MudTh>
                         <MudTh>
-                            <MudFab Color="Color.Primary" Class="mx-1" Size="Size.Small" StartIcon="@Icons.Material.Filled.Edit" OnClick="@(() => _nav.NavigateTo("/post/manage/self?idMajor=" + context.Id))" Title="Quản lý bài viết" DisableElevation="true"></MudFab>
+                            <MudFab Color="Color.Primary" Class="mx-1" Size="Size.Small" StartIcon="@Icons.Material.Filled.Article" OnClick="@(() => _nav.NavigateTo("/post/manage/self?idMajor=" + context.Id))" Title="Quản lý bài viết" DisableElevation="true"></MudFab>
                             <MudFab Size="Size.Small" Color="Color.Error" Class="m-1" Icon="@Icons.Material.Filled.Delete" OnClick="@(() => OnClickDelete(context.Id))" Title="Xóa" DisableElevation="true">Xóa</MudFab>
                         </MudTh>
                     </RowTemplate>
@@ -54,8 +67,8 @@ else
 @code {
     private List<BreadcrumbItem> _breadCrumbs = new List<BreadcrumbItem>
     {
-        new BreadcrumbItem("Trang chủ", href: "/post/client"),
-        new BreadcrumbItem("Quản lý bài viết", href: null, disabled: true)
+        new BreadcrumbItem("Trang chủ", href: "/post/home"),
+        new BreadcrumbItem("Danh sách chuyên ngành", href: null, disabled: true)
     };
     private Guid? _idUser = null;
 
@@ -69,6 +82,8 @@ else
     private bool _isLoadingAll = true;
     private bool _isLoadingList = true;
 
+    private bool _isShowSearch;
+
     protected override async Task OnInitializedAsync()
     {
         var state = await _authProvider.GetAuthenticationStateAsync();
@@ -81,6 +96,10 @@ else
         else { }
         _preqMajor.UserId = _idUser;
 
+        _listMajor.Add(new ()
+        {
+            
+        });
 
         await LoadData().ContinueWith((re) =>
         {

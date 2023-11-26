@@ -39,6 +39,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
 
                 if(request.UserId != null) { queryable = queryable.Where(c => c.CreatedBy == request.UserId); }
                 if(request.PostId != null) { queryable = queryable.Where(c => c.PostId == request.PostId); }
+                if(request.IsGetTopLevel) { queryable = queryable.Where(c => c.PostId == null); }
                 if (request.MajorId != null)
                 {
                     queryable = queryable
@@ -61,7 +62,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
                     .ProjectTo<PostDTO>(_mapper.ConfigurationProvider)
                     .ToListAsync();
 
-                foreach(var i in result)
+                foreach (var i in result)
                 {
                     var user = await _dbContext.UserEntities.AsNoTracking().Where(c => c.Id == i.CreatedBy).Select(c => c.Username).FirstOrDefaultAsync();
                     i.CreatedByName = user ?? "N/A";
@@ -93,6 +94,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
 
                 if (request.UserId != null) { queryable = queryable.Where(c => c.CreatedBy == request.UserId); }
                 if (request.PostId != null) { queryable = queryable.Where(c => c.PostId == request.PostId); }
+                if (request.IsGetTopLevel) { queryable = queryable.Where(c => c.PostId == null); }
                 if (request.MajorId != null)
                 {
                     queryable = queryable

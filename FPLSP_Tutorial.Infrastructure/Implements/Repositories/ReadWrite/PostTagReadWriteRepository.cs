@@ -72,7 +72,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
                 var posttag = await GetTagByIdAsync(entity.Id, cancellationToken);
                 posttag!.TagId = entity.TagId;
                 posttag.PostId = entity.PostId;
-     
+
                 _dbContext.PostTagEntities.Update(posttag);
                 await _dbContext.SaveChangesAsync(cancellationToken);
 
@@ -90,6 +90,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
                 });
             }
         }
+
 
         public async Task<RequestResult<int>> DeleteAsync(PostTagDeleteRequest request, CancellationToken cancellationToken)
         {

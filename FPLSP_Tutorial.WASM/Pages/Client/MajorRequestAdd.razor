@@ -26,12 +26,15 @@
         </MudTable>
         @*<CustomPagination Class="my-1" HasNext="@_presMajor.HasNext" OnPageChange="@(async e => await OnPaginationButtonClick(e))" CurrentPageNumber="@_presMajor.PageNumber"></CustomPagination>*@
         <div class="d-flex justify-end">
-            <MudButton>Đóng</MudButton>
+            <MudButton OnClick="@(() => MudDialog.Close())">Đóng</MudButton>
         </div>
     </DialogContent>
 </MudDialog>
 
     @code {
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; } = new();
+
     [Parameter]
     public Guid? UserId { get; set; }
 

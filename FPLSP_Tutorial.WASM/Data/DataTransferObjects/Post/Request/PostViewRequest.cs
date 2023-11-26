@@ -6,5 +6,6 @@
         public Guid? PostId { get; set; } = null;
         public Guid? MajorId { get; set; } = null;
         public bool IsGetSystemPost { get; set; }
+        public bool IsGetTopLevel { get; set; }
     }
 }

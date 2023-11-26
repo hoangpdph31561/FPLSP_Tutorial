@@ -6,7 +6,7 @@ namespace FPLSP_Tutorial.WASM.Repositories.Interfaces
 {
     public interface IPostRepository
     {
-        Task<PaginationResponse<PostDTO>> GetListAsync(PostViewWithPaginationRequest request);
+        Task<List<PostDTO>> GetListAsync(PostViewRequest request);
         Task<PaginationResponse<PostDTO>> GetListWithPaginationAsync(PostViewWithPaginationRequest request);
         Task<PostDTO> GetByIdAsync(Guid id);
         Task<PostDTO?> AddAsync(PostCreateRequest request);

@@ -32,7 +32,7 @@ namespace FPLSP_Tutorial.API.Controllers
             return Ok(vm);
         }
 
-        [HttpPost("AddRange")]
+        [HttpPost("AddRangeAsync")]
         public async Task<IActionResult> AddRangeAsync(List<PostTagCreateRequest> request, CancellationToken cancellationToken)
         {
             PostTagCreateRangeViewModel vm = new(_postTagReadWriteRespository, _localizationService, _mapper);

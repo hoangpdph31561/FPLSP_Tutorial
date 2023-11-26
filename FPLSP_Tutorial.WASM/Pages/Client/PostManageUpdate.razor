@@ -1,11 +1,14 @@
 ﻿@page "/post/manage/self/update"
 @using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post.Request;
 @using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post;
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Tag;
 
 
 @layout ManagementLayout
 
 @inject IPostRepository _repoPost;
+@inject IMajorRepository _repoMajor;
+@inject ITagRepository _repoTag;
 @inject ISnackbar _mudSnackbar;
 @inject NavigationManager _nav;
 
@@ -24,29 +27,33 @@
     }
     else
     {
-        <div class="row mt-3">
-            <div class="col-6"><MudTextField @bind-Value="@_postUpdateRequest.Title" Label="Tiêu đề" Variant="Variant.Outlined"></MudTextField></div>
-            <div class="col-6">
-                <MudSelect @bind-Value="@_postUpdateRequest.PostType" Label="Loại bài viết" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
-                    <MudSelectItem Value="@("Hệ thống")">Hệ thống</MudSelectItem>
-                    <MudSelectItem Value="@("Chuyên ngành")">Chuyên ngành</MudSelectItem>
-                </MudSelect>
+        <MudPaper Class="mt-3 mx-3 pa-4" Elevation="2">
+            <div class="row mt-3">
+                <div class="col-12"><MudTextField @bind-Value="@_postUpdateRequest.Title" Label="Tiêu đề" Variant="Variant.Outlined"></MudTextField></div>
+                <div class="col-12">
+                    <TagSelector ListTag="@_listTagSelected" ListTagFromDB="@_listTagFromDB" ToggleAllTags="true" />
+                </div>
             </div>
-        </div>
 
-        <MudText Typo="Typo.h6" Class="pt-3">Nội dung</MudText>
+            <MudText Typo="Typo.h6" Class="pt-3">Nội dung</MudText>
 
-        <RichTextEditor @ref="@_rteRef" Get="@((string val) => { _postUpdateRequest.Content =  val; })" Set="@_postUpdateRequest.Content" />
+            <RichTextEditor @ref="@_rteRef" Get="@((string val) => { _postUpdateRequest.Content =  val; })" Set="@_postUpdateRequest.Content" />
 
-        <div class="row">
-            <div class="col d-flex justify-content-end">
-                <MudChip OnClick="@(() => _nav.NavigateTo(fallBackUrl))" Color="Color.Error" Icon="@Icons.Material.Filled.ExitToApp">Hủy</MudChip>
-                <MudChip OnClick="@(async () => { await OnSaveAsync(); })" Color="Color.Primary" Icon="@Icons.Material.Filled.Save">Lưu</MudChip>
+            <div class="row">
+                <div class="col d-flex justify-content-end">
+                    <MudChip OnClick="@(() => _nav.NavigateTo(fallBackUrl))" Color="Color.Error" Icon="@Icons.Material.Filled.ExitToApp">Hủy</MudChip>
+                    <MudChip OnClick="@(async () => { await OnSaveAsync(); })" Color="Color.Primary" Icon="@Icons.Material.Filled.Save">Lưu</MudChip>
+                </div>
             </div>
-        </div>
+        </MudPaper>
+        
     }
 </div>
 @code {
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string? idMajor { get; set; }
+
     [Parameter]
     [SupplyParameterFromQuery]
     public string? fallBackUrl { get; set; }
@@ -56,6 +63,9 @@
     [SupplyParameterFromQuery]
     public string? idPost { get; set; }
     private PostDTO _post = new();
+
+    private List<TagDTO> _listTagFromDB = new();
+    private List<TagDTO> _listTagSelected = new();
 
     RichTextEditor _rteRef = new();
 
@@ -82,6 +92,21 @@
             Status = _post.Status,
             ModifiedBy = Guid.Empty
         };
+
+        _listTagSelected = _post.ListTag;
+
+        if (idMajor != null)
+        {
+            var majorDTO = await _repoMajor.GetByIdAsync(Guid.Parse(idMajor));
+            _listTagFromDB = majorDTO.ListTag;
+        }
+        else
+        {
+            _listTagFromDB = await _repoTag.GetListAsync(new()
+                {
+                    MajorId = null
+                });
+        }
     }
 
     private async Task OnSaveAsync()

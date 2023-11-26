@@ -44,8 +44,8 @@ else
         </div>
         <MudDivider/>
             <div Class="mx-1">
-                
-            </div>
+            <ListPostCard ListPost="@_listChildPost" IsLoading="@(_isLoadingChildPost)" />
+        </div>
         <MudDivider />
     </div>
 }
@@ -61,6 +61,7 @@ else
     private List<PostDTO> _listChildPost = new();
 
     private bool _isLoadingAll = true;
+    private bool _isLoadingChildPost = true;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -69,6 +70,7 @@ else
             await LoadData().ContinueWith((re) =>
             {
                 _isLoadingAll = false;
+                _isLoadingChildPost = false;
                 StateHasChanged();
             });
         }
@@ -80,11 +82,11 @@ else
         _detailPost = await _repoPost.GetByIdAsync(Guid.Parse(Id));
         var presPost = await _repoPost.GetListAsync(new()
         {
-            MajorId = _detailPost.Id,
+            PostId = _detailPost.Id,
         });
-        if(presPost.Data != null)
+        if(presPost != null)
         {
-            _listChildPost = presPost.Data.ToList();
+            _listChildPost = presPost;
         }
     }
 }

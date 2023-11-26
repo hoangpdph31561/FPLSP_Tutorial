@@ -5,7 +5,7 @@
 @inject AuthenticationStateProvider _authProvider;
 @inject NavigationManager _nav
 
-<MudThemeProvider />
+<MudThemeProvider Theme="@_CustomTheme"/>
 <MudDialogProvider FullWidth="true" />
 <MudSnackbarProvider />
 
@@ -15,6 +15,7 @@
     }
     :root {
         --mud-default-borderradius: 8px;
+        --mud-palette-primary-text: #f2bb1f;
     }
 
     .mud-breadcrumb-item > a {
@@ -42,9 +43,15 @@
         
         <MudNavMenu>
             <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home" Href="/post/home">Trang chủ</MudNavLink>
-            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.List" Href="/major/manage/list">Quản lý chuyên ngành</MudNavLink>
-            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Newspaper" Href="/major/joined">Quản lý bài viết</MudNavLink>
-            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.SupervisorAccount" Href="/user/manage/list">Quản lý người dùng</MudNavLink>
+            <AuthorizeView Roles="ADMIN">
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.List" Href="/major/manage/list">Quản lý chuyên ngành</MudNavLink>
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.SupervisorAccount" Href="/user/manage/list">Quản lý người dùng</MudNavLink>
+            </AuthorizeView>
+            <AuthorizeView Roles="CNBM">
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Newspaper" Href="/major/joined">Quản lý bài viết</MudNavLink>
+            </AuthorizeView>
+
+            
         </MudNavMenu>
     </MudDrawer>
     <MudMainContent >
@@ -61,6 +68,14 @@
 @code {
     bool open = false;
 
+    private readonly MudTheme _CustomTheme = new()
+        {
+            Palette = new Palette
+            {
+                Primary = "#000000",
+                
+            }
+        };
 
 
     private string _displayName = "";

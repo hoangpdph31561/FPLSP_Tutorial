@@ -9,6 +9,7 @@
 @inject IPostRepository _repoPost
 @inject IPostTagRepository _repoPostTag
 @inject IMajorRepository _repoMajor
+@inject ITagRepository _repoTag
 @inject ISnackbar _mudSnackbar
 @inject NavigationManager _nav
 @inject AuthenticationStateProvider _authProvider
@@ -98,6 +99,13 @@ else
         {
             var majorDTO = await _repoMajor.GetByIdAsync(Guid.Parse(idMajor));
             _listTagFromDB = majorDTO.ListTag;
+        }
+        else
+        {
+            _listTagFromDB = await _repoTag.GetListAsync(new()
+            {
+                MajorId = null
+            });
         }
     }
 

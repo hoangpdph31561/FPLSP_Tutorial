@@ -14,10 +14,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Pages\Client\PostHome.razor" />
-    <None Include="Pages\Client\MajorListJoined.razor" />
-    <None Include="Pages\Client\PostManageAdd.razor" />
-    <None Include="Pages\Client\PostManageUpdate.razor" />
+    <None Include="Pages\PostHome.razor" />
+    <None Include="Pages\MajorListJoined.razor" />
+    <None Include="Pages\PostCreate.razor" />
+    <None Include="Pages\PostUpdate.razor" />
   </ItemGroup>
 
   <ItemGroup>
@@ -34,10 +34,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FPLSP_Tutorial.Application\FPLSP_Tutorial.Application.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Pages\Manager\" />
   </ItemGroup>
 
 </Project>

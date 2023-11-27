@@ -6,7 +6,7 @@
 @inject NavigationManager _nav
 
 <MudThemeProvider Theme="@_CustomTheme"/>
-<MudDialogProvider FullWidth="true" />
+<MudDialogProvider FullWidth="true" NoHeader="true" />
 <MudSnackbarProvider />
 
 <style>
@@ -50,6 +50,7 @@
             <AuthorizeView Roles="CNBM">
                 <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Newspaper" Href="/major/joined">Quản lý bài viết</MudNavLink>
             </AuthorizeView>
+            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.EditNote" Href="/post/create">Tạo bài viết</MudNavLink>
 
             
         </MudNavMenu>

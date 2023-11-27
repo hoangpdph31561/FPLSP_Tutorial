@@ -4,10 +4,14 @@
 
 </textarea>
 
-<div id="div_editor1"></div>
+
 @code {
     [Parameter]
     public string? Class { get; set; }
+
+    [Parameter]
+    public string? Style { get; set; }
+
     [Parameter]
     public EventCallback<string> Get { get; set; }
     [Parameter]

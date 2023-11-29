@@ -23,5 +23,7 @@ namespace FPLSP_Tutorial.Application.DataTransferObjects.Post
         public List<TagDTO> ListTag { get; set; } = new List<TagDTO>();
         public int NumberOfChildPost { get; set; } = 0;
         public string CreatedByName { get; set; } = string.Empty;
+        public string? MajorCode { get; set; } = null;
+        public string? MajorName { get; set; } = null;
     }
 }

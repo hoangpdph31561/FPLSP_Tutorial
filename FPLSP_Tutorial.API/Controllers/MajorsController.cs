@@ -28,7 +28,23 @@ namespace FPLSP_Tutorial.API.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("GetListWithPagination")]
+        [HttpGet("GetListAsync")]
+        public async Task<IActionResult> GetListWithPagination([FromQuery] MajorViewRequest request, CancellationToken cancellationToken)
+        {
+            MajorListViewModel vm = new(_majorReadOnlyRepository, _localizationService);
+
+            await vm.HandleAsync(request, cancellationToken);
+
+            if (vm.Success)
+            {
+                List<MajorDTO> result = new();
+                result = (List<MajorDTO>)vm.Data;
+                return Ok(result);
+            }
+            return BadRequest(vm);
+        }
+
+        [HttpGet("GetListWithPaginationAsync")]
         public async Task<IActionResult> GetListWithPagination([FromQuery] MajorViewWithPaginationRequest request, CancellationToken cancellationToken)
         {
             MajorListWithPaginationViewModel vm = new(_majorReadOnlyRepository, _localizationService);

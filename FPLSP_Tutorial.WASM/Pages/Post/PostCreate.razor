@@ -14,6 +14,8 @@
 @inject NavigationManager _nav
 @inject AuthenticationStateProvider _authProvider
 
+
+
 @if (_isEnableFileImport)
 {
     <FileImportPopover Enable="@_isEnableFileImport" ReturnString="@((string s) => _rteRef.SetRTEValue(s))" OnClose="@(() => _isEnableFileImport = false)" />
@@ -23,23 +25,29 @@
 {
     <LoadingIndicatorOverlay/>
 }
+else
+{
+    <PostEditInformation Visible="@_isEnablePostInformation" OnClose="@(() => _isEnablePostInformation = false)" ListTagSelected="@_listTagSelected" UserId="@_idUser" OnSave="@(async() => await OnSaveAsync())" PostCreateRequest="@_postCreateR" />
+}
 
 <div class="pa-2">
     <MudBreadcrumbs Items="@_listBreadCrumb"></MudBreadcrumbs>
 
     <MudPaper Class="mt-3 mx-3 pa-4 position-relative" Elevation="2" >
 
-        <div class="d-flex align-center">
-            <MudText Typo="Typo.h6" Class="mr-auto">Nội dung</MudText>
+        <div class="d-flex align-center mb-3">
+            <MudText Typo="Typo.h5" Class="mr-auto" Style="font-weight: 500">Tạo bài viết</MudText>
+
             <MudChip Icon="@Icons.Material.Filled.FileUpload" title="Nhập nội dung bằng file truyền vào(.xlsx, .docs)" Color="Color.Success" OnClick="@(() => _isEnableFileImport = true)">Nhập file</MudChip>
+            <MudChip OnClick="@(() => _nav.NavigateTo("/post-manager" + ((idPost == null) ? "" : "?idPost=" + idPost)))" Color="Color.Error" Icon="@Icons.Material.Filled.ExitToApp">Hủy</MudChip>
+            <MudChip OnClick="@(async () => { _isEnablePostInformation= true; })" Color="Color.Primary" Icon="@Icons.Material.Filled.Save">Lưu</MudChip>
         </div>
 
         <RichTextEditor @ref="@_rteRef" Get="@((string val) => { _postCreateR.Content =  val; })" />
 
         <div class="row">
             <div class="col d-flex justify-content-end">
-                <MudChip OnClick="@(() => _nav.NavigateTo("/post-manager" + ((idPost == null) ? "" : "?idPost=" + idPost)))" Color="Color.Error" Icon="@Icons.Material.Filled.ExitToApp">Hủy</MudChip>
-                <MudChip OnClick="@(async () => { await OnSaveAsync(); })" Color="Color.Primary" Icon="@Icons.Material.Filled.Save">Lưu</MudChip>
+                
             </div>
         </div>
     </MudPaper>
@@ -64,10 +72,10 @@
 
     private bool _isLoadingAll = true;
     private bool _isEnableFileImport = false;
+    private bool _isEnablePostInformation = false;
 
     private Guid _idUser;
 
-    private List<TagDTO> _listTagFromDB = new();
     private List<TagDTO> _listTagSelected = new();
 
     RichTextEditor _rteRef = new();
@@ -76,36 +84,24 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var state = await _authProvider.GetAuthenticationStateAsync();
-        var userIdClaim = state.User.FindAll("UserId").FirstOrDefault();
-
-        if (userIdClaim != null)
-        {
-            _idUser = Guid.Parse(userIdClaim.Value);
-        }
-        else { }
-        _postCreateR.CreatedBy = _idUser;
-
-        await LoadData().ContinueWith((re) =>
-        {
-            _isLoadingAll = false;
-            StateHasChanged();
-        });
+        StateHasChanged();
     }
 
-    private async Task LoadData()
+    protected async override Task OnAfterRenderAsync(bool firstRender)
     {
-        if (idMajor != null)
+        if(firstRender)
         {
-            var majorDTO = await _repoMajor.GetByIdAsync(Guid.Parse(idMajor));
-            _listTagFromDB = majorDTO.ListTag;
-        }
-        else
-        {
-            _listTagFromDB = await _repoTag.GetListAsync(new()
+            var state = await _authProvider.GetAuthenticationStateAsync();
+            var userIdClaim = state.User.FindAll("UserId").FirstOrDefault();
+
+            if (userIdClaim != null)
             {
-                MajorId = null
-            });
+                _idUser = Guid.Parse(userIdClaim.Value);
+            }
+            else { }
+            _postCreateR.CreatedBy = _idUser;
+            _isLoadingAll = false;
+            StateHasChanged();
         }
     }
 
@@ -130,12 +126,18 @@
             if(resultPostTag)
             {
                 _mudSnackbar.Add("Thêm thành công", Severity.Success);
-                _nav.NavigateTo(fallBackUrl);
+                if(fallBackUrl != null)
+                {
+                    _nav.NavigateTo(fallBackUrl);
+                }
             }
             else
             {
                 _mudSnackbar.Add("Thêm bài viết thành công. Thêm tag thất bại", Severity.Warning);
-                _nav.NavigateTo(fallBackUrl);
+                if (fallBackUrl != null)
+                {
+                    _nav.NavigateTo(fallBackUrl);
+                }
             }
         }
         else

@@ -6,6 +6,7 @@ namespace FPLSP_Tutorial.WASM.Repositories.Interfaces
 {
     public interface IMajorRepository
     {
+        Task<List<MajorDTO>> GetListAsync(MajorViewRequest request);
         Task<PaginationResponse<MajorDTO>> GetListWithPaginationAsync(MajorViewWithPaginationRequest request);
         Task<MajorDTO> GetByIdAsync(Guid id);
         Task<bool> AddAsync(MajorCreateRequest request);

@@ -14,9 +14,26 @@ namespace FPLSP_Tutorial.WASM.Repositories.Implements
             _httpClient = httpClient;
         }
 
+        public async Task<List<MajorDTO>> GetListAsync(MajorViewRequest request)
+        {
+            string url = $"/api/Majors/GetListAsync?";
+
+            if (request.UserId != null) { url += $"&UserId={request.UserId}"; }
+            if (request.NotJoined) { url += $"&NotJoined={request.NotJoined}"; }
+            if (request.ContainPostOnly) { url += $"&ContainPostOnly={request.ContainPostOnly}"; }
+
+            var result = await _httpClient.GetFromJsonAsync<List<MajorDTO>>(url);
+            if (result == null)
+            {
+                return new();
+            }
+            return result;
+        }
+
+
         public async Task<PaginationResponse<MajorDTO>> GetListWithPaginationAsync(MajorViewWithPaginationRequest request)
         {
-            string url = $"/api/Majors/GetListWithPagination?PageNumber={request.PageNumber}&PageSize={request.PageSize}";
+            string url = $"/api/Majors/GetListWithPaginationAsync?PageNumber={request.PageNumber}&PageSize={request.PageSize}";
 
             if(request.UserId != null) { url += $"&UserId={request.UserId}"; }
             if(request.NotJoined) { url += $"&NotJoined={request.NotJoined}"; }

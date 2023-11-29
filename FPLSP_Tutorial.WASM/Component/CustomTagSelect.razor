@@ -7,13 +7,8 @@
 </style>
 
 <MudDialog Style="width: 50vw;">
-    <TitleContent>
-        <div class="d-flex align-center ps-5 pt-3">
-            <MudIcon Icon="@Icons.Material.Filled.Add" />
-            <MudText Typo="Typo.h6" Style="font-weight: 600">Thêm tag</MudText>
-        </div>
-    </TitleContent>
     <DialogContent>
+        <MudText Typo="Typo.h5" Style="font-weight: 500;" Class="my-2">Chọn Tag</MudText>
         <div>
             <MudTextField Variant="Variant.Outlined" T="string" @bind-Value="SearchString" Label="Tìm kiếm" DebounceInterval="200" OnDebounceIntervalElapsed="@(async () => await OnSearchFunc())" Immediate></MudTextField>
 
@@ -57,10 +52,10 @@
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
     [Parameter]
-    public List<TagDTO> ListTag { get; set; }
+    public List<TagDTO> ListTag { get; set; } = new();
     [Parameter]
-    public List<TagDTO> ListTagFromDB { get; set; }
-    private string SearchString;
+    public List<TagDTO> ListTagFromDB { get; set; } = new();
+    private string SearchString = "";
     private List<TagDTO> _lstTagDisPlay = new();
     private bool _toggleAllTags = false;
     private int _maxChipDisplay = 5;
@@ -79,6 +74,7 @@
     {
         MudDialog.Close(DialogResult.Ok(ListTag));
     }
+
     private async Task OnSearchFunc()
     {
         if(string.IsNullOrWhiteSpace(SearchString))

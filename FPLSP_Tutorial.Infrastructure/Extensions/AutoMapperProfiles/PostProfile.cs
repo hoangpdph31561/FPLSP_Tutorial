@@ -18,7 +18,19 @@ namespace FPLSP_Tutorial.Infrastructure.Extensions.AutoMapperProfiles
                             .Select(pt => pt.Tag).Where(t => t.Status != EntityStatus.Deleted && !t.Deleted)))
                 .ForMember(des => des.NumberOfChildPost, from => from
                     .MapFrom(p => p.Posts
-                        .Where(pc => pc.Status != EntityStatus.Deleted && !pc.Deleted).Count()));
+                        .Where(pc => pc.Status != EntityStatus.Deleted && !pc.Deleted).Count()))
+                .ForMember(des => des.MajorCode, from => from
+                    .MapFrom(p => p.PostTags
+                        .Where(pt => pt.Status != EntityStatus.Deleted && !pt.Deleted)
+                            .Select(pt => pt.Tag)
+                                .Where(t => t.Status != EntityStatus.Deleted && !t.Deleted)
+                                    .Select(t => t.Major.Code).FirstOrDefault()))
+                .ForMember(des => des.MajorName, from => from
+                    .MapFrom(p => p.PostTags
+                        .Where(pt => pt.Status != EntityStatus.Deleted && !pt.Deleted)
+                            .Select(pt => pt.Tag)
+                                .Where(t => t.Status != EntityStatus.Deleted && !t.Deleted)
+                                    .Select(t => t.Major.Name).FirstOrDefault()));
             CreateMap<PostEntity, ViewPostByIdResponse>();
             CreateMap<PostEntity, ViewPostWithPaginationResponse>();
             CreateMap<PostCreateRequest, PostEntity>();

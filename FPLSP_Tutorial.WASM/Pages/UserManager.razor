@@ -59,8 +59,36 @@ else
                                         }
                                         @roles
                                     </MudTd>
-                                    <MudTd>@context.ListJoinedMajors.Count()</MudTd>
+                                    <MudTd><MudChip OnClick="@(() => {
+                                            if(_isShowingLecturerDetail == context.Id) _isShowingLecturerDetail = null;
+                                            else _isShowingLecturerDetail = context.Id;
+                                        })">@context.ListJoinedMajors.Count()</MudChip>
+                                    </MudTd>
                                 </RowTemplate>
+                                <ChildRowContent>
+                                    <MudTr Style="@((_isShowingLecturerDetail != context.Id ? "display: none;" : ""))">
+                                        <td colspan="6">
+                                            <div class="ma-5">
+                                                <div class="d-flex align-center mb-2">
+                                                    <MudText Style="font-weight: 500" Class="mr-auto">Danh sách chuyên ngành đã tham gia</MudText>
+                                                    <MudIconButton Size="Size.Small" Icon="@Icons.Material.Filled.Close" OnClick="@(() => _isShowingLecturerDetail = null)"></MudIconButton>
+                                                </div>
+                                                <MudTable Items="@context.ListJoinedMajors" Context="major" Dense="true">
+                                                    <HeaderContent>
+                                                        <MudTh>STT</MudTh>
+                                                        <MudTh>Mã</MudTh>
+                                                        <MudTh>Tên</MudTh>
+                                                    </HeaderContent>
+                                                    <RowTemplate>
+                                                        <MudTd>@context.ListJoinedMajors.IndexOf(major)</MudTd>
+                                                        <MudTd>@major.Code</MudTd>
+                                                        <MudTd>@major.Name</MudTd>
+                                                    </RowTemplate>
+                                                </MudTable>
+                                            </div>
+                                        </td>
+                                    </MudTr>
+                                </ChildRowContent>
                             </MudTable>
                             <CustomPagination Class="my-1" HasNext="@_presUser.HasNext" OnPageChange="@(async e => await OnPaginationButtonClickTab1(e))" CurrentPageNumber="@_presUser.PageNumber"></CustomPagination>
                         </div>
@@ -75,22 +103,56 @@ else
                     else
                     {
                         <div class="mx-2 mt-2">
-                            <MudTable Items="@_listMajorRequest" Style="position:relative;" Elevation="2" Class="mx-4 mt-5">
+                            <MudTable Items="@_listMajorRequestGrouped" Style="position:relative;" Elevation="2" Class="mx-4 mt-5">
                                 <HeaderContent>
                                     <MudTh>STT</MudTh>
+                                    <MudTh>Email GV</MudTh>
                                     <MudTh>Tên GV</MudTh>
-                                    <MudTh>Chuyên ngành</MudTh>
+                                    <MudTh>SL Yêu cầu</MudTh>
                                     <MudTh>Hành động</MudTh>
                                 </HeaderContent>
                                 <RowTemplate>
-                                    <MudTd>@(_listMajorRequest.IndexOf(context) + 1)</MudTd>
-                                    <MudTd>@_listUser.FirstOrDefault(c => c.Id == context.CreatedBy).Username</MudTd>
-                                    <MudTd>@context.MajorName</MudTd>
+                                    <MudTd>@(_listMajorRequestGrouped.IndexOf(context) + 1)</MudTd>
+                                    <MudTd>@context.Key.email</MudTd>
+                                    <MudTd>@context.Key.name</MudTd>
+                                    <MudTd>@context.Count()</MudTd>
                                     <MudTd>
-                                        <MudFab Color="Color.Primary" Class="mx-1" Size="Size.Small" Icon="@Icons.Material.Filled.Check" OnClick="@(async () => await OnAddToMajor(context))" Title="Xác nhận" DisableElevation="true"></MudFab>
-                                            <MudFab Size="Size.Small" Color="Color.Error" Class="m-1" Icon="@Icons.Material.Filled.Delete" OnClick="@(async () => await OnDelete(context.Id))" Title="Hủy yêu cầu" DisableElevation="true">Xóa</MudFab>
+                                        <MudChip OnClick="@(() => _isShowingMajorRequestDetail = context.Key.email)">Xem chi tiết</MudChip>
                                     </MudTd>
                                 </RowTemplate>
+                                <ChildRowContent>
+                                    @if(_isShowingMajorRequestDetail == context.Key.email)
+                                    {
+                                        <MudTr>
+                                            <td colspan="5">
+                                                <div class="ma-5">
+                                                    <div class="d-flex align-center mb-2">
+                                                        <MudText Style="font-weight: 500" Class="mr-auto">Chi tiết yêu cầu chuyên ngành</MudText>
+                                                        <MudIconButton Size="Size.Small" Icon="@Icons.Material.Filled.Close" OnClick="@(() => _isShowingMajorRequestDetail = null)"></MudIconButton>
+                                                    </div>
+                                                    
+                                                    <MudTable Items="@context" Context="major" Dense="true">
+                                                        <HeaderContent>
+                                                            <MudTh>STT</MudTh>
+                                                            <MudTh>Mã</MudTh>
+                                                            <MudTh>Tên</MudTh>
+                                                            <MudTh>Hành động</MudTh>
+                                                        </HeaderContent>
+                                                        <RowTemplate>
+                                                            <MudTd>@(context.Select(c => c.Id).ToList().IndexOf(major.Id) + 1)</MudTd>
+                                                            <MudTd>@major.MajorCode</MudTd>
+                                                            <MudTd>@major.MajorName</MudTd>
+                                                            <MudTd>
+                                                                <MudFab Color="Color.Primary" Class="mx-1" Size="Size.Small" Icon="@Icons.Material.Filled.Check" OnClick="@(async () => await OnAddToMajor(major))" Title="Xác nhận" DisableElevation="true"></MudFab>
+                                                                <MudFab Size="Size.Small" Color="Color.Error" Class="m-1" Icon="@Icons.Material.Filled.Delete" OnClick="@(async () => await OnDelete(major.Id))" Title="Hủy yêu cầu" DisableElevation="true">Xóa</MudFab>
+                                                            </MudTd>
+                                                        </RowTemplate>
+                                                    </MudTable>
+                                                </div>
+                                            </td>
+                                        </MudTr>
+                                    }
+                                </ChildRowContent>
                             </MudTable>
                             <CustomPagination Class="my-1" HasNext="@_presMajorRequest.HasNext" OnPageChange="@(async e => await OnPaginationButtonClickTab2(e))" CurrentPageNumber="@_presMajorRequest.PageNumber"></CustomPagination>
                         </div>
@@ -115,6 +177,7 @@ else
     private MajorRequestViewWithPaginationRequest _preqMajorRequest = new();
     private PaginationResponse<MajorRequestDTO> _presMajorRequest = new();
     private List<MajorRequestDTO> _listMajorRequest = new();
+    private List<IGrouping<(string email, string name), MajorRequestDTO>>? _listMajorRequestGrouped;
 
     private UserViewWithPaginationRequest _preqUser = new();
     private PaginationResponse<UserDTO> _presUser = new();
@@ -125,6 +188,8 @@ else
     private bool _isLoadingTab1 = true;
     private bool _isLoadingTab2 = true;
 
+    private Guid? _isShowingLecturerDetail = null;
+    private string? _isShowingMajorRequestDetail = null;
     #endregion
     protected override async Task OnInitializedAsync()
     {
@@ -161,6 +226,8 @@ else
         {
             _listMajorRequest = (List<MajorRequestDTO>)_presMajorRequest.Data;
         }
+        _listMajorRequestGrouped = _listMajorRequest.GroupBy(c => (c.CreatedByEmail, c.CreatedByName)).ToList();
+
 
     }
 

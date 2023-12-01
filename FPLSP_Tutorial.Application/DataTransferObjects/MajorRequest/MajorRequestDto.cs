@@ -17,6 +17,7 @@ namespace FPLSP_Tutorial.Application.DataTransferObjects.MajorRequest
         public Guid? DeletedBy { get; set; }
         public DateTimeOffset DeletedTime { get; set; }
 
+        public string MajorCode { get; set; } = string.Empty;
         public string MajorName { get; set; } = string.Empty;
         public string CreatedByEmail { get; set; } = string.Empty;
         public string CreatedByName { get; set; } = string.Empty;

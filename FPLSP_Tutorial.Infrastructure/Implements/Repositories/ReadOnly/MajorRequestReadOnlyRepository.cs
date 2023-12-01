@@ -64,8 +64,22 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
                     .AsNoTracking()
                     .AsQueryable()
                     .Where(c => c.Status != EntityStatus.Deleted && !c.Deleted);
+
+                //User exist in DB only
+                queryable = queryable.Where(mr => _dbContext.UserEntities.Any(u => u.Id == mr.CreatedBy && u.Status != EntityStatus.Deleted));
+
                 var result = await queryable
                     .PaginateAsync<MajorRequestEntity, MajorRequestDTO>(request, _mapper, cancellationToken);
+                    
+                if(result.Data != null)
+                {
+                    foreach(var dto in  result.Data)
+                    {
+                        var user = await _dbContext.UserEntities.FirstOrDefaultAsync(u => u.Id == dto.CreatedBy);
+                        dto.CreatedByEmail = user == null ? "<N/A>" : user.Email;
+                        dto.CreatedByName = user == null ? "<N/A>" : user.Username;
+                    }
+                }
 
                 return RequestResult<PaginationResponse<MajorRequestDTO>>.Succeed(new PaginationResponse<MajorRequestDTO>()
                 {

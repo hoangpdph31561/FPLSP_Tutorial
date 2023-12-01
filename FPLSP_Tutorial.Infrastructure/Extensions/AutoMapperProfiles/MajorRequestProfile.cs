@@ -11,7 +11,9 @@ namespace FPLSP_Tutorial.Infrastructure.Extensions.AutoMapperProfiles
         {
             CreateMap<MajorRequestEntity, MajorRequestDTO>()
                 .ForMember(des => des.MajorName, from => from
-                    .MapFrom(mr => mr.Major.Name));
+                    .MapFrom(mr => mr.Major.Name))
+                .ForMember(des => des.MajorCode, from => from
+                    .MapFrom(mr => mr.Major.Code));
             CreateMap<MajorRequestCreateRequest, MajorRequestEntity>();
             CreateMap<MajorRequestDeleteRequest, MajorRequestEntity>();
             CreateMap<MajorRequestUpdateRequest, MajorRequestEntity>();

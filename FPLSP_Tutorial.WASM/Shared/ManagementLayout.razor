@@ -21,6 +21,10 @@
     .mud-breadcrumb-item > a {
         font-weight: 500;
     }
+
+    .custom-secondary-color {
+        color: #f2bb1f;
+    }
 </style>
 
 <MudLayout>
@@ -42,7 +46,7 @@
         </MudDrawerHeader>
         
         <MudNavMenu>
-            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home" Href="/post/home">Trang chủ</MudNavLink>
+            <MudNavLink IconColor="Color.Primary" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home" Href="/post/home">Trang chủ</MudNavLink>
             <AuthorizeView Roles="ADMIN">
                 <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.List" Href="/major/manage/list">Quản lý chuyên ngành</MudNavLink>
                 <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.SupervisorAccount" Href="/user/manage/list">Quản lý người dùng</MudNavLink>

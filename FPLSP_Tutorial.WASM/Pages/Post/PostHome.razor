@@ -1,180 +1,79 @@
 ﻿@page "/post/home"
-@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major;
-@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major.Request;
-@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post;
-@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post.Request;
 @using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Tag.TagRequest;
 @using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Tag;
-
 @inject ITagRepository _repoTag
-@inject IMajorRepository _repoMajor
-@inject IPostRepository _repoPost
 
 @layout ManagementLayout
+
+<style>
+    .hover-zoom:hover {
+        transform: scale(1.01);
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+</style>
+
 @if(_isLoadingAll)
 {
     <LoadingIndicator/>
 }
 else
 {
-    <div class="">
-        <MudPaper Class="py-3 px-5" Elevation="2">
-            <div Class="d-flex align-center mb-3">
-                <MudIcon Icon="@Icons.Material.Filled.Home" Class="me-2" Size="Size.Large"></MudIcon>
-                <MudText Typo="Typo.h4" Class="ms-2" Style="font-weight: 500">Trang chủ</MudText>
-            </div>
-
-            <MudTextField Immediate Variant="Variant.Outlined" T="string" DebounceInterval="200" Label="Tìm kiếm" Placeholder="Tìm kiếm theo tên..." MaxLength="200" AdornmentIcon="@Icons.Material.Filled.Search" Adornment="Adornment.End" T="string" OnAdornmentClick="@(() => {})" OnDebounceIntervalElapsed="@(() => {})"></MudTextField>
-            <TagSelector ListTag="@_listTagSelected" ListTagFromDB="@_listTagFromDB" />
-        </MudPaper>
-
-        <div class="py-3"></div>
-
-        <MudPaper Class="px-3 pt-4 pb-3" Elevation="2">
-            @{
-                var postSystem = _listPostByMajor.FirstOrDefault(c => c.idMajor == null);
-            }
-
-            <div class="d-flex align-center">
-                <MudText Typo="Typo.h6" Class="ms-2" Style="font-weight: bold;">Bài viết hệ thống</MudText>
-                <div class="mr-auto"></div>
-                @if (postSystem.hasNext)
-                {
-                    <MudButton Variant="Variant.Text" Color="Color.Primary">Mở rộng</MudButton>
-                }
-            </div>
-            
-            <MudDivider Class="mx-2 my-1" DividerType="DividerType.Middle"/>
-
-            <div class="px-3">
-                <ListPostCard ListPost="@postSystem.listPost" IsLoading="@(!_listMajorPostLoaded.Any(c => c == null))" />
-            </div>
-        </MudPaper>
-
-        <div class="py-3"></div>
-
-        <MudPaper Class="px-3 pt-4 pb-3" Elevation="2">
-            <MudText Typo="Typo.h6" Class="ms-2" Style="font-weight: bold;">Bài viết chuyên ngành</MudText>
-            @if (!_isLoadingMajor)
-            {
-                @foreach (var i in _listMajor)
-                {
-                    var postMajor = _listPostByMajor.FirstOrDefault(c => c.idMajor == i.Id);
-
-                    <MudDivider Class="mx-2  my-1" DividerType="DividerType.Middle" />
-
-                    <div class="d-flex align-center">
-                        <MudIcon Icon="@Icons.Material.Filled.KeyboardArrowRight" Class="me-2 ms-2"></MudIcon>
-                        <MudText Typo="Typo.subtitle2" Class="my-1">@i.Name</MudText>
-                        <div class="mr-auto"></div>
-                        @if(postMajor.hasNext)
-                        {
-                            <MudButton Variant="Variant.Text" Color="Color.Primary">Mở rộng</MudButton>
-                        }
-                    </div>
-
-                    <MudDivider Class="mx-2  my-1" DividerType="DividerType.Middle" />
-
-                    <div class="px-3">
-                        <ListPostCard ListPost="@postMajor.listPost" IsLoading="@(!_listMajorPostLoaded.Any(c => c == i.Id))" />
-                    </div>
-                }
-            }
-            else
-            {
-                <MudDivider Class="mx-2 mb-1 mt-2" DividerType="DividerType.Middle" />
-
-                <div class="d-flex align-center">
-                    <MudSkeleton Class="me-2 ms-2" Width="20%" />
+    <div class="ma-5">
+        <Animate Animation="Animations.FadeUp">
+            <MudPaper Class="py-3 px-5" Elevation="2">
+                <div Class="d-flex align-center mb-3">
+                    <MudIcon Icon="@Icons.Material.Filled.Home" Class="me-2" Size="Size.Large"></MudIcon>
+                    <MudText Typo="Typo.h4" Class="ms-2" Style="font-weight: 500">Trang chủ</MudText>
                 </div>
 
-                <MudDivider Class="mx-2 mb-1 mt-2" DividerType="DividerType.Middle" />
+                <MudTextField Immediate Variant="Variant.Outlined" T="string" DebounceInterval="200" Label="Tìm kiếm" Placeholder="Tìm kiếm theo tên..." MaxLength="200" AdornmentIcon="@Icons.Material.Filled.Search" Adornment="Adornment.End" T="string" OnAdornmentClick="@(() => {})" OnDebounceIntervalElapsed="@(() => {})"></MudTextField>
+                <TagSelector ListTag="@_listTagSelected" ListTagFromDB="@_listTagFromDB" />
+            </MudPaper>
+        </Animate>
 
-                <div class="px-3">
-                    <ListPostCard ListPost="new()" IsLoading="@true" />
-                </div>
-            }
-        </MudPaper>
+        <Animate Animation="Animations.FadeUp" Delay="TimeSpan.FromSeconds(0.05)">
+            <MudPaper Class="pt-3 pb-4 px-5 mt-5" Elevation="2">
+                <MudText Typo="Typo.h6">Danh sách bài viết</MudText>
+                <MudDivider></MudDivider>
+                <Animate Animation="Animations.FadeUp" Delay="TimeSpan.FromSeconds(0.2)">
+                    <MudPaper Class="py-3 px-5 mt-5 hover-zoom d-flex align-center" Elevation="2">
+                        <MudIcon Icon="@Icons.Material.Filled.SettingsApplications"></MudIcon>
+                        <MudText Typo="Typo.h6">Bài viết hệ thống</MudText>
+                    </MudPaper>
+                </Animate>
+                <Animate Animation="Animations.FadeUp" Delay="TimeSpan.FromSeconds(0.3)">
+                    <MudPaper Class="py-3 px-5 mt-5 hover-zoom d-flex align-center" Elevation="2">
+                        <MudIcon Icon="@Icons.Material.Filled.Class"></MudIcon>
+                        <MudText Typo="Typo.h6">Bài viết chuyên ngành</MudText>
+                    </MudPaper>
+                </Animate>
+            </MudPaper>
+        </Animate>
     </div>
 }
 
 
 
 @code {
-    private PostViewWithPaginationRequest _preqPostSystem = new()
-    { 
-        IsGetSystemPost = true,
-        PageSize = 4
-    };
-    private PaginationResponse<PostDTO> _presPost = new();
-    private List<PostDTO> _listPost = new();
-
-    private MajorViewWithPaginationRequest _preqMajor = new()
-    {
-        ContainPostOnly = true,
-    };
-    private PaginationResponse<MajorDTO> _presMajor = new();
-    private List<MajorDTO> _listMajor = new();
-
     private TagViewRequest _preqTag = new();
     private PaginationResponse<TagDTO> _presTag = new();
     private List<TagDTO> _listTagFromDB = new();
     private List<TagDTO> _listTagSelected = new();
-
-    private List<Guid?> _listMajorPostLoaded = new();
-    private List<(Guid? idMajor, List<PostDTO> listPost, bool hasNext)> _listPostByMajor = new();
 
     private bool _isLoadingAll = true;
     private bool _isLoadingMajor = true;
 
     protected async override Task OnInitializedAsync()
     {
-        _isLoadingAll = false;
-        await LoadData();
+        await LoadData().ContinueWith((re) =>
+        {
+            _isLoadingAll = false;
+        });
     }
 
     private async Task LoadData()
     {
-        await LoadMajor().ContinueWith(async (re) => { _isLoadingMajor = false; await LoadPost(); } );
         _listTagFromDB = await _repoTag.GetListAsync(_preqTag);
-    }
-
-    private async Task LoadMajor()
-    {
-        _isLoadingMajor = true;
-        _presMajor = await _repoMajor.GetListWithPaginationAsync(_preqMajor);
-        if(_presMajor.Data != null)
-        {
-            _listMajor = _presMajor.Data.ToList();
-        }
-    }
-
-    private async Task LoadPost()
-    {
-        var presPostSystem = await _repoPost.GetListWithPaginationAsync(_preqPostSystem);
-
-        if(presPostSystem.Data != null)
-        {
-            _listPostByMajor.Add((null, presPostSystem.Data.ToList(), presPostSystem.HasNext));
-        }
-
-        _listMajorPostLoaded.Add(null);
-        StateHasChanged();
-
-        foreach(var i in _listMajor)
-        {
-            var postMajor = await _repoPost.GetListWithPaginationAsync(new()
-            {
-                MajorId = i.Id,
-            });
-            if(postMajor.Data != null)
-            {
-                _listPostByMajor.Add((i.Id, postMajor.Data.ToList(), postMajor.HasNext));
-                StateHasChanged();
-            }
-            
-            _listMajorPostLoaded.Add(i.Id);
-            StateHasChanged();
-        }
     }
 }

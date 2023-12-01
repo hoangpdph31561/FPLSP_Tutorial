@@ -13,6 +13,9 @@ using FPLSP_Tutorial.Infrastructure.Database.AppDbContext;
 using FPLSP_Tutorial.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Linq;
+using System.Reflection;
 
 namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
 {
@@ -58,8 +61,14 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
                     queryable = queryable.Where(m => m.Tags.Where(t => t.Status != 0 && !t.Deleted).SelectMany(t => t.PostTags).Select(pt => pt.Post).Any(p => p.Status != 0 && !p.Deleted));
                 }
 
+                if (!request.SearchString.IsNullOrEmpty())
+                {
+                    queryable = queryable.Where(m => m.Name.ToLower().Contains(request.SearchString!.ToLower()) || m.Code.ToLower().Contains(request.SearchString!.ToLower()));
+                }
+
                 var result = await queryable
                     .ProjectTo<MajorDTO>(_mapper.ConfigurationProvider)
+                    .SortData(request.SortingProperty, request.SortingDirection)
                     .ToListAsync();
                 return RequestResult<List<MajorDTO>>.Succeed(result);
             }
@@ -105,13 +114,25 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
                     queryable = queryable.Where(m => m.Tags.Where(t => t.Status != 0 && !t.Deleted).SelectMany(t => t.PostTags).Select(pt => pt.Post).Any(p => p.Status != 0 && !p.Deleted));
                 }
 
-                var result = await queryable.PaginateAsync<MajorEntity, MajorDTO>(request, _mapper, cancellationToken);
-
-                #warning MAINTAIN: Phải tách pthuc + DTO (CountPostByUser)
-
-                if(request.UserId != null && result.Data != null)
+                if(!request.SearchString.IsNullOrEmpty())
                 {
-                    foreach (var dto in result.Data)
+                    queryable = queryable.Where(m => m.Name.ToLower().Contains(request.SearchString!.ToLower()) || m.Code.ToLower().Contains(request.SearchString!.ToLower()));
+                }
+
+                var result = await queryable
+                        .ProjectTo<MajorDTO>(_mapper.ConfigurationProvider)
+                        .SortData(request.SortingProperty, request.SortingDirection)
+                        .Skip((request.PageNumber - 1) * request.PageSize)
+                        .Take(request.PageSize + 1)
+                        .ToListAsync(cancellationToken);
+
+                bool hasNext = result.Count == request.PageSize + 1;
+
+                #warning MAINTAIN: Phải tách pthuc + DTO (CountPostByUser). Cần phải đặt sau skip take (.ToList()) mới orderby đc > chưa đáp ứng đc chức năng view này
+
+                if (request.UserId != null && result != null)
+                {
+                    foreach (var dto in result)
                     {
                         dto.NumberOfPostByUser = _dbContext.PostEntities.AsNoTracking().AsQueryable().Where(c => c.CreatedBy == request.UserId && c.PostTags.Select(pt => pt.Tag).Any(t => t.MajorId == dto.Id)).Count();
                     }
@@ -121,8 +142,8 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
                 {
                     PageNumber = request.PageNumber,
                     PageSize = request.PageSize,
-                    HasNext = result.HasNext,
-                    Data = result.Data
+                    HasNext = hasNext,
+                    Data = result.Take(request.PageSize).ToList()
                 });
             }
             catch (Exception e)
@@ -162,7 +183,5 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
                 });
             }
         }
-
-        
     }
 }

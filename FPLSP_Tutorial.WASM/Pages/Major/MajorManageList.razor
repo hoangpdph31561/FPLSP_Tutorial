@@ -17,60 +17,88 @@ else
 {
     <MudBreadcrumbs Items="_breadCrumbs" Class="ms-3"></MudBreadcrumbs>
 
-    <div class="mx-3 mb-2 px-3 pb-3">
-        <MudPaper Elevation="2" Class="px-1">
-            <div class="mx-5 pt-4">
-                <div class="d-flex align-center mb-3">
-                    <MudText Typo="Typo.h5" Class="mr-auto" Style="font-weight: 500">Danh sách chuyên ngành</MudText>
-                    <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled">
-                        <MudIconButton Icon="@Icons.Material.Filled.Add" OnClick="@(async () => await DialogAdd())" Title="Thêm chuyên ngành" Style="border-right: 2px solid white;"></MudIconButton>
-                        <MudIconButton Icon="@Icons.Material.Filled.Search" Title="Tìm kiếm" OnClick="@(() => _isShowSearch = !_isShowSearch)"></MudIconButton>
-                    </MudButtonGroup>
+    <div class="mx-5">
+        <MudPaper Elevation="2" Class="py-3 px-5">
+            <div class="d-flex align-center">
+                <MudText Typo="Typo.h5" Class="mr-auto" Style="font-weight: 500">Danh sách chuyên ngành</MudText>
+                <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled">
+                    <MudIconButton Icon="@Icons.Material.Filled.Add" OnClick="@(async () => await DialogAdd())" Title="Thêm chuyên ngành" Style="border-right: 2px solid white;"></MudIconButton>
+                    <MudIconButton Icon="@Icons.Material.Filled.Search" Title="Tìm kiếm" OnClick="@(() => _isShowFilter = !_isShowFilter)"></MudIconButton>
+                </MudButtonGroup>
 
-                </div>
-                @if (_isShowSearch)
-                {
-                    <div class="mb-4">
-                        <MudTextField T="string" Label="Tìm kiếm" Placeholder="Nhập tên, mã cần tìm kiếm..."></MudTextField>
-                    </div>
-                }
-                @if (_isLoadingList)
-                {
-                    <MudProgressLinear Color="Color.Primary" Indeterminate="true"></MudProgressLinear>
-                }
-                else
-                {
-                    <MudTable Items="@_majorDTO.Data" Elevation="3">
-                        <HeaderContent>
-                            <MudTh>STT</MudTh>
-                            <MudTh>Tên chuyên ngành</MudTh>
-                            <MudTh>SL Giảng viên</MudTh>
-                            <MudTh>SL Giảng viên chờ duyệt</MudTh>
-                            <MudTh>SL Tag</MudTh>
-                            <MudTh>SL Bài viết</MudTh>
-                            <MudTh>Trạng thái</MudTh>
-                            <MudTh>Hành động</MudTh>
-                        </HeaderContent>
-                        <RowTemplate>
-                            <MudTd>@(_lstmajors.IndexOf(context) + 1)</MudTd>
-                                <MudTd>@context.Name</MudTd>
-                                <MudTd>@context.NumberOfLecturer</MudTd>
-                                <MudTd>@context.NumberOfLecturerRequest</MudTd>
-                                <MudTd>@context.ListTag.Count()</MudTd>
-                                <MudTd>@context.NumberOfPost</MudTd>
-                                <MudTd><BadgeEntityStatus Status="@context.Status"></BadgeEntityStatus></MudTd>
-                                <MudTd>
-                                    <MudFab Size="Size.Small" Color="Color.Primary" Class="m-1" Icon="@Icons.Material.Filled.LabelImportant" OnClick="@(async () => await OnClickTagManager(context.Id))" Title="Quản lý Tag" DisableElevation="true"></MudFab>
-                                    <MudFab Size="Size.Small" Color="Color.Primary" Class="m-1" Icon="@Icons.Material.Filled.Edit" OnClick="@(() => DialogUpdate(context.Id))" Title="Chi tiết" DisableElevation="true"></MudFab>
-                                    <MudFab Size="Size.Small" Color="Color.Error" Class="m-1" Icon="@Icons.Material.Filled.Delete" OnClick="@(() => DialogDelete(context.Id))" Title="Xóa" DisableElevation="true">Xóa</MudFab>
-                                </MudTd>
-                            </RowTemplate>
-                        </MudTable>
-                    <CustomPagination Class="my-1" HasNext="@_majorDTO.HasNext" OnPageChange="@(async e => await OnPaginationButtonClick(e))" CurrentPageNumber="@_majorDTO.PageNumber"></CustomPagination>
-                }
             </div>
-                
+            
         </MudPaper>
+
+        @if (_isShowFilter)
+        {
+            <div class="mt-5"></div>
+
+            <Animate Animation="Animations.ZoomIn">
+                <MudPaper Class="px-5 pt-3 pb-4" Elevation="2">
+                    <MudTextField T="string" Variant="Variant.Outlined" Label="Tìm kiếm" Placeholder="Nhập tên, mã cần tìm kiếm..." DebounceInterval="1000" OnDebounceIntervalElapsed="@(async (string val) => { majorRequest.SearchString = val; await OnQueryRequest(); })"></MudTextField>
+                </MudPaper>
+            </Animate>
+        }
+
+        <div class="mt-5"></div>
+
+        <MudTable Items="@_lstmajors" Elevation="2" Loading="@_isLoadingList" CustomHeader="true" HeaderClass="table-head-bordered" Bordered="true" Striped="true">
+            <LoadingContent>
+
+            </LoadingContent>
+            <HeaderContent>
+
+                <MudTHeadRow>
+                    <MudTh rowspan="2">
+                        <TableSortingIcon CallLoadData="@(async () => await OnQueryRequest())" PropertyName="@(nameof(MajorDTO.CreatedTime))" ActivePropertyName="@majorRequest.SortingProperty" ActiveSortingDirection="@majorRequest.SortingDirection" SetPropName="@((e) => majorRequest.SortingProperty = e)" SetSortDir="@((e) => majorRequest.SortingDirection = e)">STT</TableSortingIcon>
+                    </MudTh>
+                    <MudTh rowspan="2">
+                        <TableSortingIcon CallLoadData="@(async () => await OnQueryRequest())" PropertyName="@(nameof(MajorDTO.Code))" ActivePropertyName="@majorRequest.SortingProperty" ActiveSortingDirection="@majorRequest.SortingDirection" SetPropName="@((e) => majorRequest.SortingProperty = e)" SetSortDir="@((e) => majorRequest.SortingDirection = e)">Mã</TableSortingIcon>
+                    </MudTh>
+                    <MudTh rowspan="2">
+                        <TableSortingIcon CallLoadData="@(async () => await OnQueryRequest())" PropertyName="@(nameof(MajorDTO.Name))" ActivePropertyName="@majorRequest.SortingProperty" ActiveSortingDirection="@majorRequest.SortingDirection" SetPropName="@((e) => majorRequest.SortingProperty = e)" SetSortDir="@((e) => majorRequest.SortingDirection = e)">Tên</TableSortingIcon>
+                    </MudTh>
+
+                    <MudTh colspan="2" Style="text-align: center;">Số lượng giảng viên</MudTh>
+
+                    <MudTh rowspan="2">
+                        <TableSortingIcon CallLoadData="@(async () => await OnQueryRequest())" PropertyName="@(nameof(MajorDTO.ListTag))" ActivePropertyName="@majorRequest.SortingProperty" ActiveSortingDirection="@majorRequest.SortingDirection" SetPropName="@((e) => majorRequest.SortingProperty = e)" SetSortDir="@((e) => majorRequest.SortingDirection = e)">SL Tag</TableSortingIcon>
+                    </MudTh>
+                    <MudTh rowspan="2">
+                        <TableSortingIcon CallLoadData="@(async () => await OnQueryRequest())" PropertyName="@(nameof(MajorDTO.NumberOfPost))" ActivePropertyName="@majorRequest.SortingProperty" ActiveSortingDirection="@majorRequest.SortingDirection" SetPropName="@((e) => majorRequest.SortingProperty = e)" SetSortDir="@((e) => majorRequest.SortingDirection = e)">SL Bài viết</TableSortingIcon>
+                    </MudTh>
+                    <MudTh rowspan="2">
+                        <TableSortingIcon CallLoadData="@(async () => await OnQueryRequest())" PropertyName="@(nameof(MajorDTO.Status))" ActivePropertyName="@majorRequest.SortingProperty" ActiveSortingDirection="@majorRequest.SortingDirection" SetPropName="@((e) => majorRequest.SortingProperty = e)" SetSortDir="@((e) => majorRequest.SortingDirection = e)">Trạng thái</TableSortingIcon>
+                    </MudTh>
+                    <MudTh rowspan="2">Hành động</MudTh>
+                </MudTHeadRow>
+                <MudTHeadRow>
+                    <MudTh>
+                        <TableSortingIcon CallLoadData="@(async () => await OnQueryRequest())" PropertyName="@(nameof(MajorDTO.NumberOfLecturer))" ActivePropertyName="@majorRequest.SortingProperty" ActiveSortingDirection="@majorRequest.SortingDirection" SetPropName="@((e) => majorRequest.SortingProperty = e)" SetSortDir="@((e) => majorRequest.SortingDirection = e)">Hoạt động</TableSortingIcon>
+                    </MudTh>
+                    <MudTh Style="border-right: 1px solid var(--mud-palette-table-lines);">
+                        <TableSortingIcon CallLoadData="@(async () => await OnQueryRequest())" PropertyName="@(nameof(MajorDTO.NumberOfLecturerRequest))" ActivePropertyName="@majorRequest.SortingProperty" ActiveSortingDirection="@majorRequest.SortingDirection" SetPropName="@((e) => majorRequest.SortingProperty = e)" SetSortDir="@((e) => majorRequest.SortingDirection = e)">Chờ duyệt</TableSortingIcon>
+                    </MudTh>
+                </MudTHeadRow>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd>@(_lstmajors.IndexOf(context) + 1 + _majorDTO.PageSize * (_majorDTO.PageNumber - 1))</MudTd>
+                <MudTd>@context.Code</MudTd>
+                <MudTd>@context.Name</MudTd>
+                <MudTd>@context.NumberOfLecturer</MudTd>
+                <MudTd>@context.NumberOfLecturerRequest</MudTd>
+                <MudTd>@context.ListTag.Count()</MudTd>
+                <MudTd>@context.NumberOfPost</MudTd>
+                <MudTd><BadgeEntityStatus Status="@context.Status"></BadgeEntityStatus></MudTd>
+                <MudTd>
+                    <MudFab Size="Size.Small" Color="Color.Primary" Class="m-1" Icon="@Icons.Material.Filled.LabelImportant" OnClick="@(async () => await OnClickTagManager(context.Id))" Title="Quản lý Tag" DisableElevation="true"></MudFab>
+                    <MudFab Size="Size.Small" Color="Color.Primary" Class="m-1" Icon="@Icons.Material.Filled.Edit" OnClick="@(() => DialogUpdate(context.Id))" Title="Chi tiết" DisableElevation="true"></MudFab>
+                    <MudFab Size="Size.Small" Color="Color.Error" Class="m-1" Icon="@Icons.Material.Filled.Delete" OnClick="@(() => DialogDelete(context.Id))" Title="Xóa" DisableElevation="true">Xóa</MudFab>
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
+        <CustomPagination Class="my-1" HasNext="@_majorDTO.HasNext" OnPageChange="@(async e => await OnPaginationButtonClick(e))" CurrentPageNumber="@_majorDTO.PageNumber"></CustomPagination>
     </div>
 }
 
@@ -93,6 +121,7 @@ else
     NavigationManager NavigationManager { get; set; }
     private Guid idMajorDetail = Guid.Empty;
 
+
     #region Major 
     List<MajorDTO> _lstmajors;
     private PaginationResponse<MajorDTO> _majorDTO;
@@ -103,7 +132,7 @@ else
     #region 
     private bool _isLoadingAll = true;
     private bool _isLoadingList = true;
-    private bool _isShowSearch = false;
+    private bool _isShowFilter = false;
     #endregion
 
 
@@ -214,5 +243,22 @@ else
         var dialog = _dialog.Show<TagManage>("Quản lý Tag", parameters, options);
         await dialog.Result;
         await LoadData();
+    }
+
+
+    private async Task OnQueryRequest()
+    {
+        _isLoadingList = true;
+        StateHasChanged();
+        if(majorRequest.SearchString != "" && majorRequest.SearchString != null)
+        {
+            majorRequest.PageNumber = 1;
+        }
+        await LoadData().ContinueWith((re) =>
+        {
+            _isLoadingList = false;
+            StateHasChanged();
+        });
+        
     }
 }

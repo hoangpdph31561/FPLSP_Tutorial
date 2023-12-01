@@ -11,13 +11,3 @@ function SetRTEValue(value) {
 function GetRTEValue(value) { 
     return editor1.getHTMLCode();
 }
-
-function ReadClipboard() {
-    navigator.clipboard.readText()
-        .then(function (clipText) {
-            alert("Clipboard content: " + clipText);
-        })
-        .catch(function (error) {
-            console.error("Error reading clipboard:", error);
-        });
-}

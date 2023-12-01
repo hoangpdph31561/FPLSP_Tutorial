@@ -2,6 +2,7 @@
 using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major.Request;
 using FPLSP_Tutorial.WASM.Data.Pagination;
 using FPLSP_Tutorial.WASM.Repositories.Interfaces;
+using Microsoft.IdentityModel.Tokens;
 using System.Net.Http.Json;
 
 namespace FPLSP_Tutorial.WASM.Repositories.Implements
@@ -21,6 +22,7 @@ namespace FPLSP_Tutorial.WASM.Repositories.Implements
             if (request.UserId != null) { url += $"&UserId={request.UserId}"; }
             if (request.NotJoined) { url += $"&NotJoined={request.NotJoined}"; }
             if (request.ContainPostOnly) { url += $"&ContainPostOnly={request.ContainPostOnly}"; }
+            if (!request.SearchString.IsNullOrEmpty()) { url += $"&SearchString={request.SearchString}"; }
 
             var result = await _httpClient.GetFromJsonAsync<List<MajorDTO>>(url);
             if (result == null)
@@ -38,7 +40,12 @@ namespace FPLSP_Tutorial.WASM.Repositories.Implements
             if(request.UserId != null) { url += $"&UserId={request.UserId}"; }
             if(request.NotJoined) { url += $"&NotJoined={request.NotJoined}"; }
             if(request.ContainPostOnly) { url += $"&ContainPostOnly={request.ContainPostOnly}"; }
-            
+
+            if(request.SortingProperty != null) { url += $"&SortingProperty={request.SortingProperty}"; }
+            if(request.SortingProperty != null) { url += $"&SortingDirection={request.SortingDirection}"; }
+
+            if (!request.SearchString.IsNullOrEmpty()) { url += $"&SearchString={request.SearchString}"; }
+
             var result = await _httpClient.GetFromJsonAsync<PaginationResponse<MajorDTO>>(url);
             if (result == null)
             {

@@ -51,9 +51,9 @@
                 <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.List" Href="/major/manage/list">Quản lý chuyên ngành</MudNavLink>
                 <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.SupervisorAccount" Href="/user/manage/list">Quản lý người dùng</MudNavLink>
             </AuthorizeView>
-            <AuthorizeView Roles="CNBM">
+            @*<AuthorizeView Roles="CNBM">
                 <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Newspaper" Href="/major/joined">Quản lý bài viết</MudNavLink>
-            </AuthorizeView>
+            </AuthorizeView>*@
             <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Archive" Href="/post/archive">Kho lưu trữ</MudNavLink>
             <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.EditNote" Href="/post/create">Tạo bài viết</MudNavLink>
 

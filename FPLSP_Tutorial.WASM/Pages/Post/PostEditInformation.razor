@@ -29,13 +29,16 @@
             
         </div>
         <div class="row">
-            <div class="col">
-                <MudText Typo="Typo.caption">Loại hình bài viết</MudText>
-                <MudSelect Variant="Variant.Outlined" Value="@_selectedPostType" ValueChanged="@((bool val) => OnSelectPostType(val))" AnchorOrigin="Origin.BottomCenter" Disabled="@_disablePostType">
-                    <MudSelectItem Value="true">Hệ thống</MudSelectItem>
-                    <MudSelectItem Value="false">Chuyên ngành</MudSelectItem>
-                </MudSelect>
-            </div>
+            <AuthorizeView Roles="ADMIN">
+                <div class="col">
+                    <MudText Typo="Typo.caption">Loại hình bài viết</MudText>
+                    <MudSelect Variant="Variant.Outlined" Value="@_selectedPostType" ValueChanged="@((bool val) => OnSelectPostType(val))" AnchorOrigin="Origin.BottomCenter" Disabled="@_disablePostType">
+                        <MudSelectItem Value="true">Hệ thống</MudSelectItem>
+                        <MudSelectItem Value="false">Chuyên ngành</MudSelectItem>
+                    </MudSelect>
+                </div>
+            </AuthorizeView>
+           
             @if(!_selectedPostType)
             {
                 <div class="col">
@@ -54,16 +57,12 @@
                 <MudText Typo="Typo.caption">Tag</MudText>
                 <div style="border: 1px solid lightgrey; border-radius: 8px">
                     <div class="d-flex align-center" style="min-height: 48px;">
-                        <div class="">
-                            @foreach (var i in ListTagSelected)
-                            {
-                                <MudChip Variant="Variant.Outlined" Size="Size.Small" @onmouseover="@(() => TagOnMouseOver(i.Id))" @onmouseleave="@(() => _hovingTagId = null)" Icon="@(_hovingTagId == i.Id ? Icons.Material.Filled.Delete : null)" OnClick="@(() => TagOnClickRemove(i.Id))">@i.Name</MudChip>
-                            }
-                            <MudIcon Icon="@Icons.Material.Filled.AddCircle" @onclick="@(async () => await OnClickTagAdd())" Class="@(ListTagSelected.Count() == 0 ? "ms-3" : "")"></MudIcon>
-                        </div>
-                        
+                        @foreach (var i in ListTagSelected)
+                        {
+                            <MudChip Variant="Variant.Outlined" Size="Size.Small" @onmouseover="@(() => TagOnMouseOver(i.Id))" @onmouseleave="@(() => _hovingTagId = null)" Icon="@(_hovingTagId == i.Id ? Icons.Material.Filled.Delete : null)" OnClick="@(() => TagOnClickRemove(i.Id))">@i.Name</MudChip>
+                        }
+                        <MudIcon Icon="@Icons.Material.Filled.AddCircle" @onclick="@(async () => await OnClickTagAdd())" Class="@(ListTagSelected.Count() == 0 ? "ms-3" : "")"></MudIcon>
                     </div>
-                    
                 </div>
             </div>
         </div>
@@ -95,7 +94,7 @@
 
     private string _bindTitle = "";
 
-    private bool _selectedPostType = true;
+    private bool _selectedPostType = false;
     private bool _disablePostType = true;
     private Guid _selectedMajorId = Guid.Empty;
 

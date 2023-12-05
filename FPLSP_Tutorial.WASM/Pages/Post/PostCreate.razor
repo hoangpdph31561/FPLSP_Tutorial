@@ -39,7 +39,6 @@ else
             <MudText Typo="Typo.h5" Class="mr-auto" Style="font-weight: 500">Tạo bài viết</MudText>
 
             <MudChip Icon="@Icons.Material.Filled.FileUpload" title="Nhập nội dung bằng file truyền vào(.xlsx, .docs)" Color="Color.Success" OnClick="@(() => _isEnableFileImport = true)">Nhập file</MudChip>
-            <MudChip OnClick="@(() => _nav.NavigateTo("/post-manager" + ((idPost == null) ? "" : "?idPost=" + idPost)))" Color="Color.Error" Icon="@Icons.Material.Filled.ExitToApp">Hủy</MudChip>
             <MudChip OnClick="@(async () => { _isEnablePostInformation= true; })" Color="Color.Primary" Icon="@Icons.Material.Filled.Save">Lưu</MudChip>
         </div>
 

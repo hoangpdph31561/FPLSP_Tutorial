@@ -1,4 +1,4 @@
-﻿@page "/user/manage/list"
+﻿@page "/user-manager"
 @using FPLSP_Tutorial.WASM.Data.DataTransferObjects.MajorRequest.Request;
 @using FPLSP_Tutorial.WASM.Data.DataTransferObjects.MajorRequest;
 @using FPLSP_Tutorial.WASM.Data.DataTransferObjects.User;
@@ -28,7 +28,7 @@ else
     <div class="mx-5">
         <MudPaper Class="" Elevation="2">
             <MudTabs @ref="tabs" Rounded="true">
-                <MudTabPanel Text="Đang hoạt động">
+                <MudTabPanel Text="Danh sách giảng viên">
                     @if (_isLoadingTab1)
                     {
                         <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="m-3" />

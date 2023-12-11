@@ -1,5 +1,5 @@
-﻿using FPLSP_Tutorial.WASM.Enum;
-using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major;
+﻿using FPLSP_Tutorial.WASM.Data.DataTransferObjects.UserMajor;
+using FPLSP_Tutorial.WASM.Enum;
 
 namespace FPLSP_Tutorial.WASM.Data.DataTransferObjects.User
 {
@@ -14,6 +14,6 @@ namespace FPLSP_Tutorial.WASM.Data.DataTransferObjects.User
         public DateTimeOffset CreatedTime { get; set; }
         public Guid? CreatedBy { get; set; }
 
-        public List<MajorDTO> ListJoinedMajors { get; set; } = new();
+        public List<UserMajorDTO> ListJoinedMajors { get; set; } = new();
     }
 }

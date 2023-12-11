@@ -78,11 +78,19 @@ else
                                                     <MudTh>STT</MudTh>
                                                     <MudTh>Mã</MudTh>
                                                     <MudTh>Tên</MudTh>
+                                                    <MudTh>Quyền</MudTh>
                                                 </HeaderContent>
                                                 <RowTemplate>
-                                                    <MudTd>@context.ListJoinedMajors.IndexOf(major)</MudTd>
-                                                    <MudTd>@major.Code</MudTd>
-                                                    <MudTd>@major.Name</MudTd>
+                                                    <MudTd>@(context.ListJoinedMajors.IndexOf(major) + 1)</MudTd>
+                                                    <MudTd>@major.MajorCode</MudTd>
+                                                    <MudTd>@major.MajorName</MudTd>
+                                                    <MudTd>
+                                                        <MudIcon Size="Size.Small" Icon="@Icons.Material.Filled.RemoveRedEye" Title="Xem bài viết"></MudIcon>
+                                                        @if (major.IsManager)
+                                                        {
+                                                            <MudIcon Size="Size.Small" Icon="@Icons.Material.Filled.EditNote" Title="Thêm/Xóa bài viết của bản thân"></MudIcon>
+                                                        }
+                                                    </MudTd>
                                                 </RowTemplate>
                                             </MudTable>
                                         </div>
@@ -94,7 +102,7 @@ else
                     }
                 </MudTabPanel>
                 @*  View danh sách giảng viên chờ duyệt  *@
-                <MudTabPanel Text="Chờ duyệt">
+                <MudTabPanel Text="Yêu cầu chuyên ngành">
                     @if (_isLoadingTab2)
                     {
                         <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="m-3" />

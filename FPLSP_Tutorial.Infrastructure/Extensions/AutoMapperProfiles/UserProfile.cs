@@ -13,8 +13,7 @@ namespace FPLSP_Tutorial.Infrastructure.Extensions.AutoMapperProfiles
             CreateMap<UserEntity, UserDTO>()
                 .ForMember(des => des.ListJoinedMajors, from => from
                     .MapFrom(u => u.UserMajors
-                        .Where(um => um.Status != EntityStatus.Deleted && !um.Deleted)
-                        .Select(um => um.Major).Where(m => m.Status != EntityStatus.Deleted && !m.Deleted)));
+                        .Where(um => um.Status != EntityStatus.Deleted && !um.Deleted)));
             CreateMap<UserCreateRequest, UserEntity>();
             CreateMap<UserUpdateRequest, UserEntity>();
 

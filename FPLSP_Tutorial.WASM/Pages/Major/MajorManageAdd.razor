@@ -4,17 +4,18 @@
 
 <MudDialog>
     <DialogContent>
-        <MudTextField @bind-Value="majorCreate.Name" Label="Tên chuyên ngành"></MudTextField>
+        <MudText Typo="Typo.h5" Style="font-weight: 500" Class="mt-2">Thêm chuyên ngành</MudText>
         <MudTextField @bind-Value="majorCreate.Code" Label="Mã chuyên ngành"></MudTextField>
-        <MudSelect T="EntityStatus" @bind-Value="majorCreate.Status" Label="Trạng thái" AnchorOrigin="Origin.BottomCenter">
+        <MudTextField @bind-Value="majorCreate.Name" Label="Tên chuyên ngành"></MudTextField>
+@*        <MudSelect T="EntityStatus" @bind-Value="majorCreate.Status" Label="Trạng thái" AnchorOrigin="Origin.BottomCenter">
             <MudSelectItem Value="EntityStatus.Active">Hoạt động</MudSelectItem>
             <MudSelectItem Value="EntityStatus.InActive">Không hoạt động</MudSelectItem>
-        </MudSelect>
+        </MudSelect>*@
     </DialogContent>
     <DialogActions>
-        <MudButton Variant="Variant.Filled" Color="Color.Error" @onclick="OnClickCancel">Hủy</MudButton>
-        <MudButton Variant="Variant.Filled" Color="Color.Info" @onclick="Reset">Làm mới</MudButton>
-        <MudButton Variant="Variant.Filled" Color="Color.Success" @onclick="CreateNewMajor">Lưu</MudButton>
+        <MudButton Color="Color.Error" OnClick="OnClickCancel">Hủy</MudButton>
+        <MudButton OnClick="Reset">Làm mới</MudButton>
+        <MudButton Color="Color.Primary" OnClick="CreateNewMajor">Lưu</MudButton>
     </DialogActions>
 </MudDialog>
 @code {

@@ -1,4 +1,5 @@
-﻿using FPLSP_Tutorial.WASM.Enum;
+﻿using FPLSP_Tutorial.Application.DataTransferObjects.Major;
+using FPLSP_Tutorial.WASM.Enum;
 
 namespace FPLSP_Tutorial.WASM.Data.DataTransferObjects.UserMajor
 {
@@ -16,5 +17,8 @@ namespace FPLSP_Tutorial.WASM.Data.DataTransferObjects.UserMajor
         public Guid? DeletedBy { get; set; }
         public DateTimeOffset DeletedTime { get; set; }
 
+
+        public string MajorCode { get; set; } = string.Empty;
+        public string MajorName { get; set; } = string.Empty;
     }
 }

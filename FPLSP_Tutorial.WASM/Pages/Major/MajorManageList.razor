@@ -63,7 +63,7 @@ else
                     <MudTh colspan="2" Style="text-align: center;">Số lượng giảng viên</MudTh>
 
                     <MudTh rowspan="2">
-                        <TableSortingIcon CallLoadData="@(async () => await OnQueryRequest())" PropertyName="@(nameof(MajorDTO.ListTag))" ActivePropertyName="@majorRequest.SortingProperty" ActiveSortingDirection="@majorRequest.SortingDirection" SetPropName="@((e) => majorRequest.SortingProperty = e)" SetSortDir="@((e) => majorRequest.SortingDirection = e)">SL Tag</TableSortingIcon>
+                        <TableSortingIcon CallLoadData="@(async () => await OnQueryRequest())" PropertyName="@(nameof(MajorDTO.ListTag))" ActivePropertyName="@majorRequest.SortingProperty" ActiveSortingDirection="@majorRequest.SortingDirection" SetPropName="@((e) => majorRequest.SortingProperty = e)" SetSortDir="@((e) => majorRequest.SortingDirection = e)">SL nhãn</TableSortingIcon>
                     </MudTh>
                     <MudTh rowspan="2">
                         <TableSortingIcon CallLoadData="@(async () => await OnQueryRequest())" PropertyName="@(nameof(MajorDTO.NumberOfPost))" ActivePropertyName="@majorRequest.SortingProperty" ActiveSortingDirection="@majorRequest.SortingDirection" SetPropName="@((e) => majorRequest.SortingProperty = e)" SetSortDir="@((e) => majorRequest.SortingDirection = e)">SL Bài viết</TableSortingIcon>

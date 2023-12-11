@@ -24,7 +24,7 @@ namespace FPLSP_Tutorial.WASM.Repositories.Implements
             if (request.PostId != null) { url += $"&PostId={request.PostId}"; }
             if (request.MajorId != null) { url += $"&MajorId={request.MajorId}"; }
             if (request.UserId != null) { url += $"&UserId={request.UserId}"; }
-            if (request.IsGetSystemPost) { url += $"&IsGetSystemPost={request.IsGetSystemPost}"; }
+            if (request.PostType != null) { url += $"&PostType={request.PostType}"; }
             if (request.IsGetTopLevel) { url += $"&IsGetTopLevel={request.IsGetTopLevel}"; }
 
             var result = await _httpClient.GetFromJsonAsync<List<PostDTO>>(url);
@@ -42,7 +42,7 @@ namespace FPLSP_Tutorial.WASM.Repositories.Implements
             if (request.PostId != null) { url += $"&PostId={request.PostId}"; }
             if (request.MajorId != null) { url += $"&MajorId={request.MajorId}"; }
             if (request.UserId != null) { url += $"&UserId={request.UserId}"; }
-            if (request.IsGetSystemPost) { url += $"&IsGetSystemPost={request.IsGetSystemPost}"; }
+            if (request.PostType != null) { url += $"&PostType={request.PostType}"; }
             if (request.IsGetTopLevel) { url += $"&IsGetTopLevel={request.IsGetTopLevel}"; }
 
             var result = await _httpClient.GetFromJsonAsync<PaginationResponse<PostDTO>>(url);

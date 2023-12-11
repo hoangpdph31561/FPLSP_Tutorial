@@ -44,9 +44,9 @@
                 <div class="col">
                     <MudText Typo="Typo.caption">Chuyên ngành</MudText>
                     <MudSelect Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter" Value="@_selectedMajorId" ValueChanged="@((Guid val) => OnSelectMajor(val))">
-                        @foreach (var i in _listMajor)
+                        @foreach (var i in _listMajor.OrderByDescending(c => c.ListTag.Count()))
                         {
-                            <MudSelectItem Value="@i.Id">@i.Name (@i.ListTag.Count())</MudSelectItem>
+                            <MudSelectItem Value="@i.Id" Disabled="@(i.ListTag.Count == 0)">@i.Name (@i.ListTag.Count())</MudSelectItem>
                         }
                     </MudSelect>
                 </div>

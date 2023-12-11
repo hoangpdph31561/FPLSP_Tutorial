@@ -16,5 +16,7 @@ namespace FPLSP_Tutorial.Application.DataTransferObjects.UserMajor
         public Guid? DeletedBy { get; set; }
         public DateTimeOffset DeletedTime { get; set; }
 
+        public string MajorCode { get; set; } = string.Empty;
+        public string MajorName { get; set; } = string.Empty;
     }
 }

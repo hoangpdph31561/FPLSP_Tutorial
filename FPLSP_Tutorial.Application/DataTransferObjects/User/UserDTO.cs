@@ -1,4 +1,4 @@
-﻿using FPLSP_Tutorial.Application.DataTransferObjects.Major;
+﻿using FPLSP_Tutorial.Application.DataTransferObjects.UserMajor;
 using FPLSP_Tutorial.Domain.Enums;
 
 namespace FPLSP_Tutorial.Application.DataTransferObjects.User
@@ -14,6 +14,6 @@ namespace FPLSP_Tutorial.Application.DataTransferObjects.User
         public DateTimeOffset CreatedTime { get; set; }
         public Guid? CreatedBy { get; set; }
 
-        public List<MajorDTO> ListJoinedMajors { get; set; } = new();
+        public List<UserMajorDTO> ListJoinedMajors { get; set; } = new();
     }
 }

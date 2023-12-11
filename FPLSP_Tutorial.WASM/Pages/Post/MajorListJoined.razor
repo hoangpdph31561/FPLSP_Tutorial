@@ -26,10 +26,6 @@ else
                 <div class="d-flex align-center mb-3">
                     <MudText Typo="Typo.h5" Class="mr-auto" Style="font-weight: 500">Quản lý bài viết</MudText>
                     <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled">
-                        <AuthorizeView Roles="ADMIN, CNBM">
-                            <MudIconButton Icon="@Icons.Material.Filled.PostAdd" OnClick="@(async () => _nav.NavigateTo($"/post/manage/self/add?fallBackUrl={_nav.Uri}"))" Title="Thêm bài viết hệ thống" Style="border-right: 2px solid white;"></MudIconButton>
-                        </AuthorizeView>
-                        
                         <MudIconButton Icon="@Icons.Material.Filled.Add" OnClick="@(async () => await OnClickJoinMajor())" Title="Thêm chuyên ngành" Style="border-right: 2px solid white;"></MudIconButton>
                         <MudIconButton Icon="@Icons.Material.Filled.Search" Title="Tìm kiếm" OnClick="@(() => _isShowSearch = !_isShowSearch)"></MudIconButton>
                     </MudButtonGroup>

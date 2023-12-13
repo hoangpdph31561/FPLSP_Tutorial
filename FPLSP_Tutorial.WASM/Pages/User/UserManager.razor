@@ -42,6 +42,7 @@ else
                                 <MudTh>Tên</MudTh>
                                 <MudTh>Chức vụ</MudTh>
                                 <MudTh>Chuyên ngành đã tham gia</MudTh>
+                                <MudTh>Hành động</MudTh>
                             </HeaderContent>
                             <RowTemplate>
                                 <MudTd>@(_listUser.IndexOf(context) + 1)</MudTd>
@@ -59,10 +60,13 @@ else
                                     @roles
                                 </MudTd>
                                 <MudTd>
-                                    <MudChip OnClick="@(() => {
+                                    @context.ListJoinedMajors.Count()
+                                </MudTd>
+                                <MudTd>
+                                    <MudFab OnClick="@(() => {
                                         if(_isShowingLecturerDetail == context.Id) _isShowingLecturerDetail = null;
                                         else _isShowingLecturerDetail = context.Id;
-                                    })">@context.ListJoinedMajors.Count()</MudChip>
+                                    })" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Pageview" Size="Size.Small" DisableElevation="true">Xem chi tiết</MudFab>
                                 </MudTd>
                             </RowTemplate>
                             <ChildRowContent>
@@ -123,7 +127,7 @@ else
                                     <MudTd>@context.Key.name</MudTd>
                                     <MudTd>@context.Count()</MudTd>
                                     <MudTd>
-                                        <MudChip OnClick="@(() => _isShowingMajorRequestDetail = (_isShowingMajorRequestDetail == null) ? context.Key.email : null)">Xem chi tiết</MudChip>
+                                        <MudFab OnClick="@(() => _isShowingMajorRequestDetail = (_isShowingMajorRequestDetail == null) ? context.Key.email : null)" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Pageview" Size="Size.Small" DisableElevation="true">Xem chi tiết</MudFab>
                                     </MudTd>
                                 </RowTemplate>
                                 <ChildRowContent>
@@ -254,11 +258,12 @@ else
             if(result)
             {
                 _mudSnackbar.Add("Hủy yêu cầu thành công", Severity.Success);
+                await LoadDataTab2();
             }
             else
             {
                 _mudSnackbar.Add("Hủy yêu cầu thất bại", Severity.Error);
-                await LoadDataTab2();
+                
             }
         }
     }

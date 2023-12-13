@@ -20,45 +20,47 @@ else
 {
     <MudBreadcrumbs Items="_breadCrumbs" Class="ms-3"></MudBreadcrumbs>
 
-    <div class="mx-3 mb-2 px-3 pb-3">
-        <MudPaper Elevation="2" Class="px-1">
-            <div class="mx-5 pt-4">
-                <div class="d-flex align-center mb-3">
-                    <MudText Typo="Typo.h5" Class="mr-auto" Style="font-weight: 500">Quản lý bài viết</MudText>
-                    <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled">
-                        <MudIconButton Icon="@Icons.Material.Filled.Add" OnClick="@(async () => await OnClickJoinMajor())" Title="Thêm chuyên ngành" Style="border-right: 2px solid white;"></MudIconButton>
-                        <MudIconButton Icon="@Icons.Material.Filled.Search" Title="Tìm kiếm" OnClick="@(() => _isShowSearch = !_isShowSearch)"></MudIconButton>
-                    </MudButtonGroup>
+    <div class="mx-5">
+        <MudPaper Elevation="2" Class="py-3 px-5">
+            <div class="d-flex align-center">
+                <MudText Typo="Typo.h5" Class="mr-auto" Style="font-weight: 500">Chuyên ngành đã tham gia</MudText>
+                <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled">
+                    <MudIconButton Icon="@Icons.Material.Filled.Add" OnClick="@(async () => await OnClickJoinMajor())" Title="Thêm chuyên ngành" Style="border-right: 2px solid white;"></MudIconButton>
+                    <MudIconButton Icon="@Icons.Material.Filled.Search" Title="Tìm kiếm" OnClick="@(() => _isShowSearch = !_isShowSearch)"></MudIconButton>
+                </MudButtonGroup>
                     
-                </div>
-                @if(_isShowSearch)
-                {
-                    <div class="mb-4">
-                        <MudTextField T="string" Label="Tìm kiếm" Placeholder="Nhập tên, mã cần tìm kiếm..."></MudTextField>
-                    </div>
-                }
-                <MudTable Items="@_listMajor" Elevation="3">
-                    <HeaderContent>
-                        <MudTh>STT</MudTh>
-                        <MudTh>Mã CN</MudTh>
-                        <MudTh>Tên CN</MudTh>
-                        <MudTh>SL bài viết đã tạo</MudTh>
-                        <MudTh>Hành động</MudTh>
-                    </HeaderContent>
-                    <RowTemplate>
-                        <MudTh>@(_listMajor.IndexOf(context) + 1)</MudTh>
-                        <MudTh>@context.Code</MudTh>
-                        <MudTh>@context.Name</MudTh>
-                        <MudTh>@context.NumberOfPostByUser</MudTh>
-                        <MudTh>
-                            <MudFab Color="Color.Primary" Class="mx-1" Size="Size.Small" StartIcon="@Icons.Material.Filled.Article" OnClick="@(() => _nav.NavigateTo("/post/archive?idMajor=" + context.Id))" Title="Quản lý bài viết" DisableElevation="true"></MudFab>
-                            <MudFab Size="Size.Small" Color="Color.Error" Class="m-1" Icon="@Icons.Material.Filled.Delete" OnClick="@(() => OnClickDelete(context.Id))" Title="Xóa" DisableElevation="true">Xóa</MudFab>
-                        </MudTh>
-                    </RowTemplate>
-                </MudTable>
-                <CustomPagination Class="my-1" HasNext="@_presMajor.HasNext" OnPageChange="@(async e => {  })" CurrentPageNumber="@_presMajor.PageNumber"></CustomPagination>
             </div>
+            @if(_isShowSearch)
+            {
+                <div class="mb-4">
+                    <MudTextField T="string" Label="Tìm kiếm" Placeholder="Nhập tên, mã cần tìm kiếm..."></MudTextField>
+                </div>
+            }
+                
         </MudPaper>
+
+        <div class="mt-5"></div>
+
+        <MudTable Items="@_listMajor" Elevation="3">
+            <HeaderContent>
+                <MudTh>STT</MudTh>
+                <MudTh>Mã CN</MudTh>
+                <MudTh>Tên CN</MudTh>
+                <MudTh>SL bài viết đã tạo</MudTh>
+                <MudTh>Hành động</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTh>@(_listMajor.IndexOf(context) + 1)</MudTh>
+                    <MudTh>@context.Code</MudTh>
+                    <MudTh>@context.Name</MudTh>
+                    <MudTh>@context.NumberOfPostByUser</MudTh>
+                    <MudTh>
+                        <MudFab Color="Color.Primary" Class="mx-1" Size="Size.Small" StartIcon="@Icons.Material.Filled.Article" OnClick="@(() => _nav.NavigateTo("/post/archive?idMajor=" + context.Id))" Title="Quản lý bài viết" DisableElevation="true"></MudFab>
+                        <MudFab Size="Size.Small" Color="Color.Error" Class="m-1" Icon="@Icons.Material.Filled.Delete" OnClick="@(() => OnClickDelete(context.Id))" Title="Xóa" DisableElevation="true">Xóa</MudFab>
+                    </MudTh>
+                </RowTemplate>
+            </MudTable>
+            <CustomPagination Class="my-1" HasNext="@_presMajor.HasNext" OnPageChange="@(async e => {  })" CurrentPageNumber="@_presMajor.PageNumber"></CustomPagination>
     </div>
 }
 @code {

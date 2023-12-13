@@ -92,6 +92,9 @@
     [Parameter]
     public List<TagDTO> ListTagSelected { get; set; } = new();
 
+    [Parameter]
+    public EventCallback<List<TagDTO>> BindListTagSelected { get; set; }
+
     private string _bindTitle = "";
 
     private bool _selectedPostType = false;
@@ -188,6 +191,7 @@
     private async Task OnClickSave()
     {
         PostCreateRequest.Title = _bindTitle;
+        await BindListTagSelected.InvokeAsync(ListTagSelected);
         await OnSave.InvokeAsync();
     }
 

@@ -47,15 +47,17 @@
         
         <MudNavMenu>
             <MudNavLink IconColor="Color.Primary" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home" Href="/post/home">Trang chủ</MudNavLink>
-            <AuthorizeView Roles="ADMIN">
-                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.SupervisorAccount" Href="/user-manager">Quản lý giảng viên*</MudNavLink>
-                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Newspaper" Href="/post/system">Quản lý bài viết hệ thống</MudNavLink>
-                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.List" Href="/major/manage/list">Quản lý chuyên ngành*</MudNavLink>
-                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Newspaper" Href="/post/manage">Quản lý bài viết</MudNavLink>
-            </AuthorizeView>
-            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Archive" Href="/major/joined">Danh sách chuyên ngành</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.SupervisorAccount" Href="/user-manager">Quản lý giảng viên</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.List" Href="/major/manage/list">Quản lý chuyên ngành</MudNavLink>
+
+            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Newspaper" Href="/post/system">Quản lý bài viết hệ thống</MudNavLink>
+
+            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Pageview" Href="/post/manage">Kiểm duyệt bài viết</MudNavLink>
+
+            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.DomainVerification" Href="/major/joined">Chuyên ngành đã tham gia</MudNavLink>
+
             <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Archive" Href="/post/archive">Bài viết đã tạo</MudNavLink>
-            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.EditNote" Href="/post/create">Tạo bài viết*</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.EditNote" Href="/post/create">Tạo bài viết</MudNavLink>
         </MudNavMenu>
     </MudDrawer>
     <MudMainContent >

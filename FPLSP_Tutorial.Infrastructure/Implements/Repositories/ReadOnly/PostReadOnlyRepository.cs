@@ -112,6 +112,9 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
                                     .Any(t => t.MajorId == request.MajorId && t.Status != EntityStatus.Deleted && !t.Deleted));
 
                 }
+
+                var dat = queryable.ToList();
+
                 if (request.PostType == 1)
                 {
                     queryable = queryable
@@ -128,6 +131,8 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
                                 .Select(pt => pt.Tag)
                                     .Any(t => t.MajorId != null && t.Status != EntityStatus.Deleted && !t.Deleted));
                 }
+
+                var dat2 = queryable.ToList();
 
                 var result = await queryable.PaginateAsync<PostEntity, PostDTO>(request, _mapper, cancellationToken);
 
@@ -171,6 +176,9 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
                     .ProjectTo<PostDTO>(_mapper.ConfigurationProvider)
                     .FirstOrDefaultAsync(cancellationToken);
                 
+                var user = await _dbContext.UserEntities.AsNoTracking().Where(c => c.Id == result.CreatedBy).Select(c => c.Username).FirstOrDefaultAsync();
+                    result.CreatedByName = user ?? "N/A";
+
                 return RequestResult<PostDTO?>.Succeed(result);
 
             }

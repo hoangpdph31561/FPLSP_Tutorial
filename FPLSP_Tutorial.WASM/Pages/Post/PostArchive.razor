@@ -35,7 +35,7 @@ else
     <div class="mx-5">
         <MudPaper Elevation="2" Class="px-5 py-3">
             <div class="d-flex align-center">
-                <MudText Typo="Typo.h5" Class="mr-auto" Style="font-weight: 500">Danh sách bài viết</MudText>
+                <MudText Typo="Typo.h5" Class="mr-auto" Style="font-weight: 500">Bài viết đã tạo</MudText>
 
                 <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled">
                     <MudIconButton Icon="@Icons.Material.Filled.PostAdd" OnClick="@(async () => await OnClickCreatePost())" Title="Thêm bài viết" Style="border-right: 2px solid white;"></MudIconButton>
@@ -90,7 +90,7 @@ else
                         <MudTd><BadgeEntityStatus Status="@context.Status" /></MudTd>
                         <MudTd>
                             <MudFab Color="Color.Primary" Size="Size.Small" Class="m-1" DisableElevation="true" StartIcon="@Icons.Material.Filled.AutoAwesomeMotion" OnClick="@(async () => { _nav.NavigateTo($"/post/archive?idMajor={idMajor}&idPost={context.Id}"); })" Title="Danh sách bài viết con"></MudFab>
-                            <MudFab Color="Color.Primary" Size="Size.Small" Class="m-1" DisableElevation="true" StartIcon="@Icons.Material.Filled.EditNote" OnClick="@(async () => { _nav.NavigateTo($"/post/manage/self/update?fallBackUrl={_nav.Uri}&idPost=" + context.Id); })" Title="Chỉnh sửa"></MudFab>
+                            <MudFab Color="Color.Primary" Size="Size.Small" Class="m-1" DisableElevation="true" StartIcon="@Icons.Material.Filled.EditNote" OnClick="@(async () => { _nav.NavigateTo($"/post/update?fallBackUrl={_nav.Uri}&idPost=" + context.Id); })" Title="Chỉnh sửa"></MudFab>
                             <MudFab Color="Color.Error" Size="Size.Small" Class="m-1" DisableElevation="true" StartIcon="@Icons.Material.Filled.Delete" OnClick="@(async () => {})" Title="Xóa"></MudFab>
                         </MudTd>
                     </RowTemplate>
@@ -114,7 +114,7 @@ else
                                         <MudText Typo="Typo.caption">@(" | " + i.CreatedTime.ToString("dd/MM/yyyy"))</MudText>
                                     </div>
                                     <MudIconButton DisableElevation="true" Color="Color.Primary" Size="Size.Small" Class="m-1" Icon="@Icons.Material.Filled.AutoAwesomeMotion" OnClick="@(async () => { _nav.NavigateTo($"/post/archive?idMajor={idMajor}&idPost={i.Id}"); })" Title="Danh sách bài viết con"></MudIconButton>
-                                    <MudIconButton DisableElevation="true" Color="Color.Primary" Size="Size.Small" Class="m-1" Icon="@Icons.Material.Filled.EditNote" OnClick="@(async () => { _nav.NavigateTo($"/post/manage/self/update?fallBackUrl={_nav.Uri}&idPost=" + i.Id); })" Title="Chỉnh sửa"></MudIconButton>
+                                    <MudIconButton DisableElevation="true" Color="Color.Primary" Size="Size.Small" Class="m-1" Icon="@Icons.Material.Filled.EditNote" OnClick="@(async () => { _nav.NavigateTo($"/post/update?fallBackUrl={_nav.Uri}&idPost=" + i.Id); })" Title="Chỉnh sửa"></MudIconButton>
                                     <MudIconButton DisableElevation="true" Color="Color.Error" Size="Size.Small" Class="m-1" Icon="@Icons.Material.Filled.Delete" OnClick="@(async () => {})" Title="Xóa"></MudIconButton>
                                 </div>
 
@@ -154,7 +154,7 @@ else
     private List<BreadcrumbItem> _breadCrumbs = new List<BreadcrumbItem>
     {
         new BreadcrumbItem("Trang chủ", href: "/post/home"),
-        new BreadcrumbItem("Kho lưu trữ", href: null, disabled: true)
+        new BreadcrumbItem("Bài viết đã tạo", href: null, disabled: true)
     };
 
     [Parameter]

@@ -1,0 +1,115 @@
+﻿@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post.Request;
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Tag;
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Tag.TagRequest;
+@using System.Text.Json;
+@using System.Web;
+
+@inject ITagRepository _repoTag
+@inject IDialogService DialogService
+@inject NavigationManager _nav
+
+<MudDialog>
+    <DialogContent>
+        <MudText Typo="Typo.h6">Tìm kiếm chi tiết</MudText>
+        <MudDivider Class="mt-1 mb-3"></MudDivider>
+
+        <MudText Typo="Typo.caption" Class="ma-0">Từ khóa tìm kiếm</MudText>
+        <MudTextField @bind-Value="@_searchString" Variant="Variant.Outlined" Placeholder="Nhập tên bài viết" Class="mt-0"></MudTextField>
+
+        <MudText Typo="Typo.caption">Nhãn</MudText>
+        <div style="border: 1px solid lightgrey; border-radius: 8px">
+            <div class="d-flex align-center" style="min-height: 48px;">
+                @foreach (var i in _listTagSelected)
+                {
+                    <MudChip Variant="Variant.Outlined" Size="Size.Small" @onmouseover="@(() => TagOnMouseOver(i.Id))" @onmouseleave="@(() => _hovingTagId = null)" Icon="@(_hovingTagId == i.Id ? Icons.Material.Filled.Delete : null)" OnClick="@(() => TagOnClickRemove(i.Id))">@i.Name</MudChip>
+                }
+                <MudIcon Icon="@Icons.Material.Filled.AddCircle" @onclick="@(async () => await OnClickTagAdd())" Class="@(_listTagSelected.Count() == 0 ? "ms-3" : "")"></MudIcon>
+            </div>
+        </div>
+
+        <div class="d-flex justify-end align-center mt-2">
+            <MudButton OnClick="@(() => MudDialog.Cancel())">Hủy</MudButton>
+            <MudButton OnClick="@(() => OnSearch())">Tìm kiếm</MudButton>
+        </div>
+    </DialogContent>
+    
+</MudDialog>
+
+@code {
+    [Parameter]
+    public Guid UserId { get; set; }
+
+
+    private string? _searchString = "";
+
+    private Guid? _hovingTagId = null;
+    public List<TagDTO> _listTagSelected = new();
+
+    private TagViewRequest _preqTag = new()
+    {
+        IgnoreMajorId = true
+    };
+    private PaginationResponse<TagDTO> _presTag = new();
+    private List<TagDTO> _listTagFromDB = new();
+
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _listTagFromDB = await _repoTag.GetListAsync(_preqTag);
+    }
+
+
+    private async Task OnClickTagAdd()
+    {
+        List<TagDTO> lstBeforeChange = new();
+        foreach (var i in _listTagSelected) lstBeforeChange.Add(i);
+
+        var parameters = new DialogParameters();
+
+        parameters.Add(nameof(CustomTagSelect.ListTag), _listTagSelected);
+        parameters.Add(nameof(CustomTagSelect.ListTagFromDB), _listTagFromDB);
+
+
+        var dialog = DialogService.Show<CustomTagSelect>("Add Tags", parameters);
+        var result = await dialog.Result;
+
+        if (!result.Cancelled)
+        {
+
+            _listTagSelected = (List<TagDTO>)result.Data;
+        }
+        else
+        {
+            _listTagSelected = lstBeforeChange;
+        }
+    }
+
+    private void TagOnClickRemove(Guid idTag)
+    {
+        _listTagSelected.Remove(_listTagSelected.FirstOrDefault(c => c.Id == idTag) ?? new());
+    }
+
+    private void TagOnMouseOver(Guid idTag)
+    {
+        _hovingTagId = idTag;
+    }
+
+    private async Task OnSearch()
+    {
+
+        var url = "/post/search?";
+        if(_searchString != null && _searchString != "")
+        {
+            url += $"searchstring={_searchString}&";
+        }
+        if(_listTagSelected != null)
+        {
+            url += $"listtagid={HttpUtility.UrlEncode(JsonSerializer.Serialize(_listTagSelected.Select(c => c.Id)))}&";
+        }
+
+        url += $"uid={UserId}";
+
+        _nav.NavigateTo(url);
+    }
+}

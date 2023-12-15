@@ -32,7 +32,7 @@ namespace FPLSP_Tutorial.WASM.Repositories.Implements
             {
                 foreach(var i in request.ListTagId)
                 {
-                    url += $"?ListTagId={i}";
+                    url += $"&ListTagId={i}";
                 }
             }
 
@@ -58,7 +58,7 @@ namespace FPLSP_Tutorial.WASM.Repositories.Implements
             {
                 foreach (var i in request.ListTagId)
                 {
-                    url += $"?ListTagId={i}";
+                    url += $"&ListTagId={i}";
                 }
             }
 

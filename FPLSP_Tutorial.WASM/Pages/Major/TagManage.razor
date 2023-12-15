@@ -21,7 +21,9 @@ else
             }
             else
             {
-                <MudTextField @bind-Value="@_createRequestTag.Name" Variant="Variant.Outlined" Class="w-100" Placeholder="Nhập tên Tag mới" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.AddCircle" OnAdornmentClick="@(async () => await OnAdd())" AdornmentColor="Color.Primary"></MudTextField>
+                <MudText Typo="Typo.h6" Style="font-weight: 500;">Quản lý nhãn</MudText>
+
+                <MudTextField @bind-Value="@_createRequestTag.Name" Variant="Variant.Outlined" Class="w-100" Placeholder="Nhập tên nhãn mới" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.AddCircle" OnAdornmentClick="@(async () => await OnAdd())" AdornmentColor="Color.Primary"></MudTextField>
                 
 
                 <MudTable Items="@_listTag" Elevation="3" Class="mt-2">

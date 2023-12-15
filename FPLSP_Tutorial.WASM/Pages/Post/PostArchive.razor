@@ -96,7 +96,7 @@ else
                     </MudTd>
                     <MudTd>
                         <MudTooltip Text="Xem chi tiết">
-                            <MudChip OnClick="@(() => { _nav.NavigateTo($"/post-manager?idPost={context.Id}"); })">@context.NumberOfChildPost</MudChip>
+                            <MudChip OnClick="@(() => { _nav.NavigateTo($"/post/archive?idPost={context.Id}"); })">@context.NumberOfChildPost</MudChip>
                         </MudTooltip>
                     </MudTd>
                     <MudTd>@(context.MajorCode + " - " + context.MajorName)</MudTd>
@@ -185,16 +185,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var state = await _authProvider.GetAuthenticationStateAsync();
-        var userIdClaim = state.User.FindAll("UserId").FirstOrDefault();
 
-        if (userIdClaim != null)
-        {
-            _idUser = Guid.Parse(userIdClaim.Value);
-        }
-        else { }
-
-        _preqPost.UserId = _idUser;
 
 
     }
@@ -203,6 +194,17 @@ else
     {
         if(idPost != idPostCurrent || firstRender)
         {
+            var state = await _authProvider.GetAuthenticationStateAsync();
+            var userIdClaim = state.User.FindAll("UserId").FirstOrDefault();
+
+            if (userIdClaim != null)
+            {
+                _idUser = Guid.Parse(userIdClaim.Value);
+            }
+            else { }
+
+            _preqPost.UserId = _idUser;
+
             _preqPost.IsGetTopLevel = (idPost == null) ? true : false;
             _preqPost.PageNumber = 1;
             _isLoadingAll = true;

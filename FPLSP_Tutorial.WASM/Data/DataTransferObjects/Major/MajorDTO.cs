@@ -25,5 +25,6 @@ namespace FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major
         public bool HasSentRequest { get; set; } = new();
         public int NumberOfPost { get; set; }
         public int NumberOfPostByUser { get; set; }
+        public bool IsManagerUser { get; set; }
     }
 }

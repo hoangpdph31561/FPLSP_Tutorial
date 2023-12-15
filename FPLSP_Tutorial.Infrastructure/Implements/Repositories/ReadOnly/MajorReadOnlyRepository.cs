@@ -70,6 +70,17 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
                     .ProjectTo<MajorDTO>(_mapper.ConfigurationProvider)
                     .SortData(request.SortingProperty, request.SortingDirection)
                     .ToListAsync();
+
+                if (request.UserId != null && result != null)
+                {
+                    foreach (var dto in result)
+                    {
+                        dto.NumberOfPostByUser = _dbContext.PostEntities.AsNoTracking().AsQueryable().Where(c => c.CreatedBy == request.UserId && c.PostTags.Select(pt => pt.Tag).Any(t => t.MajorId == dto.Id)).Count();
+                        dto.IsManagerUser = await _dbContext.UserMajorEntities.AsNoTracking().AsQueryable().Where(c => c.UserId == request.UserId && c.MajorId == dto.Id && c.Status != EntityStatus.Deleted && !c.Deleted).Select(c => c.IsManager).FirstOrDefaultAsync();
+                        dto.HasSentRequest = _dbContext.MajorRequestEntities.AsNoTracking().AsQueryable().Any(c => c.CreatedBy == request.UserId && c.MajorId == dto.Id && c.Status != EntityStatus.Deleted && !c.Deleted);
+                    }
+                }
+
                 return RequestResult<List<MajorDTO>>.Succeed(result);
             }
             catch (Exception e)
@@ -135,6 +146,8 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
                     foreach (var dto in result)
                     {
                         dto.NumberOfPostByUser = _dbContext.PostEntities.AsNoTracking().AsQueryable().Where(c => c.CreatedBy == request.UserId && c.PostTags.Select(pt => pt.Tag).Any(t => t.MajorId == dto.Id)).Count();
+                        dto.IsManagerUser = await _dbContext.UserMajorEntities.AsNoTracking().AsQueryable().Where(c => c.UserId == request.UserId && c.MajorId == dto.Id && c.Status != EntityStatus.Deleted && !c.Deleted).Select(c => c.IsManager).FirstOrDefaultAsync();
+                        dto.HasSentRequest = _dbContext.MajorRequestEntities.AsNoTracking().AsQueryable().Any(c => c.CreatedBy == request.UserId && c.MajorId == dto.Id && c.Status != EntityStatus.Deleted && !c.Deleted);
                     }
                 }
 

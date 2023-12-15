@@ -144,12 +144,14 @@ else
                                                         <MudTh>STT</MudTh>
                                                         <MudTh>Mã</MudTh>
                                                         <MudTh>Tên</MudTh>
+                                                        <MudTh>Loại yêu cầu</MudTh>
                                                         <MudTh>Hành động</MudTh>
                                                     </HeaderContent>
                                                     <RowTemplate>
                                                         <MudTd>@(context.Select(c => c.Id).ToList().IndexOf(major.Id) + 1)</MudTd>
                                                         <MudTd>@major.MajorCode</MudTd>
                                                         <MudTd>@major.MajorName</MudTd>
+                                                        <MudTd>@(major.IsManager ? "Quản lý" : "Xem")</MudTd>
                                                         <MudTd>
                                                             <MudIconButton Color="Color.Primary" Class="mx-1" Size="Size.Small" Icon="@Icons.Material.Filled.Check" OnClick="@(async () => await OnAddToMajor(major))" Title="Xác nhận" DisableElevation="true"></MudIconButton>
                                                             <MudIconButton Size="Size.Small" Color="Color.Error" Class="m-1" Icon="@Icons.Material.Filled.Delete" OnClick="@(async () => await OnDelete(major.Id))" Title="Hủy yêu cầu" DisableElevation="true">Xóa</MudIconButton>
@@ -263,7 +265,7 @@ else
             else
             {
                 _mudSnackbar.Add("Hủy yêu cầu thất bại", Severity.Error);
-                
+
             }
         }
     }
@@ -274,23 +276,28 @@ else
             {
                 Id = req.Id,
             };
-        var requestCreateUser = new UserMajorCreateRequest
-            {
-                MajorId = req.MajorId,
-                UserId = req.CreatedBy ?? Guid.Empty,
-            };
 
         var confirm = await _diagService.ShowMessageBox
               (
                   "Thông báo",
-                  "Bạn chắn chắn muốn thêm giảng viên này?",
+                  "Xác nhận duyệt yêu cầu?",
                   "Xác nhận",
                   cancelText: "Hủy"
               );
         if (confirm == true)
         {
-            var createConfirm = await _repoUserMajor.CreateAsync(requestCreateUser);
-            if (!createConfirm)
+            var user = _listUser.FirstOrDefault(c => c.Id == req.CreatedBy);
+            var userMajor = user.ListJoinedMajors.FirstOrDefault(c => c.MajorId == req.MajorId);
+
+            var result = await _repoUserMajor.UpdateAsync(new()
+            {
+                Id = userMajor.Id,
+                IsManager = true,
+                Status = userMajor.Status,
+                #warning Provide Id
+                ModifiedBy = Guid.Empty
+            });
+            if (!result)
             {
                 _mudSnackbar.Add("Duyệt thất bại", Severity.Error);
 
@@ -300,10 +307,50 @@ else
                 _mudSnackbar.Add("Duyệt thành công", Severity.Success);
                 var removeConfirm = await _repoMajorRequest.DeleteAsync(requestDelete);
                 await LoadDataTab2();
+                await LoadDataTab1();
             }
 
         }
     }
+
+    //Below: Add to major, not giving access > not used
+
+    //private async Task OnAddToMajor(MajorRequestDTO req)
+    //{
+    //    var requestDelete = new MajorRequestDeleteRequest
+    //        {
+    //            Id = req.Id,
+    //        };
+    //    var requestCreateUser = new UserMajorCreateRequest
+    //        {
+    //            MajorId = req.MajorId,
+    //            UserId = req.CreatedBy ?? Guid.Empty,
+    //        };
+
+    //    var confirm = await _diagService.ShowMessageBox
+    //          (
+    //              "Thông báo",
+    //              "Xác nhận duyệt yêu cầu?",
+    //              "Xác nhận",
+    //              cancelText: "Hủy"
+    //          );
+    //    if (confirm == true)
+    //    {
+    //        var createConfirm = await _repoUserMajor.CreateAsync(requestCreateUser);
+    //        if (!createConfirm)
+    //        {
+    //            _mudSnackbar.Add("Duyệt thất bại", Severity.Error);
+
+    //        }
+    //        else
+    //        {
+    //            _mudSnackbar.Add("Duyệt thành công", Severity.Success);
+    //            var removeConfirm = await _repoMajorRequest.DeleteAsync(requestDelete);
+    //            await LoadDataTab2();
+    //        }
+
+    //    }
+    //}
 
     private async Task OnPaginationButtonClickTab1(int pageNumber)
     {
@@ -316,27 +363,4 @@ else
         _isLoadingTab2 = true;
         _preqMajorRequest.PageNumber = pageNumber;
     }
-
-    //private async Task OnSearchTab1(string searchString)
-    //{
-    //    _isLoadingTab1 = true;
-    //    _MajorUserRequest.PageNumber = 1;
-    //    _MajorUserRequest.Email = searchString;
-    //    await LoadDataMajorUser();
-    //}
-    //private async Task OnSearchTab2(string searchString)
-    //{
-    //    _isLoadingTab2 = true;
-    //    _MajorRequestRequest.PageNumber = 1;
-    //    _MajorRequestRequest.Email = searchString;
-    //    await LoadDataMajorRequest();
-    //}
-    //private async Task OnSelect(string idMajor )
-    //{
-    //    _idMajor = idMajor;
-    //    _isLoadingTab1 = true;
-    //    _MajorUserRequest.PageNumber = 1;
-    //    _MajorUserRequest.MajorId = new Guid(idMajor);
-    //    await LoadDataMajorUser();
-    //}
 }

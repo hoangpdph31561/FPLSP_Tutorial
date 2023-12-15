@@ -35,6 +35,16 @@ namespace FPLSP_Tutorial.WASM.Repositories.Implements
             return false;
         }
 
+        public async Task<bool> UpdateAsync(UserMajorUpdateRequest request)
+        {
+            var resultCreate = await _httpClient.PutAsJsonAsync($"/api/UserMajors", request);
+            if (resultCreate.IsSuccessStatusCode)
+            {
+                return true;
+            }
+            return false;
+        }
+
         public async Task<bool> DeleteAsync(UserMajorDeleteRequest request)
         {
             var url = $"/api/UserMajors?MajorId={request.MajorId}&UserId={request.UserId}";

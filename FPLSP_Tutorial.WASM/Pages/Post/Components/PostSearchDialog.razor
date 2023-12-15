@@ -14,7 +14,7 @@
         <MudDivider Class="mt-1 mb-3"></MudDivider>
 
         <MudText Typo="Typo.caption" Class="ma-0">Từ khóa tìm kiếm</MudText>
-        <MudTextField @bind-Value="@_searchString" Variant="Variant.Outlined" Placeholder="Nhập tên bài viết" Class="mt-0"></MudTextField>
+        <MudTextField @bind-Value="@_searchString" Variant="Variant.Outlined" Placeholder="Nhập tên bài viết" Class="mt-0" Immediate></MudTextField>
 
         <MudText Typo="Typo.caption">Nhãn</MudText>
         <div style="border: 1px solid lightgrey; border-radius: 8px">
@@ -29,7 +29,7 @@
 
         <div class="d-flex justify-end align-center mt-2">
             <MudButton OnClick="@(() => MudDialog.Cancel())">Hủy</MudButton>
-            <MudButton OnClick="@(() => OnSearch())">Tìm kiếm</MudButton>
+            <MudButton OnClick="@(() => OnSearch())" Disabled=@(_listTagSelected.Count == 0 && (_searchString == "" || _searchString == null))>Tìm kiếm</MudButton>
         </div>
     </DialogContent>
     

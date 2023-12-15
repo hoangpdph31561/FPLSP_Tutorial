@@ -49,7 +49,7 @@ namespace FPLSP_Tutorial.API.Controllers
         }
         
         [HttpPut]
-        public async Task<IActionResult> UpdateAsync([FromQuery] UserMajorUpdateRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateAsync(UserMajorUpdateRequest request, CancellationToken cancellationToken)
         {
             UserMajorUpdateViewModel vm = new(_majorUserReadWriteRespository, _localizationService, _mapper);
 

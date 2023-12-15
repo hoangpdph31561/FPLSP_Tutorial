@@ -1,14 +1,20 @@
 ﻿@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major;
 @using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major.Request;
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.UserMajor.Request;
 
 @inject IMajorRepository _repoMajor
-@inject IMajorRequestRepository _repoMajorRequest
+@inject IUserMajorRepository _repoUserMajor
 
 @inject ISnackbar _mudSnackbar
+@inject IDialogService _diagService;
 
 <MudDialog>
     <DialogContent>
-        <MudTable Items="@_listMajor" FixedHeader="true" Height="50vh">
+        <MudText Typo="Typo.h6" Style="font-weight: 500">Thêm chuyên ngành</MudText>
+
+        <MudTextField T="string" Variant="Variant.Outlined" Label="Tìm kiếm" Placeholder="Nhập mã, tên chuyên ngành cần tìm kiếm..." DebounceInterval="1000" OnDebounceIntervalElapsed="@(async (string val) => { _preqMajor.SearchString = val; await OnQueryRequest(); })" Class="mb-2"></MudTextField>
+
+        <MudTable Items="@_listMajor" FixedHeader="true" Height="40vh" Loading="@_isLoadingList">
             <HeaderContent>
                 <MudTh>STT</MudTh>
                 <MudTh>Mã</MudTh>
@@ -20,7 +26,7 @@
                 <MudTd>@context.Code</MudTd>
                 <MudTd>@context.Name</MudTd>
                 <MudTd>
-                    <MudFab Color="Color.Primary" Class="mx-1" Size="Size.Small" StartIcon="@Icons.Material.Filled.Add" OnClick="@(() => OnClickAdd(context.Id))" Title="Gửi yêu cầu" DisableElevation="true"></MudFab>
+                    <MudFab Color="Color.Primary" Class="mx-1" Size="Size.Small" StartIcon="@Icons.Material.Filled.Add" OnClick="@(() => OnClickAdd(context.Id))" Title="Tham gia" DisableElevation="true"></MudFab>
                 </MudTd>
             </RowTemplate>
         </MudTable>
@@ -38,6 +44,9 @@
     [Parameter]
     public Guid? UserId { get; set; }
 
+    [Parameter]
+    public EventCallback LoadDataParent { get; set; }
+
     private MajorViewWithPaginationRequest _preqMajor = new();
     private PaginationResponse<MajorDTO> _presMajor = new();
     private List<MajorDTO> _listMajor = new();
@@ -50,13 +59,15 @@
         _preqMajor.UserId = UserId;
         _preqMajor.NotJoined = true;
 
-        await LoadData();
+        await LoadData().ContinueWith((re) =>
+        {
+            _isLoadingAll = false;
+            _isLoadingList = false;
+        });
     }
 
     private async Task LoadData()
     {
-
-
         _presMajor = await _repoMajor.GetListWithPaginationAsync(_preqMajor);
         if (_presMajor.Data != null)
         {
@@ -75,21 +86,77 @@
         });
     } 
 
+
     private async Task OnClickAdd(Guid idMajor)
     {
-        var result =await _repoMajorRequest.AddAsync(new()
+
+        var requestCreateUser = new UserMajorCreateRequest
+            {
+                MajorId = idMajor,
+                UserId = UserId ?? Guid.Empty,
+                CreatedBy = UserId ?? Guid.Empty
+            };
+
+        var confirm = await _diagService.ShowMessageBox
+              (
+                  "Thông báo",
+                  "Tham gia chuyên ngành?",
+                  "Xác nhận",
+                  cancelText: "Hủy"
+              );
+        if (confirm == true)
         {
-            MajorId = idMajor,
-            CreatedBy = UserId
-        });
-        if(result)
-        {
-            _mudSnackbar.Add("Gửi yêu cầu thành công", Severity.Success);
-            await LoadData();
-        }
-        else
-        {
-            _mudSnackbar.Add("Gửi yêu cầu thất bại", Severity.Error);
+            var createResult = await _repoUserMajor.CreateAsync(requestCreateUser);
+            if (createResult)
+            {
+                _mudSnackbar.Add("Đã tham gia chuyên ngành", Severity.Success);
+                await LoadData();
+                await LoadDataParent.InvokeAsync();
+            }
+            else
+            {
+                _mudSnackbar.Add("Tham gia thất bại", Severity.Error);
+            }
+
         }
     }
+
+
+    private async Task OnQueryRequest()
+    {
+        _isLoadingList = true;
+        StateHasChanged();
+        if (_preqMajor.SearchString != "" && _preqMajor.SearchString != null)
+        {
+            _preqMajor.PageNumber = 1;
+            
+        }
+        await LoadData().ContinueWith((re) =>
+        {
+            _isLoadingList = false;
+            StateHasChanged();
+        });
+
+    }
+
+
+    //Below: Send join request (Not manage) > Not Used
+
+    //private async Task OnClickAdd(Guid idMajor)
+    //{
+    //    var result =await _repoMajorRequest.AddAsync(new()
+    //    {
+    //        MajorId = idMajor,
+    //        CreatedBy = UserId
+    //    });
+    //    if(result)
+    //    {
+    //        _mudSnackbar.Add("Gửi yêu cầu thành công", Severity.Success);
+    //        await LoadData();
+    //    }
+    //    else
+    //    {
+    //        _mudSnackbar.Add("Gửi yêu cầu thất bại", Severity.Error);
+    //    }
+    //}
 }

@@ -6,9 +6,10 @@ namespace FPLSP_Tutorial.WASM.Repositories.Interfaces
 {
     public interface IUserMajorRepository
     {
-        public Task<PaginationResponse<UserMajorDTO>> GetListWithPaginationAsync(UserMajorViewWithPaginationRequest request);
-        public Task<bool> CreateAsync(UserMajorCreateRequest request);
-        public Task<bool> DeleteAsync(UserMajorDeleteRequest request);
+        Task<PaginationResponse<UserMajorDTO>> GetListWithPaginationAsync(UserMajorViewWithPaginationRequest request);
+        Task<bool> CreateAsync(UserMajorCreateRequest request);
+        Task<bool> UpdateAsync(UserMajorUpdateRequest request);
+        Task<bool> DeleteAsync(UserMajorDeleteRequest request);
 
     }
 }

@@ -38,7 +38,11 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
                     .AsQueryable()
                     .Where(c => c.Status != EntityStatus.Deleted && !c.Deleted);
 
-                query = query.Where(c => c.MajorId == request.MajorId);
+                if(!request.IgnoreMajorId)
+                {
+                    query = query.Where(c => c.MajorId == request.MajorId);
+                }
+                
                 if (request.Name != null) { query = query.Where(c => c.Name.ToLower().Contains(request.Name)); }
 
                 return RequestResult<List<TagDTO>>.Succeed(

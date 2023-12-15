@@ -19,6 +19,7 @@ namespace FPLSP_Tutorial.WASM.Repositories.Implements
             string url = $"/api/Tags/GetListAsync?";
 
             if (request.MajorId != null) { url += $"&MajorId={request.MajorId}"; }
+            if (request.IgnoreMajorId) { url += $"&IgnoreMajorId={request.IgnoreMajorId}"; }
 
             var result = await _httpClient.GetFromJsonAsync<List<TagDTO>>(url);
             if (result == null)
@@ -33,6 +34,7 @@ namespace FPLSP_Tutorial.WASM.Repositories.Implements
             string url = $"/api/Tags/GetListWithPaginationAsync?PageNumber={request.PageNumber}&PageSize={request.PageSize}";
 
             if(request.MajorId != null) { url += $"&MajorId={request.MajorId}"; }
+            if (request.IgnoreMajorId) { url += $"&IgnoreMajorId={request.IgnoreMajorId}"; }
 
             var result = await _httpClient.GetFromJsonAsync<PaginationResponse<TagDTO>>(url);
             if (result == null)

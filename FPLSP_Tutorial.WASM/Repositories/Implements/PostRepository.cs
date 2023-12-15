@@ -2,6 +2,7 @@
 using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post.Request;
 using FPLSP_Tutorial.WASM.Data.Pagination;
 using FPLSP_Tutorial.WASM.Repositories.Interfaces;
+using Microsoft.IdentityModel.Tokens;
 using System.Net.Http.Json;
 using System.Net.WebSockets;
 using System.Text.Json;
@@ -26,6 +27,14 @@ namespace FPLSP_Tutorial.WASM.Repositories.Implements
             if (request.UserId != null) { url += $"&UserId={request.UserId}"; }
             if (request.PostType != null) { url += $"&PostType={request.PostType}"; }
             if (request.IsGetTopLevel) { url += $"&IsGetTopLevel={request.IsGetTopLevel}"; }
+            if (!request.SearchString.IsNullOrEmpty()) { url += $"&SearchString={request.SearchString}"; }
+            if(request.ListTagId.Count() > 0)
+            {
+                foreach(var i in request.ListTagId)
+                {
+                    url += $"?ListTagId={i}";
+                }
+            }
 
             var result = await _httpClient.GetFromJsonAsync<List<PostDTO>>(url);
             if (result == null)
@@ -44,6 +53,15 @@ namespace FPLSP_Tutorial.WASM.Repositories.Implements
             if (request.UserId != null) { url += $"&UserId={request.UserId}"; }
             if (request.PostType != null) { url += $"&PostType={request.PostType}"; }
             if (request.IsGetTopLevel) { url += $"&IsGetTopLevel={request.IsGetTopLevel}"; }
+            if (!request.SearchString.IsNullOrEmpty()) { url += $"&SearchString={request.SearchString}"; }
+            if (request.ListTagId.Count() > 0)
+            {
+                foreach (var i in request.ListTagId)
+                {
+                    url += $"?ListTagId={i}";
+                }
+            }
+
 
             var result = await _httpClient.GetFromJsonAsync<PaginationResponse<PostDTO>>(url);
             if (result == null)

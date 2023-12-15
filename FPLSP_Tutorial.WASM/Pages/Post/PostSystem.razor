@@ -46,6 +46,18 @@ else
                 </MudButtonGroup>
             </div>
         </MudPaper>
+
+        @if (_isShowSearch)
+        {
+            <div class="mt-5"></div>
+
+            <Animate Animation="Animations.ZoomIn">
+                <MudPaper Class="px-5 pt-3 pb-4" Elevation="2">
+                    <MudTextField T="string" Variant="Variant.Outlined" Label="Tìm kiếm" Placeholder="Nhập tên bài viết cần tìm kiếm..." DebounceInterval="1000" OnDebounceIntervalElapsed="@(async (string val) => { _preqPost.SearchString = val; await OnQueryRequest(); })"></MudTextField>
+                </MudPaper>
+            </Animate>
+        }
+
         <div class="mt-5"></div>
 
         @if (_displayMode == 0)
@@ -139,15 +151,6 @@ else
             </MudPaper>
             
         }
-        
-
-        @if (_isShowSearch)
-        {
-            <div class="mb-4">
-                <MudTextField T="string" Label="Tìm kiếm" Placeholder="Nhập tên, mã cần tìm kiếm..."></MudTextField>
-            </div>
-        }
-        
     </div>
 }
 
@@ -250,5 +253,21 @@ else
         var dialog = _dialog.Show<TagManage>("Quản lý Tag", parameters, options);
         await dialog.Result;
         await LoadData();
+    }
+
+    private async Task OnQueryRequest()
+    {
+        _isLoadingList = true;
+        StateHasChanged();
+        if (_preqPost.SearchString != "" && _preqPost.SearchString != null)
+        {
+            _preqPost.PageNumber = 1;
+        }
+        await LoadData().ContinueWith((re) =>
+        {
+            _isLoadingList = false;
+            StateHasChanged();
+        });
+
     }
 }

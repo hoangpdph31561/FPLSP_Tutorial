@@ -7,5 +7,9 @@
         public Guid? MajorId { get; set; } = null;
         public int PostType { get; set; } = 0;
         public bool IsGetTopLevel { get; set; }
+
+        public string? SearchString { get; set; } = null;
+
+        public List<Guid> ListTagId { get; set; } = new();
     }
 }

@@ -1,171 +1,237 @@
 ﻿@page "/post/manage"
-@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post.Request;
-@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post;
-@using FPLSP_Tutorial.WASM.Data.Pagination;
 @layout ManagementLayout
 
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post;
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post.Request;
 
-@inject NavigationManager _navManager;
+@inject AuthenticationStateProvider _authProvider
+@inject NavigationManager _nav
+
 @inject IPostRepository _repoPost
-@inject IDialogService _diagService;
-@inject ISnackbar _mudSnackbar;
 
-    <div class="mx-3 mb-2 px-3 pb-3">
-        <MudBreadcrumbs Items="_breadCrumbs"></MudBreadcrumbs>
 
-        <div class="mx-5">
+<style>
+    .hover-zoom:hover {
+        transform: scale(1.005);
+        transition: all 0.1s ease;
+    }
+
+    .overflow-text {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+</style>
+
+<MudOverlay DarkBackground="true" @bind-Visible="@_showDetail" ZIndex="1400">
+    <MudCard Style="width: 80vw;" Class="px-5 pt-5 pb-2">
+        <MudDivider Class="my-2"></MudDivider>
+        @((MarkupString)_showDetailContent)
+        <MudDivider Class="my-2"></MudDivider>
+        <div class="d-flex justify-end">
+            <MudButton OnClick="@(() => _showDetail = false)">Đóng</MudButton>
+        </div>
+    </MudCard>
+</MudOverlay>
+
+@if (_isLoadingAll)
+{
+    <LoadingIndicator />
+}
+else
+{
+    <MudBreadcrumbs Items="_breadCrumbs" Class="ms-2"></MudBreadcrumbs>
+
+    <div class="mx-5">
         <MudPaper Elevation="2" Class="px-5 py-3">
             <div class="d-flex align-center">
-                <MudText Typo="Typo.h5" Class="mr-auto" Style="font-weight: 500">Bài viết đã tạo</MudText>
+                <MudText Typo="Typo.h5" Class="mr-auto" Style="font-weight: 500">Kiểm duyệt bài viết</MudText>
 
                 <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled">
+                    <MudIconButton Icon="@(_displayMode == 0 ? @Icons.Material.Filled.FormatListNumbered : @Icons.Material.Filled.FeaturedPlayList)" OnClick="@(() => _displayMode = (_displayMode == 0) ? 1 : 0)" Title="Đổi kiểu hiển thị" Style="border-right: 2px solid white;"></MudIconButton>
                     <MudIconButton Icon="@Icons.Material.Filled.Search" Title="Tìm kiếm" OnClick="@(() => _isShowSearch = !_isShowSearch)"></MudIconButton>
                 </MudButtonGroup>
             </div>
         </MudPaper>
-
         <div class="mt-5"></div>
 
-        <MudTable Items="@_listPost" Loading="_isLoadingList" Elevation="3">
-            <HeaderContent>
-                <MudTh>STT</MudTh>
-                <MudTh>Tiêu đề</MudTh>
-                <MudTh>Tag</MudTh>
-                @if (idPost == null)
-                {
+        @if (_displayMode == 0)
+        {
+            <MudTable Items="@_listPost" Loading="_isLoadingList" Elevation="2" Class="pb-0">
+                <HeaderContent>
+                    <MudTh>STT</MudTh>
+                    <MudTh>Tiêu đề</MudTh>
+                    <MudTh>Tác giả</MudTh>
+                    <MudTh>Tag</MudTh>
                     <MudTh>SL Bài viết con</MudTh>
-                }
-                <MudTh>Trạng thái</MudTh>
-                <MudTh>Hành động</MudTh>
-            </HeaderContent>
-            <RowTemplate>
-                <MudTd>@(_listPost.IndexOf(context) + 1 + (_responsePostDto.PageNumber - 1) * _responsePostDto.PageSize)</MudTd>
-                    <MudTd Style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap; max-width: 10vw;">@context.Title</MudTd>
-                    <MudTd>
-                        @foreach (var i in context.ListTag.Take(3))
-                    {
-                        <MudChip Variant="Variant.Outlined">@i.Name</MudChip>
-                    }
-                    @if (context.ListTag.Count() > 3)
-                    {
-                        string tooltip = "";
-                        foreach (var tag in context.ListTag.Skip(3))
+                    <MudTh>Chuyên ngành</MudTh>
+                    <MudTh>Trạng thái</MudTh>
+                    <MudTh>Hành động</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd>@(_listPost.IndexOf(context) + 1)</MudTd>
+                        <MudTd Style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap; max-width: 10vw;">@context.Title</MudTd>
+                        <MudTd title="@(context.CreatedByName + " (" + context.CreatedByEmail + ")")">@context.CreatedByName</MudTd>
+                        <MudTd>
+                            @foreach (var i in context.ListTag.Take(3))
                         {
-                            if (tooltip != "") tooltip += ", ";
-                            tooltip += tag.Name;
+                            <MudChip Variant="Variant.Outlined">@i.Name</MudChip>
                         }
-                        <MudTooltip Text="tooltip">
-                            <MudChip Variant="Variant.Outlined">
-                                @("+" + (context.ListTag.Count() - 3))
-                            </MudChip>
-                        </MudTooltip>
-                    }
-                </MudTd>
-                @if (idPost == null)
-                {
+                        @if (context.ListTag.Count() > 3)
+                        {
+                            string tooltip = "";
+                            foreach (var tag in context.ListTag.Skip(3))
+                            {
+                                if (tooltip != "") tooltip += ", ";
+                                tooltip += tag.Name;
+                            }
+                            <MudTooltip Text="tooltip">
+                                <MudChip Variant="Variant.Outlined">
+                                    @("+" + (context.ListTag.Count() - 3))
+                                </MudChip>
+                            </MudTooltip>
+                        }
+                    </MudTd>
                     <MudTd>
                         <MudTooltip Text="Xem chi tiết">
-                            <MudChip OnClick="@(() => { _navManager.NavigateTo($"/recreation/post-manager?idPost={context.Id}"); })">@context.NumberOfChildPost</MudChip>
+                            <MudChip OnClick="@(() => { _nav.NavigateTo($"/post-manager?idPost={context.Id}"); })">@context.NumberOfChildPost</MudChip>
                         </MudTooltip>
                     </MudTd>
-                }
+                    <MudTd>@(context.MajorCode + " - " + context.MajorName)</MudTd>
+                        <MudTd><BadgeEntityStatus Status="@context.Status" /></MudTd>
+                        <MudTd>
+                            <MudFab Color="Color.Primary" Size="Size.Small" Class="m-1" DisableElevation="true" StartIcon="@Icons.Material.Filled.RemoveRedEye" OnClick="@(() => { _showDetail = true; _showDetailContent = context.Content; })"></MudFab>
+                            <MudFab Color="Color.Error" Size="Size.Small" Class="m-1" DisableElevation="true" StartIcon="@Icons.Material.Filled.Delete" OnClick="@(async () => {})" Title="Xóa"></MudFab>
+                        </MudTd>
+                    </RowTemplate>
+                    <PagerContent>
+                        <CustomPagination Class="my-1 w-100" HasNext="@_presPost.HasNext" OnPageChange="@(async e => { await OnClickPagination(e); })" CurrentPageNumber="@_presPost.PageNumber"></CustomPagination>
+                    </PagerContent>
+                </MudTable>
+        }
+        else
+        {
+            <MudPaper Class="px-5 pt-5" Elevation="2">
+                @foreach (var i in _listPost)
+                {
+                    <MudCard Class="pa-3 mb-4 hover-zoom">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="row">
+                                    <div class="col-12 d-flex align-center">
+                                        <div class="mr-auto">
+                                            <MudText Typo="Typo.caption" Style="font-weight: 800">@i.CreatedByName</MudText>
+                                            <MudText Typo="Typo.caption">@(" | " + i.CreatedTime.ToString("dd/MM/yyyy"))</MudText>
+                                            </div>
+                                            <MudIconButton DisableElevation="true" Color="Color.Primary" Size="Size.Small" Class="m-1" Icon="@Icons.Material.Filled.AutoAwesomeMotion" OnClick="@(async () => { _nav.NavigateTo($"/post/archive?idMajor={idMajor}&idPost={i.Id}"); })" Title="Danh sách bài viết con"></MudIconButton>
+                                            <MudIconButton DisableElevation="true" Color="Color.Primary" Size="Size.Small" Class="m-1" Icon="@Icons.Material.Filled.EditNote" OnClick="@(async () => { _nav.NavigateTo($"/post/update?fallBackUrl={_nav.Uri}&idPost=" + i.Id); })" Title="Chỉnh sửa"></MudIconButton>
+                                            <MudIconButton DisableElevation="true" Color="Color.Error" Size="Size.Small" Class="m-1" Icon="@Icons.Material.Filled.Delete" OnClick="@(async () => {})" Title="Xóa"></MudIconButton>
+                                        </div>
 
-                <MudTd><BadgeEntityStatus Status="@context.Status" /></MudTd>
-                <MudTd>
-                    <MudChip Color="Color.Primary" OnClick="@(async () => { _navManager.NavigateTo("/recreation/post-update?idPost=" + context.Id); })">Chỉnh sửa</MudChip>
-                    <MudChip Color="Color.Error" OnClick="@(async () => await OnDelete(context.Id))">Xóa</MudChip>
-                </MudTd>
-            </RowTemplate>
-        </MudTable>
-        <CustomPagination Class="my-1" HasNext="@_responsePostDto.HasNext" OnPageChange="@(async e=> await  OnPaginationButtonClick(e))" CurrentPageNumber="@_responsePostDto.PageNumber"></CustomPagination>
-        </div>
-           
-</div>
+                                        <div class="col-12"><MudText Typo="Typo.h6" Style="font-weight: 500;">@(i.Title)</MudText></div>
+                                        <div class="col-12 overflow-text" style="height: 50px !important; border: 1px solid lightgrey; border-radius: 5px;">
+                                            @((MarkupString)i.Content)
+                                    </div>
+                                    <div class="col-12 mt-2">
+                                        @foreach (var t in i.ListTag)
+                                        {
+                                            <span style="background-color: lightgray; border-radius: 5px; font-size: 10px; font-weight: 500;" class="me-1 pa-1">@t.Name</span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </MudCard>
+                }
+                <CustomPagination Class="my-1" HasNext="@_presPost.HasNext" OnPageChange="@(async e => { await OnClickPagination(e); })" CurrentPageNumber="@_presPost.PageNumber"></CustomPagination>
+            </MudPaper>
+
+        }
+
+
+        @if (_isShowSearch)
+        {
+            <div class="mb-4">
+                <MudTextField T="string" Label="Tìm kiếm" Placeholder="Nhập tên, mã cần tìm kiếm..."></MudTextField>
+            </div>
+        }
+
+    </div>
+}
+
 
 @code {
     private List<BreadcrumbItem> _breadCrumbs = new List<BreadcrumbItem>
     {
-        new BreadcrumbItem("Trang chủ", href: "/recreation/post/client"),
-        new BreadcrumbItem("Quản lý bài viết", href: null, disabled: true)
+        new BreadcrumbItem("Trang chủ", href: "/post/home"),
+        new BreadcrumbItem("Bài viết đã tạo", href: null, disabled: true)
     };
 
     [Parameter]
     [SupplyParameterFromQuery]
-    public string? idPost { get; set; }
+    public Guid? idPost { get; set; }
+    public Guid? idPostCurrent = null;
 
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public Guid? idMajor { get; set; }
 
-    [Inject] 
-    public HttpClient _http { get; set; }
+    private Guid _idUser;
+
+    private bool _showDetail = false;
+    private string _showDetailContent = "";
 
     private bool _isLoadingAll = true;
     private bool _isLoadingList = true;
     private bool _isShowSearch = false;
 
-    PaginationResponse<PostDTO> _responsePostDto = new();
-    List<PostDTO> _listPost = new();
+    private int _displayMode = 0;
 
+    private PostViewWithPaginationRequest _preqPost { get; set; } = new();
+    private PaginationResponse<PostDTO> _presPost { get; set; } = new();
+    private List<PostDTO> _listPost = new();
 
-    PostViewWithPaginationRequest _prPost = new()
-        {
-            PageNumber = 1,
-            PageSize = 10,
-        };
-
-
-    protected override async Task OnParametersSetAsync()
+    protected override async Task OnInitializedAsync()
     {
-        _isLoadingAll = true;
-        _listPost = new();
-        _prPost.PostId = idPost == null ? null : Guid.Parse(idPost);
-        await LoadData().ContinueWith((result) =>
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (idPost != idPostCurrent || firstRender)
         {
-            _isLoadingAll = false;
-            _isLoadingList = false;
-        });
+            _preqPost.IsGetTopLevel = (idPost == null) ? true : false;
+            _preqPost.PageNumber = 1;
+            _isLoadingAll = true;
+            _isLoadingList = true;
+            StateHasChanged();
+
+            _preqPost.MajorId = idMajor;
+            _preqPost.PostId = idPost;
+
+            idPostCurrent = idPost;
+            await LoadData().ContinueWith((re) =>
+            {
+                _isLoadingAll = false;
+                _isLoadingList = false;
+                StateHasChanged();
+            });
+        }
     }
 
     private async Task LoadData()
     {
-        _responsePostDto = await _repoPost.GetListWithPaginationAsync(_prPost);
-        _listPost = _responsePostDto.Data.ToList();
-    }
-
-    private async Task OnDelete(Guid id)
-    {
-        var request = new PostDeleteRequest
-            {
-                Id = id,
-            };
-        var confirm = await _diagService.ShowMessageBox
-              (
-                  "Thông báo",
-                  "Bạn chắn chắn xóa bài viết này?",
-                  "Xác nhận",
-                  cancelText: "Hủy"
-              );
-        if (confirm == true)
+        _presPost = await _repoPost.GetListWithPaginationAsync(_preqPost);
+        if (_presPost.Data != null)
         {
-            var result = await _repoPost.DeleteAsync(request);
-            if(result)
-            {
-                _mudSnackbar.Add("Xóa thành công", Severity.Success);
-                await LoadData();
-            }
-            else
-            {
-                _mudSnackbar.Add("Xóa thất bại", Severity.Error);
-            }
+            _listPost = (List<PostDTO>)_presPost.Data;
         }
     }
 
-    private async Task OnPaginationButtonClick(int pageNumber)
+    private async Task OnClickPagination(int page)
     {
-        _isLoadingList = true;
-        _prPost.PageNumber = pageNumber;
-        await LoadData().ContinueWith((val) =>
-        {
-            _isLoadingAll = false;
-            _isLoadingList = false;
-        });
+        _preqPost.PageNumber = page;
+        await LoadData();
     }
+
 }

@@ -2,7 +2,7 @@
 @inject IDialogService DialogService
 
 <div Class="d-flex align-center py-2">
-    <MudText>Tags: </MudText>
+    <MudText>Nhãn: </MudText>
     <div style="overflow: auto;">
         @foreach (var i in ToggleAllTags ? ListTag : ListTag.Take(MaxChipDisplay))
         {

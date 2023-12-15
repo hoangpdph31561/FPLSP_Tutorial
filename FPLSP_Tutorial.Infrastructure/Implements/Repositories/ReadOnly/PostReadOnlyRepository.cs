@@ -13,6 +13,7 @@ using FPLSP_Tutorial.Domain.Enums;
 using FPLSP_Tutorial.Infrastructure.Database.AppDbContext;
 using FPLSP_Tutorial.Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
 {
@@ -65,6 +66,21 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
                                     .Any(t => t.MajorId != null && t.Status != EntityStatus.Deleted && !t.Deleted));
                 }
 
+                if (!request.SearchString.IsNullOrEmpty())
+                {
+                    queryable = queryable.Where(m => m.Title.ToLower().Contains(request.SearchString!.ToLower()));
+                }
+
+                if (request.ListTagId.Count != 0)
+                {
+                    queryable = queryable
+                        .Where(p => p.PostTags
+                            .Where(pt => pt.Status != EntityStatus.Deleted && !pt.Deleted)
+                                .Select(pt => pt.Tag)
+                                    .Where(t => t.Status != EntityStatus.Deleted && !t.Deleted)
+                                        .Select(t => t.Id)
+                                            .Any(tid => request.ListTagId.Contains(tid)));
+                }
 
                 var result = await queryable
                     .ProjectTo<PostDTO>(_mapper.ConfigurationProvider)
@@ -72,8 +88,9 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
 
                 foreach (var i in result)
                 {
-                    var user = await _dbContext.UserEntities.AsNoTracking().Where(c => c.Id == i.CreatedBy).Select(c => c.Username).FirstOrDefaultAsync();
-                    i.CreatedByName = user ?? "N/A";
+                    var user = await _dbContext.UserEntities.AsNoTracking().Where(c => c.Id == i.CreatedBy).FirstOrDefaultAsync();
+                    i.CreatedByName = user == null ? "N/A" : user.Username;
+                    i.CreatedByEmail = user == null ? "N/A" : user.Email;
                 }
 
                 return RequestResult<List<PostDTO>>.Succeed(result);
@@ -132,6 +149,22 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
                                     .Any(t => t.MajorId != null && t.Status != EntityStatus.Deleted && !t.Deleted));
                 }
 
+                if (!request.SearchString.IsNullOrEmpty())
+                {
+                    queryable = queryable.Where(m => m.Title.ToLower().Contains(request.SearchString!.ToLower()));
+                }
+
+                if (request.ListTagId.Count != 0)
+                {
+                    queryable = queryable
+                        .Where(p => p.PostTags
+                            .Where(pt => pt.Status != EntityStatus.Deleted && !pt.Deleted)
+                                .Select(pt => pt.Tag)
+                                    .Where(t => t.Status != EntityStatus.Deleted && !t.Deleted)
+                                        .Select(t => t.Id)
+                                            .Any(tid => request.ListTagId.Contains(tid)));
+                }
+
                 var dat2 = queryable.ToList();
 
                 var result = await queryable.PaginateAsync<PostEntity, PostDTO>(request, _mapper, cancellationToken);
@@ -140,8 +173,9 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
                 {
                     foreach (var i in result.Data)
                     {
-                        var user = await _dbContext.UserEntities.AsNoTracking().Where(c => c.Id == i.CreatedBy).Select(c => c.Username).FirstOrDefaultAsync();
-                        i.CreatedByName = user ?? "N/A";
+                        var user = await _dbContext.UserEntities.AsNoTracking().Where(c => c.Id == i.CreatedBy).FirstOrDefaultAsync();
+                        i.CreatedByName = user == null ? "N/A" : user.Username;
+                        i.CreatedByEmail = user == null ? "N/A" : user.Email;
                     }
                 }
 

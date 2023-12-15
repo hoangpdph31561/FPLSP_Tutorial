@@ -54,6 +54,14 @@ namespace FPLSP_Tutorial.WASM.Repositories.Implements
             }
         }
 
-        
+        public async Task<bool> UpdateAsync(UserUpdateRequest request)
+        {
+            var resultCreate = await _httpClient.PutAsJsonAsync($"/api/Users", request);
+            if (resultCreate.IsSuccessStatusCode)
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }

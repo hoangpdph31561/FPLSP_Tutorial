@@ -19,9 +19,9 @@
                     <div class="d-flex justify-center mb-2">
                         <MudProgressCircular Value="@Stage" Color="Color.Primary"></MudProgressCircular>
                     </div>
-                    <div class="text-center h-25">
+                    <div class="h-25">
                     
-                            <MudText Typo="Typo.h6">@((MarkupString)StageMessage)</MudText>
+                            <MudText Typo="Typo.h6" Style="text-align:center;">@((MarkupString)StageMessage)</MudText>
                     
                     </div>
                 </Animate>
@@ -96,10 +96,45 @@
         }
         else
         {
-            await HandlingAuthentication(profile);
-            await SetStage(100, "Chuyển hướng tới trang chủ");
-            
-            Redirect(profile.RoleCodes);
+            if(!CheckIfInformationsAreChanged(profile, listClaims))
+            {
+                await HandlingAuthentication(profile);
+                await SetStage(100, "Chuyển hướng tới trang chủ");
+
+                Redirect(profile.RoleCodes);
+            }
+            else
+            {
+                await SetStage(50, "Thông tin có sự thay đổi.<br>Tiến hành cập nhật");
+
+                var profileUpdateResult = await _repoUser.UpdateAsync(new ()
+                {
+                    Id = profile.Id,
+                    Email = profile.Email,
+                    Username = listClaims.FirstOrDefault(c => c.Type == "name") == null ? "N/A" : listClaims.FirstOrDefault(c => c.Type == "name").Value,
+                    RoleCodes = listClaims.FirstOrDefault(c => c.Type == "role") == null ? new List<string>() : listClaims.Where(c => c.Type == "role").Select(c => c.Value).ToList(),
+                    Status = profile.Status,
+                });
+
+                if(profileUpdateResult)
+                {
+                    await SetStage(75, "Cập nhật thành công.<br>Làm mới thông tin.");
+
+                    profile = await _repoUser.GetByEmailAsync(listClaims.FirstOrDefault(c => c.Type == "email").Value);
+
+                    await HandlingAuthentication(profile);
+                    await SetStage(100, "Chuyển hướng tới trang chủ");
+
+                    Redirect(profile.RoleCodes);
+                }
+                else
+                {
+                    await HandlingAuthentication(profile);
+                    await SetStage(100, "Cập nhật thất bại, sử dụng thông tin cũ.<br>Chuyển hướng tới trang chủ");
+
+                    Redirect(profile.RoleCodes);
+                }
+            }
         }
     }
 
@@ -119,6 +154,19 @@
 
         var customAuth = (CustomAuthenticationStateProvider)_authProvider;
         await customAuth.UpdateAuthenticationState(lstClaim);
+    }
+
+    private bool CheckIfInformationsAreChanged(UserDTO user, List<Claim> lstClaim)
+    {
+        var claimUsername = listClaims.FirstOrDefault(c => c.Type == "name") == null ? "N/A" : listClaims.FirstOrDefault(c => c.Type == "name").Value;
+        var claimRoleCodes = listClaims.FirstOrDefault(c => c.Type == "role") == null ? new List<string>() : listClaims.Where(c => c.Type == "role").Select(c => c.Value).ToList();
+
+        if(claimUsername != user.Username || !claimRoleCodes.Order().SequenceEqual(user.RoleCodes.Order()))
+        {
+            return true;
+        }
+
+        return false;
     }
 
     private void Redirect(List<string> lstRole)

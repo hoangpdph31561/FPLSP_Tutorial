@@ -9,5 +9,6 @@ namespace FPLSP_Tutorial.WASM.Repositories.Interfaces
         Task<PaginationResponse<UserDTO>> GetListWithPaginationAsync(UserViewWithPaginationRequest request);
         Task<UserDTO> GetByEmailAsync(string email);
         Task<bool> AddAsync(UserCreateRequest request);
+        Task<bool> UpdateAsync(UserUpdateRequest request);
     }
 }

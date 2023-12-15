@@ -70,7 +70,7 @@ else
         }
         else
         {
-            <PostSearch />
+            <PostSearch @ref="@_refPostSearch" PostViewRequest="@_requestPostSearchWithPagination" Cancel="@(() => { _isSearching = false; })" />
         }
 
     </div>
@@ -84,6 +84,8 @@ else
     {
 
     };
+
+    private PostSearch _refPostSearch { get; set; }
 
     private string _searchString = "";
 
@@ -120,11 +122,18 @@ else
     {
         if (_searchString == null || _searchString == "")
         {
+            _isSearching = false;
             return;
         }
         _requestPostSearchWithPagination.SearchString = _searchString;
-        _isSearching = true;
-
+        if(_isSearching)
+        {
+            await _refPostSearch.LoadData(_requestPostSearchWithPagination);
+        }
+        else
+        {
+            _isSearching = true;
+        }
     }
 
     private async Task OnClickFilter()

@@ -5,8 +5,42 @@
 
 @inject NavigationManager _nav;
 
+<style>
+    .post-transform {
+        cursor: pointer;
+    }
 
-<MudText Typo="Typo.h6" Class="mb-2">Tìm kiếm bài viết</MudText>
+    .post-transform:hover {
+        transition: 0.4s all ease;
+        transform: scale(1.02);
+    }
+
+    .post-content {
+        max-height: 0px;
+        opacity: 0;
+        transition: visibility 0s, opacity 0.1s linear, height 0.5s ease;
+    }
+
+    .post-transform:hover .post-content {
+        max-height: 80px;
+        visibility: visible;
+        opacity: 1;
+    }
+
+    .overflow-text-1 {
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+</style>
+
+<div class="d-flex align-center mb-2">
+    <MudText Typo="Typo.h6" Class="mr-auto">Tìm kiếm bài viết</MudText>
+    <MudButton OnClick="@(async () => await Cancel.InvokeAsync())">Hủy</MudButton>
+</div>
+
 
 <MudPaper>
     <div class="pa-5">
@@ -58,10 +92,21 @@
 </MudPaper>
 
 @code {
+    [Parameter]
+    public PostViewWithPaginationRequest PostViewRequest { get; set; }
+
+    [Parameter]
+    public EventCallback Cancel { get; set; }
+
     private PaginationResponse<PostDTO> _presPost = new();
     private List<PostDTO> _listPost = new();
 
     private bool _isLoadingList = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData(PostViewRequest);
+    }
 
 
     public async Task LoadData(PostViewWithPaginationRequest request)
@@ -74,5 +119,6 @@
             _listPost = (List<PostDTO>)_presPost.Data;
         }
         _isLoadingList = false;
+        StateHasChanged();
     }
 }

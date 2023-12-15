@@ -42,35 +42,50 @@
 <MudBreadcrumbs Items="_breadCrumbs" Class="ms-2"></MudBreadcrumbs>
 
 <div class="mx-5">
-    @foreach (var post in _listPost)
-    {
-        if (_listPost.IndexOf(post) > 0)
+    <MudPaper Class="pa-5">
+        <div class="d-flex align-center pb-3">
+            <MudText Typo="Typo.h5" Style="font-weight: 500" Class="mr-auto">Kết quả tìm kiếm</MudText>
+            <MudButton OnClick="@(() => { _nav.NavigateTo("/post/home"); })">Quay lại</MudButton>
+        </div>
+
+        @if(_isLoadingList)
         {
-            <MudDivider Class="my-3 mx-4" DividerType="DividerType.Middle"></MudDivider>
+            <MudProgressLinear Indeterminate="true"></MudProgressLinear>
         }
-        <MudCard Class="py-2 px-4 post-transform" Elevation="0" Style="border: 1px solid lightgrey;" @onclick="@(() => _nav.NavigateTo($"/post/view/{post.Id}"))">
-            <div class="d-flex">
-                <MudIcon Icon="@Icons.Material.Filled.Person" Size="Size.Small"></MudIcon>
-                @{
-                    var disName = (post.CreatedByName == null || post.CreatedByName == "") ? "N/A" : post.CreatedByName;
+        else
+        {
+            foreach (var post in _listPost)
+            {
+                if (_listPost.IndexOf(post) > 0)
+                {
+                    <MudDivider Class="my-3 mx-4" DividerType="DividerType.Middle"></MudDivider>
                 }
-                <MudText Typo="Typo.caption" Style="font-weight: 500; max-width: 50%" Class="overflow-text-1" title="@disName">@(disName)</MudText>
-                    <MudText Typo="Typo.caption"> | @post.CreatedTime.ToString("dd/MM/yyyy")</MudText>
-                </div>
+                <MudCard Class="py-2 px-4 post-transform" Elevation="0" Style="border: 1px solid lightgrey;" @onclick="@(() => _nav.NavigateTo($"/post/view/{post.Id}"))">
+                    <div class="d-flex">
+                        <MudIcon Icon="@Icons.Material.Filled.Person" Size="Size.Small"></MudIcon>
+                        @{
+                            var disName = (post.CreatedByName == null || post.CreatedByName == "") ? "N/A" : post.CreatedByName;
+                        }
+                        <MudText Typo="Typo.caption" Style="font-weight: 500; max-width: 50%" Class="overflow-text-1" title="@disName">@(disName)</MudText>
+                            <MudText Typo="Typo.caption"> | @post.CreatedTime.ToString("dd/MM/yyyy")</MudText>
+                        </div>
 
-                <MudText Typo="Typo.h6" Style="font-weight: 500;">@post.Title</MudText>
+                        <MudText Typo="Typo.h6" Style="font-weight: 500;">@post.Title</MudText>
 
-                <div class="d-flex align-center my-2">
-                    <div class="overflow-hidden">
-                        @foreach (var i in post.ListTag)
-                    {
-                        <span style="background-color: lightgray; border-radius: 5px;" class="me-1 pa-1">@i.Name</span>
-                    }
-                </div>
-            </div>
+                        <div class="d-flex align-center my-2">
+                            <div class="overflow-hidden">
+                                @foreach (var i in post.ListTag)
+                            {
+                                <span style="background-color: lightgray; border-radius: 5px;" class="me-1 pa-1">@i.Name</span>
+                            }
+                        </div>
+                    </div>
 
-        </MudCard>
-    }
+                </MudCard>
+            }
+        }
+        
+    </MudPaper>
 </div>
 
 
@@ -103,7 +118,19 @@
     private PaginationResponse<PostDTO> _presPost = new();
     private List<PostDTO> _listPost = new();
 
+    private bool _isLoadingList = false;
+
+
     protected override async Task OnInitializedAsync()
+    {
+        _isLoadingList = true;
+        await LoadData().ContinueWith((re) =>
+        {
+            _isLoadingList = false;
+        });
+    }
+
+    private async Task LoadData()
     {
         if ((_searchString == null && _listTagIdString == null) || _userId == null)
         {
@@ -115,7 +142,7 @@
             if (_listTagIdString != null) _preqPostWithPagination.ListTagId = JsonSerializer.Deserialize<List<Guid>>(_listTagIdString) ?? new();
 
             _presPost = await _repoPost.GetListWithPaginationAsync(_preqPostWithPagination);
-            if(_presPost.Data != null)
+            if (_presPost.Data != null)
             {
                 _listPost = (List<PostDTO>)_presPost.Data;
             }

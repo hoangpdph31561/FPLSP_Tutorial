@@ -201,7 +201,7 @@ else
         var confirm = await _dialogService.ShowMessageBox
         (
             "Thông báo",
-            "Xác nhận xóa chuyên ngành?",
+            (MarkupString)("<h2 style=\"font-weight: 500\">Thông báo</h2>" + "Xác nhận xóa chuyên ngành?"),
             "Xác nhận",
             cancelText: "Hủy"
         );

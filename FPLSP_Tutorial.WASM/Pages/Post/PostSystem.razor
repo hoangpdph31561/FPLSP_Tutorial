@@ -10,6 +10,7 @@
 
 @inject IPostRepository _repoPost
 @inject IDialogService _dialog
+@inject ISnackbar _mudSnackbar
 
 <style>
     .hover-zoom:hover {
@@ -105,7 +106,7 @@ else
                         <MudTd>
                             <MudFab Color="Color.Primary" Size="Size.Small" Class="m-1" DisableElevation="true" StartIcon="@Icons.Material.Filled.AutoAwesomeMotion" OnClick="@(async () => { _nav.NavigateTo($"/post/archive?idPost={context.Id}"); })" Title="Danh sách bài viết con"></MudFab>
                             <MudFab Color="Color.Primary" Size="Size.Small" Class="m-1" DisableElevation="true" StartIcon="@Icons.Material.Filled.EditNote" OnClick="@(async () => { _nav.NavigateTo($"/post/manage/self/update?fallBackUrl={_nav.Uri}&idPost=" + context.Id); })" Title="Chỉnh sửa"></MudFab>
-                            <MudFab Color="Color.Error" Size="Size.Small" Class="m-1" DisableElevation="true" StartIcon="@Icons.Material.Filled.Delete" OnClick="@(async () => {})" Title="Xóa"></MudFab>
+                            <MudFab Color="Color.Error" Size="Size.Small" Class="m-1" DisableElevation="true" StartIcon="@Icons.Material.Filled.Delete" OnClick="@(async () => { await DialogDelete(context.Id); })" Title="Xóa"></MudFab>
                         </MudTd>
                     </RowTemplate>
                     <PagerContent>
@@ -129,7 +130,7 @@ else
                                     </div>
                                     <MudIconButton DisableElevation="true" Color="Color.Primary" Size="Size.Small" Class="m-1" Icon="@Icons.Material.Filled.AutoAwesomeMotion" OnClick="@(async () => { _nav.NavigateTo($"/post/system?idPost={i.Id}"); })" Title="Danh sách bài viết con"></MudIconButton>
                                     <MudIconButton DisableElevation="true" Color="Color.Primary" Size="Size.Small" Class="m-1" Icon="@Icons.Material.Filled.EditNote" OnClick="@(async () => { _nav.NavigateTo($"/post/manage/self/update?fallBackUrl={_nav.Uri}&idPost=" + i.Id); })" Title="Chỉnh sửa"></MudIconButton>
-                                    <MudIconButton DisableElevation="true" Color="Color.Error" Size="Size.Small" Class="m-1" Icon="@Icons.Material.Filled.Delete" OnClick="@(async () => {})" Title="Xóa"></MudIconButton>
+                                    <MudIconButton DisableElevation="true" Color="Color.Error" Size="Size.Small" Class="m-1" Icon="@Icons.Material.Filled.Delete" OnClick="@(async () => { await DialogDelete(i.Id); })" Title="Xóa"></MudIconButton>
                                 </div>
 
                                 <div class="col-12"><MudText Typo="Typo.h6" Style="font-weight: 500;">@(i.Title)</MudText></div>
@@ -269,5 +270,38 @@ else
             StateHasChanged();
         });
 
+    }
+
+
+    private async Task DialogDelete(Guid idDelete)
+    {
+        var postInfo = _listPost.FirstOrDefault(c => c.Id == idDelete);
+
+        var confirm = await _dialog.ShowMessageBox
+        (
+            "Thông báo",
+            (MarkupString)("<h2 style=\"font-weight: 500\">Thông báo</h2>" + "Xác nhận xóa bài viết?" + ((postInfo.NumberOfChildPost > 0) ? $"<br><span style=\"color: red;\">{postInfo.NumberOfChildPost} bài viết con sẽ không thể truy cập</span>" : "")),
+            "Xác nhận",
+            cancelText: "Hủy"
+        );
+        if (confirm == true)
+        {
+            var dreqPost = new PostDeleteRequest()
+            {
+                Id = idDelete,
+                DeletedBy = _idUser
+            };
+
+            var removeConfirm = await _repoPost.DeleteAsync(dreqPost);
+            if (removeConfirm)
+            {
+                _mudSnackbar.Add("Xóa thành công", Severity.Success);
+            }
+            else
+            {
+                _mudSnackbar.Add("Xóa thất bại", Severity.Error);
+            }
+            await LoadData();
+        }
     }
 }

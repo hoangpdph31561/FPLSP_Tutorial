@@ -147,7 +147,7 @@ else
         var confirm = await _dialog.ShowMessageBox
         (
             "Thông báo",
-            (MarkupString)("Xác nhận rời chuyên ngành?<br><span style=\"color: red;\">Các bài viết đã tạo sẽ vẫn tiếp tục được hiển thị cho người dùng khác</span>"),
+            (MarkupString)("<h2 style=\"font-weight: 500\">Thông báo</h2>" + "Xác nhận rời chuyên ngành?<br><span style=\"color: red;\">Các bài viết đã tạo sẽ vẫn tiếp tục được hiển thị cho người dùng khác</span>"),
         "Xác nhận",
             cancelText: "Hủy"
         );
@@ -192,7 +192,7 @@ else
         var confirm = await _dialog.ShowMessageBox
         (
             "Thông báo",
-            (MarkupString)("Xác nhận gửi yêu cầu quản lý?"),
+            (MarkupString)("<h2 style=\"font-weight: 500\">Thông báo</h2>" + "Xác nhận gửi yêu cầu quản lý?"),
         "Xác nhận",
             cancelText: "Hủy"
         );

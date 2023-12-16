@@ -78,7 +78,7 @@ else
                         <TableSortingIcon CallLoadData="@(async () => await OnQueryRequest())" PropertyName="@(nameof(MajorDTO.NumberOfLecturer))" ActivePropertyName="@majorRequest.SortingProperty" ActiveSortingDirection="@majorRequest.SortingDirection" SetPropName="@((e) => majorRequest.SortingProperty = e)" SetSortDir="@((e) => majorRequest.SortingDirection = e)">Hoạt động</TableSortingIcon>
                     </MudTh>
                     <MudTh Style="border-right: 1px solid var(--mud-palette-table-lines);">
-                        <TableSortingIcon CallLoadData="@(async () => await OnQueryRequest())" PropertyName="@(nameof(MajorDTO.NumberOfLecturerRequest))" ActivePropertyName="@majorRequest.SortingProperty" ActiveSortingDirection="@majorRequest.SortingDirection" SetPropName="@((e) => majorRequest.SortingProperty = e)" SetSortDir="@((e) => majorRequest.SortingDirection = e)">Chờ duyệt</TableSortingIcon>
+                        <TableSortingIcon CallLoadData="@(async () => await OnQueryRequest())" PropertyName="@(nameof(MajorDTO.NumberOfLecturerRequest))" ActivePropertyName="@majorRequest.SortingProperty" ActiveSortingDirection="@majorRequest.SortingDirection" SetPropName="@((e) => majorRequest.SortingProperty = e)" SetSortDir="@((e) => majorRequest.SortingDirection = e)">Yêu cầu quản lý</TableSortingIcon>
                     </MudTh>
                 </MudTHeadRow>
             </HeaderContent>

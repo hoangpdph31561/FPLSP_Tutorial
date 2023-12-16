@@ -30,7 +30,11 @@
             <div class="row">
                 <div class="col">
                     <MudText Typo="Typo.caption">Tiêu đề</MudText>
-                    <MudTextField Variant="Variant.Outlined" @bind-Value="@_bindTitle"></MudTextField>
+                    <MudTextField Variant="Variant.Outlined" Value="@_bindTitle" ValueChanged="@((string val) => { _bindTitle = val; Validate("title"); })" Immediate></MudTextField>
+                    @if (_listDisplayError.Any(c => c.property == "title"))
+                    {
+                        <MudText Typo="Typo.caption" Color="Color.Error">@_listDisplayError.FirstOrDefault(c => c.property == "title").message</MudText>
+                    }
                 </div>
 
             </div>
@@ -70,6 +74,10 @@
                             <MudIcon Icon="@Icons.Material.Filled.AddCircle" @onclick="@(async () => await OnClickTagAdd())" Class="@(ListTagSelected.Count() == 0 ? "ms-3" : "")"></MudIcon>
                         </div>
                     </div>
+                    @if(_listDisplayError.Any(c => c.property == "tag"))
+                    {
+                        <MudText Typo="Typo.caption" Color="Color.Error">@_listDisplayError.FirstOrDefault(c => c.property == "tag").message</MudText>
+                    }
                 </div>
             </div>
             <div class="d-flex justify-content-end my-2">
@@ -116,7 +124,7 @@
 
     private List<MajorDTO> _listMajor = new();
 
-
+    private List<(string property, string message)> _listDisplayError = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -194,6 +202,8 @@
         {
             ListTagSelected = lstBeforeChange;
         }
+
+        Validate();
     }
 
     private void TagOnMouseOver(Guid idTag)
@@ -208,9 +218,52 @@
 
     private async Task OnClickSave()
     {
+
         PostCreateRequest.Title = _bindTitle;
         await BindListTagSelected.InvokeAsync(ListTagSelected);
+
+        if (!Validate()) return;
+
         await OnSave.InvokeAsync();
     }
 
+    //Manually because of Tag validation
+    private bool Validate(string? property = null)
+    {
+        if(property == null)
+        {
+            _listDisplayError.Clear();
+
+            if (_bindTitle == null || _bindTitle == "")
+            {
+                _listDisplayError.Add(("title", "Bài viết phải có tiêu đề"));
+            }
+            if (ListTagSelected.Count() == 0)
+            {
+                _listDisplayError.Add(("tag", "Phải có tối thiểu 1 nhãn"));
+            }
+            if (_listDisplayError.Count > 0) return false;
+            return true;
+        }
+        else
+        {
+            _listDisplayError = _listDisplayError.Where(c => c.property != property).ToList();
+            if (_bindTitle == null || _bindTitle == "" && property == "title")
+            {
+                _listDisplayError.Add(("title", "Bài viết phải có tiêu đề"));
+            }
+            if (ListTagSelected.Count() == 0 && property == "tag")
+            {
+                _listDisplayError.Add(("tag", "Phải có tối thiểu 1 nhãn"));
+            }
+            if (_listDisplayError.Count > 0) return false;
+            return true;
+        }
+    }
+
+
+    public async Task Cleanup()
+    {
+        _bindTitle = "";
+    }
 }

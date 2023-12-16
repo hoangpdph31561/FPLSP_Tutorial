@@ -28,30 +28,31 @@
 }
 else
 {
-    <PostEditInformation Visible="@_isEnablePostInformation" OnClose="@(() => _isEnablePostInformation = false)" ListTagSelected="@_listTagSelected" UserId="@_idUser" OnSave="@(async() => await OnSaveAsync())" PostCreateRequest="@_postCreateR" BindListTagSelected="@((List<TagDTO> lstTag) => _listTagSelected = lstTag)" />
+    <PostEditInformation Visible="@_isEnablePostInformation" OnClose="@(() => _isEnablePostInformation = false)" ListTagSelected="@_listTagSelected" UserId="@_idUser" OnSave="@(async() => await OnSaveAsync())" PostCreateRequest="@_postCreateR" BindListTagSelected="@((List<TagDTO> lstTag) => _listTagSelected = lstTag)" @ref="@_refPostEditInformation" />
+
+    <div class="pa-2">
+        <MudBreadcrumbs Items="@_listBreadCrumb"></MudBreadcrumbs>
+
+        <MudPaper Class="mt-3 mx-3 pa-4 position-relative" Elevation="2">
+
+            <div class="d-flex align-center mb-3">
+                <MudText Typo="Typo.h5" Class="mr-auto" Style="font-weight: 500">Tạo bài viết</MudText>
+
+                <MudChip Icon="@Icons.Material.Filled.FileUpload" title="Nhập nội dung bằng file truyền vào(.xlsx, .docs)" Color="Color.Success" OnClick="@(() => _isEnableFileImport = true)">Nhập file</MudChip>
+                <MudChip OnClick="@(async () => { _isEnablePostInformation= true; })" Color="Color.Primary" Icon="@Icons.Material.Filled.Save">Lưu</MudChip>
+            </div>
+
+            <RichTextEditor @ref="@_rteRef" Get="@((string val) => { _postCreateR.Content =  val; })" />
+
+            <div class="row">
+                <div class="col d-flex justify-content-end">
+                </div>
+            </div>
+        </MudPaper>
+    </div>
 }
 
-<div class="pa-2">
-    <MudBreadcrumbs Items="@_listBreadCrumb"></MudBreadcrumbs>
 
-    <MudPaper Class="mt-3 mx-3 pa-4 position-relative" Elevation="2" >
-
-        <div class="d-flex align-center mb-3">
-            <MudText Typo="Typo.h5" Class="mr-auto" Style="font-weight: 500">Tạo bài viết</MudText>
-
-            <MudChip Icon="@Icons.Material.Filled.FileUpload" title="Nhập nội dung bằng file truyền vào(.xlsx, .docs)" Color="Color.Success" OnClick="@(() => _isEnableFileImport = true)">Nhập file</MudChip>
-            <MudChip OnClick="@(async () => { _isEnablePostInformation= true; })" Color="Color.Primary" Icon="@Icons.Material.Filled.Save">Lưu</MudChip>
-        </div>
-
-        <RichTextEditor @ref="@_rteRef" Get="@((string val) => { _postCreateR.Content =  val; })" />
-
-        <div class="row">
-            <div class="col d-flex justify-content-end">
-                
-            </div>
-        </div>
-    </MudPaper>
-</div>
 
 
 
@@ -80,11 +81,12 @@ else
 
     RichTextEditor _rteRef = new();
 
+    PostEditInformation _refPostEditInformation = new();
+
     private PostCreateRequest _postCreateR = new();
 
     protected override async Task OnInitializedAsync()
     {
-        StateHasChanged();
     }
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
@@ -109,6 +111,12 @@ else
     {
         await _rteRef.GetRTEValue();
 
+        if(_postCreateR.Content == null || _postCreateR.Content == "")
+        {
+            _mudSnackbar.Add("Bài viết chưa có nội dung", Severity.Error);
+            return;
+        }
+
         if(idPost != null) _postCreateR.PostId = Guid.Parse(idPost);
         var resultPost = await _repoPost.AddAsync(_postCreateR);
 
@@ -129,6 +137,7 @@ else
                 if(fallBackUrl != null)
                 {
                     _nav.NavigateTo(fallBackUrl);
+                    return;
                 }
             }
             else
@@ -137,8 +146,11 @@ else
                 if (fallBackUrl != null)
                 {
                     _nav.NavigateTo(fallBackUrl);
+                    return;
                 }
             }
+
+            await Cleanup();
         }
         else
         {
@@ -157,5 +169,17 @@ else
             };
         }
         _listBreadCrumb.Add(new BreadcrumbItem("Tạo bài viết", href: null, disabled: true));
+    }
+
+
+    private async Task Cleanup()
+    {
+        _listTagSelected = new();
+        await _rteRef.SetRTEValue("");
+        _postCreateR.Content = "";
+        _postCreateR.Title = "";
+        _isEnablePostInformation = false;
+        await _refPostEditInformation.Cleanup();
+        StateHasChanged();
     }
 }

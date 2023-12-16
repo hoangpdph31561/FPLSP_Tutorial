@@ -27,26 +27,20 @@
 else
 {
     <div class="ma-5">
-        <Animate Animation="Animations.FadeUp">
-            <MudPaper Class="py-3 px-5" Elevation="1">
-                <div class="d-flex align-center">
-                    <div class="d-flex align-center mr-auto">
-                        <MudIcon Icon="@Icons.Material.Filled.Home" Class="me-2" Size="Size.Large"></MudIcon>
-                        <MudText Typo="Typo.h4" Class="ms-2" Style="font-weight: 500">Trang chủ</MudText>
-                    </div>
-                    <div>
-                        <MudButtonGroup>
-                            <MudIconButton Icon="@Icons.Material.Filled.Search" OnClick="@(() => _showSearch = !_showSearch)"></MudIconButton>
-                            <MudIconButton Icon="@Icons.Material.Filled.FilterList" OnClick="@(async() => await OnClickFilter())"></MudIconButton>
-                        </MudButtonGroup>
-                    </div>
+        <MudPaper Class="py-3 px-5" Elevation="1">
+            <div class="d-flex align-center">
+                <div class="d-flex align-center mr-auto">
+                    <MudIcon Icon="@Icons.Material.Filled.Home" Class="me-2" Size="Size.Large"></MudIcon>
+                    <MudText Typo="Typo.h4" Class="ms-2" Style="font-weight: 500">Trang chủ</MudText>
                 </div>
-               
-
-                
-               
-            </MudPaper>
-        </Animate>
+                <div>
+                    <MudButtonGroup>
+                        <MudIconButton Icon="@Icons.Material.Filled.Search" OnClick="@(() => _showSearch = !_showSearch)"></MudIconButton>
+                        <MudIconButton Icon="@Icons.Material.Filled.FilterList" OnClick="@(async() => await OnClickFilter())"></MudIconButton>
+                    </MudButtonGroup>
+                </div>
+            </div>
+        </MudPaper>
        
         @if(_showSearch)
         {

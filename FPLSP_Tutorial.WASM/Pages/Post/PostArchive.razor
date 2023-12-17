@@ -114,7 +114,7 @@ else
                     </MudTd>
                         <MudTd><BadgeEntityStatus Status="@context.Status" /></MudTd>
                         <MudTd>
-                        <MudFab Color="Color.Primary" Size="Size.Small" Class="m-1" DisableElevation="true" StartIcon="@Icons.Material.Filled.AutoAwesomeMotion" OnClick="@(async () => { _nav.NavigateTo($"/post/archive?idPost={context.Id}" + ((idMajor != null && idMajor != Guid.Empty) ? $"&idMajor={context.MajorId}" : "")); })" Title="Danh sách bài viết con"></MudFab>
+                        <MudFab Color="Color.Primary" Size="Size.Small" Class="m-1" DisableElevation="true" StartIcon="@Icons.Material.Filled.AutoAwesomeMotion" OnClick="@(async () => { _nav.NavigateTo($"/post/archive?idPost={context.Id}" + ((context.MajorId != null && context.MajorId != Guid.Empty) ? $"&idMajor={context.MajorId}" : "")); })" Title="Danh sách bài viết con"></MudFab>
                             <MudFab Color="Color.Primary" Size="Size.Small" Class="m-1" DisableElevation="true" StartIcon="@Icons.Material.Filled.EditNote" OnClick="@(async () => { _nav.NavigateTo($"/post/update?fallBackUrl={HttpUtility.UrlEncode(_nav.Uri)}&idPost=" + context.Id); })" Title="Chỉnh sửa"></MudFab>
                             <MudFab Color="Color.Error" Size="Size.Small" Class="m-1" DisableElevation="true" StartIcon="@Icons.Material.Filled.Delete" OnClick="@(async () => { await OnDelete(context.Id); })" Title="Xóa"></MudFab>
                         </MudTd>
@@ -138,7 +138,7 @@ else
                                         <MudText Typo="Typo.caption" Style="font-weight: 800">@i.CreatedByName</MudText>
                                         <MudText Typo="Typo.caption">@(" | " + i.CreatedTime.ToString("dd/MM/yyyy"))</MudText>
                                     </div>
-                                    <MudIconButton DisableElevation="true" Color="Color.Primary" Size="Size.Small" Class="m-1" Icon="@Icons.Material.Filled.AutoAwesomeMotion" OnClick="@(async () => { _nav.NavigateTo($"/post/archive?idMajor={((i.MajorId == null || i.MajorId == Guid.Empty) ? "" : i.MajorId)}&idPost={i.Id}"); })" Title="Danh sách bài viết con"></MudIconButton>
+                                            <MudIconButton DisableElevation="true" Color="Color.Primary" Size="Size.Small" Class="m-1" Icon="@Icons.Material.Filled.AutoAwesomeMotion" OnClick="@(async () => { _nav.NavigateTo($"/post/archive?idPost={i.Id}" + ((i.MajorId != null && i.MajorId != Guid.Empty) ? $"&idMajor={i.MajorId}" : "")); })" Title="Danh sách bài viết con"></MudIconButton>
                                     <MudIconButton DisableElevation="true" Color="Color.Primary" Size="Size.Small" Class="m-1" Icon="@Icons.Material.Filled.EditNote" OnClick="@(async () => { _nav.NavigateTo($"/post/update?fallBackUrl={HttpUtility.UrlEncode(_nav.Uri)}&idPost=" + i.Id); })" Title="Chỉnh sửa"></MudIconButton>
                                     <MudIconButton DisableElevation="true" Color="Color.Error" Size="Size.Small" Class="m-1" Icon="@Icons.Material.Filled.Delete" OnClick="@(async () => { await OnDelete(i.Id); })" Title="Xóa"></MudIconButton>
                                 </div>

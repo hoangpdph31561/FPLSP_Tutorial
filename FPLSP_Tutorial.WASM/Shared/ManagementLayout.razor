@@ -31,9 +31,17 @@
     <MudAppBar Elevation="0" Class="custom-layout-color" Style="border-bottom: 1px solid lightgrey;">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="ContentColor" Edge="Edge.Start" OnClick="@ToggleDrawer" />
         <MudSpacer />
-        <div>
+        @{
+            var roleString = "";
+            foreach(var i in _listRoles) 
+            {
+                if (roleString != "") roleString += ", ";
+                roleString += i;
+            }
+        }
+        <div title="@("Email: " + _displayEmail)">
             <MudText Color="ContentColor" Typo="Typo.subtitle2">@(_displayName)</MudText>
-            <MudText Color="ContentColor" Typo="Typo.caption">@(_displayEmail)</MudText>
+                <MudText Color="ContentColor" Typo="Typo.caption">@("Chức vụ: " + roleString)</MudText>
         </div>
         <MudIconButton Icon="@Icons.Material.Filled.Logout" Color="ContentColor" Title="Đăng xuất" OnClick="@(async() => await OnLogout())" />
     </MudAppBar>
@@ -46,18 +54,24 @@
         </MudDrawerHeader>
         
         <MudNavMenu>
-            <MudNavLink IconColor="Color.Primary" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home" Href="/post/home">Trang chủ</MudNavLink>
-            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.SupervisorAccount" Href="/user-manager">Quản lý giảng viên</MudNavLink>
-            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.List" Href="/major/manage/list">Quản lý chuyên ngành</MudNavLink>
-
-            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Newspaper" Href="/post/system">Quản lý bài viết hệ thống</MudNavLink>
+            <AuthorizeView Roles="@("ADMIN")">
+                <MudNavLink IconColor="Color.Primary" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home" Href="/post/home">Trang chủ</MudNavLink>
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.SupervisorAccount" Href="/user-manager">Quản lý giảng viên</MudNavLink>
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.List" Href="/major/manage/list">Quản lý chuyên ngành</MudNavLink>
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Newspaper" Href="/post/system">Quản lý bài viết hệ thống</MudNavLink>
+            </AuthorizeView>
 
             @*<MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Pageview" Href="/post/manage">Kiểm duyệt bài viết</MudNavLink>*@
 
-            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.DomainVerification" Href="/major/joined">Chuyên ngành đã tham gia</MudNavLink>
+            <AuthorizeView Roles="@("GV, CNBM")">
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.DomainVerification" Href="/major/joined">Chuyên ngành đã tham gia</MudNavLink>
+            </AuthorizeView>
 
-            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Archive" Href="/post/archive">Bài viết đã tạo</MudNavLink>
-            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.EditNote" Href="/post/create">Tạo bài viết</MudNavLink>
+            <AuthorizeView Roles="@("CNBM")">
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Archive" Href="/post/archive">Bài viết đã tạo</MudNavLink>
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.EditNote" Href="/post/create">Tạo bài viết</MudNavLink>
+            </AuthorizeView>
+            
         </MudNavMenu>
     </MudDrawer>
     <MudMainContent >
@@ -79,13 +93,15 @@
             Palette = new Palette
             {
                 Primary = "#000000",
-                
+
             }
         };
 
 
     private string _displayName = "";
     private string _displayEmail = "";
+    private List<string> _listRoles = new();
+
 
     private Color ContentColor = Color.Dark;
 
@@ -97,6 +113,7 @@
         _displayName = claimName == null ? "<N/A>" : claimName.Value.ToString();
         var claimEmail = lstClaim.FirstOrDefault(c => c.Type == ClaimTypes.Email);
         _displayEmail = claimEmail == null ? "<N/A>" : claimEmail.Value.ToString();
+        _listRoles = lstClaim.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
     }
 
     void ToggleDrawer()

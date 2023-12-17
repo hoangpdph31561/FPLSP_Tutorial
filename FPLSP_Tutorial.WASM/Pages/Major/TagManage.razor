@@ -15,41 +15,46 @@ else
 {
     <MudDialog>
         <DialogContent>
-            @if (_isLoadingList)
-            {
-                <MudProgressLinear Color="Color.Primary" Indeterminate="true"></MudProgressLinear>
-            }
-            else
-            {
-                <MudText Typo="Typo.h6" Style="font-weight: 500;">Quản lý nhãn</MudText>
+            <MudForm @ref="@_refForm">
+                @if (_isLoadingList)
+                {
+                    <MudProgressLinear Color="Color.Primary" Indeterminate="true"></MudProgressLinear>
+                }
+                else
+                {
+                    <MudText Typo="Typo.h6" Style="font-weight: 500;">Quản lý nhãn</MudText>
 
-                <MudTextField @bind-Value="@_createRequestTag.Name" Variant="Variant.Outlined" Class="w-100" Placeholder="Nhập tên nhãn mới" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.AddCircle" OnAdornmentClick="@(async () => await OnAdd())" AdornmentColor="Color.Primary"></MudTextField>
-                
+                    <MudTextField @bind-Value="@_createRequestTag.Name" Variant="Variant.Outlined" Class="w-100 mb-2" Placeholder="Nhập tên nhãn mới" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.AddCircle" OnAdornmentClick="@(async () => await OnAdd())" AdornmentColor="Color.Primary" For="(() => _createRequestTag.Name)" Immediate Label="Thêm nhãn"></MudTextField>
 
-                <MudTable Items="@_listTag" Elevation="3" Class="mt-2">
-                    <HeaderContent>
-                        <MudTh>STT</MudTh>
-                        <MudTh>Tên</MudTh>
-                        <MudTh>Hành động</MudTh>
-                    </HeaderContent>
-                    <RowTemplate>
-                        <MudTd>@(_listTag.IndexOf(context) + 1)</MudTd>
-                            <MudTd>@context.Name</MudTd>
-                            <MudTd>
-                                <MudIconButton Color="Color.Error" Class="mx-1" Size="Size.Small" Icon="@Icons.Material.Filled.Delete" OnClick="@(() => OnClickDelete(context.Id))" Title="Xóa" DisableElevation="true">Xóa</MudIconButton>
-                            </MudTd>
-                        </RowTemplate>
-                    </MudTable>
 
-                <div class="d-flex justify-end my-2">
-                    <MudButton OnClick="@(() => MudDialog.Cancel())">Đóng</MudButton>
-                </div>
-            }
+                    <MudTable Items="@_listTag" Elevation="3" Class="mt-2">
+                        <HeaderContent>
+                            <MudTh>STT</MudTh>
+                            <MudTh>Tên</MudTh>
+                            <MudTh>Hành động</MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd>@(_listTag.IndexOf(context) + 1)</MudTd>
+                                <MudTd>@context.Name</MudTd>
+                                <MudTd>
+                                    <MudIconButton Color="Color.Error" Class="mx-1" Size="Size.Small" Icon="@Icons.Material.Filled.Delete" OnClick="@(() => OnClickDelete(context.Id))" Title="Xóa" DisableElevation="true">Xóa</MudIconButton>
+                                </MudTd>
+                            </RowTemplate>
+                        </MudTable>
+
+                    <div class="d-flex justify-end my-2">
+                        <MudButton OnClick="@(() => MudDialog.Cancel())">Đóng</MudButton>
+                    </div>
+                }
+            </MudForm>
+            
         </DialogContent>
     </MudDialog>
 }
 
 @code {
+    MudForm _refForm;
+
     [CascadingParameter]
     MudDialogInstance MudDialog { get; set; } = new();
 
@@ -99,6 +104,8 @@ else
 
     private async Task OnAdd()
     {
+        await _refForm.Validate();
+        if (!_refForm.IsValid) return;
         var result = await _repoTag.AddAsync(_createRequestTag);
         if(result)
         {

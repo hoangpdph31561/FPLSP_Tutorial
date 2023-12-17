@@ -35,74 +35,79 @@ else
                     }
                     else
                     {
-                        <MudTable Items="@_listUser" Style="position:relative;" Elevation="0" Bordered="true" Striped="true">
-                            <HeaderContent>
-                                <MudTh>STT</MudTh>
-                                <MudTh>Email</MudTh>
-                                <MudTh>Tên</MudTh>
-                                <MudTh>Chức vụ</MudTh>
-                                <MudTh>Chuyên ngành đã tham gia</MudTh>
-                                <MudTh>Hành động</MudTh>
-                            </HeaderContent>
-                            <RowTemplate>
-                                <MudTd>@(_listUser.IndexOf(context) + 1)</MudTd>
-                                    <MudTd>@context.Email</MudTd>
-                                    <MudTd>@context.Username</MudTd>
-                                    <MudTd>
-                                        @{
-                                        string roles = "";
-                                        foreach (var i in context.RoleCodes)
-                                        {
-                                            if (roles != "") roles += ", ";
-                                            roles += i;
+                        <div class="mx-5 mt-5">
+                            <MudTextField T="string" Variant="Variant.Outlined" Label="Tìm kiếm" Placeholder="Nhập tên bài viết cần tìm kiếm..." DebounceInterval="1000" OnDebounceIntervalElapsed="@(async (string val) => { _preqUser.SearchString = val; await OnQueryRequestTab1(); })" Class="mb-2"></MudTextField>
+
+
+                            <MudTable Items="@_listUser" Style="position:relative;" Bordered="true" Striped="true" Loading=@(_isLoadingListTab1)>
+                                <HeaderContent>
+                                    <MudTh>STT</MudTh>
+                                    <MudTh>Email</MudTh>
+                                    <MudTh>Tên</MudTh>
+                                    <MudTh>Chức vụ</MudTh>
+                                    <MudTh>Chuyên ngành đã tham gia</MudTh>
+                                    <MudTh>Hành động</MudTh>
+                                </HeaderContent>
+                                <RowTemplate>
+                                    <MudTd>@(_listUser.IndexOf(context) + 1)</MudTd>
+                                        <MudTd>@context.Email</MudTd>
+                                        <MudTd>@context.Username</MudTd>
+                                        <MudTd>
+                                            @{
+                                            string roles = "";
+                                            foreach (var i in context.RoleCodes)
+                                            {
+                                                if (roles != "") roles += ", ";
+                                                roles += i;
+                                            }
                                         }
-                                    }
-                                    @roles
-                                </MudTd>
-                                <MudTd>
-                                    @context.ListJoinedMajors.Count()
-                                </MudTd>
-                                <MudTd>
-                                    <MudFab OnClick="@(() => {
+                                        @roles
+                                    </MudTd>
+                                    <MudTd>
+                                        @context.ListJoinedMajors.Count()
+                                    </MudTd>
+                                    <MudTd>
+                                        <MudFab OnClick="@(() => {
                                         if(_isShowingLecturerDetail == context.Id) _isShowingLecturerDetail = null;
                                         else _isShowingLecturerDetail = context.Id;
                                     })" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Pageview" Size="Size.Small" DisableElevation="true">Xem chi tiết</MudFab>
-                                </MudTd>
-                            </RowTemplate>
-                            <ChildRowContent>
-                                <MudTr Style="@((_isShowingLecturerDetail != context.Id ? "display: none;" : ""))">
-                                    <td colspan="6">
-                                        <div class="ma-5">
-                                            <div class="d-flex align-center mb-2">
-                                                <MudText Style="font-weight: 500" Class="mr-auto">Danh sách chuyên ngành đã tham gia</MudText>
-                                                <MudIconButton Size="Size.Small" Icon="@Icons.Material.Filled.Close" OnClick="@(() => _isShowingLecturerDetail = null)"></MudIconButton>
+                                    </MudTd>
+                                </RowTemplate>
+                                <ChildRowContent>
+                                    <MudTr Style="@((_isShowingLecturerDetail != context.Id ? "display: none;" : ""))">
+                                        <td colspan="6">
+                                            <div class="ma-5">
+                                                <div class="d-flex align-center mb-2">
+                                                    <MudText Style="font-weight: 500" Class="mr-auto">Danh sách chuyên ngành đã tham gia</MudText>
+                                                    <MudIconButton Size="Size.Small" Icon="@Icons.Material.Filled.Close" OnClick="@(() => _isShowingLecturerDetail = null)"></MudIconButton>
+                                                </div>
+                                                <MudTable Items="@context.ListJoinedMajors" Context="major" Dense="true">
+                                                    <HeaderContent>
+                                                        <MudTh>STT</MudTh>
+                                                        <MudTh>Mã</MudTh>
+                                                        <MudTh>Tên</MudTh>
+                                                        <MudTh>Quyền</MudTh>
+                                                    </HeaderContent>
+                                                    <RowTemplate>
+                                                        <MudTd>@(context.ListJoinedMajors.IndexOf(major) + 1)</MudTd>
+                                                            <MudTd>@major.MajorCode</MudTd>
+                                                            <MudTd>@major.MajorName</MudTd>
+                                                            <MudTd>
+                                                                <MudIcon Size="Size.Small" Icon="@Icons.Material.Filled.RemoveRedEye" Title="Xem bài viết"></MudIcon>
+                                                                @if (major.IsManager)
+                                                            {
+                                                                <MudIcon Size="Size.Small" Icon="@Icons.Material.Filled.EditNote" Title="Thêm/Xóa bài viết của bản thân"></MudIcon>
+                                                            }
+                                                        </MudTd>
+                                                    </RowTemplate>
+                                                </MudTable>
                                             </div>
-                                            <MudTable Items="@context.ListJoinedMajors" Context="major" Dense="true">
-                                                <HeaderContent>
-                                                    <MudTh>STT</MudTh>
-                                                    <MudTh>Mã</MudTh>
-                                                    <MudTh>Tên</MudTh>
-                                                    <MudTh>Quyền</MudTh>
-                                                </HeaderContent>
-                                                <RowTemplate>
-                                                    <MudTd>@(context.ListJoinedMajors.IndexOf(major) + 1)</MudTd>
-                                                    <MudTd>@major.MajorCode</MudTd>
-                                                    <MudTd>@major.MajorName</MudTd>
-                                                    <MudTd>
-                                                        <MudIcon Size="Size.Small" Icon="@Icons.Material.Filled.RemoveRedEye" Title="Xem bài viết"></MudIcon>
-                                                        @if (major.IsManager)
-                                                        {
-                                                            <MudIcon Size="Size.Small" Icon="@Icons.Material.Filled.EditNote" Title="Thêm/Xóa bài viết của bản thân"></MudIcon>
-                                                        }
-                                                    </MudTd>
-                                                </RowTemplate>
-                                            </MudTable>
-                                        </div>
-                                    </td>
-                                </MudTr>
-                            </ChildRowContent>
-                        </MudTable>
-                        <CustomPagination Class="my-1" HasNext="@_presUser.HasNext" OnPageChange="@(async e => await OnPaginationButtonClickTab1(e))" CurrentPageNumber="@_presUser.PageNumber"></CustomPagination>
+                                        </td>
+                                    </MudTr>
+                                </ChildRowContent>
+                            </MudTable>
+                            <CustomPagination Class="my-1" HasNext="@_presUser.HasNext" OnPageChange="@(async e => await OnPaginationButtonClickTab1(e))" CurrentPageNumber="@_presUser.PageNumber"></CustomPagination>
+                        </div>
                     }
                 </MudTabPanel>
                 @*  View danh sách giảng viên chờ duyệt  *@
@@ -197,6 +202,9 @@ else
     private bool _isLoadingAll = true;
     private bool _isLoadingTab1 = true;
     private bool _isLoadingTab2 = true;
+
+    private bool _isLoadingListTab1 = false;
+    private bool _isLoadingListTab2 = false;
 
     private Guid? _isShowingLecturerDetail = null;
     private string? _isShowingMajorRequestDetail = null;
@@ -362,5 +370,21 @@ else
     {
         _isLoadingTab2 = true;
         _preqMajorRequest.PageNumber = pageNumber;
+    }
+
+    private async Task OnQueryRequestTab1()
+    {
+        _isLoadingListTab1 = true;
+        StateHasChanged();
+        if (_preqUser.SearchString != "" && _preqUser.SearchString != null)
+        {
+            _preqUser.PageNumber = 1;
+        }
+        await LoadDataTab1().ContinueWith((re) =>
+        {
+            _isLoadingListTab1 = false;
+            StateHasChanged();
+        });
+
     }
 }

@@ -2,5 +2,6 @@
 {
     public class UserViewRequest
     {
+        public string? SearchString { get; set; }
     }
 }

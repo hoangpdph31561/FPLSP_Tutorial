@@ -11,6 +11,7 @@ using FPLSP_Tutorial.Domain.Entities;
 using FPLSP_Tutorial.Infrastructure.Database.AppDbContext;
 using FPLSP_Tutorial.Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
 {
@@ -38,6 +39,9 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
                 IQueryable<UserEntity> queryable = _dbcontext.UserEntities
                     .AsNoTracking()
                     .AsQueryable();
+
+                if (!request.SearchString.IsNullOrEmpty()) { queryable = queryable.Where(c => c.Email.ToLower().Contains(request.SearchString.ToLower()) || c.Username.ToLower().Contains(request.SearchString.ToLower())); }
+
                 var result = await queryable
                     .PaginateAsync<UserEntity, UserDTO>(request, _mapper, cancellationToken);
 

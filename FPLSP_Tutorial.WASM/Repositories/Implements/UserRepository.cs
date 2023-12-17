@@ -2,6 +2,7 @@
 using FPLSP_Tutorial.WASM.Data.DataTransferObjects.User.Request;
 using FPLSP_Tutorial.WASM.Data.Pagination;
 using FPLSP_Tutorial.WASM.Repositories.Interfaces;
+using Microsoft.IdentityModel.Tokens;
 using System.Net.Http.Json;
 
 namespace FPLSP_Tutorial.WASM.Repositories.Implements
@@ -17,6 +18,8 @@ namespace FPLSP_Tutorial.WASM.Repositories.Implements
         public async Task<PaginationResponse<UserDTO>> GetListWithPaginationAsync(UserViewWithPaginationRequest request)
         {
             string url = $"/api/Users/GetListWithPagination?PageNumber={request.PageNumber}&PageSize={request.PageSize}";
+
+            if (!request.SearchString.IsNullOrEmpty()) { url += $"&SearchString={request.SearchString}"; }
 
             var result = await _httpClient.GetFromJsonAsync<PaginationResponse<UserDTO>>(url);
             if (result == null)

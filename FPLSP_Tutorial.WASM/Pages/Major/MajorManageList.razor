@@ -92,7 +92,7 @@ else
                 <MudTd>@context.NumberOfPost</MudTd>
                 <MudTd><BadgeEntityStatus Status="@context.Status"></BadgeEntityStatus></MudTd>
                 <MudTd>
-                    <MudFab Size="Size.Small" Color="Color.Primary" Class="m-1" Icon="@Icons.Material.Filled.LabelImportant" OnClick="@(async () => await OnClickTagManager(context.Id))" Title="Quản lý Tag" DisableElevation="true"></MudFab>
+                    <MudFab Size="Size.Small" Color="Color.Primary" Class="m-1" Icon="@Icons.Material.Filled.LabelImportant" OnClick="@(async () => await OnClickTagManager(context.Id))" Title="Quản lý nhãn" DisableElevation="true"></MudFab>
                     <MudFab Size="Size.Small" Color="Color.Primary" Class="m-1" Icon="@Icons.Material.Filled.Edit" OnClick="@(() => DialogUpdate(context.Id))" Title="Chi tiết" DisableElevation="true"></MudFab>
                     <MudFab Size="Size.Small" Color="Color.Error" Class="m-1" Icon="@Icons.Material.Filled.Delete" OnClick="@(() => DialogDelete(context.Id))" Title="Xóa" DisableElevation="true">Xóa</MudFab>
                 </MudTd>

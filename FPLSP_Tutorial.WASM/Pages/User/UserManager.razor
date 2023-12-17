@@ -70,7 +70,7 @@ else
                                         <MudFab OnClick="@(() => {
                                         if(_isShowingLecturerDetail == context.Id) _isShowingLecturerDetail = null;
                                         else _isShowingLecturerDetail = context.Id;
-                                    })" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Pageview" Size="Size.Small" DisableElevation="true">Xem chi tiết</MudFab>
+                                    })" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Pageview" Size="Size.Small" DisableElevation="true" Disabled="@(context.ListJoinedMajors.Count == 0)">Xem chi tiết</MudFab>
                                     </MudTd>
                                 </RowTemplate>
                                 <ChildRowContent>

@@ -28,7 +28,7 @@
 }
 else
 {
-    <PostEditInformation Visible="@_isEnablePostInformation" OnClose="@(() => _isEnablePostInformation = false)" ListTagSelected="@_listTagSelected" UserId="@_idUser" OnSave="@(async() => await OnSaveAsync())" PostCreateRequest="@_postCreateR" BindListTagSelected="@((List<TagDTO> lstTag) => _listTagSelected = lstTag)" @ref="@_refPostEditInformation" />
+    <PostEditInformation Visible="@_isEnablePostInformation" OnClose="@(() => _isEnablePostInformation = false)" ListTagSelected="@_listTagSelected" UserId="@_idUser" OnSave="@(async() => await OnSaveAsync())" PostCreateRequest="@_postCreateR" BindListTagSelected="@((List<TagDTO> lstTag) => _listTagSelected = lstTag)" @ref="@_refPostEditInformation" SpecifyMajorId="@specifyMajorId" MajorId="@idMajor" />
 
     <div class="pa-2">
         <MudBreadcrumbs Items="@_listBreadCrumb"></MudBreadcrumbs>
@@ -44,8 +44,12 @@ else
 
             <RichTextEditor @ref="@_rteRef" Get="@((string val) => { _postCreateR.Content =  val; })" />
 
-            <div class="row">
-                <div class="col d-flex justify-content-end">
+            <div class="row mt-2">
+                <div class="col d-flex justify-end">
+                    @if(fallBackUrl != null)
+                    {
+                        <MudChip OnClick="@(() => _nav.NavigateTo(fallBackUrl))" Color="Color.Error" Icon="@Icons.Material.Filled.ExitToApp">Quay lại</MudChip>
+                    }
                 </div>
             </div>
         </MudPaper>
@@ -63,11 +67,15 @@ else
 
     [Parameter]
     [SupplyParameterFromQuery]
-    public string? idMajor { get; set; }
+    public string? fallBackUrl { get; set; }
 
     [Parameter]
     [SupplyParameterFromQuery]
-    public string? fallBackUrl { get; set; }
+    public bool specifyMajorId { get; set; }
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public Guid? idMajor { get; set; }
 
     private List<BreadcrumbItem> _listBreadCrumb = new();
 
@@ -142,7 +150,7 @@ else
             }
             else
             {
-                _mudSnackbar.Add("Thêm bài viết thành công. Thêm tag thất bại", Severity.Warning);
+                _mudSnackbar.Add("Thêm bài viết thành công. Thêm nhãn thất bại", Severity.Warning);
                 if (fallBackUrl != null)
                 {
                     _nav.NavigateTo(fallBackUrl);

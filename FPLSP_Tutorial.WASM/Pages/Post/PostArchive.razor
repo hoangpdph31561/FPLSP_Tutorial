@@ -63,15 +63,18 @@ else
 
         @if (_displayMode == 0)
         {
-            <MudTable Items="@_listPost" Loading="_isLoadingList" Elevation="2" Class="pb-0">
+            <MudTable Items="@_listPost" Loading="_isLoadingList" Elevation="2" Class="pb-0" CustomHeader="true" HeaderClass="table-head-bordered" Bordered="true" Striped="true">
                 <HeaderContent>
-                    <MudTh>STT</MudTh>
-                    <MudTh>Tiêu đề</MudTh>
-                    <MudTh>Tag</MudTh>
-                    <MudTh>SL Bài viết con</MudTh>
-                    <MudTh>Chuyên ngành</MudTh>
-                    <MudTh>Trạng thái</MudTh>
-                    <MudTh>Hành động</MudTh>
+                    <MudTHeadRow>
+                        <MudTh>STT</MudTh>
+                        <MudTh>Tiêu đề</MudTh>
+                        <MudTh>Tag</MudTh>
+                        <MudTh>SL Bài viết con</MudTh>
+                        <MudTh>Chuyên ngành</MudTh>
+                        <MudTh>Trạng thái</MudTh>
+                        <MudTh>Hành động</MudTh>
+                    </MudTHeadRow>
+                    
                 </HeaderContent>
                 <RowTemplate>
                     <MudTd>@(_listPost.IndexOf(context) + 1)</MudTd>
@@ -104,8 +107,8 @@ else
                     <MudTd>@(context.MajorCode + " - " + context.MajorName)</MudTd>
                         <MudTd><BadgeEntityStatus Status="@context.Status" /></MudTd>
                         <MudTd>
-                            <MudFab Color="Color.Primary" Size="Size.Small" Class="m-1" DisableElevation="true" StartIcon="@Icons.Material.Filled.AutoAwesomeMotion" OnClick="@(async () => { _nav.NavigateTo($"/post/archive?idMajor={idMajor}&idPost={context.Id}"); })" Title="Danh sách bài viết con"></MudFab>
-                            <MudFab Color="Color.Primary" Size="Size.Small" Class="m-1" DisableElevation="true" StartIcon="@Icons.Material.Filled.EditNote" OnClick="@(async () => { _nav.NavigateTo($"/post/update?fallBackUrl={_nav.Uri}&idPost=" + context.Id); })" Title="Chỉnh sửa"></MudFab>
+                            <MudFab Color="Color.Primary" Size="Size.Small" Class="m-1" DisableElevation="true" StartIcon="@Icons.Material.Filled.AutoAwesomeMotion" OnClick="@(async () => { _nav.NavigateTo($"/post/archive?idMajor={context.MajorId}&idPost={context.Id}"); })" Title="Danh sách bài viết con"></MudFab>
+                            <MudFab Color="Color.Primary" Size="Size.Small" Class="m-1" DisableElevation="true" StartIcon="@Icons.Material.Filled.EditNote" OnClick="@(async () => { _nav.NavigateTo($"/post/update?fallBackUrl={HttpUtility.UrlEncode(_nav.Uri)}&idPost=" + context.Id); })" Title="Chỉnh sửa"></MudFab>
                             <MudFab Color="Color.Error" Size="Size.Small" Class="m-1" DisableElevation="true" StartIcon="@Icons.Material.Filled.Delete" OnClick="@(async () => { await OnDelete(context.Id); })" Title="Xóa"></MudFab>
                         </MudTd>
                     </RowTemplate>
@@ -128,8 +131,8 @@ else
                                         <MudText Typo="Typo.caption" Style="font-weight: 800">@i.CreatedByName</MudText>
                                         <MudText Typo="Typo.caption">@(" | " + i.CreatedTime.ToString("dd/MM/yyyy"))</MudText>
                                     </div>
-                                    <MudIconButton DisableElevation="true" Color="Color.Primary" Size="Size.Small" Class="m-1" Icon="@Icons.Material.Filled.AutoAwesomeMotion" OnClick="@(async () => { _nav.NavigateTo($"/post/archive?idMajor={idMajor}&idPost={i.Id}"); })" Title="Danh sách bài viết con"></MudIconButton>
-                                    <MudIconButton DisableElevation="true" Color="Color.Primary" Size="Size.Small" Class="m-1" Icon="@Icons.Material.Filled.EditNote" OnClick="@(async () => { _nav.NavigateTo($"/post/update?fallBackUrl={_nav.Uri}&idPost=" + i.Id); })" Title="Chỉnh sửa"></MudIconButton>
+                                    <MudIconButton DisableElevation="true" Color="Color.Primary" Size="Size.Small" Class="m-1" Icon="@Icons.Material.Filled.AutoAwesomeMotion" OnClick="@(async () => { _nav.NavigateTo($"/post/archive?idMajor={i.MajorId}&idPost={i.Id}"); })" Title="Danh sách bài viết con"></MudIconButton>
+                                    <MudIconButton DisableElevation="true" Color="Color.Primary" Size="Size.Small" Class="m-1" Icon="@Icons.Material.Filled.EditNote" OnClick="@(async () => { _nav.NavigateTo($"/post/update?fallBackUrl={HttpUtility.UrlEncode(_nav.Uri)}&idPost=" + i.Id); })" Title="Chỉnh sửa"></MudIconButton>
                                     <MudIconButton DisableElevation="true" Color="Color.Error" Size="Size.Small" Class="m-1" Icon="@Icons.Material.Filled.Delete" OnClick="@(async () => { await OnDelete(i.Id); })" Title="Xóa"></MudIconButton>
                                 </div>
 
@@ -229,6 +232,7 @@ else
     private async Task LoadData()
     {
         _presPost = await _repoPost.GetListWithPaginationAsync(_preqPost);
+        
         if(_presPost.Data != null)
         {
             _listPost = (List<PostDTO>)_presPost.Data;
@@ -237,10 +241,10 @@ else
 
     private async Task OnClickCreatePost()
     {
-        var url = $"/post/create?fallBackUrl={_nav.Uri}";
+        var url = $"/post/create?fallBackUrl={HttpUtility.UrlEncode(_nav.Uri)}";
 
         if (idMajor != null) url += $"&idMajor={idMajor}";
-        if (idPost != null) url += $"&idPost={idPost}";
+        if (idPost != null) url += $"&idPost={idPost}&specifyMajorId=true";
 
         _nav.NavigateTo(url);
     }

@@ -24,6 +24,7 @@ namespace FPLSP_Tutorial.Application.DataTransferObjects.Post
         public int NumberOfChildPost { get; set; } = 0;
         public string CreatedByName { get; set; } = string.Empty;
         public string CreatedByEmail { get; set; } = string.Empty;
+        public Guid? MajorId { get; set; } = null;
         public string? MajorCode { get; set; } = null;
         public string? MajorName { get; set; } = null;
     }

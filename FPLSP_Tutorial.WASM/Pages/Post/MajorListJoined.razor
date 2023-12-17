@@ -48,13 +48,16 @@ else
 
         <div class="mt-5"></div>
 
-        <MudTable Items="@_listMajor" Elevation="3" Loading="@_isLoadingList">
+        <MudTable Items="@_listMajor" Elevation="3" Loading="@_isLoadingList" CustomHeader="true" HeaderClass="table-head-bordered" Bordered="true" Striped="true">
             <HeaderContent>
-                <MudTh>STT</MudTh>
-                <MudTh>Mã CN</MudTh>
-                <MudTh>Tên CN</MudTh>
-                <MudTh>SL bài viết đã tạo</MudTh>
-                <MudTh>Hành động</MudTh>
+                <MudTHeadRow>
+                    <MudTh>STT</MudTh>
+                    <MudTh>Mã CN</MudTh>
+                    <MudTh>Tên CN</MudTh>
+                    <MudTh>SL bài viết đã tạo</MudTh>
+                    <MudTh>Hành động</MudTh>
+                </MudTHeadRow>
+                
             </HeaderContent>
             <RowTemplate>
                 <MudTh>@(_listMajor.IndexOf(context) + 1)</MudTh>

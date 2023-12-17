@@ -8,7 +8,7 @@
 
 <MudDialog Style="width: 50vw;">
     <DialogContent>
-        <MudText Typo="Typo.h5" Style="font-weight: 500;" Class="my-2">Chọn Tag</MudText>
+        <MudText Typo="Typo.h5" Style="font-weight: 500;" Class="my-2">Chọn nhãn</MudText>
         <div>
             <MudTextField Variant="Variant.Outlined" T="string" @bind-Value="SearchString" Label="Tìm kiếm" DebounceInterval="200" OnDebounceIntervalElapsed="@(async () => await OnSearchFunc())" Immediate></MudTextField>
 

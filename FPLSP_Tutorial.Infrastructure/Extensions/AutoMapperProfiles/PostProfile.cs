@@ -19,6 +19,12 @@ namespace FPLSP_Tutorial.Infrastructure.Extensions.AutoMapperProfiles
                 .ForMember(des => des.NumberOfChildPost, from => from
                     .MapFrom(p => p.Posts
                         .Where(pc => pc.Status != EntityStatus.Deleted && !pc.Deleted).Count()))
+                .ForMember(des => des.MajorId, from => from
+                    .MapFrom(p => p.PostTags
+                        .Where(pt => pt.Status != EntityStatus.Deleted && !pt.Deleted)
+                            .Select(pt => pt.Tag)
+                                .Where(t => t.Status != EntityStatus.Deleted && !t.Deleted)
+                                    .Select(t => t.Major.Id).FirstOrDefault()))
                 .ForMember(des => des.MajorCode, from => from
                     .MapFrom(p => p.PostTags
                         .Where(pt => pt.Status != EntityStatus.Deleted && !pt.Deleted)

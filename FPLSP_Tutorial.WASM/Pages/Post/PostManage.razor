@@ -125,7 +125,7 @@ else
                                             <MudText Typo="Typo.caption">@(" | " + i.CreatedTime.ToString("dd/MM/yyyy"))</MudText>
                                             </div>
                                             <MudIconButton DisableElevation="true" Color="Color.Primary" Size="Size.Small" Class="m-1" Icon="@Icons.Material.Filled.AutoAwesomeMotion" OnClick="@(async () => { _nav.NavigateTo($"/post/archive?idMajor={idMajor}&idPost={i.Id}"); })" Title="Danh sách bài viết con"></MudIconButton>
-                                            <MudIconButton DisableElevation="true" Color="Color.Primary" Size="Size.Small" Class="m-1" Icon="@Icons.Material.Filled.EditNote" OnClick="@(async () => { _nav.NavigateTo($"/post/update?fallBackUrl={_nav.Uri}&idPost=" + i.Id); })" Title="Chỉnh sửa"></MudIconButton>
+                                            <MudIconButton DisableElevation="true" Color="Color.Primary" Size="Size.Small" Class="m-1" Icon="@Icons.Material.Filled.EditNote" OnClick="@(async () => { _nav.NavigateTo($"/post/update?fallBackUrl={HttpUtility.UrlEncode(_nav.Uri)}&idPost=" + i.Id); })" Title="Chỉnh sửa"></MudIconButton>
                                             <MudIconButton DisableElevation="true" Color="Color.Error" Size="Size.Small" Class="m-1" Icon="@Icons.Material.Filled.Delete" OnClick="@(async () => {})" Title="Xóa"></MudIconButton>
                                         </div>
 

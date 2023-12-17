@@ -70,7 +70,7 @@
                                 var disName = (post.CreatedByName == null || post.CreatedByName == "") ? "N/A" : post.CreatedByName;
                             }
                             <MudText Typo="Typo.caption" Style="font-weight: 500; max-width: 50%" Class="overflow-text-1" title="@disName">@(disName)</MudText>
-                                <MudText Typo="Typo.caption"> | @post.CreatedTime.ToString("dd/MM/yyyy")</MudText>
+                            <MudText Typo="Typo.caption" Class="ms-1">@(" | " + post.CreatedTime.ToString("dd/MM/yyyy"))</MudText>
                             </div>
 
                             <MudText Typo="Typo.h6" Style="font-weight: 500;">@post.Title</MudText>

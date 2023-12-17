@@ -100,11 +100,18 @@ else
                         }
                     </MudTd>
                     <MudTd>
-                        <MudTooltip Text="Xem chi tiết">
-                            <MudChip OnClick="@(() => { _nav.NavigateTo($"/post/archive?idPost={context.Id}"); })">@context.NumberOfChildPost</MudChip>
-                        </MudTooltip>
+                            @context.NumberOfChildPost
                     </MudTd>
-                    <MudTd>@(context.MajorCode + " - " + context.MajorName)</MudTd>
+                    <MudTd>
+                        @if(context.MajorId == null || context.MajorId == Guid.Empty)
+                        {
+                            <div title="Bài viết hệ thống">Bài viết hệ thống</div>
+                        }
+                        else
+                        {
+                            <div title="Bài viết chuyên ngành">@(context.MajorCode + " - " + context.MajorName)</div>
+                        }
+                    </MudTd>
                         <MudTd><BadgeEntityStatus Status="@context.Status" /></MudTd>
                         <MudTd>
                             <MudFab Color="Color.Primary" Size="Size.Small" Class="m-1" DisableElevation="true" StartIcon="@Icons.Material.Filled.AutoAwesomeMotion" OnClick="@(async () => { _nav.NavigateTo($"/post/archive?idMajor={context.MajorId}&idPost={context.Id}"); })" Title="Danh sách bài viết con"></MudFab>

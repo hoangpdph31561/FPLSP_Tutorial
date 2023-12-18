@@ -38,7 +38,7 @@
     {
         var confirm = await DialogService.ShowMessageBox(
             "Thông báo",
-            "Xác nhận thêm chuyên ngành?",
+            (MarkupString)("<h2 style=\"font-weight: 500\">Thông báo</h2>" + "Xác nhận thêm chuyên ngành?"),
             "Xác nhận",
             cancelText: "Hủy"
         );

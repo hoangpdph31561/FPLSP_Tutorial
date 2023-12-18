@@ -7,6 +7,38 @@
 
 @inject NavigationManager _nav
 
+<style>
+    .post-transform {
+        cursor: pointer;
+    }
+
+        .post-transform:hover {
+            transition: 0.4s all ease;
+            transform: scale(1.02);
+        }
+
+    .post-content {
+        max-height: 0px;
+        opacity: 0;
+        transition: visibility 0s, opacity 0.1s linear, height 0.5s ease;
+    }
+
+    .post-transform:hover .post-content {
+        max-height: 80px;
+        visibility: visible;
+        opacity: 1;
+    }
+
+    .overflow-text-1 {
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+</style>
+
+
 @if(_isLoadingAll)
 {
     <LoadingIndicatorOverlay/>

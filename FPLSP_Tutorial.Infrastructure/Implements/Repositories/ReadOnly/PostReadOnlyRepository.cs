@@ -82,6 +82,22 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
                                             .Any(tid => request.ListTagId.Contains(tid)));
                 }
 
+                //Filter deleted Major
+                queryable = queryable
+                    .Where(p => p.PostTags
+                        .Where(pt => pt.Status != EntityStatus.Deleted && !pt.Deleted)
+                            .Select(pt => pt.Tag)
+                                .Where(t => t.Status != EntityStatus.Deleted && !t.Deleted)
+                                    .Where(t => t.MajorId != null && !t.Major.Deleted)
+                                        .Count() > 0
+                    ||
+                    p.PostTags
+                        .Where(pt => pt.Status != EntityStatus.Deleted && !pt.Deleted)
+                            .Select(pt => pt.Tag)
+                                .Where(t => t.Status != EntityStatus.Deleted && !t.Deleted)
+                                    .Where(t => t.MajorId == null)
+                                        .Count() > 0);
+
                 var result = await queryable
                     .ProjectTo<PostDTO>(_mapper.ConfigurationProvider)
                     .ToListAsync();
@@ -130,8 +146,6 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
 
                 }
 
-                var dat = queryable.ToList();
-
                 if (request.PostType == 1)
                 {
                     queryable = queryable
@@ -165,7 +179,21 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
                                             .Any(tid => request.ListTagId.Contains(tid)));
                 }
 
-                var dat2 = queryable.ToList();
+                //Filter deleted Major
+                queryable = queryable
+                    .Where(p => p.PostTags
+                        .Where(pt => pt.Status != EntityStatus.Deleted && !pt.Deleted)
+                            .Select(pt => pt.Tag)
+                                .Where(t => t.Status != EntityStatus.Deleted && !t.Deleted)
+                                    .Where(t => t.MajorId != null && !t.Major.Deleted)
+                                        .Count() > 0
+                    ||
+                    p.PostTags
+                        .Where(pt => pt.Status != EntityStatus.Deleted && !pt.Deleted)
+                            .Select(pt => pt.Tag)
+                                .Where(t => t.Status != EntityStatus.Deleted && !t.Deleted)
+                                    .Where(t => t.MajorId == null)
+                                        .Count() > 0);
 
                 var result = await queryable.PaginateAsync<PostEntity, PostDTO>(request, _mapper, cancellationToken);
 

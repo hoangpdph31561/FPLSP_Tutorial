@@ -154,6 +154,8 @@
     [Parameter]
     public Guid UserId { get; set; }
 
+    [Parameter]
+    public bool AllMajor { get; set; }
 
     private PostViewWithPaginationRequest _preqPostSystem = new()
         {
@@ -183,7 +185,10 @@
 
     protected async override Task OnInitializedAsync()
     {
+
         _preqMajor.UserId = UserId;
+
+
         _isLoadingAll = false;
         await LoadData();
     }

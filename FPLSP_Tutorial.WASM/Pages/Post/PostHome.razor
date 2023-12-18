@@ -3,6 +3,7 @@
 @using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Tag.TagRequest;
 @using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Tag;
 @using FPLSP_Tutorial.WASM.Pages.Post.Components;
+@using System.Security.Claims;
 @inject ITagRepository _repoTag
 @inject IDialogService _dialog
 
@@ -90,6 +91,7 @@ else
     private bool _isLoadingMajor = true;
 
     private Guid _idUser;
+    private bool _isAdmin = false;
 
     protected async override Task OnInitializedAsync()
     {
@@ -103,7 +105,9 @@ else
     {
         var state = await _authProvider.GetAuthenticationStateAsync();
         var userIdClaim = state.User.FindAll("UserId").FirstOrDefault();
+        var roleClaims = state.User.FindAll(ClaimTypes.Role).Select(c => c.Value).ToList();
 
+        _isAdmin = roleClaims.Any(c => c == "ADMIN");
         if (userIdClaim != null)
         {
             _idUser = Guid.Parse(userIdClaim.Value);

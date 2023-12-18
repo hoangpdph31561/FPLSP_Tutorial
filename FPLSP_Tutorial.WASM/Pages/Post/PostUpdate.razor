@@ -155,7 +155,7 @@ else
             //}).ToList());
             if(resultPostTag)
             {
-                _mudSnackbar.Add("Thêm thành công", Severity.Success);
+                _mudSnackbar.Add("Cập nhật thành công", Severity.Success);
                 if(fallBackUrl != null)
                 {
                     _nav.NavigateTo(fallBackUrl);
@@ -164,7 +164,7 @@ else
             }
             else
             {
-                _mudSnackbar.Add("Thêm bài viết thành công. Thêm tag thất bại", Severity.Warning);
+                _mudSnackbar.Add("Cập nhật bài viết thành công. Cập nhật tag thất bại", Severity.Warning);
                 if (fallBackUrl != null)
                 {
                     _nav.NavigateTo(fallBackUrl);
@@ -176,7 +176,7 @@ else
         }
         else
         {
-            _mudSnackbar.Add("Thêm thất bại", Severity.Error);
+            _mudSnackbar.Add("Cập nhật thất bại", Severity.Error);
         }
     }
 

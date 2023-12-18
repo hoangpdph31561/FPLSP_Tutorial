@@ -106,7 +106,7 @@ else
                         <MudTd><BadgeEntityStatus Status="@context.Status" /></MudTd>
                         <MudTd>
                             <MudFab Color="Color.Primary" Size="Size.Small" Class="m-1" DisableElevation="true" StartIcon="@Icons.Material.Filled.AutoAwesomeMotion" OnClick="@(async () => { _nav.NavigateTo($"/post/system?idPost={context.Id}"); })" Title="Danh sách bài viết con"></MudFab>
-                            <MudFab Color="Color.Primary" Size="Size.Small" Class="m-1" DisableElevation="true" StartIcon="@Icons.Material.Filled.EditNote" OnClick="@(async () => { _nav.NavigateTo($"/post/manage/self/update?fallBackUrl={HttpUtility.UrlEncode(_nav.Uri)}&idPost=" + context.Id); })" Title="Chỉnh sửa"></MudFab>
+                            <MudFab Color="Color.Primary" Size="Size.Small" Class="m-1" DisableElevation="true" StartIcon="@Icons.Material.Filled.EditNote" OnClick="@(async () => { _nav.NavigateTo($"/post/update?fallBackUrl={HttpUtility.UrlEncode(_nav.Uri)}&idPost=" + context.Id); })" Title="Chỉnh sửa"></MudFab>
                             <MudFab Color="Color.Error" Size="Size.Small" Class="m-1" DisableElevation="true" StartIcon="@Icons.Material.Filled.Delete" OnClick="@(async () => { await DialogDelete(context.Id); })" Title="Xóa"></MudFab>
                         </MudTd>
                     </RowTemplate>

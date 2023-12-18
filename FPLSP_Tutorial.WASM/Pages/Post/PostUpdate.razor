@@ -28,7 +28,7 @@
 }
 else
 {
-    <PostEditInformation Visible="@_isEnablePostInformation" OnClose="@(() => _isEnablePostInformation = false)" ListTagSelected="@_listTagSelected" UserId="@_idUser" OnSave="@(async() => await OnSaveAsync())" PostCreateRequest="@_postCreateR" BindListTagSelected="@((List<TagDTO> lstTag) => _listTagSelected = lstTag)" @ref="@_refPostEditInformation" />
+    <PostEditInformationUpdate Visible="@_isEnablePostInformation" OnClose="@(() => _isEnablePostInformation = false)" ListTagSelected="@_listTagSelected" UserId="@_idUser" OnSave="@(async() => await OnSaveAsync())" PostUpdateRequest="@_postUpdateR" BindListTagSelected="@((List<TagDTO> lstTag) => _listTagSelected = lstTag)" @ref="@_refPostEditInformation" />
 
     <div class="pa-2">
         <MudBreadcrumbs Items="@_listBreadCrumb"></MudBreadcrumbs>
@@ -36,13 +36,13 @@ else
         <MudPaper Class="mt-3 mx-3 pa-4 position-relative" Elevation="2">
 
             <div class="d-flex align-center mb-3">
-                <MudText Typo="Typo.h5" Class="mr-auto" Style="font-weight: 500">Tạo bài viết</MudText>
+                <MudText Typo="Typo.h5" Class="mr-auto" Style="font-weight: 500">Chỉnh sửa bài viết</MudText>
 
                 <MudChip Icon="@Icons.Material.Filled.FileUpload" title="Nhập nội dung bằng file truyền vào(.xlsx, .docs)" Color="Color.Success" OnClick="@(() => _isEnableFileImport = true)">Nhập file</MudChip>
                 <MudChip OnClick="@(async () => { _isEnablePostInformation= true; })" Color="Color.Primary" Icon="@Icons.Material.Filled.Save">Lưu</MudChip>
             </div>
 
-            <RichTextEditor @ref="@_rteRef" Get="@((string val) => { _postCreateR.Content =  val; })" />
+            <RichTextEditor @ref="@_rteRef" Get="@((string val) => { _postUpdateR.Content =  val; })" />
 
             <div class="row mt-2">
                 <div class="col d-flex justify-end">
@@ -85,12 +85,18 @@ else
 
     RichTextEditor _rteRef = new();
 
-    PostEditInformation _refPostEditInformation = new();
+    PostEditInformationUpdate _refPostEditInformation = new();
 
-    private PostCreateRequest _postCreateR = new();
+    private PostUpdateRequest _postUpdateR = new();
 
     protected override async Task OnInitializedAsync()
     {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+
     }
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
@@ -105,9 +111,20 @@ else
                 _idUser = Guid.Parse(userIdClaim.Value);
             }
             else { }
-            _postCreateR.CreatedBy = _idUser;
+            _postUpdateR.ModifiedBy = _idUser;
+
+            var postDetail = await _repoPost.GetByIdAsync(Guid.Parse(idPost));
+            _postUpdateR.Id = postDetail.Id;
+            _postUpdateR.PostType = postDetail.PostType;
+            _postUpdateR.Title = postDetail.Title;
+            _postUpdateR.Content = postDetail.Content;
+            _postUpdateR.Status = postDetail.Status;
+
+            _listTagSelected = postDetail.ListTag;
             _isLoadingAll = false;
             StateHasChanged();
+
+            await _rteRef.SetRTEValue(postDetail.Content);
         }
     }
 
@@ -115,26 +132,27 @@ else
     {
         await _rteRef.GetRTEValue();
 
-        if(_postCreateR.Content == null || _postCreateR.Content == "")
+        if (_postUpdateR.Content == null || _postUpdateR.Content == "")
         {
             _mudSnackbar.Add("Bài viết chưa có nội dung", Severity.Error);
             return;
         }
 
-        if(idPost != null) _postCreateR.PostId = Guid.Parse(idPost);
-        var resultPost = await _repoPost.AddAsync(_postCreateR);
+        //if (idPost != null) _postUpdateR.PostId = Guid.Parse(idPost);
+        var resultPost = await _repoPost.UpdateAsync(_postUpdateR);
 
         if (resultPost != null)
         {
-            var resultPostTag = await _repoPostTag.AddRangeAsync(_listTagSelected.AsEnumerable().Select(t =>
-            {
-                return new PostTagCreateRequest()
-                {
-                    PostId = resultPost.Id,
-                    TagId = t.Id,
-                    CreatedBy = _idUser
-                };
-            }).ToList());
+            var resultPostTag = true;
+            //var resultPostTag = await _repoPostTag.AddRangeAsync(_listTagSelected.AsEnumerable().Select(t =>
+            //{
+            //    return new PostTagCreateRequest()
+            //    {
+            //        PostId = resultPost.Id,
+            //        TagId = t.Id,
+            //        CreatedBy = _idUser
+            //    };
+            //}).ToList());
             if(resultPostTag)
             {
                 _mudSnackbar.Add("Thêm thành công", Severity.Success);
@@ -178,12 +196,6 @@ else
 
     private async Task Cleanup()
     {
-        _listTagSelected = new();
-        await _rteRef.SetRTEValue("");
-        _postCreateR.Content = "";
-        _postCreateR.Title = "";
-        _isEnablePostInformation = false;
-        await _refPostEditInformation.Cleanup();
-        StateHasChanged();
+        await LoadData();
     }
 }

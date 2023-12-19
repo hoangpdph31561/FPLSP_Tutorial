@@ -24,6 +24,15 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
         {
             try
             {
+                if(_dbContext.MajorEntities.Any(c => c.Code == entity.Code && c.Status != EntityStatus.Deleted && !c.Deleted))
+                {
+                    return RequestResult<Guid>.Fail("Mã đã tồn tại");
+                }
+                if(_dbContext.MajorEntities.Any(c => c.Name == entity.Name && c.Status != EntityStatus.Deleted && !c.Deleted))
+                {
+                    return RequestResult<Guid>.Fail("Tên đã tồn tại");
+                }
+
                 await _dbContext.MajorEntities.AddAsync(entity);
                 await _dbContext.SaveChangesAsync(cancellationToken);
 
@@ -46,11 +55,25 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
         {
             try
             {
+                if (_dbContext.MajorEntities.Any(c => c.Id != entity.Id && c.Code == entity.Code && c.Status != EntityStatus.Deleted && !c.Deleted))
+                {
+                    return RequestResult<int>.Fail("Mã đã tồn tại");
+                }
+                if (_dbContext.MajorEntities.Any(c => c.Id != entity.Id && c.Name == entity.Name && c.Status != EntityStatus.Deleted && !c.Deleted))
+                {
+                    return RequestResult<int>.Fail("Tên đã tồn tại");
+                }
+
                 var major = await GetMajorByIdAsync(entity.Id, cancellationToken);
 
-                major!.Code = entity.Code;
-                major!.Name = string.IsNullOrEmpty(entity.Name) ? major.Name :entity.Name;
-                major!.Status = entity.Status;
+                if(major == null)
+                {
+                    return RequestResult<int>.Fail("Không tìm thấy ngành học này");
+                }
+
+                major.Code = entity.Code;
+                major.Name = string.IsNullOrEmpty(entity.Name) ? major.Name :entity.Name;
+                major.Status = entity.Status;
 
                 major.ModifiedBy = entity.ModifiedBy;
                 major.ModifiedTime = DateTimeOffset.UtcNow;
@@ -78,8 +101,13 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
             {
                 var major = await GetMajorByIdAsync(request.Id, cancellationToken);
 
+                if (major == null)
+                {
+                    return RequestResult<int>.Fail("Không tìm thấy ngành học này");
+                }
+
                 major.Status = EntityStatus.Deleted;
-                major!.Deleted = true;
+                major.Deleted = true;
                 major.DeletedBy = request.DeletedBy;
                 major.DeletedTime = DateTimeOffset.UtcNow;
 

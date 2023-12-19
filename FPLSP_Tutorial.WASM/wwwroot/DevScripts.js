@@ -1,6 +1,7 @@
 ﻿function CreateRTEInstance() { 
     var config = {}
     config.editorResizeMode = "height";
+    config.showFloatParagraph = false;
     window.editor1 = new RichTextEditor("#inp_editor1", config);
 }
 

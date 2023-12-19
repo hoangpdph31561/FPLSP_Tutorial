@@ -208,14 +208,14 @@ else
         if (confirm == true)
         {
             majorDelete.Id = idDelete;
-            var removeConfirm = await majorRepository.DeleteAsync(majorDelete);
-            if (removeConfirm)
+            var removeResult = await majorRepository.DeleteAsync(majorDelete);
+            if (removeResult.Success)
             {
                 _snackbar.Add("Xóa thành công", Severity.Success);
             }
             else
             {
-                _snackbar.Add("Xóa thất bại", Severity.Error);
+                _snackbar.Add("Xóa thất bại" + "<br>" + removeResult.Message, Severity.Error);
             }
             await LoadData();
         }

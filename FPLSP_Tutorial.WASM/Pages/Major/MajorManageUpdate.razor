@@ -67,34 +67,35 @@ else
     }
     private async Task Updatemajor()
     {
-        var confirm = await dialogService.ShowMessageBox
-        (
-            "Thông báo",
-            (MarkupString)("<h2 style=\"font-weight: 500\">Thông báo</h2>" + "Xác nhận sửa chuyên ngành"),
-            "Xác nhận",
-            cancelText: "Hủy"
-        );
-        if (confirm == true)
+        if(!CheckChangeData())
         {
-            var result = await majorRepository.UpdateAsync(majorUpdate);
-            if (result)
+            snackbar.Add("Không có thay đổi dữ liệu để cập nhật", Severity.Warning);
+        }
+        else
+        {
+            var confirm = await dialogService.ShowMessageBox
+            (
+                "Thông báo",
+                (MarkupString)("<h2 style=\"font-weight: 500\">Thông báo</h2>" + "Xác nhận sửa chuyên ngành"),
+                "Xác nhận",
+                cancelText: "Hủy"
+            );
+            if (confirm == true)
             {
-                if (CheckChangeData())
+                var result = await majorRepository.UpdateAsync(majorUpdate);
+                if (result.Success)
                 {
                     OnClickCancel();
                     snackbar.Add("Sửa thành công", Severity.Success);
+                        
                 }
                 else
                 {
-                    OnClickCancel();
-                    snackbar.Add("Không có thay đổi dữ liệu để cập nhật", Severity.Warning);
+                    snackbar.Add("Sửa thất bại" + "<br>" + result.Message, Severity.Error);
                 }
             }
-            else
-            {
-                snackbar.Add("Sửa thất bại", Severity.Error);
-            }
         }
+        
     }
     private async Task Reset()
     {

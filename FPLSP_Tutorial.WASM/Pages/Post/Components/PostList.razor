@@ -100,50 +100,58 @@
         </MudTabPanel>
         <MudTabPanel Text="Chuyên ngành">
             <div class="pa-5">
-                <MudExpansionPanels Elevation="0">
-                    @foreach(var pbm in _listPostByMajor.Where(c => c.idMajor != null))
-                    {
-                        var major = _listMajor.FirstOrDefault(c => c.Id == pbm.idMajor);
+                @if(_isLoadingMajor)
+                {
+                    <MudProgressLinear Indeterminate="true"></MudProgressLinear>
+                }
+                else
+                {
+                    <MudExpansionPanels Elevation="0">
+                        @foreach (var pbm in _listPostByMajor.Where(c => c.idMajor != null))
+                        {
+                            var major = _listMajor.FirstOrDefault(c => c.Id == pbm.idMajor);
 
-                        <MudExpansionPanel Style="border: 1px solid lightgrey;" Class="">
-                            <TitleContent>
-                                <MudText Typo="Typo.subtitle1" Style="font-weight: 500;">@(major.Code + " - " + major.Name)</MudText>
-                            </TitleContent>
-                            <ChildContent>
-                                <MudDivider Class="mb-3"></MudDivider>
-                                @foreach (var post in pbm.listPost)
-                                {
-                                    if (pbm.listPost.IndexOf(post) > 0)
+                            <MudExpansionPanel Style="border: 1px solid lightgrey;" Class="">
+                                <TitleContent>
+                                    <MudText Typo="Typo.subtitle1" Style="font-weight: 500;">@(major.Code + " - " + major.Name)</MudText>
+                                    </TitleContent>
+                                    <ChildContent>
+                                        <MudDivider Class="mb-3"></MudDivider>
+                                        @foreach (var post in pbm.listPost)
                                     {
-                                        <MudDivider Class="my-3 mx-4" DividerType="DividerType.Middle"></MudDivider>
-                                    }
-                                    <MudCard Class="py-2 px-4 post-transform" Elevation="0" Style="border: 1px solid lightgrey;" @onclick="@(() => _nav.NavigateTo($"/post/view/{post.Id}"))">
-                                        <div class="d-flex">
-                                            <MudIcon Icon="@Icons.Material.Filled.Person" Size="Size.Small"></MudIcon>
-                                            @{
-                                                var disName = (post.CreatedByName == null || post.CreatedByName == "") ? "N/A" : post.CreatedByName;
-                                            }
-                                            <MudText Typo="Typo.caption" Style="font-weight: 500; max-width: 50%" Class="overflow-text-1" title="@disName">@(disName)</MudText>
-                                            <MudText Typo="Typo.caption" Class="ms-1">@(" | " + post.CreatedTime.ToString("dd/MM/yyyy"))</MudText>
-                                        </div>
-
-                                        <MudText Typo="Typo.h6" Style="font-weight: 500;">@post.Title</MudText>
-
-                                        <div class="d-flex align-center my-2">
-                                            <div class="overflow-hidden">
-                                                @foreach (var i in post.ListTag)
-                                                {
-                                                    <span style="background-color: lightgray; border-radius: 5px;" class="me-1 pa-1">@i.Name</span>
+                                        if (pbm.listPost.IndexOf(post) > 0)
+                                        {
+                                            <MudDivider Class="my-3 mx-4" DividerType="DividerType.Middle"></MudDivider>
+                                        }
+                                        <MudCard Class="py-2 px-4 post-transform" Elevation="0" Style="border: 1px solid lightgrey;" @onclick="@(() => _nav.NavigateTo($"/post/view/{post.Id}"))">
+                                            <div class="d-flex">
+                                                <MudIcon Icon="@Icons.Material.Filled.Person" Size="Size.Small"></MudIcon>
+                                                @{
+                                                    var disName = (post.CreatedByName == null || post.CreatedByName == "") ? "N/A" : post.CreatedByName;
                                                 }
-                                            </div>
-                                        </div>
+                                                <MudText Typo="Typo.caption" Style="font-weight: 500; max-width: 50%" Class="overflow-text-1" title="@disName">@(disName)</MudText>
+                                                    <MudText Typo="Typo.caption" Class="ms-1">@(" | " + post.CreatedTime.ToString("dd/MM/yyyy"))</MudText>
+                                                </div>
 
-                                    </MudCard>
-                                }
-                            </ChildContent>
-                        </MudExpansionPanel>
-                    }
-                </MudExpansionPanels>
+                                                <MudText Typo="Typo.h6" Style="font-weight: 500;">@post.Title</MudText>
+
+                                                <div class="d-flex align-center my-2">
+                                                    <div class="overflow-hidden">
+                                                        @foreach (var i in post.ListTag)
+                                                    {
+                                                        <span style="background-color: lightgray; border-radius: 5px;" class="me-1 pa-1">@i.Name</span>
+                                                    }
+                                                </div>
+                                            </div>
+
+                                        </MudCard>
+                                    }
+                                    <CustomPagination Class="my-1" HasNext="@pbm.response.HasNext" OnPageChange="@(async e=> await OnPaginationButtonClickPostMajor(pbm.idMajor ?? Guid.Empty, e))" CurrentPageNumber="@pbm.response.PageNumber"></CustomPagination>
+                                </ChildContent>
+                            </MudExpansionPanel>
+                        }
+                    </MudExpansionPanels>
+                }
             </div>
         </MudTabPanel>
     </MudTabs>
@@ -249,11 +257,37 @@
         }
     }
 
+    private async Task LoadSinglePostMajor(Guid idMajor, int PageNumber)
+    {
+        var postMajor = await _repoPost.GetListWithPaginationAsync(new()
+            {
+                MajorId = idMajor,
+                IsGetTopLevel = true,
+                PageNumber = PageNumber
+            });
+        if (postMajor.Data != null)
+        {
+            _listPostByMajor.Add((idMajor, postMajor.Data.ToList(), postMajor.HasNext, postMajor));
+            StateHasChanged();
+        }
+
+        _listMajorPostLoaded.Add(idMajor);
+        StateHasChanged();
+    }
+
     private async Task OnPaginationButtonClickPostSystem(int PageNumber)
     {
         _listMajorPostLoaded.Remove(null);
         _listPostByMajor.Remove(_listPostByMajor.FirstOrDefault(c => c.idMajor == null));
         _preqPostSystem.PageNumber = PageNumber;
         await LoadPostSystem();
+    }
+
+    private async Task OnPaginationButtonClickPostMajor(Guid idMajor, int PageNumber)
+    {
+        _listMajorPostLoaded.Remove(idMajor);
+        _listPostByMajor.Remove(_listPostByMajor.FirstOrDefault(c => c.idMajor == idMajor));
+        await LoadSinglePostMajor(idMajor, PageNumber);
+
     }
 }

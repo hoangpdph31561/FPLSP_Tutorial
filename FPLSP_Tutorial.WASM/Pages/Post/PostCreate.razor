@@ -182,6 +182,11 @@ else
 
     private async Task Cleanup()
     {
+        if(fallBackUrl != null)
+        {
+            _nav.NavigateTo(fallBackUrl);
+            return;
+        }
         _listTagSelected = new();
         await _rteRef.SetRTEValue("");
         _postCreateR.Content = "";

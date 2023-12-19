@@ -45,16 +45,17 @@
         if (confirm == true)
         {
             var result = await MajorRepository.AddAsync(majorCreate);
-            if (result == true)
+            if (result.Success)
             {
                 OnClickCancel();
                 Snackbar.Add("Thêm thành công", Severity.Success);
+                await OnCloseAdd.InvokeAsync();
             }
             else
             {
-                Snackbar.Add("Thêm thất bại", Severity.Error);
+                Snackbar.Add("Thêm thất bại" + "<br>" + result.Message, Severity.Error);
             }
-            await Reset();
+            
         }
     }
 

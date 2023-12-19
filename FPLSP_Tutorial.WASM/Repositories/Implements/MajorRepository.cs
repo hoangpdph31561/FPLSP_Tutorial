@@ -1,9 +1,11 @@
-﻿using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major;
+﻿using FPLSP_Tutorial.WASM.Data;
+using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major;
 using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major.Request;
 using FPLSP_Tutorial.WASM.Data.Pagination;
 using FPLSP_Tutorial.WASM.Repositories.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using System.Net.Http.Json;
+using System.Text.Json;
 
 namespace FPLSP_Tutorial.WASM.Repositories.Implements
 {
@@ -60,27 +62,45 @@ namespace FPLSP_Tutorial.WASM.Repositories.Implements
             return result;
         }
 
-        public async Task<bool> AddAsync(MajorCreateRequest request)
+        public async Task<APIResponse> AddAsync(MajorCreateRequest request)
         {
-            var resultCreate = await _httpClient.PostAsJsonAsync($"/api/Majors", request);
-            if (resultCreate.IsSuccessStatusCode)
+            var result = await _httpClient.PostAsJsonAsync($"/api/Majors", request);
+            if (result.IsSuccessStatusCode)
             {
-                return true;
+                var contentAsString = await result.Content.ReadAsStringAsync();
+                var resultDTO = JsonSerializer.Deserialize<APIResponse>(contentAsString, new JsonSerializerOptions()
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+                return resultDTO;
             }
-            return false;
+            return new()
+            {
+                Success = false,
+                Message = "Yêu cầu thất bại",
+            };
         }
 
-        public async Task<bool> UpdateAsync(MajorUpdateRequest request)
+        public async Task<APIResponse> UpdateAsync(MajorUpdateRequest request)
         {
-            var resultCreate = await _httpClient.PutAsJsonAsync($"/api/Majors", request);
-            if (resultCreate.IsSuccessStatusCode)
+            var result = await _httpClient.PutAsJsonAsync($"/api/Majors", request);
+            if(result.IsSuccessStatusCode)
             {
-                return true;
+                var contentAsString = await result.Content.ReadAsStringAsync();
+                var resultDTO = JsonSerializer.Deserialize<APIResponse>(contentAsString, new JsonSerializerOptions()
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+                return resultDTO;
             }
-            return false;
+            return new()
+            {
+                Success = false,
+                Message = "Yêu cầu thất bại",
+            };
         }
 
-        public async Task<bool> DeleteAsync(MajorDeleteRequest request)
+        public async Task<APIResponse> DeleteAsync(MajorDeleteRequest request)
         {
             string url = $"api/Majors?Id={request.Id}";
 
@@ -90,7 +110,20 @@ namespace FPLSP_Tutorial.WASM.Repositories.Implements
             }
 
             var result = await _httpClient.DeleteAsync(url);
-            return result.IsSuccessStatusCode;
+            if (result.IsSuccessStatusCode)
+            {
+                var contentAsString = await result.Content.ReadAsStringAsync();
+                var resultDTO = JsonSerializer.Deserialize<APIResponse>(contentAsString, new JsonSerializerOptions()
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+                return resultDTO;
+            }
+            return new()
+            {
+                Success = false,
+                Message = "Yêu cầu thất bại",
+            };
         }
     }
 }

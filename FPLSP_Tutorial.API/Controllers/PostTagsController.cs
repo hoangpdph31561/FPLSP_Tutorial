@@ -61,5 +61,15 @@ namespace FPLSP_Tutorial.API.Controllers
 
             return Ok(vm);
         }
+
+        [HttpPut("SyncRangeAsync")]
+        public async Task<IActionResult> SyncRangeAsync(PostTagSyncRangeRequest request, CancellationToken cancellationToken)
+        {
+            PostTagSyncRangeViewModel vm = new(_postTagReadWriteRespository, _localizationService, _mapper);
+
+            await vm.HandleAsync(request, cancellationToken);
+
+            return Ok(vm);
+        }
     }
 }

@@ -28,7 +28,7 @@
 }
 else
 {
-    <PostEditInformationUpdate Visible="@_isEnablePostInformation" OnClose="@(() => _isEnablePostInformation = false)" ListTagSelected="@_listTagSelected" UserId="@_idUser" OnSave="@(async() => await OnSaveAsync())" PostUpdateRequest="@_postUpdateR" BindListTagSelected="@((List<TagDTO> lstTag) => _listTagSelected = lstTag)" @ref="@_refPostEditInformation" />
+    <PostEditInformationUpdate Visible="@_isEnablePostInformation" OnClose="@(() => _isEnablePostInformation = false)" ListTagSelected="@_listTagSelected" UserId="@_idUser" OnSave="@(async() => await OnSaveAsync())" PostUpdateRequest="@_postUpdateR" BindListTagSelected="@((List<TagDTO> lstTag) => _listTagSelected = lstTag)" @ref="@_refPostEditInformation" MajorId="@(idMajor  == null ? null : Guid.Parse(idMajor))" />
 
     <div class="pa-2">
         <MudBreadcrumbs Items="@_listBreadCrumb"></MudBreadcrumbs>
@@ -143,16 +143,11 @@ else
 
         if (resultPost != null)
         {
-            var resultPostTag = true;
-            //var resultPostTag = await _repoPostTag.AddRangeAsync(_listTagSelected.AsEnumerable().Select(t =>
-            //{
-            //    return new PostTagCreateRequest()
-            //    {
-            //        PostId = resultPost.Id,
-            //        TagId = t.Id,
-            //        CreatedBy = _idUser
-            //    };
-            //}).ToList());
+            var resultPostTag = await _repoPostTag.SyncRangeAsync(new()
+            {
+                PostId = Guid.Parse(idPost),
+                ListTag = _listTagSelected,
+            });
             if(resultPostTag)
             {
                 _mudSnackbar.Add("Cập nhật thành công", Severity.Success);
@@ -164,7 +159,7 @@ else
             }
             else
             {
-                _mudSnackbar.Add("Cập nhật bài viết thành công. Cập nhật tag thất bại", Severity.Warning);
+                _mudSnackbar.Add("Cập nhật bài viết thành công. Cập nhật nhãn thất bại", Severity.Warning);
                 if (fallBackUrl != null)
                 {
                     _nav.NavigateTo(fallBackUrl);

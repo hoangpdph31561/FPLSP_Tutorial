@@ -10,5 +10,6 @@ namespace FPLSP_Tutorial.Application.Interfaces.Repositories.ReadWrite
         Task<RequestResult<int>> AddAsync(PostTagEntity entity, CancellationToken cancellationToken);
         Task<RequestResult<int>> UpdateAsync(PostTagEntity entity, CancellationToken cancellationToken);
         Task<RequestResult<int>> DeleteAsync(PostTagDeleteRequest request, CancellationToken cancellationToken);
+        Task<RequestResult<int>> SyncRangeAsync(Guid PostId, List<TagEntity> request, CancellationToken cancellationToken);
     }
 }

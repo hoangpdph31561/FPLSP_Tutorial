@@ -13,6 +13,7 @@ namespace FPLSP_Tutorial.Infrastructure.Extensions.AutoMapperProfiles
             CreateMap<TagEntity, TagDTO>();
             CreateMap<TagUpdateRequest, TagEntity>();
             CreateMap<TagCreateRequest, TagEntity>();
+            CreateMap<TagDTO, TagEntity>();
         }
     }
 }

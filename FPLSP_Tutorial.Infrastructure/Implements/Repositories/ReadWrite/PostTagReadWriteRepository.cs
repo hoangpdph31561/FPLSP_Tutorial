@@ -127,5 +127,56 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
             var posttag = await _dbContext.PostTagEntities.FirstOrDefaultAsync(c => c.Id == Id && !c.Deleted, cancellationToken);
             return posttag;
         }
+
+        public async Task<RequestResult<int>> SyncRangeAsync(Guid PostId, List<TagEntity> request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var listTagExisted = _dbContext.PostTagEntities.Where(t => t.PostId == PostId && t.Status != EntityStatus.Deleted && !t.Deleted).Select(pt => pt.Tag).ToList();
+                foreach (var i in listTagExisted.Where(t => !request.Select(r => r.Id).Contains(t.Id)))
+                {
+                    var postTag = _dbContext.PostTagEntities.FirstOrDefault(pt => pt.TagId == i.Id && pt.PostId == PostId);
+                    if(postTag != null)
+                    {
+                        postTag.Status = EntityStatus.Deleted;
+                        postTag.Deleted = true;
+
+
+                        postTag.DeletedTime = DateTimeOffset.Now;
+                    }
+                }
+
+                await _dbContext.SaveChangesAsync(cancellationToken);
+
+                foreach (var i in request.Where(t => !listTagExisted.Select(r => r.Id).Contains(t.Id)))
+                {
+                    await _dbContext.PostTagEntities.AddAsync(new()
+                    {
+                        PostId = PostId,
+                        TagId = i.Id,
+                        CreatedTime = DateTimeOffset.Now,
+
+                    });
+                    await _dbContext.SaveChangesAsync(cancellationToken);
+                }
+
+                await _dbContext.SaveChangesAsync();
+
+                return RequestResult<int>.Succeed(1);
+            }
+            catch (Exception e)
+            {
+                return RequestResult<int>.Fail(_localizationService["Unable to update PostTag"], new[]
+                {
+                    new ErrorItem
+                    {
+                        Error = e.Message,
+                        FieldName = LocalizationString.Common.FailedToUpdate + "PostTag"
+                    }
+                });
+            }
+
+
+        }
     }
 }

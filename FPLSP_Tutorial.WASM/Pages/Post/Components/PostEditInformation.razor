@@ -145,7 +145,7 @@
     {
         _listTagSystem = await _repoTag.GetListAsync(new()
         {
-            IgnoreMajorId= true
+            IgnoreMajorId= false
         });
         _listMajor = await _repoMajor.GetListAsync(new()
             {

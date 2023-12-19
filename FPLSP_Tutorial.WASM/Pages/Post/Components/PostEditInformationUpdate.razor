@@ -1,4 +1,6 @@
-﻿@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major;
+﻿
+
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major;
 @using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post.Request;
 @using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Tag;
 @inject IDialogService DialogService
@@ -8,7 +10,7 @@
 
 <style>
     :root {
-        --mud-zindex-popover: 2001
+        --mud-zindex-popover: 2001 
     }
 
     .mud-input-control {
@@ -88,11 +90,10 @@
     [Parameter]
     public EventCallback<List<TagDTO>> BindListTagSelected { get; set; }
 
-    private string _bindTitle = "";
+    [Parameter]
+    public Guid? MajorId { get; set; } = null;
 
-    private bool _selectedPostType = false;
-    private bool _disablePostType = true;
-    private Guid _selectedMajorId = Guid.Empty;
+    private string _bindTitle = "";
 
     private Guid? _hovingTagId = null;
     private List<TagDTO> _listTagForSelect = new();
@@ -115,48 +116,30 @@
     {
         _listTagSystem = await _repoTag.GetListAsync(new()
         {
-            IgnoreMajorId= true
+            IgnoreMajorId= false
         });
         _listMajor = await _repoMajor.GetListAsync(new()
             {
                 UserId = UserId,
             });
-        if (_listMajor.Count() > 0)
-        {
-            _disablePostType = false;
-            _selectedMajorId = _listMajor.First().Id;
-        }
 
         //Update related
+
         _bindTitle = PostUpdateRequest.Title;
 
-
-        SetTagDisplay();
-    }
-
-    private void OnSelectPostType(bool val)
-    {
-        _selectedPostType = val;
-        SetTagDisplay();
-    }
-
-    private void OnSelectMajor(Guid val)
-    {
-        _selectedMajorId = val;
         SetTagDisplay();
     }
 
     private void SetTagDisplay()
     {
-        ListTagSelected = new();
-        if(_selectedPostType)
+        if(MajorId != null && MajorId != Guid.Empty)
         {
-            _listTagForSelect = _listTagSystem;
+            var major = _listMajor.FirstOrDefault(c => c.Id == MajorId);
+            _listTagForSelect = major == null ? new() : major.ListTag;
         }
         else
         {
-            var major = _listMajor.FirstOrDefault(c => c.Id == _selectedMajorId);
-            _listTagForSelect = major == null ? new() : major.ListTag;
+            _listTagForSelect = _listTagSystem;
         }
     }
 

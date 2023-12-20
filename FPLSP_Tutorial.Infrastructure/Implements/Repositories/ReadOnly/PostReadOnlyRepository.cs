@@ -99,6 +99,7 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
                                         .Count() > 0);
 
                 var result = await queryable
+                    .OrderByDescending(c => c.CreatedTime)
                     .ProjectTo<PostDTO>(_mapper.ConfigurationProvider)
                     .ToListAsync();
 
@@ -195,7 +196,9 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
                                     .Where(t => t.MajorId == null)
                                         .Count() > 0);
 
-                var result = await queryable.PaginateAsync<PostEntity, PostDTO>(request, _mapper, cancellationToken);
+                var result = await queryable
+                    .OrderByDescending(c => c.CreatedTime)
+                    .PaginateAsync<PostEntity, PostDTO>(request, _mapper, cancellationToken);
 
                 if(result.Data != null)
                 {

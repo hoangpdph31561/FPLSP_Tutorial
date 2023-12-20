@@ -4,13 +4,16 @@
 
 <MudDialog>
     <DialogContent>
-        <MudText Typo="Typo.h5" Style="font-weight: 500" Class="mt-2">Thêm chuyên ngành</MudText>
-        <MudTextField @bind-Value="majorCreate.Code" Label="Mã chuyên ngành"></MudTextField>
-        <MudTextField @bind-Value="majorCreate.Name" Label="Tên chuyên ngành"></MudTextField>
-@*        <MudSelect T="EntityStatus" @bind-Value="majorCreate.Status" Label="Trạng thái" AnchorOrigin="Origin.BottomCenter">
+        <MudForm Model="@majorCreate">
+            <MudText Typo="Typo.h5" Style="font-weight: 500" Class="mt-2">Thêm chuyên ngành</MudText>
+            <MudTextField @bind-Value="majorCreate.Code" Label="Mã chuyên ngành" For="@(() => majorCreate.Code)"></MudTextField>
+            <MudTextField @bind-Value="majorCreate.Name" Label="Tên chuyên ngành" For="@(() => majorCreate.Name)"></MudTextField>
+            @*        <MudSelect T="EntityStatus" @bind-Value="majorCreate.Status" Label="Trạng thái" AnchorOrigin="Origin.BottomCenter">
             <MudSelectItem Value="EntityStatus.Active">Hoạt động</MudSelectItem>
             <MudSelectItem Value="EntityStatus.InActive">Không hoạt động</MudSelectItem>
-        </MudSelect>*@
+            </MudSelect>*@
+        </MudForm>
+        
     </DialogContent>
     <DialogActions>
         <MudButton Color="Color.Error" OnClick="OnClickCancel">Hủy</MudButton>

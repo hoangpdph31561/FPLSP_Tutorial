@@ -27,7 +27,7 @@ else
                     <MudTextField @bind-Value="@_createRequestTag.Name" Variant="Variant.Outlined" Class="w-100 mb-2" Placeholder="Nhập tên nhãn mới" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.AddCircle" OnAdornmentClick="@(async () => await OnAdd())" AdornmentColor="Color.Primary" For="(() => _createRequestTag.Name)" Immediate Label="Thêm nhãn"></MudTextField>
 
 
-                    <MudTable Items="@_listTag" Elevation="3" Class="mt-2">
+                    <MudTable Items="@_listTag" Elevation="3" Class="mt-2" Height="40vh" FixedHeader="true">
                         <HeaderContent>
                             <MudTh>STT</MudTh>
                             <MudTh>Tên</MudTh>
@@ -110,6 +110,7 @@ else
         if(result)
         {
             _mudSnackbar.Add("Thêm thành công", Severity.Success);
+            _createRequestTag.Name = "";
             await LoadData();
         }
         else

@@ -10,6 +10,9 @@ namespace FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post.Request
         public int PostType { get; set; } = 0;
         public bool IsGetTopLevel { get; set; }
 
+        public string? SortingProperty { get; set; } = null;
+        public string SortingDirection { get; set; } = "desc";
+
         public string? SearchString { get; set; } = null;
 
         public List<Guid> ListTagId { get; set; } = new();

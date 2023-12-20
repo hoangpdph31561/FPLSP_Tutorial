@@ -50,7 +50,6 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
                 var postUpdating = await GetPostByIdAsync(entity.Id, cancellationToken);
                 postUpdating!.ModifiedTime = DateTimeOffset.UtcNow;
                 postUpdating.ModifiedBy = entity.ModifiedBy;
-                postUpdating.PostId = entity.PostId;
                 postUpdating.PostType = entity.PostType;
                 postUpdating.Title =  entity.Title;
                 postUpdating.Content = entity.Content;

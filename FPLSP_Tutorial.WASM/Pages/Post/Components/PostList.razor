@@ -168,7 +168,8 @@
     private PostViewWithPaginationRequest _preqPostSystem = new()
         {
             PostType = 1,
-            PageSize = 10
+            PageSize = 10,
+            IsGetTopLevel = true
         };
     private PaginationResponse<PostDTO> _presPost = new();
     private List<PostDTO> _listPost = new();
@@ -268,11 +269,11 @@
         if (postMajor.Data != null)
         {
             _listPostByMajor.Add((idMajor, postMajor.Data.ToList(), postMajor.HasNext, postMajor));
-            StateHasChanged();
+            //StateHasChanged();
         }
 
         _listMajorPostLoaded.Add(idMajor);
-        StateHasChanged();
+        //StateHasChanged();
     }
 
     private async Task OnPaginationButtonClickPostSystem(int PageNumber)

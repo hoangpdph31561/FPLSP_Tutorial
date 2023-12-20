@@ -56,8 +56,9 @@
         </MudDrawerHeader>
         
         <MudNavMenu>
+            <MudNavLink IconColor="Color.Primary" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home" Href="/post/home">Trang chủ</MudNavLink>
             <AuthorizeView Roles="@("ADMIN")">
-                <MudNavLink IconColor="Color.Primary" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home" Href="/post/home">Trang chủ</MudNavLink>
+                
                 <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.SupervisorAccount" Href="/user-manager">Quản lý giảng viên</MudNavLink>
                 <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.List" Href="/major/manage/list">Quản lý chuyên ngành</MudNavLink>
                 <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Newspaper" Href="/post/system">Quản lý bài viết hệ thống</MudNavLink>
@@ -70,10 +71,14 @@
             </AuthorizeView>
 
             <AuthorizeView Roles="@("CNBM")">
+                
+            </AuthorizeView>
+            
+            <AuthorizeView Roles="@("ADMIN, CNBM")">
                 <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Archive" Href="/post/archive">Bài viết đã tạo</MudNavLink>
                 <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.EditNote" Href="/post/create">Tạo bài viết</MudNavLink>
             </AuthorizeView>
-            
+
         </MudNavMenu>
     </MudDrawer>
     <MudMainContent >

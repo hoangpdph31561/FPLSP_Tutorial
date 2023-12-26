@@ -1,4 +1,5 @@
-﻿using FPLSP_Tutorial.Domain.Enums;
+﻿using FPLSP_Tutorial.Application.DataTransferObjects.Tag;
+using FPLSP_Tutorial.Domain.Enums;
 
 namespace FPLSP_Tutorial.Application.DataTransferObjects.Post.Request
 {
@@ -8,6 +9,8 @@ namespace FPLSP_Tutorial.Application.DataTransferObjects.Post.Request
         public string PostType { get; set; } = string.Empty;
         public string Title { get; set; } = string.Empty;
         public string Content { get; set; } = string.Empty;
-        public Guid CreatedBy { get; set; }
+        public EntityStatus Status { get; set; } = EntityStatus.Active;
+
+        public Guid? CreatedBy { get; set; }
     }
 }

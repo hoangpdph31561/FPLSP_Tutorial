@@ -13,6 +13,7 @@ namespace FPLSP_Tutorial.Domain.Entities
 
         public DateTimeOffset CreatedTime { get; set; }
         public Guid? CreatedBy { get; set; }
+
         public List<UserMajorEntity> UserMajors { get; set; }
     }
 }

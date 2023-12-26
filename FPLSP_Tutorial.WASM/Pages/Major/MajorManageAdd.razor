@@ -1,0 +1,69 @@
+﻿@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major.Request;
+
+
+
+<MudDialog>
+    <DialogContent>
+        <MudForm Model="@majorCreate">
+            <MudText Typo="Typo.h5" Style="font-weight: 500" Class="mt-2">Thêm chuyên ngành</MudText>
+            <MudTextField @bind-Value="majorCreate.Code" Label="Mã chuyên ngành" For="@(() => majorCreate.Code)"></MudTextField>
+            <MudTextField @bind-Value="majorCreate.Name" Label="Tên chuyên ngành" For="@(() => majorCreate.Name)"></MudTextField>
+            @*        <MudSelect T="EntityStatus" @bind-Value="majorCreate.Status" Label="Trạng thái" AnchorOrigin="Origin.BottomCenter">
+            <MudSelectItem Value="EntityStatus.Active">Hoạt động</MudSelectItem>
+            <MudSelectItem Value="EntityStatus.InActive">Không hoạt động</MudSelectItem>
+            </MudSelect>*@
+        </MudForm>
+        
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Error" OnClick="OnClickCancel">Hủy</MudButton>
+        <MudButton OnClick="Reset">Làm mới</MudButton>
+        <MudButton Color="Color.Primary" OnClick="CreateNewMajor">Lưu</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+    [Parameter]
+    public EventCallback OnCloseAdd { get; set; }
+    [Inject]
+    public IMajorRepository MajorRepository { get; set; }
+    [Inject]
+    public IDialogService DialogService { get; set; }
+    [Inject]
+    public ISnackbar Snackbar { get; set; }
+    public MajorCreateRequest majorCreate = new MajorCreateRequest();
+
+
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    void OnClickCancel() => MudDialog.Cancel();
+
+    private async Task CreateNewMajor()
+    {
+        var confirm = await DialogService.ShowMessageBox(
+            "Thông báo",
+            (MarkupString)("<h2 style=\"font-weight: 500\">Thông báo</h2>" + "Xác nhận thêm chuyên ngành?"),
+            "Xác nhận",
+            cancelText: "Hủy"
+        );
+        if (confirm == true)
+        {
+            var result = await MajorRepository.AddAsync(majorCreate);
+            if (result.Success)
+            {
+                OnClickCancel();
+                Snackbar.Add("Thêm thành công", Severity.Success);
+                await OnCloseAdd.InvokeAsync();
+            }
+            else
+            {
+                Snackbar.Add("Thêm thất bại" + "<br>" + result.Message, Severity.Error);
+            }
+            
+        }
+    }
+
+    private async Task Reset()
+    {
+        majorCreate = new MajorCreateRequest();
+    }
+}

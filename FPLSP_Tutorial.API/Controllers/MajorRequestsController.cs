@@ -14,12 +14,12 @@ namespace FPLSP_Tutorial.API.Controllers
     [ApiController]
     public class MajorRequestsController : ControllerBase
     {
-        public readonly IMajorRequestReadOnlyRespository _majorRequestReadOnlyRespository;
-        public readonly IMajorRequestReadWriteRespository _majorRequestReadWriteRespository;
+        public readonly IMajorRequestReadOnlyRepository _majorRequestReadOnlyRespository;
+        public readonly IMajorRequestReadWriteRepository _majorRequestReadWriteRespository;
         private readonly ILocalizationService _localizationService;
         private readonly IMapper _mapper;
 
-        public MajorRequestsController(IMajorRequestReadOnlyRespository majorRequestReadOnlyRespository, IMajorRequestReadWriteRespository majorRequestReadWriteRespository, IConfiguration configuration, ILocalizationService localizationService, IMapper mapper)
+        public MajorRequestsController(IMajorRequestReadOnlyRepository majorRequestReadOnlyRespository, IMajorRequestReadWriteRepository majorRequestReadWriteRespository, IConfiguration configuration, ILocalizationService localizationService, IMapper mapper)
         {
             _majorRequestReadOnlyRespository = majorRequestReadOnlyRespository;
             _majorRequestReadWriteRespository = majorRequestReadWriteRespository;
@@ -27,42 +27,23 @@ namespace FPLSP_Tutorial.API.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] ViewMajorRequestWithPaginationRequest request, CancellationToken cancellationToken)
+        [HttpGet("GetListWithPagination")]
+        public async Task<IActionResult> GetListWithPagination([FromQuery] MajorRequestViewWithPaginationRequest request, CancellationToken cancellationToken)
         {
             MajorRequestListWithPaginationViewModel vm = new(_majorRequestReadOnlyRespository, _localizationService);
-            vm = new(_majorRequestReadOnlyRespository, _localizationService);
-
-            await vm.HandleAsync(request, cancellationToken);
-
-            return Ok(vm);
-        }
-        //[HttpGet("{id}")]
-        //public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
-        //{
-        //    MajorRequestViewModels vm = new(_majorRequestReadOnlyRespository, _localizationService);
-
-        //    await vm.HandleAsync(id, cancellationToken);
-
-        //    return Ok(vm);
-        //}
-        [HttpGet("majorRequestNotDeleted")] // lấy ra cá majorRequest chưa bị xóa
-        public async Task<IActionResult> GetMajorRequest([FromQuery] ViewMajorRequestWithPaginationRequest request, CancellationToken cancellationToken)
-        {
-            MajorRequestListWithPaginationNotDeletedViewModels vm = new(_majorRequestReadOnlyRespository, _localizationService);
 
             await vm.HandleAsync(request, cancellationToken);
             if (vm.Success)
             {
-                PaginationResponse<MajorRequestDto> paginationResponse = new PaginationResponse<MajorRequestDto>();
-                paginationResponse = (PaginationResponse<MajorRequestDto>)vm.Data;
+                PaginationResponse<MajorRequestDTO> paginationResponse = new PaginationResponse<MajorRequestDTO>();
+                paginationResponse = (PaginationResponse<MajorRequestDTO>)vm.Data;
                 return Ok(paginationResponse);
             }
             return BadRequest();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromQuery] MajorRequestCreateRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> AddAsync(MajorRequestCreateRequest request, CancellationToken cancellationToken)
         {
             MajorRequestCreateViewModel vm = new(_majorRequestReadOnlyRespository, _majorRequestReadWriteRespository, _localizationService, _mapper);
 
@@ -73,9 +54,9 @@ namespace FPLSP_Tutorial.API.Controllers
 
 
         [HttpPut]
-        public async Task<IActionResult> Put([FromQuery] MajorRequestUpdateRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateAsync(MajorRequestUpdateRequest request, CancellationToken cancellationToken)
         {
-            MajorRequestUpDateViewModel vm = new(_majorRequestReadWriteRespository, _localizationService, _mapper);
+            MajorRequestUpdateViewModel vm = new(_majorRequestReadWriteRespository, _localizationService, _mapper);
 
             await vm.HandleAsync(request, cancellationToken);
 
@@ -83,7 +64,7 @@ namespace FPLSP_Tutorial.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> Delete([FromQuery] MajorRequestDeleteRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeleteAsync([FromQuery] MajorRequestDeleteRequest request, CancellationToken cancellationToken)
         {
             MajorRequestDeleteViewModel vm = new(_majorRequestReadWriteRespository, _localizationService, _mapper);
 

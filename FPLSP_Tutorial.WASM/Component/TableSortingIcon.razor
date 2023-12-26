@@ -1,0 +1,86 @@
+﻿<div @onmouseover="@(() => OnMouseOver())" @onmouseleave="@(() => OnMouseLeave())">
+    <div class="d-flex align-center">
+        @if (_isShowingIcon || (PropertyName == ActivePropertyName))
+        {
+            if (_currentSortingDirection == "asc")
+            {
+                @ChildContent
+                <Animate Animation="Animations.SlideLeft" Duration="TimeSpan.FromSeconds(0.5)">
+                    <MudIconButton Icon="@Icons.Material.Filled.ArrowDownward" Size="Size.Small" OnClick="@(async () => await OnClickSorting())" ></MudIconButton>
+                </Animate>
+            }
+            else
+            {
+                @ChildContent
+                <Animate Animation="Animations.SlideLeft" Duration="TimeSpan.FromSeconds(0.5)">
+                    <MudIconButton Icon="@Icons.Material.Filled.ArrowUpward" Size="Size.Small" OnClick="@(async () => await OnClickSorting())" ></MudIconButton>
+                </Animate>
+            }
+
+        }
+        else
+        {
+            <div>
+                @ChildContent
+            </div>
+            <MudIconButton Icon="@Icons.Material.Filled.ArrowUpward" Size="Size.Small" Style="visibility: hidden;"></MudIconButton>
+        }
+    </div>
+    
+</div>
+
+@code {
+    private Animate _refChildContent = new();
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [Parameter]
+    public string? PropertyName { get; set; } = null;
+
+    [Parameter]
+    public string ActivePropertyName { get; set; } = "";
+
+    [Parameter]
+    public string ActiveSortingDirection { get; set; } = "";
+
+    [Parameter]
+    public EventCallback<string> SetPropName { get; set; }
+
+    [Parameter]
+    public EventCallback<string> SetSortDir { get; set; }
+
+    [Parameter]
+    public EventCallback CallLoadData { get; set; }
+
+    private string _currentSortingDirection = "asc";
+
+    private bool _isShowingIcon = false;
+
+    private async Task OnClickSorting()
+    {
+        if(PropertyName == ActivePropertyName)
+        {
+            if (_currentSortingDirection == "asc") _currentSortingDirection = "desc";
+            else _currentSortingDirection = "asc";
+        }
+        else
+        {
+            await SetPropName.InvokeAsync(PropertyName);
+        }
+        await SetSortDir.InvokeAsync(_currentSortingDirection);
+
+        await CallLoadData.InvokeAsync();
+    }
+
+    private void OnMouseOver()
+    {
+        _isShowingIcon = true; 
+        _refChildContent.Run();
+    }
+
+    private void OnMouseLeave()
+    {
+        _isShowingIcon = false;
+    }
+}

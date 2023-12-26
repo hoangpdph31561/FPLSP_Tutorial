@@ -1,0 +1,146 @@
+﻿@page "/post/home"
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post.Request;
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Tag.TagRequest;
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Tag;
+@using FPLSP_Tutorial.WASM.Pages.Post.Components;
+@using System.Security.Claims;
+@inject ITagRepository _repoTag
+@inject IDialogService _dialog
+
+@inject AuthenticationStateProvider _authProvider
+
+@layout ManagementLayout
+
+<style>
+    .hover-zoom:hover {
+        transform: scale(1.01);
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+</style>
+
+<PostSearchDialog />
+
+@if(_isLoadingAll)
+{
+    <LoadingIndicator/>
+}
+else
+{
+    <div class="ma-5">
+        <MudPaper Class="py-3 px-5" Elevation="1">
+            <div class="d-flex align-center">
+                <div class="d-flex align-center mr-auto">
+                    <MudIcon Icon="@Icons.Material.Filled.Home" Class="me-2" Size="Size.Large"></MudIcon>
+                    <MudText Typo="Typo.h4" Class="ms-2" Style="font-weight: 500">Trang chủ</MudText>
+                </div>
+                <div>
+                    <MudButtonGroup>
+                        <MudIconButton Icon="@Icons.Material.Filled.Search" OnClick="@(() => _showSearch = !_showSearch)"></MudIconButton>
+                        <MudIconButton Icon="@Icons.Material.Filled.FilterList" OnClick="@(async() => await OnClickFilter())"></MudIconButton>
+                    </MudButtonGroup>
+                </div>
+            </div>
+        </MudPaper>
+       
+        @if(_showSearch)
+        {
+            <div class="mt-5"></div>
+
+            <Animate Animation="Animations.FadeUp">
+                <MudCard Class="px-5 pt-3 pb-4" Elevation="1">
+                    <div class="d-flex align-center">
+                        <MudTextField Immediate Variant="Variant.Outlined" T="string" DebounceInterval="200" Label="Tìm kiếm" Placeholder="Tìm kiếm..." MaxLength="200" AdornmentIcon="@Icons.Material.Filled.Search" Adornment="Adornment.End" Value="@_searchString" ValueChanged="@((string val) =>  { _searchString = val; })" OnAdornmentClick="@(() => {  OnSearchClick(); })" OnDebounceIntervalElapsed="@(() => {})"></MudTextField>
+                    </div>
+                </MudCard>
+            </Animate>
+        }
+        
+
+        <div class="mt-3"></div>
+
+        @if(!_isSearching)
+        {
+            <PostList UserId="@_idUser" AllMajor="@_isAdmin"/>
+        }
+        else
+        {
+            <PostSearch @ref="@_refPostSearch" PostViewRequest="@_requestPostSearchWithPagination" Cancel="@(() => { _isSearching = false; })" />
+        }
+
+    </div>
+}
+
+
+
+@code {
+
+    private PostViewWithPaginationRequest _requestPostSearchWithPagination = new()
+    {
+
+    };
+
+    private PostSearch _refPostSearch { get; set; }
+
+    private string _searchString = "";
+
+    private bool _showSearch = false;
+    private bool _isSearching = false;
+
+    private bool _isLoadingAll = true;
+    private bool _isLoadingMajor = true;
+
+    private Guid _idUser;
+    private bool _isAdmin = false;
+
+    protected async override Task OnInitializedAsync()
+    {
+        await LoadData().ContinueWith((re) =>
+        {
+            _isLoadingAll = false;
+        });
+    }
+
+    private async Task LoadData()
+    {
+        var state = await _authProvider.GetAuthenticationStateAsync();
+        var userIdClaim = state.User.FindAll("UserId").FirstOrDefault();
+        var roleClaims = state.User.FindAll(ClaimTypes.Role).Select(c => c.Value).ToList();
+
+        _isAdmin = roleClaims.Any(c => c == "ADMIN");
+        if (userIdClaim != null)
+        {
+            _idUser = Guid.Parse(userIdClaim.Value);
+        }
+        else { }
+    }
+
+
+    private async void OnSearchClick()
+    {
+        if (_searchString == null || _searchString == "")
+        {
+            _isSearching = false;
+            return;
+        }
+        _requestPostSearchWithPagination.SearchString = _searchString;
+        if(_isSearching)
+        {
+            await _refPostSearch.LoadData(_requestPostSearchWithPagination);
+        }
+        else
+        {
+            _isSearching = true;
+        }
+    }
+
+    private async Task OnClickFilter()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        var parameters = new DialogParameters();
+        parameters.Add(nameof(PostSearchDialog.UserId), _idUser);
+        var dialog = _dialog.Show<PostSearchDialog>("Tìm kiếm chi tiết", parameters, options);
+        await dialog.Result;
+        await LoadData();
+    }
+}

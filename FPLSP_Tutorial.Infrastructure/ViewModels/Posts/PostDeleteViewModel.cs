@@ -8,9 +8,9 @@ namespace FPLSP_Tutorial.Infrastructure.ViewModels.Posts
 {
     public class PostDeleteViewModel : ViewModelBase<PostDeleteRequest>
     {
-        private readonly IPostReadWriteRespository _postReadWriteRespository;
+        private readonly IPostReadWriteRepository _postReadWriteRespository;
         private readonly ILocalizationService _localizationService;
-        public PostDeleteViewModel(IPostReadWriteRespository postReadWriteRespository, ILocalizationService localizationService)
+        public PostDeleteViewModel(IPostReadWriteRepository postReadWriteRespository, ILocalizationService localizationService)
         {
             _postReadWriteRespository = postReadWriteRespository;
             _localizationService = localizationService;
@@ -19,7 +19,7 @@ namespace FPLSP_Tutorial.Infrastructure.ViewModels.Posts
         {
             try
             {
-                var result = await _postReadWriteRespository.DeletePost(request, cancellationToken);
+                var result = await _postReadWriteRespository.DeleteAsync(request, cancellationToken);
                 Success = result.Success;
                 ErrorItems = result.Errors;
                 Message = result.Message;

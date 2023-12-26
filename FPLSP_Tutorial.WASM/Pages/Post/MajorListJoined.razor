@@ -1,0 +1,221 @@
+﻿@page "/major/joined"
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major.Request;
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major;
+@using FPLSP_Tutorial.WASM.Pages.Major;
+@layout ManagementLayout
+
+@inject AuthenticationStateProvider _authProvider
+@inject NavigationManager _nav
+@inject IDialogService _dialog
+@inject ISnackbar _snackbar
+
+@inject IMajorRepository _repoMajor
+@inject IMajorRequestRepository _repoMajorRequest
+@inject IUserMajorRepository _repoUserMajor
+
+@if (_isLoadingAll)
+{
+    <LoadingIndicator />
+}
+else
+{
+    <MudBreadcrumbs Items="_breadCrumbs" Class="ms-3"></MudBreadcrumbs>
+
+    <div class="mx-5">
+        <MudPaper Elevation="2" Class="py-3 px-5">
+            <div class="d-flex align-center">
+                <MudText Typo="Typo.h5" Class="mr-auto" Style="font-weight: 500">Chuyên ngành đã tham gia</MudText>
+                <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled">
+                    <MudIconButton Icon="@Icons.Material.Filled.Add" OnClick="@(async () => await OnClickJoinMajor())" Title="Thêm chuyên ngành" Style="border-right: 2px solid white;"></MudIconButton>
+                    <MudIconButton Icon="@Icons.Material.Filled.Search" Title="Tìm kiếm" OnClick="@(() => _isShowSearch = !_isShowSearch)"></MudIconButton>
+                </MudButtonGroup>
+                    
+            </div>
+                
+        </MudPaper>
+
+
+        @if (_isShowSearch)
+        {
+            <div class="mt-5"></div>
+
+            <Animate Animation="Animations.ZoomIn">
+                <MudPaper Class="px-5 pt-3 pb-4" Elevation="2">
+                    <MudTextField T="string" Variant="Variant.Outlined" Label="Tìm kiếm" Placeholder="Nhập tên, mã cần tìm kiếm..." DebounceInterval="1000" OnDebounceIntervalElapsed="@(async (string val) => { _preqMajor.SearchString = val; await OnQueryRequest(); })"></MudTextField>
+                </MudPaper>
+            </Animate>
+        }
+
+        <div class="mt-5"></div>
+
+        <MudTable Items="@_listMajor" Elevation="3" Loading="@_isLoadingList" CustomHeader="true" HeaderClass="table-head-bordered" Bordered="true" Striped="true">
+            <HeaderContent>
+                <MudTHeadRow>
+                    <MudTh>STT</MudTh>
+                    <MudTh>Mã CN</MudTh>
+                    <MudTh>Tên CN</MudTh>
+                    <MudTh>SL bài viết đã tạo</MudTh>
+                    <MudTh>Hành động</MudTh>
+                </MudTHeadRow>
+                
+            </HeaderContent>
+            <RowTemplate>
+                <MudTh>@(_listMajor.IndexOf(context) + 1)</MudTh>
+                    <MudTh>@context.Code</MudTh>
+                    <MudTh>@context.Name</MudTh>
+                    <MudTh>@context.NumberOfPostByUser</MudTh>
+                    <MudTh>
+                        @if(context.IsManagerUser)
+                        {
+                            <MudFab Color="Color.Primary" Class="mx-1" Size="Size.Small" StartIcon="@Icons.Material.Filled.Article" OnClick="@(() => _nav.NavigateTo("/post/archive?idMajor=" + context.Id))" Title="Quản lý bài viết" DisableElevation="true"></MudFab>
+                        }
+                        else
+                        {
+                            <MudFab Color="Color.Primary" Class="mx-1" Size="Size.Small" StartIcon="@Icons.Material.Filled.Accessibility" OnClick="@(async () => await OnClickAddManageRequest(context.Id))" Title="Yêu cầu quyền quản lý" DisableElevation="true" Disabled="@context.HasSentRequest"></MudFab>
+                        }
+
+                        <MudFab Size="Size.Small" Color="Color.Error" Class="m-1" Icon="@Icons.Material.Filled.Delete" OnClick="@(() => OnClickDelete(context.Id))" Title="Xóa" DisableElevation="true">Xóa</MudFab>
+                    </MudTh>
+                </RowTemplate>
+            </MudTable>
+            <CustomPagination Class="my-1" HasNext="@_presMajor.HasNext" OnPageChange="@(async e => {  })" CurrentPageNumber="@_presMajor.PageNumber"></CustomPagination>
+    </div>
+}
+@code {
+    private List<BreadcrumbItem> _breadCrumbs = new List<BreadcrumbItem>
+    {
+        new BreadcrumbItem("Trang chủ", href: "/post/home"),
+        new BreadcrumbItem("Chuyên ngành đã tham gia", href: null, disabled: true)
+    };
+    private Guid? _idUser = null;
+
+    private MajorViewWithPaginationRequest _preqMajor = new()
+    {
+        PageSize = 20
+    };
+    private PaginationResponse<MajorDTO> _presMajor = new();
+    List<MajorDTO> _listMajor = new();
+
+    private bool _isLoadingAll = true;
+    private bool _isLoadingList = true;
+
+    private bool _isShowSearch;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await _authProvider.GetAuthenticationStateAsync();
+        var userIdClaim = state.User.FindAll("UserId").FirstOrDefault();
+
+        if (userIdClaim != null)
+        {
+            _idUser = Guid.Parse(userIdClaim.Value);
+        }
+        else { }
+        _preqMajor.UserId = _idUser;
+
+        _listMajor.Add(new ()
+        {
+            
+        });
+
+        await LoadData().ContinueWith((re) =>
+        {
+            _isLoadingAll = false;
+            _isLoadingList = false;
+        });
+    }
+
+
+    private async Task LoadData()
+    {
+        _presMajor = await _repoMajor.GetListWithPaginationAsync(_preqMajor);
+        _listMajor = (List<MajorDTO>)_presMajor.Data;
+    }
+
+    private async Task OnClickJoinMajor()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        var parameters = new DialogParameters();
+
+        parameters.Add(nameof(MajorRequestAdd.UserId), _idUser);
+        parameters.Add(nameof(MajorRequestAdd.LoadDataParent), EventCallback.Factory.Create(this, (async () => await LoadData())));
+
+        var dialog = _dialog.Show<MajorRequestAdd>("Yêu cầu gia nhập chuyên ngành", parameters, options);
+        await dialog.Result;
+        await LoadData();
+    }
+
+    public async Task OnClickDelete(Guid idMajorDelete)
+    {
+        var confirm = await _dialog.ShowMessageBox
+        (
+            "Thông báo",
+            (MarkupString)("<h2 style=\"font-weight: 500\">Thông báo</h2>" + "Xác nhận rời chuyên ngành?<br><span style=\"color: red;\">Các bài viết đã tạo sẽ vẫn tiếp tục được hiển thị cho người dùng khác</span>"),
+        "Xác nhận",
+            cancelText: "Hủy"
+        );
+        if (confirm == true)
+        {
+            var removeConfirm = await _repoUserMajor.DeleteAsync(new()
+            {
+                UserId = _idUser ?? Guid.Empty,
+                MajorId = idMajorDelete,
+                DeletedBy = _idUser
+            });
+            if (removeConfirm)
+            {
+                _snackbar.Add("Rời thành công", Severity.Success);
+            }
+            else
+            {
+                _snackbar.Add("Rời thất bại", Severity.Error);
+            }
+            await LoadData();
+        }
+    }
+
+    private async Task OnQueryRequest()
+    {
+        _isLoadingList = true;
+        StateHasChanged();
+        if (_preqMajor.SearchString != "" && _preqMajor.SearchString != null)
+        {
+            _preqMajor.PageNumber = 1;
+        }
+        await LoadData().ContinueWith((re) =>
+        {
+            _isLoadingList = false;
+            StateHasChanged();
+        });
+
+    }
+
+    private async Task OnClickAddManageRequest(Guid idMajor)
+    {
+        var confirm = await _dialog.ShowMessageBox
+        (
+            "Thông báo",
+            (MarkupString)("<h2 style=\"font-weight: 500\">Thông báo</h2>" + "Xác nhận gửi yêu cầu quản lý?"),
+        "Xác nhận",
+            cancelText: "Hủy"
+        );
+        if (confirm == true)
+        {
+            var result = await _repoMajorRequest.AddAsync(new()
+                {
+                    MajorId = idMajor,
+                    CreatedBy = _idUser,
+                    IsManager = true
+                });
+            if (result)
+            {
+                _snackbar.Add("Gửi yêu cầu thành công", Severity.Success);
+                await LoadData();
+            }
+            else
+            {
+                _snackbar.Add("Gửi yêu cầu thất bại", Severity.Error);
+            }
+        }
+    }
+}

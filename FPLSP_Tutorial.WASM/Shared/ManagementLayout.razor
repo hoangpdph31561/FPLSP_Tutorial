@@ -1,50 +1,89 @@
 ﻿@using System.Security.Claims;
-@using FPLSP_Tutorial.WASM.Pages.Recreation;
+@using FPLSP_Tutorial.WASM.Pages;
 @inherits LayoutComponentBase
 
 @inject AuthenticationStateProvider _authProvider;
 @inject NavigationManager _nav
 
-<MudThemeProvider />
-<MudDialogProvider FullWidth="true" />
+<MudThemeProvider Theme="@_CustomTheme"/>
+<MudDialogProvider FullWidth="true" NoHeader="true" />
 <MudSnackbarProvider />
 
 <style>
     .custom-layout-color {
         background-color: rgb(255, 255, 255);
     }
+    :root {
+        --mud-default-borderradius: 8px;
+        --mud-palette-primary-text: #f2bb1f;
+    }
 
+    .mud-breadcrumb-item > a {
+        font-weight: 500;
+    }
 
+    .custom-secondary-color {
+        color: #f2bb1f;
+    }
 </style>
 
 <MudLayout>
     <MudAppBar Elevation="0" Class="custom-layout-color" Style="border-bottom: 1px solid lightgrey;">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="ContentColor" Edge="Edge.Start" OnClick="@ToggleDrawer" />
         <MudSpacer />
-        <div>
+        @{
+            var roleString = "";
+            foreach(var i in _listRoles) 
+            {
+                if (roleString != "") roleString += ", ";
+                roleString += i;
+            }
+        }
+        <div title="@("Email: " + _displayEmail)">
             <MudText Color="ContentColor" Typo="Typo.subtitle2">@(_displayName)</MudText>
-            <MudText Color="ContentColor" Typo="Typo.caption">@(_displayEmail)</MudText>
+                <MudText Color="ContentColor" Typo="Typo.caption">@("Chức vụ: " + roleString)</MudText>
         </div>
         <MudIconButton Icon="@Icons.Material.Filled.Logout" Color="ContentColor" Title="Đăng xuất" OnClick="@(async() => await OnLogout())" />
     </MudAppBar>
         <MudDrawer @bind-Open="@open" Variant="DrawerVariant.Mini" Elevation="0" Class="custom-layout-color">
-        <MudDrawerHeader Class="top-row px-4 d-flex align-center" >
-            @if(open)
+        <MudDrawerHeader Class="top-row py-0 d-flex align-center justify-center" >
+            @if (open)
             {
-                <MudText Typo="Typo.h6">FPLSP Tutorial</MudText>
+                <MudDrawerHeader Class="d-flex align-items-center justify-content-center px-2 pt-2 py-0">
+                    <MudImage Src="/udpm.png" Fluid="true" Style="height: calc(var(--mud-appbar-height) - 11px);"></MudImage>
+                </MudDrawerHeader>
             }
         </MudDrawerHeader>
         
         <MudNavMenu>
-            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home" Href="/recreation/post/client">Trang chủ</MudNavLink>
-            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.List" Href="/recreation/major">Quản lý chuyên ngành</MudNavLink>
-            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.SupervisorAccount" Href="/recreation/lecturer-manager">Quản lý giảng viên</MudNavLink>
-            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Newspaper" Href="/recreation/post-manager">Quản lý bài viết</MudNavLink>
+            <MudNavLink IconColor="Color.Primary" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home" Href="/post/home">Trang chủ</MudNavLink>
+            <AuthorizeView Roles="@("ADMIN")">
+                
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.SupervisorAccount" Href="/user-manager">Quản lý giảng viên</MudNavLink>
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.List" Href="/major/manage/list">Quản lý chuyên ngành</MudNavLink>
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Newspaper" Href="/post/system">Quản lý bài viết hệ thống</MudNavLink>
+            </AuthorizeView>
+
+            @*<MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Pageview" Href="/post/manage">Kiểm duyệt bài viết</MudNavLink>*@
+
+            <AuthorizeView Roles="@("GV, CNBM")">
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.DomainVerification" Href="/major/joined">Chuyên ngành đã tham gia</MudNavLink>
+            </AuthorizeView>
+
+            <AuthorizeView Roles="@("CNBM")">
+                
+            </AuthorizeView>
+            
+            <AuthorizeView Roles="@("ADMIN, CNBM")">
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Archive" Href="/post/archive">Bài viết đã tạo</MudNavLink>
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.EditNote" Href="/post/create">Tạo bài viết</MudNavLink>
+            </AuthorizeView>
+
         </MudNavMenu>
     </MudDrawer>
     <MudMainContent >
         <div style="
-                background-color: rgba(247, 251, 255, 1); 
+                background-color: rgba(235, 235, 235, 0.5); 
                 min-height: calc(100vh - var(--mud-appbar-height));
                 border-top: 1px solid lightgrey; 
                 border-left: 1px solid lightgrey;">
@@ -56,8 +95,20 @@
 @code {
     bool open = false;
 
+    private readonly MudTheme _CustomTheme = new()
+        {
+            Palette = new Palette
+            {
+                Primary = "#000000",
+
+            }
+        };
+
+
     private string _displayName = "";
     private string _displayEmail = "";
+    private List<string> _listRoles = new();
+
 
     private Color ContentColor = Color.Dark;
 
@@ -69,6 +120,7 @@
         _displayName = claimName == null ? "<N/A>" : claimName.Value.ToString();
         var claimEmail = lstClaim.FirstOrDefault(c => c.Type == ClaimTypes.Email);
         _displayEmail = claimEmail == null ? "<N/A>" : claimEmail.Value.ToString();
+        _listRoles = lstClaim.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
     }
 
     void ToggleDrawer()

@@ -8,13 +8,13 @@ using FPLSP_Tutorial.Domain.Entities;
 
 namespace FPLSP_Tutorial.Infrastructure.ViewModels.MajorRequests
 {
-    public class MajorRequestUpDateViewModel : ViewModelBase<MajorRequestUpdateRequest>
+    public class MajorRequestUpdateViewModel : ViewModelBase<MajorRequestUpdateRequest>
     {
-        private readonly IMajorRequestReadWriteRespository _majorRequestReadWriteRespository;
+        private readonly IMajorRequestReadWriteRepository _majorRequestReadWriteRespository;
         private readonly ILocalizationService _localizationService;
         private readonly IMapper _mapper;
 
-        public MajorRequestUpDateViewModel(IMajorRequestReadWriteRespository majorRequestReadWriteRespository, ILocalizationService localizationService, IMapper mapper)
+        public MajorRequestUpdateViewModel(IMajorRequestReadWriteRepository majorRequestReadWriteRespository, ILocalizationService localizationService, IMapper mapper)
         {
             _majorRequestReadWriteRespository = majorRequestReadWriteRespository;
             _localizationService = localizationService;

@@ -10,10 +10,10 @@ namespace FPLSP_Tutorial.Infrastructure.ViewModels.Posts
 {
     public class PostUpdateViewModel : ViewModelBase<PostUpdateRequest>
     {
-        private readonly IPostReadWriteRespository _postReadWriteRespository;
+        private readonly IPostReadWriteRepository _postReadWriteRespository;
         private readonly ILocalizationService _localizationService;
         private readonly IMapper _mapper;
-        public PostUpdateViewModel(IPostReadWriteRespository postReadWriteRespository, ILocalizationService localizationService, IMapper mapper)
+        public PostUpdateViewModel(IPostReadWriteRepository postReadWriteRespository, ILocalizationService localizationService, IMapper mapper)
         {
             _postReadWriteRespository = postReadWriteRespository;
             _localizationService = localizationService;
@@ -24,7 +24,7 @@ namespace FPLSP_Tutorial.Infrastructure.ViewModels.Posts
         {
             try
             {
-                var result = await _postReadWriteRespository.UpdatePost(_mapper.Map<PostEntity>(request), cancellationToken);
+                var result = await _postReadWriteRespository.UpdateAsync(_mapper.Map<PostEntity>(request), cancellationToken);
                 Success = result.Success;
                 ErrorItems = result.Errors;
                 Message = result.Message;

@@ -6,23 +6,23 @@ using FPLSP_Tutorial.Application.ViewModels;
 
 namespace FPLSP_Tutorial.Infrastructure.ViewModels.MajorRequests
 {
-    public class MajorRequestListWithPaginationViewModel : ViewModelBase<ViewMajorRequestWithPaginationRequest>
+    public class MajorRequestListWithPaginationViewModel : ViewModelBase<MajorRequestViewWithPaginationRequest>
 
     {
-        public readonly IMajorRequestReadOnlyRespository _MajorRequestReadOnlyRepository;
+        public readonly IMajorRequestReadOnlyRepository _MajorRequestReadOnlyRepository;
         private readonly ILocalizationService _localizationService;
 
-        public MajorRequestListWithPaginationViewModel(IMajorRequestReadOnlyRespository MajorRequestReadOnlyRepository, ILocalizationService localizationService)
+        public MajorRequestListWithPaginationViewModel(IMajorRequestReadOnlyRepository MajorRequestReadOnlyRepository, ILocalizationService localizationService)
         {
             _MajorRequestReadOnlyRepository = MajorRequestReadOnlyRepository;
             _localizationService = localizationService;
         }
 
-        public override async Task HandleAsync(ViewMajorRequestWithPaginationRequest data, CancellationToken cancellationToken)
+        public override async Task HandleAsync(MajorRequestViewWithPaginationRequest data, CancellationToken cancellationToken)
         {
             try
             {
-                var result = await _MajorRequestReadOnlyRepository.GetMajorRequestWithPaginationByAdminAsync(data, cancellationToken);
+                var result = await _MajorRequestReadOnlyRepository.GetMajorRequestWithPaginationAsync(data, cancellationToken);
 
                 Data = result.Data!;
                 Success = result.Success;

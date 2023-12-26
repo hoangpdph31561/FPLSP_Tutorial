@@ -1,0 +1,155 @@
+﻿@page "/post/view/{Id}"
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post;
+
+@layout ManagementLayout
+
+@inject IPostRepository _repoPost
+
+@inject NavigationManager _nav
+
+<style>
+    .post-transform {
+        cursor: pointer;
+    }
+
+        .post-transform:hover {
+            transition: 0.4s all ease;
+            transform: scale(1.02);
+        }
+
+    .post-content {
+        max-height: 0px;
+        opacity: 0;
+        transition: visibility 0s, opacity 0.1s linear, height 0.5s ease;
+    }
+
+    .post-transform:hover .post-content {
+        max-height: 80px;
+        visibility: visible;
+        opacity: 1;
+    }
+
+    .overflow-text-1 {
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+</style>
+
+
+@if(_isLoadingAll)
+{
+    <LoadingIndicatorOverlay/>
+}
+else
+{
+
+    <MudBreadcrumbs Class="ms-3" Items="@(new List<BreadcrumbItem>() {
+                        new BreadcrumbItem("Trang chủ", href: "/post/home"),
+                        new BreadcrumbItem("Bài viết", href: null, disabled: true)
+    })"></MudBreadcrumbs>
+    <div class="mx-5">
+        <MudPaper Class="pa-5" Elevation="2">
+            <div class="d-flex align-center">
+                <div class="overflow-hidden">
+                    @foreach (var i in _detailPost.ListTag)
+                    {
+                        <span style="font-size: 20px; background-color: lightgray; border-radius: 10px;" class="me-2 pa-2">@i.Name</span>
+                    }
+                </div>
+            </div>
+            <div class="mt-2">
+                <MudText Typo="Typo.h4" Style="word-wrap:break-word">
+                    <span style="font-weight:500;">@_detailPost!.Title</span>
+                </MudText>
+                <MudText Typo="Typo.body1">Tạo bởi: <span style="font-weight: 500">@_detailPost.CreatedByName</span><span> | @_detailPost.CreatedTime.ToString("dd/MM/yyyy")</span></MudText>
+            </div>
+            <MudDivider Class="my-3"></MudDivider>
+            <div>
+                @((MarkupString)_detailPost.Content)
+            </div>
+        </MudPaper>
+        @if(_listChildPost.Count > 0)
+        {
+            <div class="d-flex align-center justify-center mt-4 mb-2">
+                <MudIcon Icon="@Icons.Material.Filled.Share" Size="Size.Small"></MudIcon>
+                <MudText Typo="Typo.h6" Class="ms-1">Các bài viết tham khảo</MudText>
+            </div>
+            <MudDivider Class="mb-3" />
+            @foreach (var post in _listChildPost)
+            {
+                if (_listChildPost.IndexOf(post) > 0)
+                {
+                    <MudDivider Class="my-3 mx-4" DividerType="DividerType.Middle"></MudDivider>
+                }
+                <MudCard Class="py-2 px-4 post-transform" Elevation="0" Style="border: 1px solid lightgrey;" @onclick="@(() => _nav.NavigateTo($"/post/view/{post.Id}"))">
+                    <div class="d-flex">
+                        <MudIcon Icon="@Icons.Material.Filled.Person" Size="Size.Small"></MudIcon>
+                        @{
+                            var disName = (post.CreatedByName == null || post.CreatedByName == "") ? "N/A" : post.CreatedByName;
+                        }
+                        <MudText Typo="Typo.caption" Style="font-weight: 500; max-width: 50%" Class="overflow-text-1" title="@disName">@(disName)</MudText>
+                            <MudText Typo="Typo.caption"> | @post.CreatedTime.ToString("dd/MM/yyyy")</MudText>
+                        </div>
+
+                        <MudText Typo="Typo.h6" Style="font-weight: 500;">@post.Title</MudText>
+
+                        <div class="d-flex align-center my-2">
+                            <div class="overflow-hidden">
+                                @foreach (var i in post.ListTag)
+                            {
+                                <span style="background-color: lightgray; border-radius: 5px;" class="me-1 pa-1">@i.Name</span>
+                            }
+                        </div>
+                    </div>
+
+                </MudCard>
+            }
+            <MudDivider Class="mt-3" />
+        }
+        
+    </div>
+}
+
+
+
+@code {
+    [Parameter]
+    public string Id { get; set; } = string.Empty;
+
+    private PostDTO _detailPost = new();
+
+    private List<PostDTO> _listChildPost = new();
+
+    private bool _isLoadingAll = true;
+    private bool _isLoadingChildPost = true;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (Id != _detailPost.Id.ToString())
+        {
+            await LoadData().ContinueWith((re) =>
+            {
+                _isLoadingAll = false;
+                _isLoadingChildPost = false;
+                StateHasChanged();
+            });
+        }
+
+    }
+
+    private async Task LoadData()
+    {
+        _detailPost = await _repoPost.GetByIdAsync(Guid.Parse(Id));
+        var presPost = await _repoPost.GetListAsync(new()
+        {
+            PostId = _detailPost.Id,
+        });
+        if(presPost != null)
+        {
+            _listChildPost = presPost;
+        }
+    }
+}

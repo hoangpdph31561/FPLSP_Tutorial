@@ -1,0 +1,198 @@
+﻿@page "/post/create"
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major;
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post.Request;
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.PostTag.Request;
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Tag;
+@using FPLSP_Tutorial.WASM.Pages.Post.Components
+
+@layout ManagementLayout
+
+@inject IPostRepository _repoPost
+@inject IPostTagRepository _repoPostTag
+@inject IMajorRepository _repoMajor
+@inject ITagRepository _repoTag
+@inject ISnackbar _mudSnackbar
+@inject NavigationManager _nav
+@inject AuthenticationStateProvider _authProvider
+
+
+
+@if (_isEnableFileImport)
+{
+    <FileImportPopover Enable="@_isEnableFileImport" ReturnString="@((string s) => _rteRef.SetRTEValue(s))" OnClose="@(() => _isEnableFileImport = false)" />
+}
+
+@if(_isLoadingAll)
+{
+    <LoadingIndicatorOverlay/>
+}
+else
+{
+    <PostEditInformation Visible="@_isEnablePostInformation" OnClose="@(() => _isEnablePostInformation = false)" ListTagSelected="@_listTagSelected" UserId="@_idUser" OnSave="@(async() => await OnSaveAsync())" PostCreateRequest="@_postCreateR" BindListTagSelected="@((List<TagDTO> lstTag) => _listTagSelected = lstTag)" @ref="@_refPostEditInformation" SpecifyMajorId="@specifyMajorId" MajorId="@idMajor" />
+
+    <div class="pa-2">
+        <MudBreadcrumbs Items="@_listBreadCrumb"></MudBreadcrumbs>
+
+        <MudPaper Class="mt-3 mx-3 pa-4 position-relative" Elevation="2">
+
+            <div class="d-flex align-center mb-3">
+                <MudText Typo="Typo.h5" Class="mr-auto" Style="font-weight: 500">Tạo bài viết</MudText>
+
+                <MudChip Icon="@Icons.Material.Filled.FileUpload" title="Nhập nội dung bằng file truyền vào(.xlsx, .docs)" Color="Color.Success" OnClick="@(() => _isEnableFileImport = true)">Nhập file</MudChip>
+                <MudChip OnClick="@(async () => { _isEnablePostInformation= true; })" Color="Color.Primary" Icon="@Icons.Material.Filled.Save">Lưu</MudChip>
+            </div>
+
+            <RichTextEditor @ref="@_rteRef" Get="@((string val) => { _postCreateR.Content =  val; })" />
+
+            <div class="row mt-2">
+                <div class="col d-flex justify-end">
+                    @if(fallBackUrl != null)
+                    {
+                        <MudChip OnClick="@(() => _nav.NavigateTo(fallBackUrl))" Color="Color.Error" Icon="@Icons.Material.Filled.ExitToApp">Quay lại</MudChip>
+                    }
+                </div>
+            </div>
+        </MudPaper>
+    </div>
+}
+
+
+
+
+
+@code {
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string? idPost { get; set; }
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string? fallBackUrl { get; set; }
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public bool specifyMajorId { get; set; }
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public Guid? idMajor { get; set; }
+
+    private List<BreadcrumbItem> _listBreadCrumb = new();
+
+    private bool _isLoadingAll = true;
+    private bool _isEnableFileImport = false;
+    private bool _isEnablePostInformation = false;
+
+    private Guid _idUser;
+
+    private List<TagDTO> _listTagSelected = new();
+
+    RichTextEditor _rteRef = new();
+
+    PostEditInformation _refPostEditInformation = new();
+
+    private PostCreateRequest _postCreateR = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+    }
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(firstRender)
+        {
+            var state = await _authProvider.GetAuthenticationStateAsync();
+            var userIdClaim = state.User.FindAll("UserId").FirstOrDefault();
+
+            if (userIdClaim != null)
+            {
+                _idUser = Guid.Parse(userIdClaim.Value);
+            }
+            else { }
+            _postCreateR.CreatedBy = _idUser;
+            _isLoadingAll = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task OnSaveAsync()
+    {
+        await _rteRef.GetRTEValue();
+
+        if(_postCreateR.Content == null || _postCreateR.Content == "")
+        {
+            _mudSnackbar.Add("Bài viết chưa có nội dung", Severity.Error);
+            return;
+        }
+
+        if(idPost != null) _postCreateR.PostId = Guid.Parse(idPost);
+        var resultPost = await _repoPost.AddAsync(_postCreateR);
+
+        if (resultPost != null)
+        {
+            var resultPostTag = await _repoPostTag.AddRangeAsync(_listTagSelected.AsEnumerable().Select(t =>
+            {
+                return new PostTagCreateRequest()
+                {
+                    PostId = resultPost.Id,
+                    TagId = t.Id,
+                    CreatedBy = _idUser
+                };
+            }).ToList());
+            if(resultPostTag)
+            {
+                _mudSnackbar.Add("Thêm thành công", Severity.Success);
+                if(fallBackUrl != null)
+                {
+                    _nav.NavigateTo(fallBackUrl);
+                    return;
+                }
+            }
+            else
+            {
+                _mudSnackbar.Add("Thêm bài viết thành công. Thêm nhãn thất bại", Severity.Warning);
+                if (fallBackUrl != null)
+                {
+                    _nav.NavigateTo(fallBackUrl);
+                    return;
+                }
+            }
+
+            await Cleanup();
+        }
+        else
+        {
+            _mudSnackbar.Add("Thêm thất bại", Severity.Error);
+        }
+    }
+
+    private void BreadCrumbHandling()
+    {
+        _listBreadCrumb.Clear();
+        _listBreadCrumb.Add(new BreadcrumbItem("Trang chủ", href: "/post/client"));
+        if(fallBackUrl != null)
+        {
+            _listBreadCrumb = new List<BreadcrumbItem>() {
+                        new BreadcrumbItem("Danh sách", href: "/post-manager"),
+            };
+        }
+        _listBreadCrumb.Add(new BreadcrumbItem("Tạo bài viết", href: null, disabled: true));
+    }
+
+
+    private async Task Cleanup()
+    {
+        if(fallBackUrl != null)
+        {
+            _nav.NavigateTo(fallBackUrl);
+            return;
+        }
+        _listTagSelected = new();
+        await _rteRef.SetRTEValue("");
+        _postCreateR.Content = "";
+        _postCreateR.Title = "";
+        _isEnablePostInformation = false;
+        await _refPostEditInformation.Cleanup();
+        StateHasChanged();
+    }
+}

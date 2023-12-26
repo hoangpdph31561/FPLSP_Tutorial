@@ -15,7 +15,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
 {
-    public class MajorRequestReadOnlyRepository : IMajorRequestReadOnlyRespository
+    public class MajorRequestReadOnlyRepository : IMajorRequestReadOnlyRepository
     {
         private readonly IMapper _mapper;
         private readonly ILocalizationService _localizationService;
@@ -27,18 +27,96 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
             _localizationService = localizationService;
             _dbContext = dbContext;
         }
-        public async Task<RequestResult<MajorRequestDto?>> GetMajorRequestByIdAsync(Guid idMajorRequest, CancellationToken cancellationToken)
+
+        public async Task<RequestResult<List<MajorRequestDTO>>> GetMajorRequestAsync(MajorRequestViewRequest request, CancellationToken cancellationToken)
         {
             try
             {
-                var MajorRequest = await _dbContext.MajorRequestEntities.AsNoTracking().Where(c => c.Id == idMajorRequest && !c.Deleted).ProjectTo<MajorRequestDto>(_mapper.ConfigurationProvider)
-                .FirstOrDefaultAsync(cancellationToken);
+                IQueryable<MajorRequestEntity> queryable = _dbContext.MajorRequestEntities
+                    .AsNoTracking()
+                    .AsQueryable()
+                    .Where(c => c.Status != EntityStatus.Deleted && !c.Deleted);
 
-                return RequestResult<MajorRequestDto?>.Succeed(MajorRequest);
+                var result = await queryable
+                    .ProjectTo<MajorRequestDTO>(_mapper.ConfigurationProvider)
+                    .ToListAsync();
+
+                return RequestResult<List<MajorRequestDTO>>.Succeed(result);
             }
             catch (Exception e)
             {
-                return RequestResult<MajorRequestDto?>.Fail(_localizationService["MajorRequest is not found"], new[]
+                return RequestResult<List<MajorRequestDTO>>.Fail(_localizationService["List of MajorRequest are not found"], new[]
+                {
+                    new ErrorItem
+                    {
+                        Error = e.Message,
+                        FieldName = LocalizationString.Common.FailedToGet + "List of MajorRequest"
+                    }
+                });
+            }
+        }
+
+        public async Task<RequestResult<PaginationResponse<MajorRequestDTO>>> GetMajorRequestWithPaginationAsync(MajorRequestViewWithPaginationRequest request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                IQueryable<MajorRequestEntity> queryable = _dbContext.MajorRequestEntities
+                    .AsNoTracking()
+                    .AsQueryable()
+                    .Where(c => c.Status != EntityStatus.Deleted && !c.Deleted);
+
+                //User exist in DB only
+                queryable = queryable.Where(mr => _dbContext.UserEntities.Any(u => u.Id == mr.CreatedBy && u.Status != EntityStatus.Deleted));
+
+                var result = await queryable
+                    .PaginateAsync<MajorRequestEntity, MajorRequestDTO>(request, _mapper, cancellationToken);
+                    
+                if(result.Data != null)
+                {
+                    foreach(var dto in  result.Data)
+                    {
+                        var user = await _dbContext.UserEntities.FirstOrDefaultAsync(u => u.Id == dto.CreatedBy);
+                        dto.CreatedByEmail = user == null ? "<N/A>" : user.Email;
+                        dto.CreatedByName = user == null ? "<N/A>" : user.Username;
+                    }
+                }
+
+                return RequestResult<PaginationResponse<MajorRequestDTO>>.Succeed(new PaginationResponse<MajorRequestDTO>()
+                {
+                    PageNumber = request.PageNumber,
+                    PageSize = request.PageSize,
+                    HasNext = result.HasNext,
+                    Data = result.Data
+                });
+            }
+            catch (Exception e)
+            {
+                return RequestResult<PaginationResponse<MajorRequestDTO>>.Fail(_localizationService["List of MajorRequest is not found"], new[]
+                {
+                    new ErrorItem
+                    {
+                        Error = e.Message,
+                        FieldName = LocalizationString.Common.FailedToGet + "list of MajorRequest"
+                    }
+                });
+            }
+        }
+
+        public async Task<RequestResult<MajorRequestDTO?>> GetMajorRequestByIdAsync(Guid idMajorRequest, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var MajorRequest = await _dbContext.MajorRequestEntities
+                    .AsNoTracking()
+                    .Where(c => c.Id == idMajorRequest && !c.Deleted)
+                    .ProjectTo<MajorRequestDTO>(_mapper.ConfigurationProvider)
+                    .FirstOrDefaultAsync(cancellationToken);
+
+                return RequestResult<MajorRequestDTO?>.Succeed(MajorRequest);
+            }
+            catch (Exception e)
+            {
+                return RequestResult<MajorRequestDTO?>.Fail(_localizationService["MajorRequest is not found"], new[]
                 {
                     new ErrorItem
                     {
@@ -49,64 +127,6 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly
             }
         }
 
-        public async Task<RequestResult<PaginationResponse<MajorRequestDto>>> GetMajorRequestWithPaginationByNotDeletedAsync(ViewMajorRequestWithPaginationRequest request, CancellationToken cancellationToken)
-        {
-            try
-            {
-                var query = _dbContext.MajorRequestEntities.AsNoTracking().Where(x => x.Deleted == false && x.Status != EntityStatus.Deleted).ProjectTo<MajorRequestDto>(_mapper.ConfigurationProvider);
-                if (!string.IsNullOrWhiteSpace(request.Email))
-                {
-                    query = query.Where(x => x.Email.ToLower().Contains(request.Email));
-                }
-                var result = await query.PaginateAsync(request, cancellationToken);
-                return RequestResult<PaginationResponse<MajorRequestDto>>.Succeed(new PaginationResponse<MajorRequestDto>()
-                {
-                    PageNumber = request.PageNumber,
-                    PageSize = request.PageSize,
-                    HasNext = result.HasNext,
-                    Data = result.Data,
-                });
-            }
-            catch (Exception e)
-            {
-                return RequestResult<PaginationResponse<MajorRequestDto>>.Fail(_localizationService["List of MajorRequest are not found"], new[]
-                {
-                    new ErrorItem
-                    {
-                        Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToGet + "list of MajorRequest"
-                    }
-                });
-            }
-        }
-        public async Task<RequestResult<PaginationResponse<MajorRequestDto>>> GetMajorRequestWithPaginationByAdminAsync(ViewMajorRequestWithPaginationRequest request, CancellationToken cancellationToken)
-        {
-            try
-            {
-                IQueryable<MajorRequestEntity> queryable = _dbContext.MajorRequestEntities.AsNoTracking().AsQueryable();
-                var result = await _dbContext.MajorRequestEntities.AsNoTracking()
-                    .PaginateAsync<MajorRequestEntity, MajorRequestDto>(request, _mapper, cancellationToken);
-
-                return RequestResult<PaginationResponse<MajorRequestDto>>.Succeed(new PaginationResponse<MajorRequestDto>()
-                {
-                    PageNumber = request.PageNumber,
-                    PageSize = request.PageSize,
-                    HasNext = result.HasNext,
-                    Data = result.Data
-                });
-            }
-            catch (Exception e)
-            {
-                return RequestResult<PaginationResponse<MajorRequestDto>>.Fail(_localizationService["List of MajorRequest are not found"], new[]
-                {
-                    new ErrorItem
-                    {
-                        Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToGet + "list of MajorRequest"
-                    }
-                });
-            }
-        }
-
+        
     }
 }

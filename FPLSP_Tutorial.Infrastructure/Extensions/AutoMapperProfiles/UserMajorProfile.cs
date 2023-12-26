@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using FPLSP_Tutorial.Application.DataTransferObjects.MajorUser;
-using FPLSP_Tutorial.Application.DataTransferObjects.MajorUser.Request;
+using FPLSP_Tutorial.Application.DataTransferObjects.UserMajor;
+using FPLSP_Tutorial.Application.DataTransferObjects.UserMajor.Request;
 using FPLSP_Tutorial.Domain.Entities;
 
 namespace FPLSP_Tutorial.Infrastructure.Extensions.AutoMapperProfiles
@@ -9,12 +9,14 @@ namespace FPLSP_Tutorial.Infrastructure.Extensions.AutoMapperProfiles
     {
         public UserMajorProfile()
         {
-            CreateMap<UserMajorEntity, MajorUserDto>().ForMember(des => des.TenChuyenNganh, src => src.MapFrom(src => src.Major.Name))
-                                               .ForMember(des => des.RoleCodes, src => src.MapFrom(src => src.User.RoleCodes))
-                                               .ForMember(des => des.email, src => src.MapFrom(src => src.User.Email));
-            CreateMap<DeleteMajorUserRequest, UserMajorEntity>();
-            CreateMap<UpdateMajorUserRequest, UserMajorEntity>();
-            CreateMap<CreateUserMajorRequest, UserMajorEntity>();
+            CreateMap<UserMajorEntity, UserMajorDTO>()
+                .ForMember(des => des.MajorCode, from => from
+                    .MapFrom(um => um.Major.Code))
+                .ForMember(des => des.MajorName, from => from
+                        .MapFrom(um => um.Major.Name));
+            CreateMap<UserMajorDeleteRequest, UserMajorEntity>();
+            CreateMap<UserMajorUpdateRequest, UserMajorEntity>();
+            CreateMap<UserMajorCreateRequest, UserMajorEntity>();
         }
 
     }

@@ -1,9 +1,9 @@
 ﻿using FPLSP_Tutorial.WASM.Data.DataTransferObjects.User;
 using FPLSP_Tutorial.WASM.Data.DataTransferObjects.User.Request;
+using FPLSP_Tutorial.WASM.Data.Pagination;
 using FPLSP_Tutorial.WASM.Repositories.Interfaces;
+using Microsoft.IdentityModel.Tokens;
 using System.Net.Http.Json;
-using System.Text.Json;
-using static FPLSP_Tutorial.Application.ValueObjects.Common.LocalizationString;
 
 namespace FPLSP_Tutorial.WASM.Repositories.Implements
 {
@@ -15,11 +15,25 @@ namespace FPLSP_Tutorial.WASM.Repositories.Implements
             _httpClient = httpClient;
         }
 
-        public async Task<UserDTO?> GetUserByEmailAsync(string email)
+        public async Task<PaginationResponse<UserDTO>> GetListWithPaginationAsync(UserViewWithPaginationRequest request)
+        {
+            string url = $"/api/Users/GetListWithPagination?PageNumber={request.PageNumber}&PageSize={request.PageSize}";
+
+            if (!request.SearchString.IsNullOrEmpty()) { url += $"&SearchString={request.SearchString}"; }
+
+            var result = await _httpClient.GetFromJsonAsync<PaginationResponse<UserDTO>>(url);
+            if (result == null)
+            {
+                return new();
+            }
+            return result;
+        }
+
+        public async Task<UserDTO?> GetByEmailAsync(string email)
         {
             try
             {
-                var url = $"/api/Users/GetUserByEmailAsync?email={email}";
+                var url = $"/api/Users/GetByEmailAsync?email={email}";
                 var response = await _httpClient.GetFromJsonAsync<UserDTO?>(url);
                 return response;
             }
@@ -29,7 +43,7 @@ namespace FPLSP_Tutorial.WASM.Repositories.Implements
             }
         }
 
-        public async Task<bool> CreateUserAsync(UserCreateRequest request)
+        public async Task<bool> AddAsync(UserCreateRequest request)
         {
             try
             {
@@ -41,6 +55,16 @@ namespace FPLSP_Tutorial.WASM.Repositories.Implements
             {
                 return false;
             }
+        }
+
+        public async Task<bool> UpdateAsync(UserUpdateRequest request)
+        {
+            var resultCreate = await _httpClient.PutAsJsonAsync($"/api/Users", request);
+            if (resultCreate.IsSuccessStatusCode)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

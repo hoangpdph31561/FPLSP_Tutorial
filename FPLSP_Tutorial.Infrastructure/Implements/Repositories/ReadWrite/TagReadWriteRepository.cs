@@ -21,16 +21,11 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
             _localizationService = localizationService;
         }
 
-        public async Task<RequestResult<int>> AddTagAsync(List<TagEntity> lstTagCreate, CancellationToken cancellationToken)
+        public async Task<RequestResult<int>> AddTagAsync(TagEntity entity, CancellationToken cancellationToken)
         {
             try
             {
-                foreach (var item in lstTagCreate)
-                {
-                    item.CreatedTime = DateTimeOffset.Now;
-                    item.Status = EntityStatus.Active;
-                }
-                await _dbContext.TagEntities.AddRangeAsync(lstTagCreate);
+                await _dbContext.TagEntities.AddAsync(entity);
                 await _dbContext.SaveChangesAsync(cancellationToken);
 
                 return RequestResult<int>.Succeed(1);
@@ -43,36 +38,6 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
                     {
                         Error = e.Message,
                         FieldName = LocalizationString.Common.FailedToCreate + "Tags"
-                    }
-                });
-            }
-        }
-
-        public async Task<RequestResult<int>> DeleteTagAsync(TagDeleteRequest request, CancellationToken cancellationToken)
-        {
-            try
-            {
-                var tag = await GetTagByIdAsync(request.Id, cancellationToken);
-
-                tag!.Deleted = true;
-                tag.DeletedBy = request.DeletedBy;
-                tag.DeletedTime = DateTimeOffset.UtcNow;
-
-                tag.Status = EntityStatus.Deleted;
-
-                _dbContext.TagEntities.Remove(tag);
-                await _dbContext.SaveChangesAsync(cancellationToken);
-
-                return RequestResult<int>.Succeed(1);
-            }
-            catch (Exception e)
-            {
-                return RequestResult<int>.Fail(_localizationService["Unable to delete tag"], new[]
-                {
-                    new ErrorItem
-                    {
-                        Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToDelete + "tag"
                     }
                 });
             }
@@ -102,6 +67,35 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
                     {
                         Error = e.Message,
                         FieldName = LocalizationString.Common.FailedToUpdate + "tag"
+                    }
+                });
+            }
+        }
+
+        public async Task<RequestResult<int>> DeleteTagAsync(TagDeleteRequest request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var tag = await GetTagByIdAsync(request.Id, cancellationToken);
+
+                tag!.Deleted = true;
+                tag.DeletedBy = request.DeletedBy;
+                tag.DeletedTime = DateTimeOffset.UtcNow;
+
+                tag.Status = EntityStatus.Deleted;
+
+                await _dbContext.SaveChangesAsync(cancellationToken);
+
+                return RequestResult<int>.Succeed(1);
+            }
+            catch (Exception e)
+            {
+                return RequestResult<int>.Fail(_localizationService["Unable to delete tag"], new[]
+                {
+                    new ErrorItem
+                    {
+                        Error = e.Message,
+                        FieldName = LocalizationString.Common.FailedToDelete + "tag"
                     }
                 });
             }

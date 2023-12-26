@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
+using FPLSP_Tutorial.Application.DataTransferObjects.User;
 using FPLSP_Tutorial.Application.DataTransferObjects.User.Request;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly;
 using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadWrite;
 using FPLSP_Tutorial.Application.Interfaces.Services;
+using FPLSP_Tutorial.Application.ValueObjects.Pagination;
 using FPLSP_Tutorial.Infrastructure.ViewModels.User;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,28 +28,31 @@ namespace FPLSP_Tutorial.API.Controllers
             _mapper = mapper;
         }
 
-
-        [HttpGet("GetUserByEmailAsync")]
-        public async Task<IActionResult> GetUserByEmailAsync([FromQuery] string email, CancellationToken cToken)
-        {
-            UserGetByEmailViewModel vm = new(_localizationService, _userReadOnlyRepository);
-            await vm.HandleAsync(email, cToken);
-            return Ok(vm.Data);
-        }
-
-
-        [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] ViewUserWithPaginationRequest request, CancellationToken cancellationToken)
+        [HttpGet("GetListWithPagination")]
+        public async Task<IActionResult> GetListWithPaginationAsync([FromQuery] UserViewWithPaginationRequest request, CancellationToken cancellationToken)
         {
             UserListWithPaginationViewModel vm = new(_userReadOnlyRepository, _localizationService);
 
             await vm.HandleAsync(request, cancellationToken);
-
+            if (vm.Success)
+            {
+                PaginationResponse<UserDTO> paginationResponse = new PaginationResponse<UserDTO>();
+                paginationResponse = (PaginationResponse<UserDTO>)vm.Data;
+                return Ok(paginationResponse);
+            }
             return Ok(vm);
         }
 
-        [HttpGet("id")]
-        public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
+        [HttpGet("GetByEmailAsync")]
+        public async Task<IActionResult> GetByEmailAsync([FromQuery] string email, CancellationToken cToken)
+        {
+            UserViewByEmailViewModel vm = new(_localizationService, _userReadOnlyRepository);
+            await vm.HandleAsync(email, cToken);
+            return Ok(vm.Data);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
             UserViewModel vm = new(_userReadOnlyRepository, _localizationService);
 
@@ -59,7 +64,7 @@ namespace FPLSP_Tutorial.API.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> Post(UserCreateRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> AddAsync(UserCreateRequest request, CancellationToken cancellationToken)
         {
             UserCreateViewModel vm = new(_userReadOnlyRepository, _userReadWriteRepository, _localizationService, _mapper);
 
@@ -69,7 +74,7 @@ namespace FPLSP_Tutorial.API.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Put(UserUpdateRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateAsync(UserUpdateRequest request, CancellationToken cancellationToken)
         {
             UserUpdateViewModel vm = new(_userReadWriteRepository, _localizationService, _mapper);
 
@@ -77,7 +82,5 @@ namespace FPLSP_Tutorial.API.Controllers
 
             return Ok(vm);
         }
-
-
     }
 }

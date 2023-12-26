@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
 {
-    public class PostTagReadWriteRepository : IPostTagReadWriteRespository
+    public class PostTagReadWriteRepository : IPostTagReadWriteRepository
     {
         private readonly AppReadWriteDbContext _dbContext;
         private readonly ILocalizationService _localizationService;
@@ -21,14 +21,10 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
             _localizationService = localizationService;
         }
 
-        public async Task<RequestResult<int>> AddPostTagAsync(List<PostTagEntity> entity, CancellationToken cancellationToken)
+        public async Task<RequestResult<int>> AddRangeAsync(List<PostTagEntity> entity, CancellationToken cancellationToken)
         {
             try
             {
-                foreach (var item in entity)
-                {
-                    item.CreatedTime = DateTimeOffset.Now;
-                }
                 await _dbContext.PostTagEntities.AddRangeAsync(entity);
                 await _dbContext.SaveChangesAsync(cancellationToken);
 
@@ -36,18 +32,67 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
             }
             catch (Exception e)
             {
-                return RequestResult<int>.Fail(_localizationService["Unable to create PostTags"], new[]
+                return RequestResult<int>.Fail(_localizationService["Unable to create List of PostTag"], new[]
                 {
                     new ErrorItem
                     {
                         Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToCreate + "PostTags"
+                        FieldName = LocalizationString.Common.FailedToCreate + "List of PostTag"
                     }
                 });
             }
         }
 
-        public async Task<RequestResult<int>> DeletePostTagAsync(PostTagDeleteRequest request, CancellationToken cancellationToken)
+        public async Task<RequestResult<int>> AddAsync(PostTagEntity entity, CancellationToken cancellationToken)
+        {
+            try
+            {
+                await _dbContext.PostTagEntities.AddAsync(entity);
+                await _dbContext.SaveChangesAsync(cancellationToken);
+
+                return RequestResult<int>.Succeed(1);
+            }
+            catch (Exception e)
+            {
+                return RequestResult<int>.Fail(_localizationService["Unable to create PostTag"], new[]
+                {
+                    new ErrorItem
+                    {
+                        Error = e.Message,
+                        FieldName = LocalizationString.Common.FailedToCreate + "PostTag"
+                    }
+                });
+            }
+        }
+
+        public async Task<RequestResult<int>> UpdateAsync(PostTagEntity entity, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var posttag = await GetTagByIdAsync(entity.Id, cancellationToken);
+                posttag!.TagId = entity.TagId;
+                posttag.PostId = entity.PostId;
+
+                _dbContext.PostTagEntities.Update(posttag);
+                await _dbContext.SaveChangesAsync(cancellationToken);
+
+                return RequestResult<int>.Succeed(1);
+            }
+            catch (Exception e)
+            {
+                return RequestResult<int>.Fail(_localizationService["Unable to update PostTag"], new[]
+                {
+                    new ErrorItem
+                    {
+                        Error = e.Message,
+                        FieldName = LocalizationString.Common.FailedToUpdate + "PostTag"
+                    }
+                });
+            }
+        }
+
+
+        public async Task<RequestResult<int>> DeleteAsync(PostTagDeleteRequest request, CancellationToken cancellationToken)
         {
             try
             {
@@ -77,16 +122,45 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
             }
         }
 
-        public async Task<RequestResult<int>> UpdatePostTagAsync(PostTagEntity entity, CancellationToken cancellationToken)
+        private async Task<PostTagEntity?> GetTagByIdAsync(Guid Id, CancellationToken cancellationToken)
+        {
+            var posttag = await _dbContext.PostTagEntities.FirstOrDefaultAsync(c => c.Id == Id && !c.Deleted, cancellationToken);
+            return posttag;
+        }
+
+        public async Task<RequestResult<int>> SyncRangeAsync(Guid PostId, List<TagEntity> request, CancellationToken cancellationToken)
         {
             try
             {
-                var posttag = await GetTagByIdAsync(entity.Id, cancellationToken);
-                posttag!.TagId = entity.TagId;
-                posttag.PostId = entity.PostId;
-     
-                _dbContext.PostTagEntities.Update(posttag);
+                var listTagExisted = _dbContext.PostTagEntities.Where(t => t.PostId == PostId && t.Status != EntityStatus.Deleted && !t.Deleted).Select(pt => pt.Tag).ToList();
+                foreach (var i in listTagExisted.Where(t => !request.Select(r => r.Id).Contains(t.Id)))
+                {
+                    var postTag = _dbContext.PostTagEntities.FirstOrDefault(pt => pt.TagId == i.Id && pt.PostId == PostId);
+                    if(postTag != null)
+                    {
+                        postTag.Status = EntityStatus.Deleted;
+                        postTag.Deleted = true;
+
+
+                        postTag.DeletedTime = DateTimeOffset.Now;
+                    }
+                }
+
                 await _dbContext.SaveChangesAsync(cancellationToken);
+
+                foreach (var i in request.Where(t => !listTagExisted.Select(r => r.Id).Contains(t.Id)))
+                {
+                    await _dbContext.PostTagEntities.AddAsync(new()
+                    {
+                        PostId = PostId,
+                        TagId = i.Id,
+                        CreatedTime = DateTimeOffset.Now,
+
+                    });
+                    await _dbContext.SaveChangesAsync(cancellationToken);
+                }
+
+                await _dbContext.SaveChangesAsync();
 
                 return RequestResult<int>.Succeed(1);
             }
@@ -101,12 +175,8 @@ namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
                     }
                 });
             }
-        }
 
-        private async Task<PostTagEntity?> GetTagByIdAsync(Guid Id, CancellationToken cancellationToken)
-        {
-            var posttag = await _dbContext.PostTagEntities.FirstOrDefaultAsync(c => c.Id == Id && !c.Deleted, cancellationToken);
-            return posttag;
+
         }
     }
 }

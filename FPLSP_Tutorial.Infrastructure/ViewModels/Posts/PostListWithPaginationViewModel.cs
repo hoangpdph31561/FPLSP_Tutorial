@@ -6,7 +6,7 @@ using FPLSP_Tutorial.Application.ViewModels;
 
 namespace FPLSP_Tutorial.Infrastructure.ViewModels.Posts
 {
-    public class PostListWithPaginationViewModel : ViewModelBase<ViewPostWithPaginationRequest>
+    public class PostListWithPaginationViewModel : ViewModelBase<PostViewWithPaginationRequest>
     {
         private readonly IPostReadOnlyRespository _postReadOnlyRespository;
         private readonly ILocalizationService _localizationService;
@@ -15,7 +15,7 @@ namespace FPLSP_Tutorial.Infrastructure.ViewModels.Posts
             _postReadOnlyRespository = postReadOnlyRespository;
             _localizationService = localizationService;
         }
-        public override async Task HandleAsync(ViewPostWithPaginationRequest request, CancellationToken cancellationToken)
+        public override async Task HandleAsync(PostViewWithPaginationRequest request, CancellationToken cancellationToken)
         {
             try
             {

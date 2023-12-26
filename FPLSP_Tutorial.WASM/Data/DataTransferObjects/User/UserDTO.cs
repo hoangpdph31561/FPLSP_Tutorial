@@ -1,4 +1,4 @@
-﻿using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major;
+﻿using FPLSP_Tutorial.WASM.Data.DataTransferObjects.UserMajor;
 using FPLSP_Tutorial.WASM.Enum;
 
 namespace FPLSP_Tutorial.WASM.Data.DataTransferObjects.User
@@ -11,6 +11,9 @@ namespace FPLSP_Tutorial.WASM.Data.DataTransferObjects.User
         public List<string> RoleCodes { get; set; } = new List<string>();
         public EntityStatus Status { get; set; } = EntityStatus.Active;
 
-        public List<MajorDTO> ListJoinedMajors { get; set; } = new();
+        public DateTimeOffset CreatedTime { get; set; }
+        public Guid? CreatedBy { get; set; }
+
+        public List<UserMajorDTO> ListJoinedMajors { get; set; } = new();
     }
 }

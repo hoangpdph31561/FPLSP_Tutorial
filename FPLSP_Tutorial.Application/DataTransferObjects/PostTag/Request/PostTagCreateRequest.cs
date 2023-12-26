@@ -1,7 +1,13 @@
-﻿namespace FPLSP_Tutorial.Application.DataTransferObjects.PostTag.Request
+﻿using FPLSP_Tutorial.Domain.Enums;
+
+namespace FPLSP_Tutorial.Application.DataTransferObjects.PostTag.Request
 {
     public class PostTagCreateRequest
     {
-        public List<PostTagDto> PostTags { get; set; }
+        public Guid PostId { get; set; }
+        public Guid TagId { get; set; }
+        public EntityStatus Status { get; set; } = EntityStatus.Active;
+
+        public Guid? CreatedBy { get; set; }
     }
 }

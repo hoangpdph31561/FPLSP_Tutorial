@@ -9,9 +9,9 @@ namespace FPLSP_Tutorial.Infrastructure.Extensions.AutoMapperProfiles
     {
         public PostTagProfile()
         {
-            CreateMap<PostTagEntity, PostTagDto>().ReverseMap();
-            CreateMap<PostTagEntity, PostTagCreateRequest>().ReverseMap();
-            CreateMap<PostTagEntity, PostTagUpdateRequest>().ReverseMap();
+            CreateMap<PostTagEntity, PostTagDTO>();
+            CreateMap<PostTagCreateRequest, PostTagEntity>();
+            CreateMap<PostTagUpdateRequest, PostTagEntity>();
         }
     }
 }

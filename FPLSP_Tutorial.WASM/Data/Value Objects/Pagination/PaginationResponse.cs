@@ -1,10 +1,9 @@
-﻿namespace FPLSP_Tutorial.WASM.Data.Pagination
+﻿namespace FPLSP_Tutorial.WASM.Data.Pagination;
+
+public class PaginationResponse<TDataType>
 {
-    public class PaginationResponse<TDataType>
-    {
-        public int PageNumber { get; set; } = 1;
-        public int PageSize { get; set; } = 10;
-        public bool HasNext { get; set; }
-        public ICollection<TDataType>? Data { get; set; }
-    }
+    public int PageNumber { get; set; } = 1;
+    public int PageSize { get; set; } = 10;
+    public bool HasNext { get; set; }
+    public ICollection<TDataType>? Data { get; set; }
 }

@@ -4,6 +4,7 @@
 
 
 @code {
+
     [Parameter]
     public string? Class { get; set; }
 
@@ -12,6 +13,7 @@
 
     [Parameter]
     public EventCallback<string> Get { get; set; }
+
     [Parameter]
     public string? Set { get; set; }
 
@@ -29,7 +31,7 @@
 
     public async Task GetRTEValue()
     {
-        string rteVal = await _js.InvokeAsync<string>("GetRTEValue");
+        var rteVal = await _js.InvokeAsync<string>("GetRTEValue");
         await Get.InvokeAsync(rteVal);
     }
 
@@ -37,4 +39,5 @@
     {
         await _js.InvokeVoidAsync("SetRTEValue", val);
     }
+
 }

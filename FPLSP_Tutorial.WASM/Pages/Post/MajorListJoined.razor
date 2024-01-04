@@ -1,7 +1,9 @@
 ﻿@page "/major/joined"
-@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major.Request;
-@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major;
-@using FPLSP_Tutorial.WASM.Pages.Major;
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major.Request
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.MajorRequest.Request
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.UserMajor.Request
+@using FPLSP_Tutorial.WASM.Pages.Major
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major
 @layout ManagementLayout
 
 @inject AuthenticationStateProvider _authProvider
@@ -15,7 +17,7 @@
 
 @if (_isLoadingAll)
 {
-    <LoadingIndicator />
+    <LoadingIndicator/>
 }
 else
 {
@@ -29,9 +31,9 @@ else
                     <MudIconButton Icon="@Icons.Material.Filled.Add" OnClick="@(async () => await OnClickJoinMajor())" Title="Thêm chuyên ngành" Style="border-right: 2px solid white;"></MudIconButton>
                     <MudIconButton Icon="@Icons.Material.Filled.Search" Title="Tìm kiếm" OnClick="@(() => _isShowSearch = !_isShowSearch)"></MudIconButton>
                 </MudButtonGroup>
-                    
+
             </div>
-                
+
         </MudPaper>
 
 
@@ -41,7 +43,7 @@ else
 
             <Animate Animation="Animations.ZoomIn">
                 <MudPaper Class="px-5 pt-3 pb-4" Elevation="2">
-                    <MudTextField T="string" Variant="Variant.Outlined" Label="Tìm kiếm" Placeholder="Nhập tên, mã cần tìm kiếm..." DebounceInterval="1000" OnDebounceIntervalElapsed="@(async (string val) => { _preqMajor.SearchString = val; await OnQueryRequest(); })"></MudTextField>
+                    <MudTextField T="string" Variant="Variant.Outlined" Label="Tìm kiếm" Placeholder="Nhập tên, mã cần tìm kiếm..." DebounceInterval="1000" OnDebounceIntervalElapsed="@(async val => { _preqMajor.SearchString = val; await OnQueryRequest(); })"></MudTextField>
                 </MudPaper>
             </Animate>
         }
@@ -57,42 +59,46 @@ else
                     <MudTh>SL bài viết đã tạo</MudTh>
                     <MudTh>Hành động</MudTh>
                 </MudTHeadRow>
-                
+
             </HeaderContent>
             <RowTemplate>
                 <MudTh>@(_listMajor.IndexOf(context) + 1)</MudTh>
-                    <MudTh>@context.Code</MudTh>
-                    <MudTh>@context.Name</MudTh>
-                    <MudTh>@context.NumberOfPostByUser</MudTh>
-                    <MudTh>
-                        @if(context.IsManagerUser)
-                        {
-                            <MudFab Color="Color.Primary" Class="mx-1" Size="Size.Small" StartIcon="@Icons.Material.Filled.Article" OnClick="@(() => _nav.NavigateTo("/post/archive?idMajor=" + context.Id))" Title="Quản lý bài viết" DisableElevation="true"></MudFab>
-                        }
-                        else
-                        {
-                            <MudFab Color="Color.Primary" Class="mx-1" Size="Size.Small" StartIcon="@Icons.Material.Filled.Accessibility" OnClick="@(async () => await OnClickAddManageRequest(context.Id))" Title="Yêu cầu quyền quản lý" DisableElevation="true" Disabled="@context.HasSentRequest"></MudFab>
-                        }
+                <MudTh>@context.Code</MudTh>
+                <MudTh>@context.Name</MudTh>
+                <MudTh>@context.NumberOfPostByUser</MudTh>
+                <MudTh>
+                    @if (context.IsManagerUser)
+                    {
+                        <MudFab Color="Color.Primary" Class="mx-1" Size="Size.Small" StartIcon="@Icons.Material.Filled.Article" OnClick="@(() => _nav.NavigateTo("/post/archive?idMajor=" + context.Id))" Title="Quản lý bài viết" DisableElevation="true"></MudFab>
+                    }
+                    else
+                    {
+                        <MudFab Color="Color.Primary" Class="mx-1" Size="Size.Small" StartIcon="@Icons.Material.Filled.Accessibility" OnClick="@(async () => await OnClickAddManageRequest(context.Id))" Title="Yêu cầu quyền quản lý" DisableElevation="true" Disabled="@context.HasSentRequest"></MudFab>
+                    }
 
-                        <MudFab Size="Size.Small" Color="Color.Error" Class="m-1" Icon="@Icons.Material.Filled.Delete" OnClick="@(() => OnClickDelete(context.Id))" Title="Xóa" DisableElevation="true">Xóa</MudFab>
-                    </MudTh>
-                </RowTemplate>
-            </MudTable>
-            <CustomPagination Class="my-1" HasNext="@_presMajor.HasNext" OnPageChange="@(async e => {  })" CurrentPageNumber="@_presMajor.PageNumber"></CustomPagination>
+                    <MudFab Size="Size.Small" Color="Color.Error" Class="m-1" Icon="@Icons.Material.Filled.Delete" OnClick="@(() => OnClickDelete(context.Id))" Title="Xóa" DisableElevation="true">Xóa</MudFab>
+                </MudTh>
+            </RowTemplate>
+        </MudTable>
+        <CustomPagination Class="my-1" HasNext="@_presMajor.HasNext" OnPageChange="@(async e => { })" CurrentPageNumber="@_presMajor.PageNumber"></CustomPagination>
     </div>
 }
-@code {
-    private List<BreadcrumbItem> _breadCrumbs = new List<BreadcrumbItem>
-    {
-        new BreadcrumbItem("Trang chủ", href: "/post/home"),
-        new BreadcrumbItem("Chuyên ngành đã tham gia", href: null, disabled: true)
-    };
-    private Guid? _idUser = null;
 
-    private MajorViewWithPaginationRequest _preqMajor = new()
+@code {
+
+    private readonly List<BreadcrumbItem> _breadCrumbs = new()
+    {
+        new BreadcrumbItem("Trang chủ", "/post/home"),
+        new BreadcrumbItem("Chuyên ngành đã tham gia", null, true)
+    };
+
+    private Guid? _idUser;
+
+    private readonly MajorViewWithPaginationRequest _preqMajor = new()
     {
         PageSize = 20
     };
+
     private PaginationResponse<MajorDTO> _presMajor = new();
     List<MajorDTO> _listMajor = new();
 
@@ -110,15 +116,11 @@ else
         {
             _idUser = Guid.Parse(userIdClaim.Value);
         }
-        else { }
         _preqMajor.UserId = _idUser;
 
-        _listMajor.Add(new ()
-        {
-            
-        });
+        _listMajor.Add(new MajorDTO());
 
-        await LoadData().ContinueWith((re) =>
+        await LoadData().ContinueWith(re =>
         {
             _isLoadingAll = false;
             _isLoadingList = false;
@@ -138,7 +140,7 @@ else
         var parameters = new DialogParameters();
 
         parameters.Add(nameof(MajorRequestAdd.UserId), _idUser);
-        parameters.Add(nameof(MajorRequestAdd.LoadDataParent), EventCallback.Factory.Create(this, (async () => await LoadData())));
+        parameters.Add(nameof(MajorRequestAdd.LoadDataParent), EventCallback.Factory.Create(this, async () => await LoadData()));
 
         var dialog = _dialog.Show<MajorRequestAdd>("Yêu cầu gia nhập chuyên ngành", parameters, options);
         await dialog.Result;
@@ -148,15 +150,15 @@ else
     public async Task OnClickDelete(Guid idMajorDelete)
     {
         var confirm = await _dialog.ShowMessageBox
-        (
-            "Thông báo",
-            (MarkupString)("<h2 style=\"font-weight: 500\">Thông báo</h2>" + "Xác nhận rời chuyên ngành?<br><span style=\"color: red;\">Các bài viết đã tạo sẽ vẫn tiếp tục được hiển thị cho người dùng khác</span>"),
-        "Xác nhận",
-            cancelText: "Hủy"
-        );
+            (
+                "Thông báo",
+                (MarkupString)("<h2 style=\"font-weight: 500\">Thông báo</h2>" + "Xác nhận rời chuyên ngành?<br><span style=\"color: red;\">Các bài viết đã tạo sẽ vẫn tiếp tục được hiển thị cho người dùng khác</span>"),
+                "Xác nhận",
+                cancelText: "Hủy"
+            );
         if (confirm == true)
         {
-            var removeConfirm = await _repoUserMajor.DeleteAsync(new()
+            var removeConfirm = await _repoUserMajor.DeleteAsync(new UserMajorDeleteRequest
             {
                 UserId = _idUser ?? Guid.Empty,
                 MajorId = idMajorDelete,
@@ -182,31 +184,30 @@ else
         {
             _preqMajor.PageNumber = 1;
         }
-        await LoadData().ContinueWith((re) =>
+        await LoadData().ContinueWith(re =>
         {
             _isLoadingList = false;
             StateHasChanged();
         });
-
     }
 
     private async Task OnClickAddManageRequest(Guid idMajor)
     {
         var confirm = await _dialog.ShowMessageBox
-        (
-            "Thông báo",
-            (MarkupString)("<h2 style=\"font-weight: 500\">Thông báo</h2>" + "Xác nhận gửi yêu cầu quản lý?"),
-        "Xác nhận",
-            cancelText: "Hủy"
-        );
+            (
+                "Thông báo",
+                (MarkupString)("<h2 style=\"font-weight: 500\">Thông báo</h2>" + "Xác nhận gửi yêu cầu quản lý?"),
+                "Xác nhận",
+                cancelText: "Hủy"
+            );
         if (confirm == true)
         {
-            var result = await _repoMajorRequest.AddAsync(new()
-                {
-                    MajorId = idMajor,
-                    CreatedBy = _idUser,
-                    IsManager = true
-                });
+            var result = await _repoMajorRequest.AddAsync(new MajorRequestCreateRequest
+            {
+                MajorId = idMajor,
+                CreatedBy = _idUser,
+                IsManager = true
+            });
             if (result)
             {
                 _snackbar.Add("Gửi yêu cầu thành công", Severity.Success);
@@ -218,4 +219,5 @@ else
             }
         }
     }
+
 }

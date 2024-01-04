@@ -1,4 +1,4 @@
-﻿@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Tag;
+﻿@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Tag
 @inject IDialogService DialogService
 
 <div Class="d-flex align-center py-2">
@@ -26,8 +26,9 @@
 </div>
 
 @code {
+
     [Parameter]
-    public bool ToggleAllTags { get; set; } = false;
+    public bool ToggleAllTags { get; set; }
 
     [Parameter]
     public int MaxChipDisplay { get; set; } = 10;
@@ -54,7 +55,6 @@
 
         if (!result.Cancelled)
         {
-
             ListTag = (List<TagDTO>)result.Data;
         }
         else
@@ -62,4 +62,5 @@
             ListTag = lstBeforeChange;
         }
     }
+
 }

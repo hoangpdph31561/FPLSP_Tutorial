@@ -1,13 +1,13 @@
-﻿@using System.Security.Claims;
-@using FPLSP_Tutorial.WASM.Pages;
+﻿@using System.Security.Claims
+@using FPLSP_Tutorial.WASM.Pages
 @inherits LayoutComponentBase
 
 @inject AuthenticationStateProvider _authProvider;
 @inject NavigationManager _nav
 
 <MudThemeProvider Theme="@_CustomTheme"/>
-<MudDialogProvider FullWidth="true" NoHeader="true" />
-<MudSnackbarProvider />
+<MudDialogProvider FullWidth="true" NoHeader="true"/>
+<MudSnackbarProvider/>
 
 <style>
     .custom-layout-color {
@@ -29,11 +29,11 @@
 
 <MudLayout>
     <MudAppBar Elevation="0" Class="custom-layout-color" Style="border-bottom: 1px solid lightgrey;">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="ContentColor" Edge="Edge.Start" OnClick="@ToggleDrawer" />
-        <MudSpacer />
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="ContentColor" Edge="Edge.Start" OnClick="@ToggleDrawer"/>
+        <MudSpacer/>
         @{
             var roleString = "";
-            foreach(var i in _listRoles) 
+            foreach (var i in _listRoles)
             {
                 if (roleString != "") roleString += ", ";
                 roleString += i;
@@ -41,12 +41,12 @@
         }
         <div title="@("Email: " + _displayEmail)">
             <MudText Color="ContentColor" Typo="Typo.subtitle2">@(_displayName)</MudText>
-                <MudText Color="ContentColor" Typo="Typo.caption">@("Chức vụ: " + roleString)</MudText>
+            <MudText Color="ContentColor" Typo="Typo.caption">@("Chức vụ: " + roleString)</MudText>
         </div>
-        <MudIconButton Icon="@Icons.Material.Filled.Logout" Color="ContentColor" Title="Đăng xuất" OnClick="@(async() => await OnLogout())" />
+        <MudIconButton Icon="@Icons.Material.Filled.Logout" Color="ContentColor" Title="Đăng xuất" OnClick="@(async () => await OnLogout())"/>
     </MudAppBar>
-        <MudDrawer @bind-Open="@open" Variant="DrawerVariant.Mini" Elevation="0" Class="custom-layout-color">
-        <MudDrawerHeader Class="top-row py-0 d-flex align-center justify-center" >
+    <MudDrawer @bind-Open="@open" Variant="DrawerVariant.Mini" Elevation="0" Class="custom-layout-color">
+        <MudDrawerHeader Class="top-row py-0 d-flex align-center justify-center">
             @if (open)
             {
                 <MudDrawerHeader Class="d-flex align-items-center justify-content-center px-2 pt-2 py-0">
@@ -54,11 +54,11 @@
                 </MudDrawerHeader>
             }
         </MudDrawerHeader>
-        
+
         <MudNavMenu>
             <MudNavLink IconColor="Color.Primary" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home" Href="/post/home">Trang chủ</MudNavLink>
             <AuthorizeView Roles="@("ADMIN")">
-                
+
                 <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.SupervisorAccount" Href="/user-manager">Quản lý giảng viên</MudNavLink>
                 <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.List" Href="/major/manage/list">Quản lý chuyên ngành</MudNavLink>
                 <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Newspaper" Href="/post/system">Quản lý bài viết hệ thống</MudNavLink>
@@ -71,9 +71,9 @@
             </AuthorizeView>
 
             <AuthorizeView Roles="@("CNBM")">
-                
+
             </AuthorizeView>
-            
+
             <AuthorizeView Roles="@("ADMIN, CNBM")">
                 <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Archive" Href="/post/archive">Bài viết đã tạo</MudNavLink>
                 <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.EditNote" Href="/post/create">Tạo bài viết</MudNavLink>
@@ -93,16 +93,15 @@
 </MudLayout>
 
 @code {
-    bool open = false;
+    bool open;
 
     private readonly MudTheme _CustomTheme = new()
+    {
+        Palette = new Palette
         {
-            Palette = new Palette
-            {
-                Primary = "#000000",
-
-            }
-        };
+            Primary = "#000000"
+        }
+    };
 
 
     private string _displayName = "";
@@ -110,16 +109,16 @@
     private List<string> _listRoles = new();
 
 
-    private Color ContentColor = Color.Dark;
+    private readonly Color ContentColor = Color.Dark;
 
     protected override async Task OnInitializedAsync()
     {
         var state = await _authProvider.GetAuthenticationStateAsync();
         var lstClaim = state.User.Claims;
         var claimName = lstClaim.FirstOrDefault(c => c.Type == ClaimTypes.Name);
-        _displayName = claimName == null ? "<N/A>" : claimName.Value.ToString();
+        _displayName = claimName == null ? "<N/A>" : claimName.Value;
         var claimEmail = lstClaim.FirstOrDefault(c => c.Type == ClaimTypes.Email);
-        _displayEmail = claimEmail == null ? "<N/A>" : claimEmail.Value.ToString();
+        _displayEmail = claimEmail == null ? "<N/A>" : claimEmail.Value;
         _listRoles = lstClaim.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
     }
 
@@ -134,4 +133,5 @@
         await customAuth.UpdateAuthenticationState(null);
         _nav.NavigateTo("https://localhost:5000");
     }
+
 }

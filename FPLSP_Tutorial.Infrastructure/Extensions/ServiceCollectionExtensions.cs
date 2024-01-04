@@ -9,65 +9,71 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace FPLSP_Tutorial.Infrastructure.Extensions
+namespace FPLSP_Tutorial.Infrastructure.Extensions;
+
+public static class ServiceCollectionExtensions
 {
-    public static class ServiceCollectionExtensions
+    public static IServiceCollection AddEventBus(this IServiceCollection services, IConfiguration configuration)
     {
-        public static IServiceCollection AddEventBus(this IServiceCollection services, IConfiguration configuration)
+        #region App DbContext
+
+        services.AddDbContextPool<AppReadOnlyDbContext>(options =>
         {
-            #region App DbContext
-            services.AddDbContextPool<AppReadOnlyDbContext>(options =>
-            {
-                // Configure your DbContext options here
-                options.UseSqlServer(configuration.GetConnectionString("DbConnection"));
-            });
+            // Configure your DbContext options here
+            options.UseSqlServer(configuration.GetConnectionString("DbConnection"));
+        });
 
-            services.AddDbContextPool<AppReadWriteDbContext>(options =>
-            {
-                // Configure your DbContext options here
-                options.UseSqlServer(configuration.GetConnectionString("DbConnection"));
-            });
-            #endregion
+        services.AddDbContextPool<AppReadWriteDbContext>(options =>
+        {
+            // Configure your DbContext options here
+            options.UseSqlServer(configuration.GetConnectionString("DbConnection"));
+        });
 
-            #region Example DbContext
-            services.AddDbContextPool<ExampleReadOnlyDbContext>(options =>
-            {
-                // Configure your DbContext options here
-                options.UseSqlServer(configuration.GetConnectionString("DbConnection"));
-            });
+        #endregion
 
-            services.AddDbContextPool<ExampleReadWriteDbContext>(options =>
-            {
-                // Configure your DbContext options here
-                options.UseSqlServer(configuration.GetConnectionString("DbConnection"));
-            });
-            #endregion
+        #region Example DbContext
 
-            #region Transients
-            services.AddTransient<ILocalizationService, LocalizationService>();
-            services.AddTransient<IExampleReadOnlyRepository, ExampleReadOnlyRepository>();
-            services.AddTransient<IExampleReadWriteRepository, ExampleReadWriteRepository>();
-            services.AddTransient<ITagReadOnlyRepository, TagReadOnlyRepository>();
-            services.AddTransient<ITagReadWriteRepository, TagReadWriteRepository>();
-            services.AddTransient<IMajorReadOnlyRepository, MajorReadOnlyRepository>();
-            services.AddTransient<IMajorReadWriteRepository, MajorReadWriteRepository>();
-            services.AddTransient<IPostTagReadWriteRepository, PostTagReadWriteRepository>();
-            services.AddTransient<IUserReadOnlyRepository, UserReadOnlyRepository>();
-            services.AddTransient<IUserReadWriteRepository, UserReadWriteRepository>();
-            services.AddTransient<IClientPostReadOnlyRespository, ClientPostReadOnlyRepository>();
-            services.AddTransient<IClientPostReadWriteRespository, ClientPostReadWriteRepository>();
+        services.AddDbContextPool<ExampleReadOnlyDbContext>(options =>
+        {
+            // Configure your DbContext options here
+            options.UseSqlServer(configuration.GetConnectionString("DbConnection"));
+        });
 
-            services.AddScoped<IMajorRequestReadOnlyRepository, MajorRequestReadOnlyRepository>();
-            services.AddScoped<IMajorRequestReadWriteRepository, MajorRequestReadWriteRepository>();
+        services.AddDbContextPool<ExampleReadWriteDbContext>(options =>
+        {
+            // Configure your DbContext options here
+            options.UseSqlServer(configuration.GetConnectionString("DbConnection"));
+        });
+
+        #endregion
+
+        #region Transients
+
+        services.AddTransient<ILocalizationService, LocalizationService>();
+        services.AddTransient<IExampleReadOnlyRepository, ExampleReadOnlyRepository>();
+        services.AddTransient<IExampleReadWriteRepository, ExampleReadWriteRepository>();
+        services.AddTransient<ITagReadOnlyRepository, TagReadOnlyRepository>();
+        services.AddTransient<ITagReadWriteRepository, TagReadWriteRepository>();
+        services.AddTransient<IMajorReadOnlyRepository, MajorReadOnlyRepository>();
+        services.AddTransient<IMajorReadWriteRepository, MajorReadWriteRepository>();
+        services.AddTransient<IPostTagReadWriteRepository, PostTagReadWriteRepository>();
+        services.AddTransient<IUserReadOnlyRepository, UserReadOnlyRepository>();
+        services.AddTransient<IUserReadWriteRepository, UserReadWriteRepository>();
+        services.AddTransient<IClientPostReadOnlyRespository, ClientPostReadOnlyRepository>();
+        services.AddTransient<IClientPostReadWriteRespository, ClientPostReadWriteRepository>();
+
+        services.AddScoped<IMajorRequestReadOnlyRepository, MajorRequestReadOnlyRepository>();
+        services.AddScoped<IMajorRequestReadWriteRepository, MajorRequestReadWriteRepository>();
 
 
-            services.AddScoped<IUserMajorReadWriteRepository, UserMajorReadWriteRepository>();
-            services.AddScoped<IUserMajorReadOnlyRepository, UserMajorReadOnlyRepository>();
+        services.AddScoped<IUserMajorReadWriteRepository, UserMajorReadWriteRepository>();
+        services.AddScoped<IUserMajorReadOnlyRepository, UserMajorReadOnlyRepository>();
 
-            services.AddScoped<IPostReadOnlyRespository, PostReadOnlyRepository>();
-            services.AddScoped<IPostReadWriteRepository, PostReadWriteRepository>();
-            #endregion
-            return services;
-        }
+        services.AddScoped<IPostReadOnlyRespository, PostReadOnlyRepository>();
+        services.AddScoped<IPostReadWriteRepository, PostReadWriteRepository>();
+
+        #endregion
+
+        return services;
     }
 }

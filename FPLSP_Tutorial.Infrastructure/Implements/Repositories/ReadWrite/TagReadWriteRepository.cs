@@ -8,103 +8,102 @@ using FPLSP_Tutorial.Domain.Enums;
 using FPLSP_Tutorial.Infrastructure.Database.AppDbContext;
 using Microsoft.EntityFrameworkCore;
 
-namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
+namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite;
+
+public class TagReadWriteRepository : ITagReadWriteRepository
 {
-    public class TagReadWriteRepository : ITagReadWriteRepository
+    private readonly AppReadWriteDbContext _dbContext;
+    private readonly ILocalizationService _localizationService;
+
+    public TagReadWriteRepository(AppReadWriteDbContext dbContext, ILocalizationService localizationService)
     {
-        private readonly AppReadWriteDbContext _dbContext;
-        private readonly ILocalizationService _localizationService;
+        _dbContext = dbContext;
+        _localizationService = localizationService;
+    }
 
-        public TagReadWriteRepository(AppReadWriteDbContext dbContext, ILocalizationService localizationService)
+    public async Task<RequestResult<int>> AddTagAsync(TagEntity entity, CancellationToken cancellationToken)
+    {
+        try
         {
-            _dbContext = dbContext;
-            _localizationService = localizationService;
+            await _dbContext.TagEntities.AddAsync(entity);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+
+            return RequestResult<int>.Succeed(1);
         }
-
-        public async Task<RequestResult<int>> AddTagAsync(TagEntity entity, CancellationToken cancellationToken)
+        catch (Exception e)
         {
-            try
+            return RequestResult<int>.Fail(_localizationService["Unable to create Tags"], new[]
             {
-                await _dbContext.TagEntities.AddAsync(entity);
-                await _dbContext.SaveChangesAsync(cancellationToken);
-
-                return RequestResult<int>.Succeed(1);
-            }
-            catch (Exception e)
-            {
-                return RequestResult<int>.Fail(_localizationService["Unable to create Tags"], new[]
+                new ErrorItem
                 {
-                    new ErrorItem
-                    {
-                        Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToCreate + "Tags"
-                    }
-                });
-            }
+                    Error = e.Message,
+                    FieldName = LocalizationString.Common.FailedToCreate + "Tags"
+                }
+            });
         }
+    }
 
-        public async Task<RequestResult<int>> UpdateTagAsync(TagEntity entity, CancellationToken cancellationToken)
+    public async Task<RequestResult<int>> UpdateTagAsync(TagEntity entity, CancellationToken cancellationToken)
+    {
+        try
         {
-            try
-            {
-                var tag = await GetTagByIdAsync(entity.Id, cancellationToken);
-                tag!.Name = entity.Name;
-                tag.MajorId = entity.MajorId;
-                tag.Status = entity.Status;
-                tag.ModifiedBy = entity.ModifiedBy;
-                tag.ModifiedTime = DateTimeOffset.UtcNow;
+            var tag = await GetTagByIdAsync(entity.Id, cancellationToken);
+            tag!.Name = entity.Name;
+            tag.MajorId = entity.MajorId;
+            tag.Status = entity.Status;
+            tag.ModifiedBy = entity.ModifiedBy;
+            tag.ModifiedTime = DateTimeOffset.UtcNow;
 
-                _dbContext.TagEntities.Update(tag);
-                await _dbContext.SaveChangesAsync(cancellationToken);
+            _dbContext.TagEntities.Update(tag);
+            await _dbContext.SaveChangesAsync(cancellationToken);
 
-                return RequestResult<int>.Succeed(1);
-            }
-            catch (Exception e)
+            return RequestResult<int>.Succeed(1);
+        }
+        catch (Exception e)
+        {
+            return RequestResult<int>.Fail(_localizationService["Unable to update tag"], new[]
             {
-                return RequestResult<int>.Fail(_localizationService["Unable to update tag"], new[]
+                new ErrorItem
                 {
-                    new ErrorItem
-                    {
-                        Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToUpdate + "tag"
-                    }
-                });
-            }
+                    Error = e.Message,
+                    FieldName = LocalizationString.Common.FailedToUpdate + "tag"
+                }
+            });
         }
+    }
 
-        public async Task<RequestResult<int>> DeleteTagAsync(TagDeleteRequest request, CancellationToken cancellationToken)
+    public async Task<RequestResult<int>> DeleteTagAsync(TagDeleteRequest request, CancellationToken cancellationToken)
+    {
+        try
         {
-            try
+            var tag = await GetTagByIdAsync(request.Id, cancellationToken);
+
+            tag!.Deleted = true;
+            tag.DeletedBy = request.DeletedBy;
+            tag.DeletedTime = DateTimeOffset.UtcNow;
+
+            tag.Status = EntityStatus.Deleted;
+
+            await _dbContext.SaveChangesAsync(cancellationToken);
+
+            return RequestResult<int>.Succeed(1);
+        }
+        catch (Exception e)
+        {
+            return RequestResult<int>.Fail(_localizationService["Unable to delete tag"], new[]
             {
-                var tag = await GetTagByIdAsync(request.Id, cancellationToken);
-
-                tag!.Deleted = true;
-                tag.DeletedBy = request.DeletedBy;
-                tag.DeletedTime = DateTimeOffset.UtcNow;
-
-                tag.Status = EntityStatus.Deleted;
-
-                await _dbContext.SaveChangesAsync(cancellationToken);
-
-                return RequestResult<int>.Succeed(1);
-            }
-            catch (Exception e)
-            {
-                return RequestResult<int>.Fail(_localizationService["Unable to delete tag"], new[]
+                new ErrorItem
                 {
-                    new ErrorItem
-                    {
-                        Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToDelete + "tag"
-                    }
-                });
-            }
+                    Error = e.Message,
+                    FieldName = LocalizationString.Common.FailedToDelete + "tag"
+                }
+            });
         }
+    }
 
-        private async Task<TagEntity?> GetTagByIdAsync(Guid Id, CancellationToken cancellationToken)
-        {
-            var tag = await _dbContext.TagEntities.FirstOrDefaultAsync(c => c.Id == Id && !c.Deleted, cancellationToken);
-            return tag;
-        }
+    private async Task<TagEntity?> GetTagByIdAsync(Guid Id, CancellationToken cancellationToken)
+    {
+        var tag = await _dbContext.TagEntities.FirstOrDefaultAsync(c => c.Id == Id && !c.Deleted, cancellationToken);
+        return tag;
     }
 }

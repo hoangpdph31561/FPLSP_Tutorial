@@ -1,9 +1,8 @@
-﻿namespace FPLSP_Tutorial.WASM.Data
+﻿namespace FPLSP_Tutorial.WASM.Data;
+
+public class APIResponse
 {
-    public class APIResponse
-    {
-        public bool Success { get; set; }
-        public string? Message { get; set; }
-        public object? Data { get; set; }
-    }
+    public bool Success { get; set; }
+    public string? Message { get; set; }
+    public object? Data { get; set; }
 }

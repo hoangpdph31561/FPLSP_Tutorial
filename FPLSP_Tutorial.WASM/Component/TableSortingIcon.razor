@@ -1,22 +1,21 @@
 ﻿<div @onmouseover="@(() => OnMouseOver())" @onmouseleave="@(() => OnMouseLeave())">
     <div class="d-flex align-center">
-        @if (_isShowingIcon || (PropertyName == ActivePropertyName))
+        @if (_isShowingIcon || PropertyName == ActivePropertyName)
         {
             if (_currentSortingDirection == "asc")
             {
                 @ChildContent
                 <Animate Animation="Animations.SlideLeft" Duration="TimeSpan.FromSeconds(0.5)">
-                    <MudIconButton Icon="@Icons.Material.Filled.ArrowDownward" Size="Size.Small" OnClick="@(async () => await OnClickSorting())" ></MudIconButton>
+                    <MudIconButton Icon="@Icons.Material.Filled.ArrowDownward" Size="Size.Small" OnClick="@(async () => await OnClickSorting())"></MudIconButton>
                 </Animate>
             }
             else
             {
                 @ChildContent
                 <Animate Animation="Animations.SlideLeft" Duration="TimeSpan.FromSeconds(0.5)">
-                    <MudIconButton Icon="@Icons.Material.Filled.ArrowUpward" Size="Size.Small" OnClick="@(async () => await OnClickSorting())" ></MudIconButton>
+                    <MudIconButton Icon="@Icons.Material.Filled.ArrowUpward" Size="Size.Small" OnClick="@(async () => await OnClickSorting())"></MudIconButton>
                 </Animate>
             }
-
         }
         else
         {
@@ -26,7 +25,7 @@
             <MudIconButton Icon="@Icons.Material.Filled.ArrowUpward" Size="Size.Small" Style="visibility: hidden;"></MudIconButton>
         }
     </div>
-    
+
 </div>
 
 @code {
@@ -59,7 +58,7 @@
 
     private async Task OnClickSorting()
     {
-        if(PropertyName == ActivePropertyName)
+        if (PropertyName == ActivePropertyName)
         {
             if (_currentSortingDirection == "asc") _currentSortingDirection = "desc";
             else _currentSortingDirection = "asc";
@@ -75,7 +74,7 @@
 
     private void OnMouseOver()
     {
-        _isShowingIcon = true; 
+        _isShowingIcon = true;
         _refChildContent.Run();
     }
 
@@ -83,4 +82,5 @@
     {
         _isShowingIcon = false;
     }
+
 }

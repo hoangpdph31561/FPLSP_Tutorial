@@ -1,9 +1,6 @@
-﻿using FPLSP_Tutorial.Domain.Enums;
+﻿namespace FPLSP_Tutorial.Application.DataTransferObjects.User.Request;
 
-namespace FPLSP_Tutorial.Application.DataTransferObjects.User.Request
+public class UserDeleteRequest
 {
-    public class UserDeleteRequest
-    {
-        public Guid Id { get; set; }
-    }
+    public Guid Id { get; set; }
 }

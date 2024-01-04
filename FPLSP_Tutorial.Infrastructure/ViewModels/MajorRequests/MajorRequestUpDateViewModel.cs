@@ -6,43 +6,45 @@ using FPLSP_Tutorial.Application.ValueObjects.Common;
 using FPLSP_Tutorial.Application.ViewModels;
 using FPLSP_Tutorial.Domain.Entities;
 
-namespace FPLSP_Tutorial.Infrastructure.ViewModels.MajorRequests
+namespace FPLSP_Tutorial.Infrastructure.ViewModels.MajorRequests;
+
+public class MajorRequestUpdateViewModel : ViewModelBase<MajorRequestUpdateRequest>
 {
-    public class MajorRequestUpdateViewModel : ViewModelBase<MajorRequestUpdateRequest>
+    private readonly ILocalizationService _localizationService;
+    private readonly IMajorRequestReadWriteRepository _majorRequestReadWriteRespository;
+    private readonly IMapper _mapper;
+
+    public MajorRequestUpdateViewModel(IMajorRequestReadWriteRepository majorRequestReadWriteRespository,
+        ILocalizationService localizationService, IMapper mapper)
     {
-        private readonly IMajorRequestReadWriteRepository _majorRequestReadWriteRespository;
-        private readonly ILocalizationService _localizationService;
-        private readonly IMapper _mapper;
+        _majorRequestReadWriteRespository = majorRequestReadWriteRespository;
+        _localizationService = localizationService;
+        _mapper = mapper;
+    }
 
-        public MajorRequestUpdateViewModel(IMajorRequestReadWriteRepository majorRequestReadWriteRespository, ILocalizationService localizationService, IMapper mapper)
+    public override async Task HandleAsync(MajorRequestUpdateRequest data, CancellationToken cancellationToken)
+    {
+        try
         {
-            _majorRequestReadWriteRespository = majorRequestReadWriteRespository;
-            _localizationService = localizationService;
-            _mapper = mapper;
+            var result =
+                await _majorRequestReadWriteRespository.UpdateMajorRequestAsync(_mapper.Map<MajorRequestEntity>(data),
+                    cancellationToken);
+
+            Success = result.Success;
+            ErrorItems = result.Errors;
+            Message = result.Message;
         }
-        public async override Task HandleAsync(MajorRequestUpdateRequest data, CancellationToken cancellationToken)
+        catch (Exception)
         {
-            try
+            Success = false;
+            ErrorItems = new[]
             {
-                var result = await _majorRequestReadWriteRespository.UpdateMajorRequestAsync(_mapper.Map<MajorRequestEntity>(data), cancellationToken);
-
-                Success = result.Success;
-                ErrorItems = result.Errors;
-                Message = result.Message;
-                return;
-            }
-            catch (Exception)
-            {
-                Success = false;
-                ErrorItems = new[]
-                    {
-                    new ErrorItem
-                    {
-                        Error = _localizationService["Error occurred while updating the majorRequest"],
-                        FieldName = string.Concat(LocalizationString.Common.FailedToUpdate, "majorRequest")
-                    }
-                };
-            }
+                new ErrorItem
+                {
+                    Error = _localizationService["Error occurred while updating the majorRequest"],
+                    FieldName = string.Concat(LocalizationString.Common.FailedToUpdate, "majorRequest")
+                }
+            };
         }
     }
 }

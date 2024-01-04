@@ -1,6 +1,5 @@
-﻿@using FPLSP_Tutorial.WASM.Enum;
-@{
-    EntityStatus statusValue = Status;
+﻿@{
+    var statusValue = Status;
 }
 @switch (statusValue)
 {
@@ -34,10 +33,13 @@
 
         break;
 }
+
 @code {
+
     [Parameter]
     public EntityStatus Status { get; set; }
-     /*
+
+    /*
          * /*
     * Active = 1,
     InActive = 2,

@@ -1,11 +1,9 @@
+using System.Linq.Expressions;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using FPLSP_Tutorial.Application.ValueObjects.Pagination;
 using FPLSP_Tutorial.Domain.Entities.Base;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.Linq.Expressions;
-using System.Reflection;
 
 namespace FPLSP_Tutorial.Infrastructure.Extensions;
 
@@ -16,7 +14,7 @@ public static class QueryableExtensions
         CancellationToken cancellationToken)
     {
         // Force to sort by CreateTime asc 
-        IQueryable<TSourceEntity> finalQuery = queryable;
+        var finalQuery = queryable;
 
         // Hit to the db to get data back to client side
         var result = await finalQuery
@@ -24,9 +22,9 @@ public static class QueryableExtensions
             .Take(request.PageSize + 1)
             .ToListAsync(cancellationToken);
 
-        bool hasNext = result.Count == request.PageSize + 1;
+        var hasNext = result.Count == request.PageSize + 1;
 
-        return new PaginationResponse<TSourceEntity>()
+        return new PaginationResponse<TSourceEntity>
         {
             PageNumber = request.PageNumber,
             PageSize = request.PageSize,
@@ -40,7 +38,7 @@ public static class QueryableExtensions
         CancellationToken cancellationToken) where TSourceEntity : ICreatedBase
     {
         // Force to sort by CreateTime desc 
-        IQueryable<TSourceEntity> finalQuery = queryable;
+        var finalQuery = queryable;
         //IQueryable<TSourceEntity> finalQuery = queryable.OrderByDescending(x => x.CreatedTime);
 
 
@@ -51,9 +49,9 @@ public static class QueryableExtensions
             .Take(request.PageSize + 1)
             .ToListAsync(cancellationToken);
 
-        bool hasNext = result.Count == request.PageSize + 1;
+        var hasNext = result.Count == request.PageSize + 1;
 
-        return new PaginationResponse<TTargetEntity>()
+        return new PaginationResponse<TTargetEntity>
         {
             PageNumber = request.PageNumber,
             PageSize = request.PageSize,
@@ -62,9 +60,10 @@ public static class QueryableExtensions
         };
     }
 
-    public static IQueryable<T> SortData<T>(this IQueryable<T> listData, string sortPropName = "CreatedTime", string sortDir = "desc")
+    public static IQueryable<T> SortData<T>(this IQueryable<T> listData, string sortPropName = "CreatedTime",
+        string sortDir = "desc")
     {
-        PropertyInfo[] lstPropInfo = typeof(T).GetProperties();
+        var lstPropInfo = typeof(T).GetProperties();
 
         if (sortPropName != null && lstPropInfo.Any(c => c.Name == sortPropName))
         {
@@ -72,20 +71,17 @@ public static class QueryableExtensions
             var parameter = Expression.Parameter(typeof(T), "c");
             var property = Expression.Property(parameter, propInfo);
 
-            if (propInfo.PropertyType.IsGenericType && propInfo.PropertyType.GetGenericTypeDefinition() == typeof(List<>))
+            if (propInfo.PropertyType.IsGenericType &&
+                propInfo.PropertyType.GetGenericTypeDefinition() == typeof(List<>))
             {
                 // Property is a list type
                 var listCount = Expression.Property(property, "Count");
                 var selector = Expression.Lambda(listCount, parameter);
 
                 if (sortDir.ToLower() == "asc")
-                {
                     listData = Queryable.OrderBy(listData, (dynamic)selector);
-                }
                 else if (sortDir.ToLower() == "desc")
-                {
                     listData = Queryable.OrderByDescending(listData, (dynamic)selector);
-                }
             }
             else
             {
@@ -93,13 +89,9 @@ public static class QueryableExtensions
                 var selector = Expression.Lambda(property, parameter);
 
                 if (sortDir.ToLower() == "asc")
-                {
                     listData = Queryable.OrderBy(listData, (dynamic)selector);
-                }
                 else if (sortDir.ToLower() == "desc")
-                {
                     listData = Queryable.OrderByDescending(listData, (dynamic)selector);
-                }
             }
         }
 

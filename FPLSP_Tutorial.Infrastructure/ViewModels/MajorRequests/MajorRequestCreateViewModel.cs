@@ -7,55 +7,61 @@ using FPLSP_Tutorial.Application.ValueObjects.Common;
 using FPLSP_Tutorial.Application.ViewModels;
 using FPLSP_Tutorial.Domain.Entities;
 
-namespace FPLSP_Tutorial.Infrastructure.ViewModels.MajorRequests
+namespace FPLSP_Tutorial.Infrastructure.ViewModels.MajorRequests;
+
+public class MajorRequestCreateViewModel : ViewModelBase<MajorRequestCreateRequest>
 {
-    public class MajorRequestCreateViewModel : ViewModelBase<MajorRequestCreateRequest>
+    private readonly ILocalizationService _localizationService;
+    private readonly IMajorRequestReadOnlyRepository _majorRequestReadOnlyRespository;
+    private readonly IMajorRequestReadWriteRepository _majorRequestReadWriteRespository;
+    private readonly IMapper _mapper;
+
+    public MajorRequestCreateViewModel(IMajorRequestReadOnlyRepository majorRequestReadOnlyRespository,
+        IMajorRequestReadWriteRepository majorRequestReadWriteRespository, ILocalizationService localizationService,
+        IMapper mapper)
     {
-        private readonly IMajorRequestReadOnlyRepository _majorRequestReadOnlyRespository;
-        private readonly IMajorRequestReadWriteRepository _majorRequestReadWriteRespository;
-        private readonly ILocalizationService _localizationService;
-        private readonly IMapper _mapper;
+        _majorRequestReadOnlyRespository = majorRequestReadOnlyRespository;
+        _majorRequestReadWriteRespository = majorRequestReadWriteRespository;
+        _localizationService = localizationService;
+        _mapper = mapper;
+    }
 
-        public MajorRequestCreateViewModel(IMajorRequestReadOnlyRepository majorRequestReadOnlyRespository, IMajorRequestReadWriteRepository majorRequestReadWriteRespository, ILocalizationService localizationService, IMapper mapper)
+    public override async Task HandleAsync(MajorRequestCreateRequest data, CancellationToken cancellationToken)
+    {
+        try
         {
-            _majorRequestReadOnlyRespository = majorRequestReadOnlyRespository;
-            _majorRequestReadWriteRespository = majorRequestReadWriteRespository;
-            _localizationService = localizationService;
-            _mapper = mapper;
+            var createResult =
+                await _majorRequestReadWriteRespository.AddMajorRequestAsync(_mapper.Map<MajorRequestEntity>(data),
+                    cancellationToken);
+
+            if (createResult.Success)
+            {
+                var result =
+                    await _majorRequestReadOnlyRespository.GetMajorRequestByIdAsync(createResult.Data,
+                        cancellationToken);
+
+                Data = result.Data!;
+                Success = result.Success;
+                ErrorItems = result.Errors;
+                Message = result.Message;
+                return;
+            }
+
+            Success = createResult.Success;
+            ErrorItems = createResult.Errors;
+            Message = createResult.Message;
         }
-        public async override Task HandleAsync(MajorRequestCreateRequest data, CancellationToken cancellationToken)
+        catch (Exception)
         {
-            try
+            Success = false;
+            ErrorItems = new[]
             {
-                var createResult = await _majorRequestReadWriteRespository.AddMajorRequestAsync(_mapper.Map<MajorRequestEntity>(data), cancellationToken);
-
-                if (createResult.Success)
+                new ErrorItem
                 {
-                    var result = await _majorRequestReadOnlyRespository.GetMajorRequestByIdAsync(createResult.Data, cancellationToken);
-
-                    Data = result.Data!;
-                    Success = result.Success;
-                    ErrorItems = result.Errors;
-                    Message = result.Message;
-                    return;
+                    Error = _localizationService["Error occurred while getting the MajorRequest"],
+                    FieldName = string.Concat(LocalizationString.Common.FailedToGet, "MajorRequest")
                 }
-
-                Success = createResult.Success;
-                ErrorItems = createResult.Errors;
-                Message = createResult.Message;
-            }
-            catch (Exception)
-            {
-                Success = false;
-                ErrorItems = new[]
-                    {
-                    new ErrorItem
-                    {
-                        Error = _localizationService["Error occurred while getting the MajorRequest"],
-                        FieldName = string.Concat(LocalizationString.Common.FailedToGet, "MajorRequest")
-                    }
-                };
-            }
+            };
         }
     }
 }

@@ -3,17 +3,15 @@ using FPLSP_Tutorial.Application.DataTransferObjects.Tag;
 using FPLSP_Tutorial.Application.DataTransferObjects.Tag.TagRequest;
 using FPLSP_Tutorial.Domain.Entities;
 
+namespace FPLSP_Tutorial.Infrastructure.Extensions.AutoMapperProfiles;
 
-namespace FPLSP_Tutorial.Infrastructure.Extensions.AutoMapperProfiles
+public class TagProfile : Profile
 {
-    public class TagProfile : Profile
+    public TagProfile()
     {
-        public TagProfile()
-        {
-            CreateMap<TagEntity, TagDTO>();
-            CreateMap<TagUpdateRequest, TagEntity>();
-            CreateMap<TagCreateRequest, TagEntity>();
-            CreateMap<TagDTO, TagEntity>();
-        }
+        CreateMap<TagEntity, TagDTO>();
+        CreateMap<TagUpdateRequest, TagEntity>();
+        CreateMap<TagCreateRequest, TagEntity>();
+        CreateMap<TagDTO, TagEntity>();
     }
 }

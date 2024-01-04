@@ -1,8 +1,7 @@
-﻿namespace FPLSP_Tutorial.WASM.Pages
+﻿namespace FPLSP_Tutorial.WASM.Pages;
+
+public class ClaimSimplifyModel
 {
-    public class ClaimSimplifyModel
-    {
-        public string Key { get; set; }
-        public string Value { get; set; }
-    }
+    public string Key { get; set; }
+    public string Value { get; set; }
 }

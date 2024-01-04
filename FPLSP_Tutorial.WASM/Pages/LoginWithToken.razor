@@ -1,8 +1,8 @@
 ﻿@page "/loginwithtoken"
-@using System.IdentityModel.Tokens.Jwt;
-@using System.Security.Claims;
-@using System.Text.Json;
-@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.User;
+@using System.Security.Claims
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.User
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.User.Request
+@using System.IdentityModel.Tokens.Jwt
 
 @inject IUserRepository _repoUser
 @inject NavigationManager _nav
@@ -13,16 +13,16 @@
 <div style="width: 100%; height: 80vh;">
     <div class="d-flex justify-center w-100 h-100">
         <div style="margin-top: 40vh;">
-            @if(!IsErrorWhileLoading)
+            @if (!IsErrorWhileLoading)
             {
                 <Animate Animation="Animations.SlideUp" Duration="TimeSpan.FromSeconds(1)">
                     <div class="d-flex justify-center mb-2">
                         <MudProgressCircular Value="@Stage" Color="Color.Primary"></MudProgressCircular>
                     </div>
                     <div class="h-25">
-                    
-                            <MudText Typo="Typo.h6" Style="text-align:center;">@((MarkupString)StageMessage)</MudText>
-                    
+
+                        <MudText Typo="Typo.h6" Style="text-align:center;">@((MarkupString)StageMessage)</MudText>
+
                     </div>
                 </Animate>
             }
@@ -40,19 +40,20 @@
 </div>
 
 
-    @*@foreach(var i in listClaims)
+@*@foreach(var i in listClaims)
 {
     <h6>@i.Type - @i.Value</h6>
 }*@
 
 @code {
+
     [Parameter]
     [SupplyParameterFromQuery(Name = "token")]
     public string JWTToken { get; set; } = "";
 
-    private int Stage = 0;
+    private int Stage;
     private string StageMessage = "Khởi động chương trình";
-    private bool IsErrorWhileLoading = false;
+    private bool IsErrorWhileLoading;
 
     List<Claim> listClaims = new();
 
@@ -76,12 +77,12 @@
         {
             await SetStage(50, "Hồ sơ người dùng không tồn tại.<br>Tiến hành khởi tạo");
 
-            var createResult = await _repoUser.AddAsync(new()
-                    {
-                        Email = listClaims.FirstOrDefault(c => c.Type == "email") == null ? "N/A" : listClaims.FirstOrDefault(c => c.Type == "email").Value,
-                        Username = listClaims.FirstOrDefault(c => c.Type == "name") == null ? "N/A" : listClaims.FirstOrDefault(c => c.Type == "name").Value,
-                        RoleCodes = listClaims.FirstOrDefault(c => c.Type == "role") == null ? new List<string>() : listClaims.Where(c => c.Type == "role").Select(c => c.Value).ToList()
-                    });
+            var createResult = await _repoUser.AddAsync(new UserCreateRequest
+            {
+                Email = listClaims.FirstOrDefault(c => c.Type == "email") == null ? "N/A" : listClaims.FirstOrDefault(c => c.Type == "email").Value,
+                Username = listClaims.FirstOrDefault(c => c.Type == "name") == null ? "N/A" : listClaims.FirstOrDefault(c => c.Type == "name").Value,
+                RoleCodes = listClaims.FirstOrDefault(c => c.Type == "role") == null ? new List<string>() : listClaims.Where(c => c.Type == "role").Select(c => c.Value).ToList()
+            });
             if (createResult)
             {
                 var profileCreated = await _repoUser.GetByEmailAsync(listClaims.FirstOrDefault(c => c.Type == "email").Value);
@@ -96,7 +97,7 @@
         }
         else
         {
-            if(!CheckIfInformationsAreChanged(profile, listClaims))
+            if (!CheckIfInformationsAreChanged(profile, listClaims))
             {
                 await HandlingAuthentication(profile);
                 await SetStage(100, "Chuyển hướng tới trang chủ");
@@ -107,16 +108,16 @@
             {
                 await SetStage(50, "Thông tin có sự thay đổi.<br>Tiến hành cập nhật");
 
-                var profileUpdateResult = await _repoUser.UpdateAsync(new ()
+                var profileUpdateResult = await _repoUser.UpdateAsync(new UserUpdateRequest
                 {
                     Id = profile.Id,
                     Email = profile.Email,
                     Username = listClaims.FirstOrDefault(c => c.Type == "name") == null ? "N/A" : listClaims.FirstOrDefault(c => c.Type == "name").Value,
                     RoleCodes = listClaims.FirstOrDefault(c => c.Type == "role") == null ? new List<string>() : listClaims.Where(c => c.Type == "role").Select(c => c.Value).ToList(),
-                    Status = profile.Status,
+                    Status = profile.Status
                 });
 
-                if(profileUpdateResult)
+                if (profileUpdateResult)
                 {
                     await SetStage(75, "Cập nhật thành công.<br>Làm mới thông tin.");
 
@@ -144,12 +145,13 @@
         {
             new Claim(ClaimTypes.Email, user.Email),
             new Claim(ClaimTypes.Name, user.Username),
-            new Claim("UserId", user.Id.ToString()),
+            new Claim("UserId", user.Id.ToString())
         };
 
-        foreach(var i in user.RoleCodes.ToList()) {
-            //if (lstClaim.Any(c => c.Type == ClaimTypes.Role && c.Value == i)) continue;
-            lstClaim.Add(new Claim(ClaimTypes.Role, i)); 
+        foreach (var i in user.RoleCodes.ToList())
+        {
+    //if (lstClaim.Any(c => c.Type == ClaimTypes.Role && c.Value == i)) continue;
+            lstClaim.Add(new Claim(ClaimTypes.Role, i));
         }
 
         var customAuth = (CustomAuthenticationStateProvider)_authProvider;
@@ -161,7 +163,7 @@
         var claimUsername = listClaims.FirstOrDefault(c => c.Type == "name") == null ? "N/A" : listClaims.FirstOrDefault(c => c.Type == "name").Value;
         var claimRoleCodes = listClaims.FirstOrDefault(c => c.Type == "role") == null ? new List<string>() : listClaims.Where(c => c.Type == "role").Select(c => c.Value).ToList();
 
-        if(claimUsername != user.Username || !claimRoleCodes.Order().SequenceEqual(user.RoleCodes.Order()))
+        if (claimUsername != user.Username || !claimRoleCodes.Order().SequenceEqual(user.RoleCodes.Order()))
         {
             return true;
         }
@@ -174,5 +176,12 @@
         _nav.NavigateTo("/post/home");
     }
 
-    private async Task SetStage(int val, string message) { Stage = val; StageMessage = message; StateHasChanged(); await Task.Delay(500); }
+    private async Task SetStage(int val, string message)
+    {
+        Stage = val;
+        StageMessage = message;
+        StateHasChanged();
+        await Task.Delay(500);
+    }
+
 }

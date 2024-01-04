@@ -1,48 +1,47 @@
 ﻿using FPLSP_Tutorial.Domain.Enums;
 
-namespace FPLSP_Tutorial.Infrastructure.Extensions
+namespace FPLSP_Tutorial.Infrastructure.Extensions;
+
+public class EntityStatusExtention
 {
-    public class EntityStatusExtention
+    public class EntityStatusExtensions
     {
-        public class EntityStatusExtensions
+        public string ConvertForGeneral(EntityStatus status)
         {
-
-            public string ConvertForGeneral(EntityStatus status)
+            switch (status)
             {
-                switch (status)
-                {
-                    case EntityStatus.Active:
-                        return "Đang hoạt động";
-                    case EntityStatus.InActive:
-                        return "Ngừng hoạt động";
-                    case EntityStatus.Deleted:
-                        return "Đã xóa";
-                    case EntityStatus.Pending:
-                        return "Đang chờ";
-                    case EntityStatus.Locked:
-                        return "Đã khóa";
-                }
-
-                return "N/A";
+                case EntityStatus.Active:
+                    return "Đang hoạt động";
+                case EntityStatus.InActive:
+                    return "Ngừng hoạt động";
+                case EntityStatus.Deleted:
+                    return "Đã xóa";
+                case EntityStatus.Pending:
+                    return "Đang chờ";
+                case EntityStatus.Locked:
+                    return "Đã khóa";
             }
 
-            public string ConvertForExample(EntityStatus status)
+            return "N/A";
+        }
+
+        public string ConvertForExample(EntityStatus status)
+        {
+            switch (status)
             {
-                switch (status)
-                {
-                    case EntityStatus.Active:
-                        return "Đang mở";
-                    case EntityStatus.InActive:
-                        return "Đang đóng";
-                    case EntityStatus.Deleted:
-                        return "Đã xóa";
-                    case EntityStatus.Pending:
-                        return "Đang chờ";
-                    case EntityStatus.Locked:
-                        return "Đã khóa";
-                }
-                return "N/A";
+                case EntityStatus.Active:
+                    return "Đang mở";
+                case EntityStatus.InActive:
+                    return "Đang đóng";
+                case EntityStatus.Deleted:
+                    return "Đã xóa";
+                case EntityStatus.Pending:
+                    return "Đang chờ";
+                case EntityStatus.Locked:
+                    return "Đã khóa";
             }
+
+            return "N/A";
         }
     }
 }

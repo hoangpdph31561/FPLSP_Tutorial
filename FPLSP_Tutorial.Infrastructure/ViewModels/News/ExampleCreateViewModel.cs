@@ -7,56 +7,59 @@ using FPLSP_Tutorial.Application.ValueObjects.Common;
 using FPLSP_Tutorial.Application.ViewModels;
 using FPLSP_Tutorial.Domain.Entities;
 
-namespace FPLSP_Tutorial.Infrastructure.ViewModels.News
+namespace FPLSP_Tutorial.Infrastructure.ViewModels.News;
+
+public class ExampleCreateViewModel : ViewModelBase<ExampleCreateRequest>
 {
-    public class ExampleCreateViewModel : ViewModelBase<ExampleCreateRequest>
+    public readonly IExampleReadOnlyRepository _exampleReadOnlyRepository;
+    public readonly IExampleReadWriteRepository _exampleReadWriteRepository;
+    private readonly ILocalizationService _localizationService;
+    private readonly IMapper _mapper;
+
+    public ExampleCreateViewModel(IExampleReadOnlyRepository ExampleReadOnlyRepository,
+        IExampleReadWriteRepository ExampleReadWriteRepository, ILocalizationService localizationService,
+        IMapper mapper)
     {
-        public readonly IExampleReadOnlyRepository _exampleReadOnlyRepository;
-        public readonly IExampleReadWriteRepository _exampleReadWriteRepository;
-        private readonly ILocalizationService _localizationService;
-        private readonly IMapper _mapper;
+        _exampleReadOnlyRepository = ExampleReadOnlyRepository;
+        _exampleReadWriteRepository = ExampleReadWriteRepository;
+        _localizationService = localizationService;
+        _mapper = mapper;
+    }
 
-        public ExampleCreateViewModel(IExampleReadOnlyRepository ExampleReadOnlyRepository, IExampleReadWriteRepository ExampleReadWriteRepository, ILocalizationService localizationService, IMapper mapper)
+    public override async Task HandleAsync(ExampleCreateRequest request, CancellationToken cancellationToken)
+    {
+        try
         {
-            _exampleReadOnlyRepository = ExampleReadOnlyRepository;
-            _exampleReadWriteRepository = ExampleReadWriteRepository;
-            _localizationService = localizationService;
-            _mapper = mapper;
+            var createResult =
+                await _exampleReadWriteRepository.AddExampleAsync(_mapper.Map<ExampleEntity>(request),
+                    cancellationToken);
+
+            if (createResult.Success)
+            {
+                var result = await _exampleReadOnlyRepository.GetExampleByIdAsync(createResult.Data, cancellationToken);
+
+                Data = result.Data!;
+                Success = result.Success;
+                ErrorItems = result.Errors;
+                Message = result.Message;
+                return;
+            }
+
+            Success = createResult.Success;
+            ErrorItems = createResult.Errors;
+            Message = createResult.Message;
         }
-
-        public override async Task HandleAsync(ExampleCreateRequest request, CancellationToken cancellationToken)
+        catch (Exception)
         {
-            try
+            Success = false;
+            ErrorItems = new[]
             {
-                var createResult = await _exampleReadWriteRepository.AddExampleAsync(_mapper.Map<ExampleEntity>(request), cancellationToken);
-
-                if (createResult.Success)
+                new ErrorItem
                 {
-                    var result = await _exampleReadOnlyRepository.GetExampleByIdAsync(createResult.Data, cancellationToken);
-
-                    Data = result.Data!;
-                    Success = result.Success;
-                    ErrorItems = result.Errors;
-                    Message = result.Message;
-                    return;
+                    Error = _localizationService["Error occurred while getting the Example"],
+                    FieldName = string.Concat(LocalizationString.Common.FailedToGet, "Example")
                 }
-
-                Success = createResult.Success;
-                ErrorItems = createResult.Errors;
-                Message = createResult.Message;
-            }
-            catch (Exception)
-            {
-                Success = false;
-                ErrorItems = new[]
-                    {
-                    new ErrorItem
-                    {
-                        Error = _localizationService["Error occurred while getting the Example"],
-                        FieldName = string.Concat(LocalizationString.Common.FailedToGet, "Example")
-                    }
-                };
-            }
+            };
         }
     }
 }

@@ -1,9 +1,8 @@
-﻿namespace FPLSP_Tutorial.WASM.Data.DataTransferObjects.PostTag.Request
-{
-    public class PostTagDeleteRequest
-    {
-        public Guid Id { get; set; }
+﻿namespace FPLSP_Tutorial.WASM.Data.DataTransferObjects.PostTag.Request;
 
-        public Guid? DeletedBy { get; set; }
-    }
+public class PostTagDeleteRequest
+{
+    public Guid Id { get; set; }
+
+    public Guid? DeletedBy { get; set; }
 }

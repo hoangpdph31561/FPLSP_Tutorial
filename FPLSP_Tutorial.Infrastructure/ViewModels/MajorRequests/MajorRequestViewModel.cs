@@ -3,41 +3,42 @@ using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Application.ValueObjects.Common;
 using FPLSP_Tutorial.Application.ViewModels;
 
-namespace FPLSP_Tutorial.Infrastructure.ViewModels.MajorRequests
-{
-    public class MajorRequestViewModel : ViewModelBase<Guid>
-    {
-        private readonly IMajorRequestReadOnlyRepository _majorRequestReadOnlyRespository;
-        private readonly ILocalizationService _localizationService;
+namespace FPLSP_Tutorial.Infrastructure.ViewModels.MajorRequests;
 
-        public MajorRequestViewModel(IMajorRequestReadOnlyRepository majorRequestReadOnlyRespository, ILocalizationService localizationService)
+public class MajorRequestViewModel : ViewModelBase<Guid>
+{
+    private readonly ILocalizationService _localizationService;
+    private readonly IMajorRequestReadOnlyRepository _majorRequestReadOnlyRespository;
+
+    public MajorRequestViewModel(IMajorRequestReadOnlyRepository majorRequestReadOnlyRespository,
+        ILocalizationService localizationService)
+    {
+        _majorRequestReadOnlyRespository = majorRequestReadOnlyRespository;
+        _localizationService = localizationService;
+    }
+
+    public override async Task HandleAsync(Guid idMajorRequest, CancellationToken cancellationToken)
+    {
+        try
         {
-            _majorRequestReadOnlyRespository = majorRequestReadOnlyRespository;
-            _localizationService = localizationService;
+            var result =
+                await _majorRequestReadOnlyRespository.GetMajorRequestByIdAsync(idMajorRequest, cancellationToken);
+            Data = result.Data!;
+            Success = result.Success;
+            ErrorItems = result.Errors;
+            Message = result.Message;
         }
-        public async override Task HandleAsync(Guid idMajorRequest, CancellationToken cancellationToken)
+        catch
         {
-            try
+            Success = false;
+            ErrorItems = new[]
             {
-                var result = await _majorRequestReadOnlyRespository.GetMajorRequestByIdAsync(idMajorRequest, cancellationToken);
-                Data = result.Data!;
-                Success = result.Success;
-                ErrorItems = result.Errors;
-                Message = result.Message;
-                return;
-            }
-            catch
-            {
-                Success = false;
-                ErrorItems = new[]
-                {
                 new ErrorItem
                 {
                     Error = _localizationService["Error occurred while getting the MajorRequest"],
                     FieldName = string.Concat(LocalizationString.Common.FailedToGet, "MajorRequest")
                 }
             };
-            }
         }
     }
 }

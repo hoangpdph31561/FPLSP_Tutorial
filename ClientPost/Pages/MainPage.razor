@@ -1,6 +1,5 @@
 ﻿@page "/mainpage"
-@using ClientPost.Component;
-@using ClientPost.Pages
+@using ClientPost.Component
 
 @inject IDialogService DialogService
 @inject NavigationManager NavigationManager
@@ -8,7 +7,7 @@
 
 @if (_isLoadingAll)
 {
-    <LoadingIndicator />
+    <LoadingIndicator/>
 }
 else
 {
@@ -27,7 +26,7 @@ else
                     // Truyền pthc xóa Tag khỏi List<Tag> vào trong OnClose
                     <MudChip Color="Color.Primary" OnClose="@(() => { _lstTag.Remove(i); })">@i.Name</MudChip>
                 }
-                @if(_toggleAllTags)
+                @if (_toggleAllTags)
                 {
                     <MudChip Color="Color.Default" OnClick="@(() => _toggleAllTags = false)" Style="font-weight: 500">@("<")</MudChip>
                 }
@@ -39,19 +38,19 @@ else
                     }
                 }
             </div>
-            
+
             <MudChip Color="Color.Default" Icon="@Icons.Material.Filled.AddCircle" OnClick="@(async () => { await OnTagSelectionToggle(); })">Thêm</MudChip>
         </div>
-        @if(_isSearching)
+        @if (_isSearching)
         {
-            @if(_lstPostSearch.Count == 0)
+            @if (_lstPostSearch.Count == 0)
             {
                 <MudText>Không có bài viết cần tìm</MudText>
             }
             else
             {
                 @foreach (var item in _lstPostSearch)
-            {
+                {
                     <MudItem xs="12" sm="6" md="4" Class="pa-3">
                         <MudPaper Elevation="2" Class="pa-4">
                             <MudText Typo="Typo.caption">@item.CreatedTime.ToString("hh:MM tt dd/MM/yyyy")</MudText>
@@ -61,7 +60,7 @@ else
                                 </MudTooltip>
                             </div>
                             <MudPaper Elevation="0" Class="truncated-inline-text-container">
-                                <MudIcon Icon="@Icons.Material.Filled.Man" />
+                                <MudIcon Icon="@Icons.Material.Filled.Man"/>
                                 <MudText Typo="Typo.caption" Class="truncated-inline-text ">@item.CreatedName</MudText>
                             </MudPaper>
                             <MudText Typo="Typo.caption">Loại bài viết: @item.PostType</MudText>
@@ -79,7 +78,12 @@ else
                                 }
                             </MudPaper>
                             <MudPaper Elevation="0" Class="d-flex align-center justify-end">
-                                <MudButton OnClick="@(() => NavigationManager.NavigateTo($"/postdetail/{item.Id}"))" Color="Color.Primary">Đọc thêm<MudText Class="mt-1 px-2 align-center" Typo="Typo.caption"><MudIcon Icon="@Icons.Material.Filled.East" /></MudText></MudButton>
+                                <MudButton OnClick="@(() => NavigationManager.NavigateTo($"/postdetail/{item.Id}"))" Color="Color.Primary">
+                                    Đọc thêm
+                                    <MudText Class="mt-1 px-2 align-center" Typo="Typo.caption">
+                                        <MudIcon Icon="@Icons.Material.Filled.East"/>
+                                    </MudText>
+                                </MudButton>
                             </MudPaper>
                         </MudPaper>
                     </MudItem>
@@ -97,7 +101,9 @@ else
                         </div>
                     </MudItem>
                     <MudItem xs="5" sm="4" Class="d-flex justify-end align-center">
-                        <MudText><MudNavLink Href="@($"/postbysystem")">>> Tất cả</MudNavLink></MudText>
+                        <MudText>
+                            <MudNavLink Href="@("/postbysystem")">>> Tất cả</MudNavLink>
+                        </MudText>
                     </MudItem>
                 </MudGrid>
             </MudPaper>
@@ -131,7 +137,9 @@ else
                                         </MudTooltip>
                                     </MudItem>
                                     <MudItem xs="5" sm="4" Class="d-flex justify-end align-center">
-                                        <MudText><MudNavLink Href="@($"/postbymajor/{item.Id}")">>> Tất cả</MudNavLink></MudText>
+                                        <MudText>
+                                            <MudNavLink Href="@($"/postbymajor/{item.Id}")">>> Tất cả</MudNavLink>
+                                        </MudText>
                                     </MudItem>
                                 </MudGrid>
                             </MudPaper>
@@ -141,60 +149,68 @@ else
                     }
                 }
             </div>
-            <CustomePagination Class="my-1" HasNext="@_majorDTOS.HasNext" OnPageChange="@(async e=> await  OnPaginationButtonClick(e))" CurrentPageNumber="@_majorDTOS.PageNumber"></CustomePagination>
+            <CustomePagination Class="my-1" HasNext="@_majorDTOS.HasNext" OnPageChange="@(async e => await OnPaginationButtonClick(e))" CurrentPageNumber="@_majorDTOS.PageNumber"></CustomePagination>
         }
-       
+
     </MudPaper>
 }
 
 @code {
+
     #region Khai báo
+
     [Inject]
     public IClientPostService ClientPostService { get; set; }
+
     private string SearchString;
     private PaginationRequest _paginationRequest = new();
-    private ClientPostMajorRequestWithPagination _request { get; set; } = new();
+    private ClientPostMajorRequestWithPagination _request { get; } = new();
     private PaginationResponse<MajorBaseDTO> _majorDTOS;
     private List<MajorBaseDTO> _lstMajor;
     private bool _isLoadingAll = true;
     private bool _isLoadingList = true;
-    private bool _isDisableControls = false;
+    private readonly bool _isDisableControls = false;
     private Guid _idMajorDetail = Guid.Empty;
-    private bool _isSearching = false;
-    private int _maxChipDisplay = 10;
-    private bool _toggleAllTags = false;
+    private bool _isSearching;
+    private readonly int _maxChipDisplay = 10;
+    private bool _toggleAllTags;
     private List<TagBaseDTO> _lstTag = new();
     private List<TagBaseDTO> _lstTagFromDB = new();
-    private ClientPostGetByMajorIdWithPaginationRequest _requestSearch = new()
-        {
-            MajorId = null,
-        };
+
+    private readonly ClientPostGetByMajorIdWithPaginationRequest _requestSearch = new()
+    {
+        MajorId = null
+    };
+
     private PaginationResponse<PostMainDTO> _lstPostSearchPaginate = new();
     private List<PostMainDTO> _lstPostSearch = new();
+
     #endregion
 
-    protected async override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
         _isLoadingAll = true;
-        await LoadData().ContinueWith((val) =>
+        await LoadData().ContinueWith(val =>
         {
             _isLoadingAll = false;
             _isLoadingList = false;
         });
     }
+
     private async Task LoadData()
     {
-        //lấy ra tên major và id của nó
+    //lấy ra tên major và id của nó
         _majorDTOS = await ClientPostService.GetMajorList(_request);
         _lstMajor = _majorDTOS.Data.ToList();
         _lstTagFromDB = await ClientPostService.GetAllListTags();
     }
+
     private async Task OnPaginationButtonClick(int pageNumber)
     {
         if (_isDisableControls) return;
         _isLoadingList = true;
         _request.PageNumber = pageNumber;
-        await LoadData().ContinueWith((val) =>
+        await LoadData().ContinueWith(val =>
         {
             _isLoadingAll = false;
             _isLoadingList = false;
@@ -217,7 +233,6 @@ else
 
         if (!result.Cancelled)
         {
-
             _lstTag = (List<TagBaseDTO>)result.Data;
         }
         else
@@ -225,9 +240,10 @@ else
             _lstTag = lstBeforeChange;
         }
     }
+
     private async Task OnSearchFunc()
     {
-        if(!string.IsNullOrWhiteSpace(SearchString))
+        if (!string.IsNullOrWhiteSpace(SearchString))
         {
             _isSearching = true;
             _requestSearch.StringSearch = SearchString;

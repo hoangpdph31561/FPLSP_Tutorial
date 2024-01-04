@@ -1,8 +1,7 @@
 ﻿using ClientPost.Data.ValueObject.Pagination;
 
-namespace ClientPost.Data.DataTransferObject.Request
+namespace ClientPost.Data.DataTransferObject.Request;
+
+public class ClientPostMajorRequestWithPagination : PaginationRequest
 {
-    public class ClientPostMajorRequestWithPagination : PaginationRequest
-    {
-    }
 }

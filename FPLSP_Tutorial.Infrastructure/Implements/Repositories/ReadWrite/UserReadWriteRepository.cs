@@ -3,69 +3,68 @@ using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Application.ValueObjects.Common;
 using FPLSP_Tutorial.Application.ValueObjects.Response;
 using FPLSP_Tutorial.Domain.Entities;
-using FPLSP_Tutorial.Domain.Enums;
 using FPLSP_Tutorial.Infrastructure.Database.AppDbContext;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 
-namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
+namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite;
+
+public class UserReadWriteRepository : IUserReadWriteRepository
 {
-    public class UserReadWriteRepository : IUserReadWriteRepository
+    private readonly AppReadWriteDbContext _dbContext;
+    private readonly ILocalizationService _localizationService;
+
+    public UserReadWriteRepository(ILocalizationService localizationService, AppReadWriteDbContext dbContext)
     {
-        private readonly AppReadWriteDbContext _dbContext;
-        private readonly ILocalizationService _localizationService;
-        public UserReadWriteRepository(ILocalizationService localizationService, AppReadWriteDbContext dbContext)
+        _dbContext = dbContext;
+        _localizationService = localizationService;
+    }
+
+    public async Task<RequestResult<Guid>> AddUserAsync(UserEntity entity, CancellationToken cancellationToken)
+    {
+        try
         {
-            _dbContext = dbContext;
-            _localizationService = localizationService;
+            await _dbContext.UserEntities.AddAsync(entity);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+
+            return RequestResult<Guid>.Succeed(entity.Id);
         }
-        public async Task<RequestResult<Guid>> AddUserAsync(UserEntity entity, CancellationToken cancellationToken)
+        catch (Exception e)
         {
-            try
+            return RequestResult<Guid>.Fail(_localizationService["Unable to create User"], new[]
             {
-                await _dbContext.UserEntities.AddAsync(entity);
-                await _dbContext.SaveChangesAsync(cancellationToken);
-
-                return RequestResult<Guid>.Succeed(entity.Id);
-            }
-            catch (Exception e)
-            {
-                return RequestResult<Guid>.Fail(_localizationService["Unable to create User"], new[]
+                new ErrorItem
                 {
-                    new ErrorItem
-                    {
-                        Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToCreate + "User"
-                    }
-                });
-            }
+                    Error = e.Message,
+                    FieldName = LocalizationString.Common.FailedToCreate + "User"
+                }
+            });
         }
+    }
 
-        public async Task<RequestResult<int>> UpdateUserAsync(UserEntity entity, CancellationToken cToken)
+    public async Task<RequestResult<int>> UpdateUserAsync(UserEntity entity, CancellationToken cToken)
+    {
+        try
         {
-            try
-            {
-                var user = await _dbContext.UserEntities.FirstOrDefaultAsync(c => c.Id == entity.Id, cToken);
+            var user = await _dbContext.UserEntities.FirstOrDefaultAsync(c => c.Id == entity.Id, cToken);
 
-                user.Username = entity.Username;
-                user.RoleCodes = entity.RoleCodes;
-                user.Status = entity.Status;
-                
-                await _dbContext.SaveChangesAsync(cToken);
+            user.Username = entity.Username;
+            user.RoleCodes = entity.RoleCodes;
+            user.Status = entity.Status;
 
-                return RequestResult<int>.Succeed(1);
-            }
-            catch (Exception e)
+            await _dbContext.SaveChangesAsync(cToken);
+
+            return RequestResult<int>.Succeed(1);
+        }
+        catch (Exception e)
+        {
+            return RequestResult<int>.Fail(_localizationService["Unable to update User"], new[]
             {
-                return RequestResult<int>.Fail(_localizationService["Unable to update User"], new[]
+                new ErrorItem
                 {
-                    new ErrorItem
-                    {
-                        Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToUpdate + "User"
-                    }
-                });
-            }
+                    Error = e.Message,
+                    FieldName = LocalizationString.Common.FailedToUpdate + "User"
+                }
+            });
         }
     }
 }

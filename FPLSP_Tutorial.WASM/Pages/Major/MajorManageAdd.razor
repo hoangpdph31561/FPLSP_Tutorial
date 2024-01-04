@@ -1,7 +1,4 @@
-﻿@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major.Request;
-
-
-
+﻿@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major.Request
 <MudDialog>
     <DialogContent>
         <MudForm Model="@majorCreate">
@@ -13,7 +10,7 @@
             <MudSelectItem Value="EntityStatus.InActive">Không hoạt động</MudSelectItem>
             </MudSelect>*@
         </MudForm>
-        
+
     </DialogContent>
     <DialogActions>
         <MudButton Color="Color.Error" OnClick="OnClickCancel">Hủy</MudButton>
@@ -21,21 +18,31 @@
         <MudButton Color="Color.Primary" OnClick="CreateNewMajor">Lưu</MudButton>
     </DialogActions>
 </MudDialog>
+
 @code {
+
     [Parameter]
     public EventCallback OnCloseAdd { get; set; }
+
     [Inject]
     public IMajorRepository MajorRepository { get; set; }
+
     [Inject]
     public IDialogService DialogService { get; set; }
+
     [Inject]
     public ISnackbar Snackbar { get; set; }
-    public MajorCreateRequest majorCreate = new MajorCreateRequest();
+
+    public MajorCreateRequest majorCreate = new();
 
 
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; }
 
-    void OnClickCancel() => MudDialog.Cancel();
+    void OnClickCancel()
+    {
+        MudDialog.Cancel();
+    }
 
     private async Task CreateNewMajor()
     {
@@ -44,7 +51,7 @@
             (MarkupString)("<h2 style=\"font-weight: 500\">Thông báo</h2>" + "Xác nhận thêm chuyên ngành?"),
             "Xác nhận",
             cancelText: "Hủy"
-        );
+            );
         if (confirm == true)
         {
             var result = await MajorRepository.AddAsync(majorCreate);
@@ -58,7 +65,6 @@
             {
                 Snackbar.Add("Thêm thất bại" + "<br>" + result.Message, Severity.Error);
             }
-            
         }
     }
 
@@ -66,4 +72,5 @@
     {
         majorCreate = new MajorCreateRequest();
     }
+
 }

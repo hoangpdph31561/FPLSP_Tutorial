@@ -1,7 +1,6 @@
-﻿namespace FPLSP_Tutorial.Application.DataTransferObjects.Example.Request
+﻿namespace FPLSP_Tutorial.Application.DataTransferObjects.Example.Request;
+
+public class ExampleCreateRequest
 {
-    public class ExampleCreateRequest
-    {
-        public string Name { get; set; } = null!;
-    }
+    public string Name { get; set; } = null!;
 }

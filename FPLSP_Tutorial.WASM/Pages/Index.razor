@@ -6,29 +6,29 @@
 
 
 @code {
+
     [Parameter]
     [SupplyParameterFromQuery(Name = "token")]
-    public string? JWTToken { get; set; } = null;
+    public string? JWTToken { get; set; }
 
 
     protected override async Task OnInitializedAsync()
     {
-
-
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        //_nav.NavigateTo("/major/joined");
-        //_nav.NavigateTo("/loginwithtoken?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjMzlmNzIyLWNiYTUtNDEyNC1hNDkyLTBlZmU3ZmFmYmM5ZiIsIm5hbWUiOiJOZ3V54buFbiBMw6ogTmfhu41jIFRo4buNIFAgSCAyIDYgNSA1IDciLCJlbWFpbCI6InRob25sbnBoMjY1NTdAZnB0LmVkdS52biIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BQ2c4b2NJZzVPNzBkWFFUcUVYVEZ6d3NydmpMTXkxVGoxVTdBcnItZ0hPTVpsZ0ozS2c9czk2LWMiLCJ1c2VyTmFtZSI6InRob25sbnBoMjY1NTciLCJpZFRyYWluaW5nRmFjaWxpdHkiOiJjNmE3YjY5MS1kMzFjLTRmMzMtOThmNS00OTc5NTU1NWY2M2UiLCJsb2NhbEhvc3QiOiJodHRwczovL2xvY2FsaG9zdDo3MTkzIiwicm9sZSI6WyJDTkJNIiwiVVNFUiIsIkFETUlOIl0sInJvbGVOYW1lcyI6WyJRQV9DTkJNIiwiUUFfVXNlciIsIlF14bqjbiB0cuG7iyB2acOqbiJdLCJuYmYiOjE3MDA1NTQ2MDQsImV4cCI6MTcwMzE0NjYwNCwiaWF0IjoxNzAwNTU0NjA0LCJpc3MiOiJodHRwczovL2xvY2FsaG9zdDo1MDAwIiwiYXVkIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NTAwMCJ9.MI6R5VZ0Z53SeUVFU7LWYNJ4k-GPfMLL9AEacOBEhs8");
-        if(JWTToken != null)
+    //_nav.NavigateTo("/major/joined");
+    //_nav.NavigateTo("/loginwithtoken?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjMzlmNzIyLWNiYTUtNDEyNC1hNDkyLTBlZmU3ZmFmYmM5ZiIsIm5hbWUiOiJOZ3V54buFbiBMw6ogTmfhu41jIFRo4buNIFAgSCAyIDYgNSA1IDciLCJlbWFpbCI6InRob25sbnBoMjY1NTdAZnB0LmVkdS52biIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BQ2c4b2NJZzVPNzBkWFFUcUVYVEZ6d3NydmpMTXkxVGoxVTdBcnItZ0hPTVpsZ0ozS2c9czk2LWMiLCJ1c2VyTmFtZSI6InRob25sbnBoMjY1NTciLCJpZFRyYWluaW5nRmFjaWxpdHkiOiJjNmE3YjY5MS1kMzFjLTRmMzMtOThmNS00OTc5NTU1NWY2M2UiLCJsb2NhbEhvc3QiOiJodHRwczovL2xvY2FsaG9zdDo3MTkzIiwicm9sZSI6WyJDTkJNIiwiVVNFUiIsIkFETUlOIl0sInJvbGVOYW1lcyI6WyJRQV9DTkJNIiwiUUFfVXNlciIsIlF14bqjbiB0cuG7iyB2acOqbiJdLCJuYmYiOjE3MDA1NTQ2MDQsImV4cCI6MTcwMzE0NjYwNCwiaWF0IjoxNzAwNTU0NjA0LCJpc3MiOiJodHRwczovL2xvY2FsaG9zdDo1MDAwIiwiYXVkIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NTAwMCJ9.MI6R5VZ0Z53SeUVFU7LWYNJ4k-GPfMLL9AEacOBEhs8");
+        if (JWTToken != null)
         {
             _nav.NavigateTo($"/loginwithtoken?token={JWTToken}");
         }
         else
         {
             _nav.NavigateTo("https://localhost:5000/Account/Login");
-            //await _jsRuntime.InvokeVoidAsync("eval", $"let _discard_ = open(`{"/mainpage"}`, `_blank`)");
+    //await _jsRuntime.InvokeVoidAsync("eval", $"let _discard_ = open(`{"/mainpage"}`, `_blank`)");
         }
     }
+
 }

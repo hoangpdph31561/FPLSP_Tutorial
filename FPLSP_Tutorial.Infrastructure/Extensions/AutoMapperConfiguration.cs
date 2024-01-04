@@ -1,7 +1,7 @@
-﻿using AutoMapper.Extensions.ExpressionMapping;
+﻿using System.Reflection;
+using AutoMapper.Extensions.ExpressionMapping;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System.Reflection;
 
 namespace FPLSP_Tutorial.Infrastructure.Extensions;
 

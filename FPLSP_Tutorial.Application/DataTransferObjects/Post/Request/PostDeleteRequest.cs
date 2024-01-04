@@ -1,10 +1,8 @@
-﻿namespace FPLSP_Tutorial.Application.DataTransferObjects.Post.Request
+﻿namespace FPLSP_Tutorial.Application.DataTransferObjects.Post.Request;
+
+public class PostDeleteRequest
 {
-    public class PostDeleteRequest
-    {
-        public Guid Id { get; set; }
+    public Guid Id { get; set; }
 
-        public Guid? DeletedBy { get; set; }
-
-    }
+    public Guid? DeletedBy { get; set; }
 }

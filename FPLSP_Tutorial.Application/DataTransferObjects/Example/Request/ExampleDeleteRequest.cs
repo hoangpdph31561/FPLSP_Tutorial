@@ -1,8 +1,7 @@
-﻿namespace FPLSP_Tutorial.Application.DataTransferObjects.Example.Request
+﻿namespace FPLSP_Tutorial.Application.DataTransferObjects.Example.Request;
+
+public class ExampleDeleteRequest
 {
-    public class ExampleDeleteRequest
-    {
-        public Guid Id { get; set; }
-        public Guid? DeletedBy { get; set; }
-    }
+    public Guid Id { get; set; }
+    public Guid? DeletedBy { get; set; }
 }

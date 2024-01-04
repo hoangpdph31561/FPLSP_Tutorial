@@ -6,41 +6,44 @@ using FPLSP_Tutorial.Application.ValueObjects.Common;
 using FPLSP_Tutorial.Application.ViewModels;
 using FPLSP_Tutorial.Domain.Entities;
 
-namespace FPLSP_Tutorial.Infrastructure.ViewModels.UserMajors
-{
-    public class UserMajorCreateViewModel : ViewModelBase<UserMajorCreateRequest>
-    {
-        private readonly IUserMajorReadWriteRepository _majorUserReadWriteResponsitory;
-        private readonly ILocalizationService _localizationService;
-        private readonly IMapper _mapper;
+namespace FPLSP_Tutorial.Infrastructure.ViewModels.UserMajors;
 
-        public UserMajorCreateViewModel(IUserMajorReadWriteRepository majorUserReadWriteResponsitory, ILocalizationService localizationService, IMapper mapper)
+public class UserMajorCreateViewModel : ViewModelBase<UserMajorCreateRequest>
+{
+    private readonly ILocalizationService _localizationService;
+    private readonly IUserMajorReadWriteRepository _majorUserReadWriteResponsitory;
+    private readonly IMapper _mapper;
+
+    public UserMajorCreateViewModel(IUserMajorReadWriteRepository majorUserReadWriteResponsitory,
+        ILocalizationService localizationService, IMapper mapper)
+    {
+        _majorUserReadWriteResponsitory = majorUserReadWriteResponsitory;
+        _localizationService = localizationService;
+        _mapper = mapper;
+    }
+
+    public override async Task HandleAsync(UserMajorCreateRequest data, CancellationToken cancellationToken)
+    {
+        try
         {
-            _majorUserReadWriteResponsitory = majorUserReadWriteResponsitory;
-            _localizationService = localizationService;
-            _mapper = mapper;
+            var createResult =
+                await _majorUserReadWriteResponsitory.AddUserMajorAsync(_mapper.Map<UserMajorEntity>(data),
+                    cancellationToken);
+            Success = createResult.Success;
+            ErrorItems = createResult.Errors;
+            Message = createResult.Message;
         }
-        public override async Task HandleAsync(UserMajorCreateRequest data, CancellationToken cancellationToken)
+        catch (Exception)
         {
-            try
+            Success = false;
+            ErrorItems = new[]
             {
-                var createResult = await _majorUserReadWriteResponsitory.AddUserMajorAsync(_mapper.Map<UserMajorEntity>(data), cancellationToken);
-                Success = createResult.Success;
-                ErrorItems = createResult.Errors;
-                Message = createResult.Message;
-            }
-            catch (Exception)
-            {
-                Success = false;
-                ErrorItems = new[]
-                    {
-                    new ErrorItem
-                    {
-                        Error = _localizationService["Error occurred while getting the UserMajor"],
-                        FieldName = string.Concat(LocalizationString.Common.FailedToGet, "UserMajor")
-                    }
-                };
-            }
+                new ErrorItem
+                {
+                    Error = _localizationService["Error occurred while getting the UserMajor"],
+                    FieldName = string.Concat(LocalizationString.Common.FailedToGet, "UserMajor")
+                }
+            };
         }
     }
 }

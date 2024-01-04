@@ -1,8 +1,7 @@
-﻿namespace FPLSP_Tutorial.Application.DataTransferObjects.ClientPost.Request
+﻿namespace FPLSP_Tutorial.Application.DataTransferObjects.ClientPost.Request;
+
+public class InputMajorRequest
 {
-    public class InputMajorRequest
-    {
-        public Guid UserId { get; set; }
-        public Guid MajorId { get; set; }
-    }
+    public Guid UserId { get; set; }
+    public Guid MajorId { get; set; }
 }

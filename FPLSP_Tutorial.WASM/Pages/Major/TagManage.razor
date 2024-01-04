@@ -1,6 +1,5 @@
-﻿@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Tag;
-@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Tag.TagRequest;
-
+﻿@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Tag.TagRequest
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Tag
 @inject AuthenticationStateProvider _authProvider
 
 @inject ITagRepository _repoTag
@@ -24,7 +23,7 @@ else
                 {
                     <MudText Typo="Typo.h6" Style="font-weight: 500;">Quản lý nhãn</MudText>
 
-                    <MudTextField @bind-Value="@_createRequestTag.Name" Variant="Variant.Outlined" Class="w-100 mb-2" Placeholder="Nhập tên nhãn mới" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.AddCircle" OnAdornmentClick="@(async () => await OnAdd())" AdornmentColor="Color.Primary" For="(() => _createRequestTag.Name)" Immediate Label="Thêm nhãn"></MudTextField>
+                    <MudTextField @bind-Value="@_createRequestTag.Name" Variant="Variant.Outlined" Class="w-100 mb-2" Placeholder="Nhập tên nhãn mới" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.AddCircle" OnAdornmentClick="@(async () => await OnAdd())" AdornmentColor="Color.Primary" For="() => _createRequestTag.Name" Immediate Label="Thêm nhãn"></MudTextField>
 
 
                     <MudTable Items="@_listTag" Elevation="3" Class="mt-2" Height="40vh" FixedHeader="true">
@@ -35,19 +34,19 @@ else
                         </HeaderContent>
                         <RowTemplate>
                             <MudTd>@(_listTag.IndexOf(context) + 1)</MudTd>
-                                <MudTd>@context.Name</MudTd>
-                                <MudTd>
-                                    <MudIconButton Color="Color.Error" Class="mx-1" Size="Size.Small" Icon="@Icons.Material.Filled.Delete" OnClick="@(() => OnClickDelete(context.Id))" Title="Xóa" DisableElevation="true">Xóa</MudIconButton>
-                                </MudTd>
-                            </RowTemplate>
-                        </MudTable>
+                            <MudTd>@context.Name</MudTd>
+                            <MudTd>
+                                <MudIconButton Color="Color.Error" Class="mx-1" Size="Size.Small" Icon="@Icons.Material.Filled.Delete" OnClick="@(() => OnClickDelete(context.Id))" Title="Xóa" DisableElevation="true">Xóa</MudIconButton>
+                            </MudTd>
+                        </RowTemplate>
+                    </MudTable>
 
                     <div class="d-flex justify-end my-2">
                         <MudButton OnClick="@(() => MudDialog.Cancel())">Đóng</MudButton>
                     </div>
                 }
             </MudForm>
-            
+
         </DialogContent>
     </MudDialog>
 }
@@ -64,17 +63,18 @@ else
     [Parameter]
     public Guid? UserId { get; set; }
 
-    private TagViewWithPaginationRequest _preqRequestTag = new()
+    private readonly TagViewWithPaginationRequest _preqRequestTag = new()
     {
         PageSize = 20
     };
+
     private PaginationResponse<TagDTO> _presTag = new();
     private List<TagDTO> _listTag = new();
 
     private bool _isLoadingAll = true;
     private bool _isLoadingList = true;
 
-    private TagCreateRequest _createRequestTag = new()
+    private readonly TagCreateRequest _createRequestTag = new()
     {
         Status = EntityStatus.Active
     };
@@ -86,7 +86,7 @@ else
 
 
         _preqRequestTag.MajorId = MajorId;
-        await LoadData().ContinueWith((re) =>
+        await LoadData().ContinueWith(re =>
         {
             _isLoadingAll = false;
             _isLoadingList = false;
@@ -96,7 +96,7 @@ else
     private async Task LoadData()
     {
         _presTag = await _repoTag.GetListWithPaginationAsync(_preqRequestTag);
-        if(_presTag.Data != null)
+        if (_presTag.Data != null)
         {
             _listTag = (List<TagDTO>)_presTag.Data;
         }
@@ -107,7 +107,7 @@ else
         await _refForm.Validate();
         if (!_refForm.IsValid) return;
         var result = await _repoTag.AddAsync(_createRequestTag);
-        if(result)
+        if (result)
         {
             _mudSnackbar.Add("Thêm thành công", Severity.Success);
             _createRequestTag.Name = "";
@@ -122,15 +122,15 @@ else
     public async Task OnClickDelete(Guid idDelete)
     {
         var confirm = await _dialog.ShowMessageBox
-        (
-            "Thông báo",
-            "Xác nhận xóa?",
-            "Xác nhận",
-            cancelText: "Hủy"
-        );
+            (
+                "Thông báo",
+                "Xác nhận xóa?",
+                "Xác nhận",
+                cancelText: "Hủy"
+            );
         if (confirm == true)
         {
-            var removeConfirm = await _repoTag.DeleteAsync(new()
+            var removeConfirm = await _repoTag.DeleteAsync(new TagDeleteRequest
             {
                 Id = idDelete,
                 DeletedBy = UserId
@@ -146,4 +146,5 @@ else
             await LoadData();
         }
     }
+
 }

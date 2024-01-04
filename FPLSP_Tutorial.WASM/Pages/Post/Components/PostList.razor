@@ -1,10 +1,9 @@
-﻿@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major;
-@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major.Request;
-@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post;
-@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post.Request;
-@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Tag;
-@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Tag.TagRequest;
-
+﻿@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post.Request
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Tag
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Tag.TagRequest
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major.Request
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major
 @inject IPostRepository _repoPost;
 @inject ITagRepository _repoTag;
 @inject IMajorRepository _repoMajor;
@@ -48,9 +47,9 @@
 
 <MudPaper>
     <MudTabs Rounded="true">
-        <MudTabPanel Text="Hệ thống" >
+        <MudTabPanel Text="Hệ thống">
             <div class="pa-5">
-                @if(!_listMajorPostLoaded.Any(c => c == null))
+                @if (!_listMajorPostLoaded.Any(c => c == null))
                 {
                     <MudProgressLinear Indeterminate="true"></MudProgressLinear>
                 }
@@ -67,12 +66,12 @@
                             <div class="d-flex">
                                 <MudIcon Icon="@Icons.Material.Filled.Person" Size="Size.Small"></MudIcon>
                                 @{
-                                    var disName = (post.CreatedByName == null || post.CreatedByName == "") ? "N/A" : post.CreatedByName;
+                                    var disName = post.CreatedByName == null || post.CreatedByName == "" ? "N/A" : post.CreatedByName;
                                 }
                                 <MudText Typo="Typo.caption" Style="font-weight: 500; max-width: 50%" Class="overflow-text-1" title="@disName">@(disName)</MudText>
-                                    <MudText Typo="Typo.caption" Class="ms-1">@(" | " + post.CreatedTime.ToString("dd/MM/yyyy"))</MudText>
-                                </div>
-                            
+                                <MudText Typo="Typo.caption" Class="ms-1">@(" | " + post.CreatedTime.ToString("dd/MM/yyyy"))</MudText>
+                            </div>
+
                             <MudText Typo="Typo.h6" Style="font-weight: 500;">@post.Title</MudText>
 
                             @*<div class="post-content">
@@ -91,16 +90,15 @@
                             </div>
 
                         </MudCard>
-
                     }
-                    <CustomPagination Class="my-1" HasNext="@viewPostSystem.response.HasNext" OnPageChange="@(async e=> await  OnPaginationButtonClickPostSystem(e))" CurrentPageNumber="@viewPostSystem.response.PageNumber"></CustomPagination>
+                    <CustomPagination Class="my-1" HasNext="@viewPostSystem.response.HasNext" OnPageChange="@(async e => await OnPaginationButtonClickPostSystem(e))" CurrentPageNumber="@viewPostSystem.response.PageNumber"></CustomPagination>
                 }
             </div>
-            
+
         </MudTabPanel>
         <MudTabPanel Text="Chuyên ngành">
             <div class="pa-5">
-                @if(_isLoadingMajor)
+                @if (_isLoadingMajor)
                 {
                     <MudProgressLinear Indeterminate="true"></MudProgressLinear>
                 }
@@ -114,10 +112,10 @@
                             <MudExpansionPanel Style="border: 1px solid lightgrey;" Class="">
                                 <TitleContent>
                                     <MudText Typo="Typo.subtitle1" Style="font-weight: 500;">@(major.Code + " - " + major.Name)</MudText>
-                                    </TitleContent>
-                                    <ChildContent>
-                                        <MudDivider Class="mb-3"></MudDivider>
-                                        @foreach (var post in pbm.listPost)
+                                </TitleContent>
+                                <ChildContent>
+                                    <MudDivider Class="mb-3"></MudDivider>
+                                    @foreach (var post in pbm.listPost)
                                     {
                                         if (pbm.listPost.IndexOf(post) > 0)
                                         {
@@ -127,17 +125,17 @@
                                             <div class="d-flex">
                                                 <MudIcon Icon="@Icons.Material.Filled.Person" Size="Size.Small"></MudIcon>
                                                 @{
-                                                    var disName = (post.CreatedByName == null || post.CreatedByName == "") ? "N/A" : post.CreatedByName;
+                                                    var disName = post.CreatedByName == null || post.CreatedByName == "" ? "N/A" : post.CreatedByName;
                                                 }
                                                 <MudText Typo="Typo.caption" Style="font-weight: 500; max-width: 50%" Class="overflow-text-1" title="@disName">@(disName)</MudText>
-                                                    <MudText Typo="Typo.caption" Class="ms-1">@(" | " + post.CreatedTime.ToString("dd/MM/yyyy"))</MudText>
-                                                </div>
+                                                <MudText Typo="Typo.caption" Class="ms-1">@(" | " + post.CreatedTime.ToString("dd/MM/yyyy"))</MudText>
+                                            </div>
 
-                                                <MudText Typo="Typo.h6" Style="font-weight: 500;">@post.Title</MudText>
+                                            <MudText Typo="Typo.h6" Style="font-weight: 500;">@post.Title</MudText>
 
-                                                <div class="d-flex align-center my-2">
-                                                    <div class="overflow-hidden">
-                                                        @foreach (var i in post.ListTag)
+                                            <div class="d-flex align-center my-2">
+                                                <div class="overflow-hidden">
+                                                    @foreach (var i in post.ListTag)
                                                     {
                                                         <span style="background-color: lightgray; border-radius: 5px;" class="me-1 pa-1">@i.Name</span>
                                                     }
@@ -146,7 +144,7 @@
 
                                         </MudCard>
                                     }
-                                    <CustomPagination Class="my-1" HasNext="@pbm.response.HasNext" OnPageChange="@(async e=> await OnPaginationButtonClickPostMajor(pbm.idMajor ?? Guid.Empty, e))" CurrentPageNumber="@pbm.response.PageNumber"></CustomPagination>
+                                    <CustomPagination Class="my-1" HasNext="@pbm.response.HasNext" OnPageChange="@(async e => await OnPaginationButtonClickPostMajor(pbm.idMajor ?? Guid.Empty, e))" CurrentPageNumber="@pbm.response.PageNumber"></CustomPagination>
                                 </ChildContent>
                             </MudExpansionPanel>
                         }
@@ -159,6 +157,7 @@
 
 
 @code {
+
     [Parameter]
     public Guid UserId { get; set; }
 
@@ -166,18 +165,20 @@
     public bool AllMajor { get; set; }
 
     private PostViewWithPaginationRequest _preqPostSystem = new()
-        {
-            PostType = 1,
-            PageSize = 10,
-            IsGetTopLevel = true
-        };
+    {
+        PostType = 1,
+        PageSize = 10,
+        IsGetTopLevel = true
+    };
+
     private PaginationResponse<PostDTO> _presPost = new();
     private List<PostDTO> _listPost = new();
 
     private MajorViewWithPaginationRequest _preqMajor = new()
-        {
-            ContainPostOnly = true,
-        };
+    {
+        ContainPostOnly = true
+    };
+
     private PaginationResponse<MajorDTO> _presMajor = new();
     private List<MajorDTO> _listMajor = new();
 
@@ -192,9 +193,9 @@
     private bool _isLoadingAll = true;
     private bool _isLoadingMajor = true;
 
-    protected async override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
-        if(!AllMajor)
+        if (!AllMajor)
         {
             _preqMajor.UserId = UserId;
         }
@@ -205,7 +206,11 @@
 
     private async Task LoadData()
     {
-        await LoadMajor().ContinueWith(async (re) => { _isLoadingMajor = false; await LoadPost(); });
+        await LoadMajor().ContinueWith(async re =>
+        {
+            _isLoadingMajor = false;
+            await LoadPost();
+        });
         _listTagFromDB = await _repoTag.GetListAsync(_preqTag);
     }
 
@@ -242,11 +247,11 @@
     {
         foreach (var i in _listMajor)
         {
-            var postMajor = await _repoPost.GetListWithPaginationAsync(new()
-                {
-                    MajorId = i.Id,
-                    IsGetTopLevel = true,
-                });
+            var postMajor = await _repoPost.GetListWithPaginationAsync(new PostViewWithPaginationRequest
+            {
+                MajorId = i.Id,
+                IsGetTopLevel = true
+            });
             if (postMajor.Data != null)
             {
                 _listPostByMajor.Add((i.Id, postMajor.Data.ToList(), postMajor.HasNext, postMajor));
@@ -260,20 +265,20 @@
 
     private async Task LoadSinglePostMajor(Guid idMajor, int PageNumber)
     {
-        var postMajor = await _repoPost.GetListWithPaginationAsync(new()
-            {
-                MajorId = idMajor,
-                IsGetTopLevel = true,
-                PageNumber = PageNumber
-            });
+        var postMajor = await _repoPost.GetListWithPaginationAsync(new PostViewWithPaginationRequest
+        {
+            MajorId = idMajor,
+            IsGetTopLevel = true,
+            PageNumber = PageNumber
+        });
         if (postMajor.Data != null)
         {
             _listPostByMajor.Add((idMajor, postMajor.Data.ToList(), postMajor.HasNext, postMajor));
-            //StateHasChanged();
+    //StateHasChanged();
         }
 
         _listMajorPostLoaded.Add(idMajor);
-        //StateHasChanged();
+    //StateHasChanged();
     }
 
     private async Task OnPaginationButtonClickPostSystem(int PageNumber)
@@ -289,6 +294,6 @@
         _listMajorPostLoaded.Remove(idMajor);
         _listPostByMajor.Remove(_listPostByMajor.FirstOrDefault(c => c.idMajor == idMajor));
         await LoadSinglePostMajor(idMajor, PageNumber);
-
     }
+
 }

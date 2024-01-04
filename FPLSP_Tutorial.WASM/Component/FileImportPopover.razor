@@ -1,6 +1,6 @@
-﻿@using DocumentFormat.OpenXml.Packaging;
-@using System.Xml.Linq;
-@using OpenXmlPowerTools;
+﻿@using OpenXmlPowerTools
+@using System.Buffers
+@using DocumentFormat.OpenXml.Packaging
 @inject ISnackbar _mudSnackbar
 @inject IJSRuntime _jsRuntime;
 
@@ -22,7 +22,7 @@
                     <MudIconButton Icon="@Icons.Material.Filled.Close" Size="Size.Small" OnClick="@(async () => { await OnClose.InvokeAsync(); })"></MudIconButton>
                 </div>
                 <div>
-                    <MudFileUpload T="IBrowserFile" FilesChanged="@(async (IBrowserFile f) => await UploadFile(f))" Hidden="false" Class="flex-1" InputClass="absolute mud-width-full mud-height-full overflow-hidden z-20" InputStyle="opacity:0" @ondragenter="@SetDragClass" @ondragleave="@ClearDragClass" @ondragend="@ClearDragClass">
+                    <MudFileUpload T="IBrowserFile" FilesChanged="@(async f => await UploadFile(f))" Hidden="false" Class="flex-1" InputClass="absolute mud-width-full mud-height-full overflow-hidden z-20" InputStyle="opacity:0" @ondragenter="@SetDragClass" @ondragleave="@ClearDragClass" @ondragend="@ClearDragClass">
                         <ButtonTemplate>
                             <MudPaper Outlined="true" Class="@(DragClass)">
                                 <div class="w-100 d-flex justify-content-center">
@@ -41,13 +41,14 @@
                 <MudText Class="mr-auto">Đang xử lý file...</MudText>
                 <MudText @onclick="@(() => OnClose.InvokeAsync())">Hủy</MudText>
             </div>
-            
+
             <MudProgressLinear Value="@LoadingProgress" Color="Color.Info" Style="width: 30vw"></MudProgressLinear>
         }
     </MudCard>
 </MudOverlay>
 
 @code {
+
     [Parameter]
     public bool Enable { get; set; } = false;
 
@@ -80,7 +81,7 @@
         IsLoading = true;
 
         var fileExtension = browserFile.Name.Split(".").Last();
-        if(!ListAcceptedExtensions.Any(c => c.ToLower() == fileExtension))
+        if (!ListAcceptedExtensions.Any(c => c.ToLower() == fileExtension))
         {
             _mudSnackbar.Add("Định dạng file không được hỗ trợ", Severity.Error);
             return;
@@ -88,40 +89,40 @@
 
         const long maxFileSize = 1024L * 1024L * 1024L;
 
-        Stream stream = browserFile.OpenReadStream(maxFileSize);
-        int bufferSize = 512;
-        byte[] buffer = System.Buffers.ArrayPool<byte>.Shared.Rent(bufferSize);
-        int bytesRead = 0;
+        var stream = browserFile.OpenReadStream(maxFileSize);
+        var bufferSize = 512;
+        var buffer = ArrayPool<byte>.Shared.Rent(bufferSize);
+        var bytesRead = 0;
         long totalBytesRead = 0;
 
         using var timer = new Timer(_ => InvokeAsync(() => StateHasChanged()));
         timer.Change(TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(500));
 
-        using (MemoryStream memStream = new MemoryStream())
+        using (var memStream = new MemoryStream())
         {
             try
             {
-                int offset = 0;
+                var offset = 0;
 
                 while ((bytesRead = await stream.ReadAsync(buffer)) != 0)
                 {
                     totalBytesRead += bytesRead;
                     await memStream.WriteAsync(buffer, 0, bytesRead);
-                    LoadingProgress =  (int)(100 * totalBytesRead / browserFile.Size);
+                    LoadingProgress = (int)(100 * totalBytesRead / browserFile.Size);
                 }
             }
             finally
             {
-                System.Buffers.ArrayPool<byte>.Shared.Return(buffer);
+                ArrayPool<byte>.Shared.Return(buffer);
             }
-        
-            using (WordprocessingDocument doc = WordprocessingDocument.Open(memStream, true))
+
+            using (var doc = WordprocessingDocument.Open(memStream, true))
             {
-                HtmlConverterSettings settings = new HtmlConverterSettings()
-                    {
-                        PageTitle = "My Page Title"
-                    };
-                XElement html = HtmlConverter.ConvertToHtml(doc, settings);
+                var settings = new HtmlConverterSettings
+                {
+                    PageTitle = "My Page Title"
+                };
+                var html = HtmlConverter.ConvertToHtml(doc, settings);
 
                 Result = html.ToStringNewLineOnAttributes();
             }
@@ -141,4 +142,5 @@
     {
         DragClass = DefaultDragClass;
     }
+
 }

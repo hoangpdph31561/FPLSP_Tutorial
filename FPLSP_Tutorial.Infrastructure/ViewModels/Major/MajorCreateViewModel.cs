@@ -7,56 +7,58 @@ using FPLSP_Tutorial.Application.ValueObjects.Common;
 using FPLSP_Tutorial.Application.ViewModels;
 using FPLSP_Tutorial.Domain.Entities;
 
-namespace FPLSP_Tutorial.Infrastructure.ViewModels.Major
+namespace FPLSP_Tutorial.Infrastructure.ViewModels.Major;
+
+public class MajorCreateViewModel : ViewModelBase<MajorCreateRequest>
 {
-    public class MajorCreateViewModel : ViewModelBase<MajorCreateRequest>
+    private readonly ILocalizationService _localizationService;
+    public readonly IMajorReadOnlyRepository _majorReadOnlyRepository;
+    public readonly IMajorReadWriteRepository _majorReadWriteRepository;
+    private readonly IMapper _mapper;
+
+    public MajorCreateViewModel(IMajorReadOnlyRepository majorReadOnlyRepository,
+        IMajorReadWriteRepository majorReadWriteRepository,
+        ILocalizationService localizationService, IMapper mapper)
     {
-        public readonly IMajorReadOnlyRepository _majorReadOnlyRepository;
-        public readonly IMajorReadWriteRepository _majorReadWriteRepository;
-        private readonly ILocalizationService _localizationService;
-        private readonly IMapper _mapper;
+        _majorReadOnlyRepository = majorReadOnlyRepository;
+        _majorReadWriteRepository = majorReadWriteRepository;
+        _localizationService = localizationService;
+        _mapper = mapper;
+    }
 
-        public MajorCreateViewModel(IMajorReadOnlyRepository majorReadOnlyRepository, IMajorReadWriteRepository majorReadWriteRepository,
-            ILocalizationService localizationService, IMapper mapper)
+    public override async Task HandleAsync(MajorCreateRequest request, CancellationToken cancellationToken)
+    {
+        try
         {
-            _majorReadOnlyRepository = majorReadOnlyRepository;
-            _majorReadWriteRepository = majorReadWriteRepository;
-            _localizationService = localizationService;
-            _mapper = mapper;
+            var createResult =
+                await _majorReadWriteRepository.AddMajorAsync(_mapper.Map<MajorEntity>(request), cancellationToken);
+
+            if (createResult.Success)
+            {
+                var result = await _majorReadOnlyRepository.GetMajorByIdAsync(createResult.Data, cancellationToken);
+
+                Data = result.Data!;
+                Success = result.Success;
+                ErrorItems = result.Errors;
+                Message = result.Message;
+                return;
+            }
+
+            Success = createResult.Success;
+            ErrorItems = createResult.Errors;
+            Message = createResult.Message;
         }
-        public override async Task HandleAsync(MajorCreateRequest request, CancellationToken cancellationToken)
+        catch (Exception)
         {
-            try
+            Success = false;
+            ErrorItems = new[]
             {
-                var createResult = await _majorReadWriteRepository.AddMajorAsync(_mapper.Map<MajorEntity>(request), cancellationToken);
-
-                if (createResult.Success)
+                new ErrorItem
                 {
-                    var result = await _majorReadOnlyRepository.GetMajorByIdAsync(createResult.Data, cancellationToken);
-
-                    Data = result.Data!;
-                    Success = result.Success;
-                    ErrorItems = result.Errors;
-                    Message = result.Message;
-                    return;
+                    Error = _localizationService["Error occurred while getting the Major"],
+                    FieldName = string.Concat(LocalizationString.Common.FailedToGet, "Major")
                 }
-
-                Success = createResult.Success;
-                ErrorItems = createResult.Errors;
-                Message = createResult.Message;
-            }
-            catch (Exception)
-            {
-                Success = false;
-                ErrorItems = new[]
-                    {
-                    new ErrorItem
-                    {
-                        Error = _localizationService["Error occurred while getting the Major"],
-                        FieldName = string.Concat(LocalizationString.Common.FailedToGet, "Major")
-                    }
-                };
-            }
+            };
         }
     }
 }

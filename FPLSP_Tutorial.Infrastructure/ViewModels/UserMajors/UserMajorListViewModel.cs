@@ -4,42 +4,42 @@ using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Application.ValueObjects.Common;
 using FPLSP_Tutorial.Application.ViewModels;
 
-namespace FPLSP_Tutorial.Infrastructure.ViewModels.UserMajors
+namespace FPLSP_Tutorial.Infrastructure.ViewModels.UserMajors;
+
+public class UserMajorListViewModel : ViewModelBase<UserMajorViewRequest>
 {
-    public class UserMajorListViewModel : ViewModelBase<UserMajorViewRequest>
+    private readonly ILocalizationService _localizationService;
+    public readonly IUserMajorReadOnlyRepository _userMajorReadOnlyRespository;
+
+    public UserMajorListViewModel(IUserMajorReadOnlyRepository userMajorReadOnlyRespository,
+        ILocalizationService localizationService)
     {
-        public readonly IUserMajorReadOnlyRepository _userMajorReadOnlyRespository;
-        private readonly ILocalizationService _localizationService;
+        _userMajorReadOnlyRespository = userMajorReadOnlyRespository;
+        _localizationService = localizationService;
+    }
 
-        public UserMajorListViewModel(IUserMajorReadOnlyRepository userMajorReadOnlyRespository, ILocalizationService localizationService)
+    public override async Task HandleAsync(UserMajorViewRequest data, CancellationToken cancellationToken)
+    {
+        try
         {
-            _userMajorReadOnlyRespository = userMajorReadOnlyRespository;
-            _localizationService = localizationService;
+            var result = await _userMajorReadOnlyRespository.GetMajorUserAsync(data, cancellationToken);
+
+            Data = result.Data!;
+            Success = result.Success;
+            ErrorItems = result.Errors;
+            Message = result.Message;
         }
-        public async override Task HandleAsync(UserMajorViewRequest data, CancellationToken cancellationToken)
+        catch
         {
-            try
+            Success = false;
+            ErrorItems = new[]
             {
-                var result = await _userMajorReadOnlyRespository.GetMajorUserAsync(data, cancellationToken);
-
-                Data = result.Data!;
-                Success = result.Success;
-                ErrorItems = result.Errors;
-                Message = result.Message;
-                return;
-            }
-            catch
-            {
-                Success = false;
-                ErrorItems = new[]
-                {
                 new ErrorItem
                 {
                     Error = _localizationService["Error occurred while getting the list of MajorUser"],
                     FieldName = string.Concat(LocalizationString.Common.FailedToGet, "list of MajorUser")
                 }
             };
-            }
         }
     }
 }

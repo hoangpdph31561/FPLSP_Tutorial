@@ -4,43 +4,42 @@ using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Application.ValueObjects.Common;
 using FPLSP_Tutorial.Application.ViewModels;
 
-namespace FPLSP_Tutorial.Infrastructure.ViewModels.Tag
+namespace FPLSP_Tutorial.Infrastructure.ViewModels.Tag;
+
+public class TagListWithPaginationViewModel : ViewModelBase<TagViewWithPaginationRequest>
 {
-    public class TagListWithPaginationViewModel : ViewModelBase<TagViewWithPaginationRequest>
+    private readonly ILocalizationService _localizationService;
+    private readonly ITagReadOnlyRepository _tagReadOnlyRepository;
+
+    public TagListWithPaginationViewModel(ITagReadOnlyRepository tagReadOnlyRepository,
+        ILocalizationService localizationService)
     {
-        private readonly ITagReadOnlyRepository _tagReadOnlyRepository;
-        private readonly ILocalizationService _localizationService;
+        _tagReadOnlyRepository = tagReadOnlyRepository;
+        _localizationService = localizationService;
+    }
 
-        public TagListWithPaginationViewModel(ITagReadOnlyRepository tagReadOnlyRepository, ILocalizationService localizationService)
+    public override async Task HandleAsync(TagViewWithPaginationRequest request, CancellationToken cancellationToken)
+    {
+        try
         {
-            _tagReadOnlyRepository = tagReadOnlyRepository;
-            _localizationService = localizationService;
+            var result = await _tagReadOnlyRepository.GetTagWithPaginationAsync(request, cancellationToken);
+
+            Data = result.Data!;
+            Success = result.Success;
+            ErrorItems = result.Errors;
+            Message = result.Message;
         }
-
-        public override async Task HandleAsync(TagViewWithPaginationRequest request, CancellationToken cancellationToken)
+        catch
         {
-            try
+            Success = false;
+            ErrorItems = new[]
             {
-                var result = await _tagReadOnlyRepository.GetTagWithPaginationAsync(request, cancellationToken);
-
-                Data = result.Data!;
-                Success = result.Success;
-                ErrorItems = result.Errors;
-                Message = result.Message;
-                return;
-            }
-            catch
-            {
-                Success = false;
-                ErrorItems = new[]
+                new ErrorItem
                 {
-                    new ErrorItem
-                    {
-                        Error = _localizationService["Error occurred while getting the tag"],
-                        FieldName = string.Concat(LocalizationString.Common.FailedToGet, "Tag")
-                    }
-                };
-            }
+                    Error = _localizationService["Error occurred while getting the tag"],
+                    FieldName = string.Concat(LocalizationString.Common.FailedToGet, "Tag")
+                }
+            };
         }
     }
 }

@@ -3,42 +3,41 @@ using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Application.ValueObjects.Common;
 using FPLSP_Tutorial.Application.ViewModels;
 
-namespace FPLSP_Tutorial.Infrastructure.ViewModels.User
+namespace FPLSP_Tutorial.Infrastructure.ViewModels.User;
+
+public class UserViewByEmailViewModel : ViewModelBase<string>
 {
-    public class UserViewByEmailViewModel : ViewModelBase<string>
+    private readonly IUserReadOnlyRepository _repoUserReadOnly;
+    private readonly ILocalizationService _svLocalization;
+
+    public UserViewByEmailViewModel(ILocalizationService svLocalization, IUserReadOnlyRepository repoUserReadOnly)
     {
-        private readonly IUserReadOnlyRepository _repoUserReadOnly;
-        private readonly ILocalizationService _svLocalization;
+        _svLocalization = svLocalization;
+        _repoUserReadOnly = repoUserReadOnly;
+    }
 
-        public UserViewByEmailViewModel(ILocalizationService svLocalization, IUserReadOnlyRepository repoUserReadOnly)
+    public override async Task HandleAsync(string email, CancellationToken cancellationToken)
+    {
+        try
         {
-            _svLocalization = svLocalization;
-            _repoUserReadOnly = repoUserReadOnly;
+            var result = await _repoUserReadOnly.GetUserByEmailAsync(email, cancellationToken);
+
+            Data = result.Data!;
+            Success = result.Success;
+            ErrorItems = result.Errors;
+            Message = result.Message;
         }
-        public override async Task HandleAsync(string email, CancellationToken cancellationToken)
+        catch
         {
-            try
+            Success = false;
+            ErrorItems = new[]
             {
-                var result = await _repoUserReadOnly.GetUserByEmailAsync(email, cancellationToken);
-
-                Data = result.Data!;
-                Success = result.Success;
-                ErrorItems = result.Errors;
-                Message = result.Message;
-                return;
-            }
-            catch
-            {
-                Success = false;
-                ErrorItems = new[]
-                {
                 new ErrorItem
                 {
                     Error = _svLocalization["Error occurred while getting the User"],
                     FieldName = string.Concat(LocalizationString.Common.FailedToGet, "User")
                 }
             };
-            }
         }
     }
 }

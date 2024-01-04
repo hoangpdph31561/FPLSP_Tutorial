@@ -1,21 +1,20 @@
-﻿namespace FPLSP_Tutorial.Domain.Enums
+﻿namespace FPLSP_Tutorial.Domain.Enums;
+
+public enum EntityStatus
 {
-    public enum EntityStatus
-    {
-        Active = 1,
+    Active = 1,
 
-        InActive = 2,
+    InActive = 2,
 
-        Deleted = 3,
+    Deleted = 3,
 
-        Pending = 4,
+    Pending = 4,
 
-        PendingForActivation = 5,
+    PendingForActivation = 5,
 
-        PendingForConfirmation = 6,
+    PendingForConfirmation = 6,
 
-        PendingForApproval = 7,
+    PendingForApproval = 7,
 
-        Locked = 8,
-    }
+    Locked = 8
 }

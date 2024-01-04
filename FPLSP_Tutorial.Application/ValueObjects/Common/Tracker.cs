@@ -1,16 +1,15 @@
-﻿namespace FPLSP_Tutorial.Application.ValueObjects.Common
+﻿namespace FPLSP_Tutorial.Application.ValueObjects.Common;
+
+public class Tracker
 {
-    public class Tracker
+    public Tracker()
     {
-        public string RequestId { get; set; } = null!;
-
-        public Tracker()
-        {
-        }
-
-        public Tracker(string requestId)
-        {
-            RequestId = requestId;
-        }
     }
+
+    public Tracker(string requestId)
+    {
+        RequestId = requestId;
+    }
+
+    public string RequestId { get; set; } = null!;
 }

@@ -1,6 +1,5 @@
-﻿namespace FPLSP_Tutorial.WASM.Data.DataTransferObjects.MajorRequest.Request
+﻿namespace FPLSP_Tutorial.WASM.Data.DataTransferObjects.MajorRequest.Request;
+
+public class MajorRequestViewRequest
 {
-    public class MajorRequestViewRequest
-    {
-    }
 }

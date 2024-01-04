@@ -1,9 +1,6 @@
-﻿@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post.Request;
-@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Tag;
-@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Tag.TagRequest;
-@using System.Text.Json;
-@using System.Web;
-
+﻿@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Tag
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Tag.TagRequest
+@using System.Text.Json
 @inject ITagRepository _repoTag
 @inject IDialogService DialogService
 @inject NavigationManager _nav
@@ -32,10 +29,11 @@
             <MudButton OnClick="@(() => OnSearch())" Disabled=@(_listTagSelected.Count == 0 && (_searchString == "" || _searchString == null))>Tìm kiếm</MudButton>
         </div>
     </DialogContent>
-    
+
 </MudDialog>
 
 @code {
+
     [Parameter]
     public Guid UserId { get; set; }
 
@@ -49,10 +47,12 @@
     {
         IgnoreMajorId = true
     };
+
     private PaginationResponse<TagDTO> _presTag = new();
     private List<TagDTO> _listTagFromDB = new();
 
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -76,7 +76,6 @@
 
         if (!result.Cancelled)
         {
-
             _listTagSelected = (List<TagDTO>)result.Data;
         }
         else
@@ -87,7 +86,7 @@
 
     private void TagOnClickRemove(Guid idTag)
     {
-        _listTagSelected.Remove(_listTagSelected.FirstOrDefault(c => c.Id == idTag) ?? new());
+        _listTagSelected.Remove(_listTagSelected.FirstOrDefault(c => c.Id == idTag) ?? new TagDTO());
     }
 
     private void TagOnMouseOver(Guid idTag)
@@ -97,13 +96,12 @@
 
     private async Task OnSearch()
     {
-
         var url = "/post/search?";
-        if(_searchString != null && _searchString != "")
+        if (_searchString != null && _searchString != "")
         {
             url += $"searchstring={_searchString}&";
         }
-        if(_listTagSelected != null)
+        if (_listTagSelected != null)
         {
             url += $"listtagid={HttpUtility.UrlEncode(JsonSerializer.Serialize(_listTagSelected.Select(c => c.Id)))}&";
         }
@@ -112,4 +110,5 @@
 
         _nav.NavigateTo(url);
     }
+
 }

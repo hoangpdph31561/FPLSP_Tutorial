@@ -1,32 +1,34 @@
-﻿@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post;
+﻿@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post
 <div class="row">
     @if (IsLoading)
     {
-        for (int i = 1; i <= Convert.ToInt32(12 / CardCol); i++)
+        for (var i = 1; i <= Convert.ToInt32(12 / CardCol); i++)
         {
-            <PostCard IsSkeleton="true" Col="@CardCol" />
+            <PostCard IsSkeleton="true" Col="@CardCol"/>
         }
     }
     else
     {
         @foreach (var i in ListPost)
         {
-            <PostCard Post="@i" Col="@CardCol" />
+            <PostCard Post="@i" Col="@CardCol"/>
         }
     }
 </div>
 
 
 @code {
+
     [Parameter]
     public List<PostDTO> ListPost { get; set; } = new();
 
     [Parameter]
-    public Guid? MajorId { get; set; } = null;
+    public Guid? MajorId { get; set; }
 
     [Parameter]
     public bool IsLoading { get; set; } = true;
 
     [Parameter]
     public int CardCol { get; set; } = 3;
+
 }

@@ -1,9 +1,9 @@
 ﻿@inherits LayoutComponentBase
 @inject NavigationManager _navManager;
 
-<MudThemeProvider />
-<MudDialogProvider />
-<MudSnackbarProvider />
+<MudThemeProvider/>
+<MudDialogProvider/>
+<MudSnackbarProvider/>
 
 <MudLayout>
     <MudAppBar Elevation="0">
@@ -26,7 +26,7 @@
             <MudText Typo="Typo.subtitle2">@("<người dùng>")</MudText>
             <MudText Typo="Typo.caption">@("<email>")</MudText>
         </div>
-            <MudIconButton Icon="@Icons.Material.Filled.Logout" Color="Color.Inherit" Title="Đăng xuất" />
+        <MudIconButton Icon="@Icons.Material.Filled.Logout" Color="Color.Inherit" Title="Đăng xuất"/>
     </MudAppBar>
     <MudMainContent Style="background-color: (0, 0, 0, 0.5)">
         @Body

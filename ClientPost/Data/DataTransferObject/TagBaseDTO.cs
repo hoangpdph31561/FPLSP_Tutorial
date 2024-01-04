@@ -1,8 +1,7 @@
-﻿namespace ClientPost.Data.DataTransferObject
+﻿namespace ClientPost.Data.DataTransferObject;
+
+public class TagBaseDTO
 {
-    public class TagBaseDTO
-    {
-        public Guid Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-    }
+    public Guid Id { get; set; }
+    public string Name { get; set; } = string.Empty;
 }

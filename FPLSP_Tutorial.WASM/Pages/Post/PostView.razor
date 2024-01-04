@@ -1,5 +1,6 @@
 ﻿@page "/post/view/{Id}"
-@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post;
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post.Request
 
 @layout ManagementLayout
 
@@ -39,17 +40,13 @@
 </style>
 
 
-@if(_isLoadingAll)
+@if (_isLoadingAll)
 {
     <LoadingIndicatorOverlay/>
 }
 else
 {
-
-    <MudBreadcrumbs Class="ms-3" Items="@(new List<BreadcrumbItem>() {
-                        new BreadcrumbItem("Trang chủ", href: "/post/home"),
-                        new BreadcrumbItem("Bài viết", href: null, disabled: true)
-    })"></MudBreadcrumbs>
+    <MudBreadcrumbs Class="ms-3" Items="@(new List<BreadcrumbItem> { new("Trang chủ", "/post/home"), new("Bài viết", null, true) })"></MudBreadcrumbs>
     <div class="mx-5">
         <MudPaper Class="pa-5" Elevation="2">
             <div class="d-flex align-center">
@@ -71,13 +68,13 @@ else
                 @((MarkupString)_detailPost.Content)
             </div>
         </MudPaper>
-        @if(_listChildPost.Count > 0)
+        @if (_listChildPost.Count > 0)
         {
             <div class="d-flex align-center justify-center mt-4 mb-2">
                 <MudIcon Icon="@Icons.Material.Filled.Share" Size="Size.Small"></MudIcon>
                 <MudText Typo="Typo.h6" Class="ms-1">Các bài viết tham khảo</MudText>
             </div>
-            <MudDivider Class="mb-3" />
+            <MudDivider Class="mb-3"/>
             @foreach (var post in _listChildPost)
             {
                 if (_listChildPost.IndexOf(post) > 0)
@@ -88,17 +85,17 @@ else
                     <div class="d-flex">
                         <MudIcon Icon="@Icons.Material.Filled.Person" Size="Size.Small"></MudIcon>
                         @{
-                            var disName = (post.CreatedByName == null || post.CreatedByName == "") ? "N/A" : post.CreatedByName;
+                            var disName = post.CreatedByName == null || post.CreatedByName == "" ? "N/A" : post.CreatedByName;
                         }
                         <MudText Typo="Typo.caption" Style="font-weight: 500; max-width: 50%" Class="overflow-text-1" title="@disName">@(disName)</MudText>
-                            <MudText Typo="Typo.caption"> | @post.CreatedTime.ToString("dd/MM/yyyy")</MudText>
-                        </div>
+                        <MudText Typo="Typo.caption"> | @post.CreatedTime.ToString("dd/MM/yyyy")</MudText>
+                    </div>
 
-                        <MudText Typo="Typo.h6" Style="font-weight: 500;">@post.Title</MudText>
+                    <MudText Typo="Typo.h6" Style="font-weight: 500;">@post.Title</MudText>
 
-                        <div class="d-flex align-center my-2">
-                            <div class="overflow-hidden">
-                                @foreach (var i in post.ListTag)
+                    <div class="d-flex align-center my-2">
+                        <div class="overflow-hidden">
+                            @foreach (var i in post.ListTag)
                             {
                                 <span style="background-color: lightgray; border-radius: 5px;" class="me-1 pa-1">@i.Name</span>
                             }
@@ -107,15 +104,16 @@ else
 
                 </MudCard>
             }
-            <MudDivider Class="mt-3" />
+            <MudDivider Class="mt-3"/>
         }
-        
+
     </div>
 }
 
 
 
 @code {
+
     [Parameter]
     public string Id { get; set; } = string.Empty;
 
@@ -130,26 +128,26 @@ else
     {
         if (Id != _detailPost.Id.ToString())
         {
-            await LoadData().ContinueWith((re) =>
+            await LoadData().ContinueWith(re =>
             {
                 _isLoadingAll = false;
                 _isLoadingChildPost = false;
                 StateHasChanged();
             });
         }
-
     }
 
     private async Task LoadData()
     {
         _detailPost = await _repoPost.GetByIdAsync(Guid.Parse(Id));
-        var presPost = await _repoPost.GetListAsync(new()
+        var presPost = await _repoPost.GetListAsync(new PostViewRequest
         {
-            PostId = _detailPost.Id,
+            PostId = _detailPost.Id
         });
-        if(presPost != null)
+        if (presPost != null)
         {
             _listChildPost = presPost;
         }
     }
+
 }

@@ -2,50 +2,48 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
     <title>FPLSP_Tutorial.WASM</title>
-    <base href="/" />
+    <base href="/"/>
     <!--<link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />-->
-    <link href="css/app.css" rel="stylesheet" />
-    <link rel="icon" type="image/png" href="favicon.png" />
-    <link href="FPLSP_Tutorial.WASM.styles.css" rel="stylesheet" />
+    <link href="css/app.css" rel="stylesheet"/>
+    <link href="favicon.png" rel="icon" type="image/png"/>
+    <link href="FPLSP_Tutorial.WASM.styles.css" rel="stylesheet"/>
     <!--MudBlazor-->
-    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
-    <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet"/>
+    <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet"/>
     <!--RichTextEditor-->
-    <link rel="stylesheet" href="richtexteditor/rte_theme_default.css" />
+    <link href="richtexteditor/rte_theme_default.css" rel="stylesheet"/>
     <!--Stylesheets-->
-    <link href="DevStyles.css" rel="stylesheet" />
+    <link href="DevStyles.css" rel="stylesheet"/>
 </head>
 
 
-
-
 <body>
-    <div id="app">
-        <svg class="loading-progress">
-            <circle r="40%" cx="50%" cy="50%" />
-            <circle r="40%" cx="50%" cy="50%" />
-        </svg>
-        <div class="loading-progress-text"></div>
-    </div>
+<div id="app">
+    <svg class="loading-progress">
+        <circle cx="50%" cy="50%" r="40%"/>
+        <circle cx="50%" cy="50%" r="40%"/>
+    </svg>
+    <div class="loading-progress-text"></div>
+</div>
 
-    <div id="blazor-error-ui">
-        An unhandled error has occurred.
-        <a href="" class="reload">Reload</a>
-        <a class="dismiss">🗙</a>
-    </div>
-    <script src="_framework/blazor.webassembly.js"></script>
-    <!--MudBlazor-->
-    <script src="_content/MudBlazor/MudBlazor.min.js"></script>
-    <!--RichTextEditor-->
-    <script type="text/javascript" src="richtexteditor/rte.js"></script>
-    <script type="text/javascript" src='richtexteditor/plugins/all_plugins.js'></script>
-    <!--Scripts-->
-    <script type="text/javascript" src="DevScripts.js"></script>
-    <!--BlazorAnimate-->
-    <script src="_content/BlazorAnimate/blazorAnimateInterop.js"></script>
+<div id="blazor-error-ui">
+    An unhandled error has occurred.
+    <a class="reload" href="">Reload</a>
+    <a class="dismiss">🗙</a>
+</div>
+<script src="_framework/blazor.webassembly.js"></script>
+<!--MudBlazor-->
+<script src="_content/MudBlazor/MudBlazor.min.js"></script>
+<!--RichTextEditor-->
+<script src="richtexteditor/rte.js" type="text/javascript"></script>
+<script src='richtexteditor/plugins/all_plugins.js' type="text/javascript"></script>
+<!--Scripts-->
+<script src="DevScripts.js" type="text/javascript"></script>
+<!--BlazorAnimate-->
+<script src="_content/BlazorAnimate/blazorAnimateInterop.js"></script>
 </body>
 
 </html>

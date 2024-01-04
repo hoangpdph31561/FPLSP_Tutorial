@@ -8,79 +8,81 @@ using FPLSP_Tutorial.Application.ValueObjects.Pagination;
 using FPLSP_Tutorial.Infrastructure.ViewModels.User;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FPLSP_Tutorial.API.Controllers
+namespace FPLSP_Tutorial.API.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class UsersController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class UsersController : ControllerBase
-    {
-        public readonly IUserReadOnlyRepository _userReadOnlyRepository;
-        public readonly IUserReadWriteRepository _userReadWriteRepository;
-        private readonly ILocalizationService _localizationService;
-        private readonly IMapper _mapper;
-        public UsersController(IUserReadOnlyRepository userReadOnlyRepository, IUserReadWriteRepository userReadWriteRepository
+    private readonly ILocalizationService _localizationService;
+    private readonly IMapper _mapper;
+    public readonly IUserReadOnlyRepository _userReadOnlyRepository;
+    public readonly IUserReadWriteRepository _userReadWriteRepository;
+
+    public UsersController(IUserReadOnlyRepository userReadOnlyRepository,
+        IUserReadWriteRepository userReadWriteRepository
         , ILocalizationService localizationService, IMapper mapper)
 
+    {
+        _userReadOnlyRepository = userReadOnlyRepository;
+        _userReadWriteRepository = userReadWriteRepository;
+        _localizationService = localizationService;
+        _mapper = mapper;
+    }
+
+    [HttpGet("GetListWithPagination")]
+    public async Task<IActionResult> GetListWithPaginationAsync([FromQuery] UserViewWithPaginationRequest request,
+        CancellationToken cancellationToken)
+    {
+        UserListWithPaginationViewModel vm = new(_userReadOnlyRepository, _localizationService);
+
+        await vm.HandleAsync(request, cancellationToken);
+        if (vm.Success)
         {
-            _userReadOnlyRepository = userReadOnlyRepository;
-            _userReadWriteRepository = userReadWriteRepository;
-            _localizationService = localizationService;
-            _mapper = mapper;
+            var paginationResponse = new PaginationResponse<UserDTO>();
+            paginationResponse = (PaginationResponse<UserDTO>)vm.Data;
+            return Ok(paginationResponse);
         }
 
-        [HttpGet("GetListWithPagination")]
-        public async Task<IActionResult> GetListWithPaginationAsync([FromQuery] UserViewWithPaginationRequest request, CancellationToken cancellationToken)
-        {
-            UserListWithPaginationViewModel vm = new(_userReadOnlyRepository, _localizationService);
+        return Ok(vm);
+    }
 
-            await vm.HandleAsync(request, cancellationToken);
-            if (vm.Success)
-            {
-                PaginationResponse<UserDTO> paginationResponse = new PaginationResponse<UserDTO>();
-                paginationResponse = (PaginationResponse<UserDTO>)vm.Data;
-                return Ok(paginationResponse);
-            }
-            return Ok(vm);
-        }
+    [HttpGet("GetByEmailAsync")]
+    public async Task<IActionResult> GetByEmailAsync([FromQuery] string email, CancellationToken cToken)
+    {
+        UserViewByEmailViewModel vm = new(_localizationService, _userReadOnlyRepository);
+        await vm.HandleAsync(email, cToken);
+        return Ok(vm.Data);
+    }
 
-        [HttpGet("GetByEmailAsync")]
-        public async Task<IActionResult> GetByEmailAsync([FromQuery] string email, CancellationToken cToken)
-        {
-            UserViewByEmailViewModel vm = new(_localizationService, _userReadOnlyRepository);
-            await vm.HandleAsync(email, cToken);
-            return Ok(vm.Data);
-        }
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    {
+        UserViewModel vm = new(_userReadOnlyRepository, _localizationService);
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetByIdAsync(Guid id, CancellationToken cancellationToken)
-        {
-            UserViewModel vm = new(_userReadOnlyRepository, _localizationService);
+        await vm.HandleAsync(id, cancellationToken);
 
-            await vm.HandleAsync(id, cancellationToken);
-
-            return Ok(vm);
-        }
+        return Ok(vm);
+    }
 
 
+    [HttpPost]
+    public async Task<IActionResult> AddAsync(UserCreateRequest request, CancellationToken cancellationToken)
+    {
+        UserCreateViewModel vm = new(_userReadOnlyRepository, _userReadWriteRepository, _localizationService, _mapper);
 
-        [HttpPost]
-        public async Task<IActionResult> AddAsync(UserCreateRequest request, CancellationToken cancellationToken)
-        {
-            UserCreateViewModel vm = new(_userReadOnlyRepository, _userReadWriteRepository, _localizationService, _mapper);
+        await vm.HandleAsync(request, cancellationToken);
 
-            await vm.HandleAsync(request, cancellationToken);
+        return Ok(vm);
+    }
 
-            return Ok(vm);
-        }
+    [HttpPut]
+    public async Task<IActionResult> UpdateAsync(UserUpdateRequest request, CancellationToken cancellationToken)
+    {
+        UserUpdateViewModel vm = new(_userReadWriteRepository, _localizationService, _mapper);
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateAsync(UserUpdateRequest request, CancellationToken cancellationToken)
-        {
-            UserUpdateViewModel vm = new(_userReadWriteRepository, _localizationService, _mapper);
+        await vm.HandleAsync(request, cancellationToken);
 
-            await vm.HandleAsync(request, cancellationToken);
-
-            return Ok(vm);
-        }
+        return Ok(vm);
     }
 }

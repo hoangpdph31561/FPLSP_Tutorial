@@ -7,56 +7,58 @@ using FPLSP_Tutorial.Application.ValueObjects.Common;
 using FPLSP_Tutorial.Application.ViewModels;
 using FPLSP_Tutorial.Domain.Entities;
 
-namespace FPLSP_Tutorial.Infrastructure.ViewModels.User
+namespace FPLSP_Tutorial.Infrastructure.ViewModels.User;
+
+public class UserCreateViewModel : ViewModelBase<UserCreateRequest>
 {
-    public class UserCreateViewModel : ViewModelBase<UserCreateRequest>
+    private readonly ILocalizationService _localizationService;
+    private readonly IMapper _mapper;
+    public readonly IUserReadOnlyRepository _userReadOnlyRepository;
+    public readonly IUserReadWriteRepository _userReadWriteRepository;
+
+    public UserCreateViewModel(IUserReadOnlyRepository userReadOnlyRepository,
+        IUserReadWriteRepository userReadWriteRepository
+        , ILocalizationService localizationService, IMapper mapper)
     {
-        public readonly IUserReadOnlyRepository _userReadOnlyRepository;
-        public readonly IUserReadWriteRepository _userReadWriteRepository;
-        private readonly ILocalizationService _localizationService;
-        private readonly IMapper _mapper;
+        _userReadOnlyRepository = userReadOnlyRepository;
+        _userReadWriteRepository = userReadWriteRepository;
+        _localizationService = localizationService;
+        _mapper = mapper;
+    }
 
-        public UserCreateViewModel(IUserReadOnlyRepository userReadOnlyRepository, IUserReadWriteRepository userReadWriteRepository
-            , ILocalizationService localizationService, IMapper mapper)
+    public override async Task HandleAsync(UserCreateRequest request, CancellationToken cancellationToken)
+    {
+        try
         {
-            _userReadOnlyRepository = userReadOnlyRepository;
-            _userReadWriteRepository = userReadWriteRepository;
-            _localizationService = localizationService;
-            _mapper = mapper;
+            var createResult =
+                await _userReadWriteRepository.AddUserAsync(_mapper.Map<UserEntity>(request), cancellationToken);
+
+            if (createResult.Success)
+            {
+                var result = await _userReadOnlyRepository.GetUserByIdAsync(createResult.Data, cancellationToken);
+
+                Data = result.Data!;
+                Success = result.Success;
+                ErrorItems = result.Errors;
+                Message = result.Message;
+                return;
+            }
+
+            Success = createResult.Success;
+            ErrorItems = createResult.Errors;
+            Message = createResult.Message;
         }
-        public override async Task HandleAsync(UserCreateRequest request, CancellationToken cancellationToken)
+        catch (Exception)
         {
-            try
+            Success = false;
+            ErrorItems = new[]
             {
-                var createResult = await _userReadWriteRepository.AddUserAsync(_mapper.Map<UserEntity>(request), cancellationToken);
-
-                if (createResult.Success)
+                new ErrorItem
                 {
-                    var result = await _userReadOnlyRepository.GetUserByIdAsync(createResult.Data, cancellationToken);
-
-                    Data = result.Data!;
-                    Success = result.Success;
-                    ErrorItems = result.Errors;
-                    Message = result.Message;
-                    return;
+                    Error = _localizationService["Error occurred while getting the User"],
+                    FieldName = string.Concat(LocalizationString.Common.FailedToGet, "User")
                 }
-
-                Success = createResult.Success;
-                ErrorItems = createResult.Errors;
-                Message = createResult.Message;
-            }
-            catch (Exception)
-            {
-                Success = false;
-                ErrorItems = new[]
-                    {
-                    new ErrorItem
-                    {
-                        Error = _localizationService["Error occurred while getting the User"],
-                        FieldName = string.Concat(LocalizationString.Common.FailedToGet, "User")
-                    }
-                };
-            }
+            };
         }
     }
 }

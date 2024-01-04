@@ -1,9 +1,6 @@
-﻿
-
-RTE_DefaultConfig.plugin_inserttemplate = RTE_Plugin_InsertTemplate;
+﻿RTE_DefaultConfig.plugin_inserttemplate = RTE_Plugin_InsertTemplate;
 
 function RTE_Plugin_InsertTemplate() {
-
 
 
     var obj = this;

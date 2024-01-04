@@ -1,9 +1,8 @@
 ﻿using FPLSP_Tutorial.WASM.Data.Pagination;
 
-namespace FPLSP_Tutorial.WASM.Data.DataTransferObjects.User.Request
+namespace FPLSP_Tutorial.WASM.Data.DataTransferObjects.User.Request;
+
+public class UserViewWithPaginationRequest : PaginationRequest
 {
-    public class UserViewWithPaginationRequest : PaginationRequest
-    {
-        public string? SearchString { get; set; }
-    }
+    public string? SearchString { get; set; }
 }

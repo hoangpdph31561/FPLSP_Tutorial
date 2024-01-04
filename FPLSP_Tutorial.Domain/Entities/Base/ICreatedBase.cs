@@ -1,9 +1,8 @@
-﻿namespace FPLSP_Tutorial.Domain.Entities.Base
-{
-    public interface ICreatedBase
-    {
-        public DateTimeOffset CreatedTime { get; set; }
+﻿namespace FPLSP_Tutorial.Domain.Entities.Base;
 
-        public Guid? CreatedBy { get; set; }
-    }
+public interface ICreatedBase
+{
+    public DateTimeOffset CreatedTime { get; set; }
+
+    public Guid? CreatedBy { get; set; }
 }

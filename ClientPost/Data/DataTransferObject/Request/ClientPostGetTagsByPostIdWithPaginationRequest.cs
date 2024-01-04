@@ -1,9 +1,8 @@
 ﻿using ClientPost.Data.ValueObject.Pagination;
 
-namespace ClientPost.Data.DataTransferObject.Request
+namespace ClientPost.Data.DataTransferObject.Request;
+
+public class ClientPostGetTagsByPostIdWithPaginationRequest : PaginationRequest
 {
-    public class ClientPostGetTagsByPostIdWithPaginationRequest : PaginationRequest
-    {
-        public string Id { get; set; }
-    }
+    public string Id { get; set; }
 }

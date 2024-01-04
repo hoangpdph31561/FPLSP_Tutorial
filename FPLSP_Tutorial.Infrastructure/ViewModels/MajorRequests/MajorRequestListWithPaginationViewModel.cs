@@ -4,44 +4,45 @@ using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Application.ValueObjects.Common;
 using FPLSP_Tutorial.Application.ViewModels;
 
-namespace FPLSP_Tutorial.Infrastructure.ViewModels.MajorRequests
+namespace FPLSP_Tutorial.Infrastructure.ViewModels.MajorRequests;
+
+public class MajorRequestListWithPaginationViewModel : ViewModelBase<MajorRequestViewWithPaginationRequest>
+
 {
-    public class MajorRequestListWithPaginationViewModel : ViewModelBase<MajorRequestViewWithPaginationRequest>
+    private readonly ILocalizationService _localizationService;
+    public readonly IMajorRequestReadOnlyRepository _MajorRequestReadOnlyRepository;
 
+    public MajorRequestListWithPaginationViewModel(IMajorRequestReadOnlyRepository MajorRequestReadOnlyRepository,
+        ILocalizationService localizationService)
     {
-        public readonly IMajorRequestReadOnlyRepository _MajorRequestReadOnlyRepository;
-        private readonly ILocalizationService _localizationService;
+        _MajorRequestReadOnlyRepository = MajorRequestReadOnlyRepository;
+        _localizationService = localizationService;
+    }
 
-        public MajorRequestListWithPaginationViewModel(IMajorRequestReadOnlyRepository MajorRequestReadOnlyRepository, ILocalizationService localizationService)
+    public override async Task HandleAsync(MajorRequestViewWithPaginationRequest data,
+        CancellationToken cancellationToken)
+    {
+        try
         {
-            _MajorRequestReadOnlyRepository = MajorRequestReadOnlyRepository;
-            _localizationService = localizationService;
+            var result =
+                await _MajorRequestReadOnlyRepository.GetMajorRequestWithPaginationAsync(data, cancellationToken);
+
+            Data = result.Data!;
+            Success = result.Success;
+            ErrorItems = result.Errors;
+            Message = result.Message;
         }
-
-        public override async Task HandleAsync(MajorRequestViewWithPaginationRequest data, CancellationToken cancellationToken)
+        catch
         {
-            try
+            Success = false;
+            ErrorItems = new[]
             {
-                var result = await _MajorRequestReadOnlyRepository.GetMajorRequestWithPaginationAsync(data, cancellationToken);
-
-                Data = result.Data!;
-                Success = result.Success;
-                ErrorItems = result.Errors;
-                Message = result.Message;
-                return;
-            }
-            catch
-            {
-                Success = false;
-                ErrorItems = new[]
-                {
                 new ErrorItem
                 {
                     Error = _localizationService["Error occurred while getting the list of MajorRequest"],
                     FieldName = string.Concat(LocalizationString.Common.FailedToGet, "list of MajorRequest")
                 }
             };
-            }
         }
     }
 }

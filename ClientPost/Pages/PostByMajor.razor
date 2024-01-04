@@ -1,10 +1,10 @@
 ﻿@page "/postbymajor/{id}"
-@using ClientPost.Component;
+@using ClientPost.Component
 @inject IDialogService DialogService
 <PageTitle>Bài viết chuyên ngành @major.Name</PageTitle>
 
 <MudTextField Immediate Variant="Variant.Outlined" @bind-Value="SearchString" OnDebounceIntervalElapsed="@(async () => await OnSearchFunc())" DebounceInterval="200" Label="Tìm kiếm" MaxLength="200" AdornmentIcon="@Icons.Material.Filled.Search" Adornment="Adornment.End" T="string"></MudTextField>
- @if(_lstTagFromDB != null)
+@if (_lstTagFromDB != null)
 {
     <div Class="d-flex align-center py-2">
         <MudText>Tags: </MudText>
@@ -26,7 +26,7 @@
                 }
             }
         </div>
-        <MudSpacer />
+        <MudSpacer/>
         <MudChip Color="Color.Default" Icon="@Icons.Material.Filled.AddCircle" OnClick="@(async () => { await OnTagSelectionToggle(); })">Thêm</MudChip>
     </div>
     @if (lstPosts == null || lstPosts.Count == 0)
@@ -48,7 +48,7 @@
                             </MudTooltip>
                         </div>
                         <MudPaper Elevation="0" Class="truncated-inline-text-container">
-                            <MudIcon Icon="@Icons.Material.Filled.Man" />
+                            <MudIcon Icon="@Icons.Material.Filled.Man"/>
                             <MudText Typo="Typo.caption" Class="truncated-inline-text ">@item.CreatedName</MudText>
                         </MudPaper>
                         <MudText Typo="Typo.caption">Loại bài viết: @item.PostType</MudText>
@@ -66,51 +66,64 @@
                             }
                         </MudPaper>
                         <MudPaper Elevation="0" Class="d-flex align-center justify-end">
-                            <MudButton OnClick="@(() => ButtonClick(item.Id))" Color="Color.Primary">Đọc thêm<MudText Class="mt-1 px-2 align-center" Typo="Typo.caption"><MudIcon Icon="@Icons.Material.Filled.East" /></MudText></MudButton>
+                            <MudButton OnClick="@(() => ButtonClick(item.Id))" Color="Color.Primary">
+                                Đọc thêm
+                                <MudText Class="mt-1 px-2 align-center" Typo="Typo.caption">
+                                    <MudIcon Icon="@Icons.Material.Filled.East"/>
+                                </MudText>
+                            </MudButton>
                         </MudPaper>
                     </MudPaper>
                 </MudItem>
             }
         </MudGrid>
-        <CustomePagination Class="my-1" HasNext="@result.HasNext" OnPageChange="@(async e=> await  OnPaginationButtonClick(e))" CurrentPageNumber="@result.PageNumber"></CustomePagination>
+        <CustomePagination Class="my-1" HasNext="@result.HasNext" OnPageChange="@(async e => await OnPaginationButtonClick(e))" CurrentPageNumber="@result.PageNumber"></CustomePagination>
     }
 }
 
- 
+
 
 
 @code {
+
     [Parameter]
     public string? Id { get; set; }
+
     [Inject]
     public IClientPostService ClientPostService { get; set; }
+
     [Inject]
     public NavigationManager NavigationManager { get; set; }
-    private ClientPostGetByMajorIdWithPaginationRequest request { get; set; } = new()
+
+    private ClientPostGetByMajorIdWithPaginationRequest request { get; } = new()
     {
         PageSize = 30
     };
+
     private PaginationResponse<PostMainDTO> result { get; set; }
     private List<PostMainDTO> lstPosts { get; set; }
     private MajorBaseDTO major = new();
-    protected async override Task OnInitializedAsync()
+
+    protected override async Task OnInitializedAsync()
     {
         await LoadData();
     }
+
     private string SearchString;
     private List<TagBaseDTO> _lstTag = new();
-    private int _maxChipDisplay = 10;
-    private bool _toggleAllTags = false;
+    private readonly int _maxChipDisplay = 10;
+    private bool _toggleAllTags;
     private List<TagBaseDTO> _lstTagFromDB = new();
+
     private async Task LoadData()
     {
-
         request.MajorId = Id;
         result = await ClientPostService.GetPostsByMajorId(request);
         major = await ClientPostService.GetMajorsById(Id);
         lstPosts = result.Data.ToList();
         _lstTagFromDB = await ClientPostService.GetAllListTags();
     }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (request.MajorId != Id)
@@ -120,28 +133,29 @@
 
         StateHasChanged();
     }
+
     private async Task OnPaginationButtonClick(int pageNumber)
     {
-
         request.PageNumber = pageNumber;
         await LoadData();
     }
+
     private void ButtonClick(Guid id)
     {
         NavigationManager.NavigateTo($"/postdetail/{id}");
     }
+
     private async Task OnSearch(string? searchString)
     {
-
         request.PageNumber = 1;
         request.StringSearch = searchString;
         await LoadData();
     }
+
     private async Task OnSearchFunc()
     {
         if (!string.IsNullOrWhiteSpace(SearchString))
         {
-
             request.StringSearch = SearchString;
             request.LstTagsId = _lstTag.Select(x => x.Id).ToList();
             result = await ClientPostService.GetPostsByMajorId(request);
@@ -154,6 +168,7 @@
             await LoadData();
         }
     }
+
     private async Task OnTagSelectionToggle()
     {
         List<TagBaseDTO> lstBeforeChange = new();
@@ -170,7 +185,6 @@
 
         if (!result.Cancelled)
         {
-
             _lstTag = (List<TagBaseDTO>)result.Data;
         }
         else
@@ -178,4 +192,5 @@
             _lstTag = lstBeforeChange;
         }
     }
+
 }

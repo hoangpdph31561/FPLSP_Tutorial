@@ -1,4 +1,4 @@
-﻿function CreateRTEInstance() { 
+﻿function CreateRTEInstance() {
     var config = {}
     config.editorResizeMode = "height";
     config.showFloatParagraph = false;
@@ -9,6 +9,6 @@ function SetRTEValue(value) {
     editor1.setHTMLCode(value);
 }
 
-function GetRTEValue(value) { 
+function GetRTEValue(value) {
     return editor1.getHTMLCode();
 }

@@ -1,7 +1,6 @@
-﻿namespace ClientPost.Data.DataTransferObject
+﻿namespace ClientPost.Data.DataTransferObject;
+
+public class PostDetailDTO : PostMainDTO
 {
-    public class PostDetailDTO : PostMainDTO
-    {
-        public string Content { get; set; } = string.Empty;
-    }
+    public string Content { get; set; } = string.Empty;
 }

@@ -1,7 +1,6 @@
-﻿@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major;
-@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major.Request;
-@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.UserMajor.Request;
-
+﻿@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major.Request
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.UserMajor.Request
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major
 @inject IMajorRepository _repoMajor
 @inject IUserMajorRepository _repoUserMajor
 
@@ -12,7 +11,7 @@
     <DialogContent>
         <MudText Typo="Typo.h6" Style="font-weight: 500">Thêm chuyên ngành</MudText>
 
-        <MudTextField T="string" Variant="Variant.Outlined" Label="Tìm kiếm" Placeholder="Nhập mã, tên chuyên ngành cần tìm kiếm..." DebounceInterval="1000" OnDebounceIntervalElapsed="@(async (string val) => { _preqMajor.SearchString = val; await OnQueryRequest(); })" Class="mb-2"></MudTextField>
+        <MudTextField T="string" Variant="Variant.Outlined" Label="Tìm kiếm" Placeholder="Nhập mã, tên chuyên ngành cần tìm kiếm..." DebounceInterval="1000" OnDebounceIntervalElapsed="@(async val => { _preqMajor.SearchString = val; await OnQueryRequest(); })" Class="mb-2"></MudTextField>
 
         <MudTable Items="@_listMajor" FixedHeader="true" Height="40vh" Loading="@_isLoadingList">
             <HeaderContent>
@@ -37,7 +36,8 @@
     </DialogContent>
 </MudDialog>
 
-    @code {
+@code {
+
     [CascadingParameter]
     MudDialogInstance MudDialog { get; set; } = new();
 
@@ -47,7 +47,7 @@
     [Parameter]
     public EventCallback LoadDataParent { get; set; }
 
-    private MajorViewWithPaginationRequest _preqMajor = new();
+    private readonly MajorViewWithPaginationRequest _preqMajor = new();
     private PaginationResponse<MajorDTO> _presMajor = new();
     private List<MajorDTO> _listMajor = new();
 
@@ -59,7 +59,7 @@
         _preqMajor.UserId = UserId;
         _preqMajor.NotJoined = true;
 
-        await LoadData().ContinueWith((re) =>
+        await LoadData().ContinueWith(re =>
         {
             _isLoadingAll = false;
             _isLoadingList = false;
@@ -79,31 +79,30 @@
     {
         _isLoadingList = true;
         _preqMajor.PageNumber = pageNumber;
-        await LoadData().ContinueWith((re) =>
+        await LoadData().ContinueWith(re =>
         {
             _isLoadingAll = false;
             _isLoadingList = false;
         });
-    } 
+    }
 
 
     private async Task OnClickAdd(Guid idMajor)
     {
-
         var requestCreateUser = new UserMajorCreateRequest
-            {
-                MajorId = idMajor,
-                UserId = UserId ?? Guid.Empty,
-                CreatedBy = UserId ?? Guid.Empty
-            };
+        {
+            MajorId = idMajor,
+            UserId = UserId ?? Guid.Empty,
+            CreatedBy = UserId ?? Guid.Empty
+        };
 
         var confirm = await _diagService.ShowMessageBox
-              (
-                  "Thông báo",
-                  "Tham gia chuyên ngành?",
-                  "Xác nhận",
-                  cancelText: "Hủy"
-              );
+            (
+                "Thông báo",
+                "Tham gia chuyên ngành?",
+                "Xác nhận",
+                cancelText: "Hủy"
+            );
         if (confirm == true)
         {
             var createResult = await _repoUserMajor.CreateAsync(requestCreateUser);
@@ -117,7 +116,6 @@
             {
                 _mudSnackbar.Add("Tham gia thất bại", Severity.Error);
             }
-
         }
     }
 
@@ -129,14 +127,12 @@
         if (_preqMajor.SearchString != "" && _preqMajor.SearchString != null)
         {
             _preqMajor.PageNumber = 1;
-            
         }
-        await LoadData().ContinueWith((re) =>
+        await LoadData().ContinueWith(re =>
         {
             _isLoadingList = false;
             StateHasChanged();
         });
-
     }
 
 

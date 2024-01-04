@@ -1,4 +1,4 @@
-﻿@if(IsLoading)
+﻿@if (IsLoading)
 {
     <LoadingIndicator/>
 }
@@ -19,11 +19,11 @@ else
                             }
                         </MudPaper>
                     </MudItem>
-                    <MudItem lg="4" md="5" sm="6" xs="12" >
+                    <MudItem lg="4" md="5" sm="6" xs="12">
                         @HeaderContent
 
                     </MudItem>
-                    
+
                 </MudGrid>
             </MudPaper>
             @if (ToolbarContent != null)
@@ -35,7 +35,7 @@ else
             @if (AdditionalSearchBarColumn != null || HideSearch == false)
             {
                 <MudGrid>
-                    @if(AdditionalSearchBarColumn !=null && HideSearch)
+                    @if (AdditionalSearchBarColumn != null && HideSearch)
                     {
                         <MudItem xs="12">
                             @AdditionalSearchBarColumn
@@ -45,7 +45,7 @@ else
                     {
                         <MudItem xs="12">
                             <MudTextField Immediate Variant="Variant.Outlined" Class="custom-list-display-border-input" Style="background-color: white;" @bind-Value="@SearchString" DebounceInterval="200" OnDebounceIntervalElapsed="@(async () => await OnSearchFunc())" Label="Tìm kiếm" HelperText="@HelperSearch" Disabled="@DisableSearch" MaxLength="200" AdornmentIcon="@Icons.Material.Filled.Search" Adornment="Adornment.End" OnAdornmentClick="@(async () => await OnSearchFunc())"></MudTextField>
-                         </MudItem>
+                        </MudItem>
                     }
                     else
                     {
@@ -54,14 +54,14 @@ else
                         </MudItem>
                         <MudItem xs="6">
                             <MudTextField Immediate Variant="Variant.Outlined" Class="custom-list-display-border-input" Style="background-color: white;" @bind-Value="@SearchString" DebounceInterval="200" OnDebounceIntervalElapsed="@(async () => await OnSearchFunc())" Label="Tìm kiếm" HelperText="@HelperSearch" Disabled="@DisableSearch" MaxLength="200" AdornmentIcon="@Icons.Material.Filled.Search" Adornment="Adornment.End" OnAdornmentClick="@(async () => await OnSearchFunc())"></MudTextField>
-                         </MudItem>
+                        </MudItem>
                     }
                 </MudGrid>
             }
             <MudPaper Class="@BodyClass" Elevation="0">
                 @if (IsLoadingBody)
                 {
-                    <LoadingIndicator />
+                    <LoadingIndicator/>
                 }
                 else
                 {
@@ -71,11 +71,15 @@ else
         </MudPaper>
     </MudPaper>
 }
+
 @code {
+
     [Parameter]
     public bool IsLoading { get; set; }
+
     [Parameter]
     public bool IsLoadingBody { get; set; }
+
     [Parameter]
     public string? Label { get; set; } = "";
 
@@ -98,10 +102,10 @@ else
     public RenderFragment? AdditionalSearchBarColumn { get; set; }
 
     [Parameter]
-    public bool HideSearch { get; set; } = false;
+    public bool HideSearch { get; set; }
 
     [Parameter]
-    public bool DisableSearch { get; set; } = false;
+    public bool DisableSearch { get; set; }
 
     [Parameter]
     public string HelperSearch { get; set; } = "";
@@ -119,4 +123,5 @@ else
     {
         await OnSearch.InvokeAsync(SearchString);
     }
+
 }

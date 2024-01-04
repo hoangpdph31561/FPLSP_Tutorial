@@ -1,7 +1,6 @@
-﻿namespace FPLSP_Tutorial.Application.DataTransferObjects.User.Request
+﻿namespace FPLSP_Tutorial.Application.DataTransferObjects.User.Request;
+
+public class UserViewRequest
 {
-    public class UserViewRequest
-    {
-        public string? SearchString { get; set; }
-    }
+    public string? SearchString { get; set; }
 }

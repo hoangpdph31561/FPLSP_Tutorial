@@ -1,5 +1,6 @@
 ﻿body {
 }
+
 .truncated-text {
     display: -webkit-box;
     -webkit-line-clamp: 1; /* Specify the number of lines */
@@ -7,6 +8,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
 .truncated-inline-text-container {
     display: flex;
 }

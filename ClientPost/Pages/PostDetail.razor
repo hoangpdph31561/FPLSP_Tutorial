@@ -2,12 +2,11 @@
 <PageTitle>@result.Title</PageTitle>
 
 
-
 <MudCard Elevation="0" Class="ma-5 pa-2">
-    <MudText Typo="Typo.body2">@($"Bài viết")</MudText>
+    <MudText Typo="Typo.body2">@("Bài viết")</MudText>
     @if (_isLoadingAll)
     {
-        <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="m-3" />
+        <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="m-3"/>
     }
     else
     {
@@ -48,7 +47,7 @@
             <MudIcon Icon="@Icons.Material.Filled.Share" Size="Size.Small"></MudIcon>
             <MudText Typo="Typo.h6" Class="ms-1">Bài viết tham khảo</MudText>
         </div>
-        
+
 
         <MudNavMenu Dense="true" Margin="Margin.None">
             @if (lstSuggestPost.Count > 0)
@@ -56,41 +55,45 @@
                 <div class="my-3 mx-1">
                     @foreach (var item in lstSuggestPost)
                     {
-                        <MudNavLink OnClick="@(async() => await OnClick(item.Id.ToString()))" Class="my-1" Style="border-left: 2px solid black"><MudText>@item.Title</MudText></MudNavLink>
+                        <MudNavLink OnClick="@(async () => await OnClick(item.Id.ToString()))" Class="my-1" Style="border-left: 2px solid black">
+                            <MudText>@item.Title</MudText>
+                        </MudNavLink>
                     }
                 </div>
             }
         </MudNavMenu>
     }
 </MudCard>
-        
+
 
 @code {
+
     [Parameter]
-    public string Id { get; set; } = string.Empty; 
+    public string Id { get; set; } = string.Empty;
+
     [Inject]
     public IClientPostService ClientPostService { get; set; }
+
     [Inject]
     public NavigationManager NavigationManager { get; set; }
+
     PostDetailDTO result = new();
     PaginationResponse<TagBaseDTO> tagsResult { get; set; } = new();
     List<TagBaseDTO> lstTags { get; set; } = new();
-    ClientPostGetTagsByPostIdWithPaginationRequest request = new();
+    readonly ClientPostGetTagsByPostIdWithPaginationRequest request = new();
     PostBaseDTO parentPost = new();
     PaginationResponse<PostBaseDTO> childPosts = new();
     List<PostBaseDTO> lstChildPosts = new();
-    ClientPostGetChildWithPaginationRequest requestChild = new();
-    private List<PostBaseDTO> lstSuggestPost = new();
+    readonly ClientPostGetChildWithPaginationRequest requestChild = new();
+    private readonly List<PostBaseDTO> lstSuggestPost = new();
 
     private bool _isLoadingAll = true;
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadData().ContinueWith((re) =>
-        {
-            _isLoadingAll = false;
-        });
+        await LoadData().ContinueWith(re => { _isLoadingAll = false; });
     }
+
     private async Task LoadData()
     {
         request.Id = Id;
@@ -110,9 +113,10 @@
             lstSuggestPost.AddRange(childPosts.Data.ToList());
         }
     }
+
     private async Task OnClick(string id)
     {
-        if(Id != id)
+        if (Id != id)
         {
             NavigationManager.NavigateTo($"/postdetail/{id}");
             Id = id;
@@ -120,6 +124,6 @@
             await LoadData();
             StateHasChanged();
         }
-
     }
+
 }

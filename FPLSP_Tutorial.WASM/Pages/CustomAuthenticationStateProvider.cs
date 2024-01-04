@@ -1,61 +1,60 @@
-﻿using Blazored.SessionStorage;
+﻿using System.Security.Claims;
+using Blazored.SessionStorage;
 using Microsoft.AspNetCore.Components.Authorization;
-using System.Security.Claims;
 
-namespace FPLSP_Tutorial.WASM.Pages
+namespace FPLSP_Tutorial.WASM.Pages;
+
+public class CustomAuthenticationStateProvider : AuthenticationStateProvider
 {
-    public class CustomAuthenticationStateProvider : AuthenticationStateProvider
+    private readonly ClaimsPrincipal _anonymous = new(new ClaimsIdentity());
+    private readonly ISessionStorageService _session;
+
+    public CustomAuthenticationStateProvider(ISessionStorageService session)
     {
-        private readonly ISessionStorageService _session;
-        private readonly ClaimsPrincipal _anonymous = new(new ClaimsIdentity());
+        _session = session;
+    }
 
-        public CustomAuthenticationStateProvider(ISessionStorageService session)
+
+    public override async Task<AuthenticationState> GetAuthenticationStateAsync()
+    {
+        try
         {
-            _session = session;
-        }
+            var lstClaimVM = await _session.GetItemAsync<List<ClaimSimplifyModel>>("UserClaims");
+            var lstClaim = lstClaimVM.Select(c => new Claim(c.Key, c.Value)).ToList();
 
-
-        public override async Task<AuthenticationState> GetAuthenticationStateAsync()
-        {
-            try
-            {
-                List<ClaimSimplifyModel> lstClaimVM = await _session.GetItemAsync<List<ClaimSimplifyModel>>("UserClaims");
-                List<Claim> lstClaim = lstClaimVM.Select(c => new Claim(c.Key, c.Value)).ToList();
-
-                if (lstClaim == null || lstClaim.Count == 0)
-                    return await Task.FromResult(new AuthenticationState(_anonymous));
-
-                var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(lstClaim, "CustomAuth"));
-                return await Task.FromResult(new AuthenticationState(claimsPrincipal));
-            }
-            catch (Exception ex)
-            {
+            if (lstClaim == null || lstClaim.Count == 0)
                 return await Task.FromResult(new AuthenticationState(_anonymous));
-            }
-        }
 
-        public async Task UpdateAuthenticationState(List<Claim>? claims)
+            var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(lstClaim, "CustomAuth"));
+            return await Task.FromResult(new AuthenticationState(claimsPrincipal));
+        }
+        catch (Exception ex)
         {
-            ClaimsPrincipal claimsPrincipal;
-
-            if (claims != null)
-            {
-                List<ClaimSimplifyModel> lstClaimVM = claims.Select(c => new ClaimSimplifyModel()
-                {
-                    Key = c.Type,
-                    Value = c.Value
-                }).ToList();
-
-                await _session.SetItemAsync("UserClaims", lstClaimVM);
-                claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(claims));
-            }
-            else
-            {
-                await _session.RemoveItemAsync("UserClaims");
-                claimsPrincipal = _anonymous;
-            }
-
-            NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(claimsPrincipal)));
+            return await Task.FromResult(new AuthenticationState(_anonymous));
         }
+    }
+
+    public async Task UpdateAuthenticationState(List<Claim>? claims)
+    {
+        ClaimsPrincipal claimsPrincipal;
+
+        if (claims != null)
+        {
+            var lstClaimVM = claims.Select(c => new ClaimSimplifyModel
+            {
+                Key = c.Type,
+                Value = c.Value
+            }).ToList();
+
+            await _session.SetItemAsync("UserClaims", lstClaimVM);
+            claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(claims));
+        }
+        else
+        {
+            await _session.RemoveItemAsync("UserClaims");
+            claimsPrincipal = _anonymous;
+        }
+
+        NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(claimsPrincipal)));
     }
 }

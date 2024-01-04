@@ -8,102 +8,108 @@ using FPLSP_Tutorial.Domain.Enums;
 using FPLSP_Tutorial.Infrastructure.Database.AppDbContext;
 using Microsoft.EntityFrameworkCore;
 
-namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
+namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite;
+
+public class MajorRequestReadWriteRepository : IMajorRequestReadWriteRepository
 {
-    public class MajorRequestReadWriteRepository : IMajorRequestReadWriteRepository
+    private readonly AppReadWriteDbContext _dbContext;
+    private readonly ILocalizationService _localizationService;
+
+    public MajorRequestReadWriteRepository(ILocalizationService localizationService, AppReadWriteDbContext dbContext)
     {
-        private readonly ILocalizationService _localizationService;
-        private readonly AppReadWriteDbContext _dbContext;
+        _localizationService = localizationService;
+        _dbContext = dbContext;
+    }
 
-        public MajorRequestReadWriteRepository(ILocalizationService localizationService, AppReadWriteDbContext dbContext)
+    public async Task<RequestResult<Guid>> AddMajorRequestAsync(MajorRequestEntity entity,
+        CancellationToken cancellationToken)
+    {
+        try
         {
-            _localizationService = localizationService;
-            _dbContext = dbContext;
+            entity.CreatedTime = DateTimeOffset.UtcNow;
+            entity.ModifiedTime = DateTimeOffset.UtcNow;
+
+
+            await _dbContext.MajorRequestEntities.AddAsync(entity);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+
+            return RequestResult<Guid>.Succeed(entity.Id);
         }
-        public async Task<RequestResult<Guid>> AddMajorRequestAsync(MajorRequestEntity entity, CancellationToken cancellationToken)
+        catch (Exception e)
         {
-            try
+            return RequestResult<Guid>.Fail(_localizationService["Unable to create MajorRequest"], new[]
             {
-                entity.CreatedTime = DateTimeOffset.UtcNow;
-                entity.ModifiedTime = DateTimeOffset.UtcNow;
-
-
-                await _dbContext.MajorRequestEntities.AddAsync(entity);
-                await _dbContext.SaveChangesAsync(cancellationToken);
-
-                return RequestResult<Guid>.Succeed(entity.Id);
-            }
-            catch (Exception e)
-            {
-                return RequestResult<Guid>.Fail(_localizationService["Unable to create MajorRequest"], new[]
+                new ErrorItem
                 {
-                    new ErrorItem
-                    {
-                        Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToCreate + "MajorRequest"
-                    }
-                });
-            }
+                    Error = e.Message,
+                    FieldName = LocalizationString.Common.FailedToCreate + "MajorRequest"
+                }
+            });
         }
+    }
 
-        public async Task<RequestResult<int>> UpdateMajorRequestAsync(MajorRequestEntity entity, CancellationToken cancellationToken)
+    public async Task<RequestResult<int>> UpdateMajorRequestAsync(MajorRequestEntity entity,
+        CancellationToken cancellationToken)
+    {
+        try
         {
-            try
-            {
-                var majorRequest = await GetMajorRequestByIdAsync(entity.Id, cancellationToken);
+            var majorRequest = await GetMajorRequestByIdAsync(entity.Id, cancellationToken);
 
-                majorRequest!.Status = entity.Status;
-                majorRequest.ModifiedBy = entity.ModifiedBy;
-                majorRequest.ModifiedTime = DateTimeOffset.UtcNow;
-                _dbContext.MajorRequestEntities.Update(majorRequest);
-                await _dbContext.SaveChangesAsync(cancellationToken);
-                return RequestResult<int>.Succeed(1);
-            }
-            catch (Exception e)
+            majorRequest!.Status = entity.Status;
+            majorRequest.ModifiedBy = entity.ModifiedBy;
+            majorRequest.ModifiedTime = DateTimeOffset.UtcNow;
+            _dbContext.MajorRequestEntities.Update(majorRequest);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+            return RequestResult<int>.Succeed(1);
+        }
+        catch (Exception e)
+        {
+            return RequestResult<int>.Fail(_localizationService["Unable to update majorRequest"], new[]
             {
-                return RequestResult<int>.Fail(_localizationService["Unable to update majorRequest"], new[]
+                new ErrorItem
                 {
-                    new ErrorItem
-                    {
-                        Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToUpdate + "majorRequest"
-                    }
-                });
-            }
+                    Error = e.Message,
+                    FieldName = LocalizationString.Common.FailedToUpdate + "majorRequest"
+                }
+            });
         }
+    }
 
-        public async Task<RequestResult<int>> DeleteMajorRequestAsync(MajorRequestDeleteRequest request, CancellationToken cancellationToken)
+    public async Task<RequestResult<int>> DeleteMajorRequestAsync(MajorRequestDeleteRequest request,
+        CancellationToken cancellationToken)
+    {
+        try
         {
-            try
+            var majorRequest = await GetMajorRequestByIdAsync(request.Id, cancellationToken);
+
+            // update trạng thái 
+            majorRequest.Deleted = true;
+            majorRequest.Status = EntityStatus.Deleted;
+
+            await _dbContext.SaveChangesAsync(cancellationToken);
+
+            return RequestResult<int>.Succeed(1);
+        }
+        catch (Exception e)
+        {
+            return RequestResult<int>.Fail(_localizationService["Unable to delete majorRequest"], new[]
             {
-                var majorRequest = await GetMajorRequestByIdAsync(request.Id, cancellationToken);
-
-                // update trạng thái 
-                majorRequest.Deleted = true;
-                majorRequest.Status = EntityStatus.Deleted;
-
-                await _dbContext.SaveChangesAsync(cancellationToken);
-
-                return RequestResult<int>.Succeed(1);
-            }
-            catch (Exception e)
-            {
-                return RequestResult<int>.Fail(_localizationService["Unable to delete majorRequest"], new[]
+                new ErrorItem
                 {
-                    new ErrorItem
-                    {
-                        Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToDelete + "majorRequest"
-                    }
-                });
-            }
+                    Error = e.Message,
+                    FieldName = LocalizationString.Common.FailedToDelete + "majorRequest"
+                }
+            });
         }
+    }
 
-        private async Task<MajorRequestEntity?> GetMajorRequestByIdAsync(Guid idMajorRequest, CancellationToken cancellationToken)
-        {
-            var majorRequest = await _dbContext.MajorRequestEntities.FirstOrDefaultAsync(c => c.Id == idMajorRequest && !c.Deleted, cancellationToken);
+    private async Task<MajorRequestEntity?> GetMajorRequestByIdAsync(Guid idMajorRequest,
+        CancellationToken cancellationToken)
+    {
+        var majorRequest =
+            await _dbContext.MajorRequestEntities.FirstOrDefaultAsync(c => c.Id == idMajorRequest && !c.Deleted,
+                cancellationToken);
 
-            return majorRequest;
-        }
+        return majorRequest;
     }
 }

@@ -1,6 +1,5 @@
-﻿namespace FPLSP_Tutorial.Application.DataTransferObjects.Example
+﻿namespace FPLSP_Tutorial.Application.DataTransferObjects.Example;
+
+public class ExampleDto
 {
-    public class ExampleDto
-    {
-    }
 }

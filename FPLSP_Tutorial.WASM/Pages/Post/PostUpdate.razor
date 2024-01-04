@@ -1,9 +1,8 @@
 ﻿@page "/post/update"
-@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major;
-@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post.Request;
-@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.PostTag.Request;
-@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Tag;
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Tag
 @using FPLSP_Tutorial.WASM.Pages.Post.Components
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post.Request
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.PostTag.Request
 
 @layout ManagementLayout
 
@@ -19,16 +18,16 @@
 
 @if (_isEnableFileImport)
 {
-    <FileImportPopover Enable="@_isEnableFileImport" ReturnString="@((string s) => _rteRef.SetRTEValue(s))" OnClose="@(() => _isEnableFileImport = false)" />
+    <FileImportPopover Enable="@_isEnableFileImport" ReturnString="@(s => _rteRef.SetRTEValue(s))" OnClose="@(() => _isEnableFileImport = false)"/>
 }
 
-@if(_isLoadingAll)
+@if (_isLoadingAll)
 {
     <LoadingIndicatorOverlay/>
 }
 else
 {
-    <PostEditInformationUpdate Visible="@_isEnablePostInformation" OnClose="@(() => _isEnablePostInformation = false)" ListTagSelected="@_listTagSelected" UserId="@_idUser" OnSave="@(async() => await OnSaveAsync())" PostUpdateRequest="@_postUpdateR" BindListTagSelected="@((List<TagDTO> lstTag) => _listTagSelected = lstTag)" @ref="@_refPostEditInformation" MajorId="@(idMajor  == null ? null : Guid.Parse(idMajor))" />
+    <PostEditInformationUpdate Visible="@_isEnablePostInformation" OnClose="@(() => _isEnablePostInformation = false)" ListTagSelected="@_listTagSelected" UserId="@_idUser" OnSave="@(async () => await OnSaveAsync())" PostUpdateRequest="@_postUpdateR" BindListTagSelected="@(lstTag => _listTagSelected = lstTag)" @ref="@_refPostEditInformation" MajorId="@(idMajor == null ? null : Guid.Parse(idMajor))"/>
 
     <div class="pa-2">
         <MudBreadcrumbs Items="@_listBreadCrumb"></MudBreadcrumbs>
@@ -39,14 +38,14 @@ else
                 <MudText Typo="Typo.h5" Class="mr-auto" Style="font-weight: 500">Chỉnh sửa bài viết</MudText>
 
                 <MudChip Icon="@Icons.Material.Filled.FileUpload" title="Nhập nội dung bằng file truyền vào(.xlsx, .docs)" Color="Color.Success" OnClick="@(() => _isEnableFileImport = true)">Nhập file</MudChip>
-                <MudChip OnClick="@(async () => { _isEnablePostInformation= true; })" Color="Color.Primary" Icon="@Icons.Material.Filled.Save">Lưu</MudChip>
+                <MudChip OnClick="@(async () => { _isEnablePostInformation = true; })" Color="Color.Primary" Icon="@Icons.Material.Filled.Save">Lưu</MudChip>
             </div>
 
-            <RichTextEditor @ref="@_rteRef" Get="@((string val) => { _postUpdateR.Content =  val; })" />
+            <RichTextEditor @ref="@_rteRef" Get="@(val => { _postUpdateR.Content = val; })"/>
 
             <div class="row mt-2">
                 <div class="col d-flex justify-end">
-                    @if(fallBackUrl != null)
+                    @if (fallBackUrl != null)
                     {
                         <MudChip OnClick="@(() => _nav.NavigateTo(fallBackUrl))" Color="Color.Error" Icon="@Icons.Material.Filled.ExitToApp">Quay lại</MudChip>
                     }
@@ -61,6 +60,7 @@ else
 
 
 @code {
+
     [Parameter]
     [SupplyParameterFromQuery]
     public string? idPost { get; set; }
@@ -76,8 +76,8 @@ else
     private List<BreadcrumbItem> _listBreadCrumb = new();
 
     private bool _isLoadingAll = true;
-    private bool _isEnableFileImport = false;
-    private bool _isEnablePostInformation = false;
+    private bool _isEnableFileImport;
+    private bool _isEnablePostInformation;
 
     private Guid _idUser;
 
@@ -87,7 +87,7 @@ else
 
     PostEditInformationUpdate _refPostEditInformation = new();
 
-    private PostUpdateRequest _postUpdateR = new();
+    private readonly PostUpdateRequest _postUpdateR = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -96,12 +96,11 @@ else
 
     private async Task LoadData()
     {
-
     }
 
-    protected async override Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if(firstRender)
+        if (firstRender)
         {
             var state = await _authProvider.GetAuthenticationStateAsync();
             var userIdClaim = state.User.FindAll("UserId").FirstOrDefault();
@@ -110,7 +109,6 @@ else
             {
                 _idUser = Guid.Parse(userIdClaim.Value);
             }
-            else { }
             _postUpdateR.ModifiedBy = _idUser;
 
             var postDetail = await _repoPost.GetByIdAsync(Guid.Parse(idPost));
@@ -138,20 +136,20 @@ else
             return;
         }
 
-        //if (idPost != null) _postUpdateR.PostId = Guid.Parse(idPost);
+    //if (idPost != null) _postUpdateR.PostId = Guid.Parse(idPost);
         var resultPost = await _repoPost.UpdateAsync(_postUpdateR);
 
         if (resultPost != null)
         {
-            var resultPostTag = await _repoPostTag.SyncRangeAsync(new()
+            var resultPostTag = await _repoPostTag.SyncRangeAsync(new PostTagSyncRangeRequest
             {
                 PostId = Guid.Parse(idPost),
-                ListTag = _listTagSelected,
+                ListTag = _listTagSelected
             });
-            if(resultPostTag)
+            if (resultPostTag)
             {
                 _mudSnackbar.Add("Cập nhật thành công", Severity.Success);
-                if(fallBackUrl != null)
+                if (fallBackUrl != null)
                 {
                     _nav.NavigateTo(fallBackUrl);
                     return;
@@ -178,14 +176,15 @@ else
     private void BreadCrumbHandling()
     {
         _listBreadCrumb.Clear();
-        _listBreadCrumb.Add(new BreadcrumbItem("Trang chủ", href: "/post/client"));
-        if(fallBackUrl != null)
+        _listBreadCrumb.Add(new BreadcrumbItem("Trang chủ", "/post/client"));
+        if (fallBackUrl != null)
         {
-            _listBreadCrumb = new List<BreadcrumbItem>() {
-                        new BreadcrumbItem("Danh sách", href: "/post-manager"),
+            _listBreadCrumb = new List<BreadcrumbItem>
+            {
+                new("Danh sách", "/post-manager")
             };
         }
-        _listBreadCrumb.Add(new BreadcrumbItem("Cập nhật bài viết", href: null, disabled: true));
+        _listBreadCrumb.Add(new BreadcrumbItem("Cập nhật bài viết", null, true));
     }
 
 
@@ -193,4 +192,5 @@ else
     {
         await LoadData();
     }
+
 }

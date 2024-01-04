@@ -1,8 +1,8 @@
-﻿
-
-@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major;
-@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post.Request;
-@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Tag;
+﻿@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Post.Request
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Tag
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Tag.TagRequest
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Major.Request
 @inject IDialogService DialogService
 
 @inject IMajorRepository _repoMajor
@@ -52,7 +52,7 @@
                             <MudIcon Icon="@Icons.Material.Filled.AddCircle" @onclick="@(async () => await OnClickTagAdd())" Class="@(ListTagSelected.Count() == 0 ? "ms-3" : "")"></MudIcon>
                         </div>
                     </div>
-                    @if(_listDisplayError.Any(c => c.property == "tag"))
+                    @if (_listDisplayError.Any(c => c.property == "tag"))
                     {
                         <MudText Typo="Typo.caption" Color="Color.Error">@_listDisplayError.FirstOrDefault(c => c.property == "tag").message</MudText>
                     }
@@ -106,24 +106,21 @@
     protected override async Task OnInitializedAsync()
     {
         _isLoadingAll = true;
-        await LoadData().ContinueWith((re) =>
-        {
-            _isLoadingAll = false;
-        });
+        await LoadData().ContinueWith(re => { _isLoadingAll = false; });
     }
 
     private async Task LoadData()
     {
-        _listTagSystem = await _repoTag.GetListAsync(new()
+        _listTagSystem = await _repoTag.GetListAsync(new TagViewRequest
         {
-            IgnoreMajorId= false
+            IgnoreMajorId = false
         });
-        _listMajor = await _repoMajor.GetListAsync(new()
-            {
-                UserId = UserId,
-            });
+        _listMajor = await _repoMajor.GetListAsync(new MajorViewRequest
+        {
+            UserId = UserId
+        });
 
-        //Update related
+    //Update related
 
         _bindTitle = PostUpdateRequest.Title;
 
@@ -132,10 +129,10 @@
 
     private void SetTagDisplay()
     {
-        if(MajorId != null && MajorId != Guid.Empty)
+        if (MajorId != null && MajorId != Guid.Empty)
         {
             var major = _listMajor.FirstOrDefault(c => c.Id == MajorId);
-            _listTagForSelect = major == null ? new() : major.ListTag;
+            _listTagForSelect = major == null ? new List<TagDTO>() : major.ListTag;
         }
         else
         {
@@ -159,7 +156,6 @@
 
         if (!result.Cancelled)
         {
-
             ListTagSelected = (List<TagDTO>)result.Data;
         }
         else
@@ -177,12 +173,11 @@
 
     private void TagOnClickRemove(Guid idTag)
     {
-        ListTagSelected.Remove(ListTagSelected.FirstOrDefault(c => c.Id == idTag) ?? new());
+        ListTagSelected.Remove(ListTagSelected.FirstOrDefault(c => c.Id == idTag) ?? new TagDTO());
     }
 
     private async Task OnClickSave()
     {
-
         PostUpdateRequest.Title = _bindTitle;
         await BindListTagSelected.InvokeAsync(ListTagSelected);
 
@@ -194,7 +189,7 @@
     //Manually because of Tag validation
     private bool Validate(string? property = null)
     {
-        if(property == null)
+        if (property == null)
         {
             _listDisplayError.Clear();
 
@@ -209,24 +204,22 @@
             if (_listDisplayError.Count > 0) return false;
             return true;
         }
-        else
+        _listDisplayError = _listDisplayError.Where(c => c.property != property).ToList();
+        if (_bindTitle == null || (_bindTitle == "" && property == "title"))
         {
-            _listDisplayError = _listDisplayError.Where(c => c.property != property).ToList();
-            if (_bindTitle == null || _bindTitle == "" && property == "title")
-            {
-                _listDisplayError.Add(("title", "Bài viết phải có tiêu đề"));
-            }
-            if (ListTagSelected.Count() == 0 && property == "tag")
-            {
-                _listDisplayError.Add(("tag", "Phải có tối thiểu 1 nhãn"));
-            }
-            if (_listDisplayError.Count > 0) return false;
-            return true;
+            _listDisplayError.Add(("title", "Bài viết phải có tiêu đề"));
         }
+        if (ListTagSelected.Count() == 0 && property == "tag")
+        {
+            _listDisplayError.Add(("tag", "Phải có tối thiểu 1 nhãn"));
+        }
+        if (_listDisplayError.Count > 0) return false;
+        return true;
     }
 
 
     public async Task Cleanup()
     {
     }
+
 }

@@ -1,5 +1,4 @@
-﻿@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Tag;
-
+﻿@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.Tag
 <style>
     .mud-dialog-title {
         padding: 0 !important;
@@ -16,7 +15,7 @@
                 @foreach (var i in _lstTagDisPlay.Where(c => ListTag.Any(d => d.Id == c.Id) == false))
                 {
                     // Truyền pthc thêm Tag khỏi List<Tag> vào trong OnClose
-                    <MudChip Color="Color.Primary" Variant="Variant.Outlined" CloseIcon="@Icons.Material.Filled.AddCircle" OnClose="@(() => { if(!ListTag.Any(c => c.Id == i.Id)) {ListTag.Add(i); }})">@i.Name</MudChip>
+                    <MudChip Color="Color.Primary" Variant="Variant.Outlined" CloseIcon="@Icons.Material.Filled.AddCircle" OnClose="@(() => { if (!ListTag.Any(c => c.Id == i.Id)) {ListTag.Add(i); }})">@i.Name</MudChip>
                 }
             </div>
 
@@ -48,17 +47,22 @@
         <MudButton Color="Color.Primary" OnClick="DeleteServer">Lưu</MudButton>
     </DialogActions>
 </MudDialog>
+
 @code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; }
 
     [Parameter]
     public List<TagDTO> ListTag { get; set; } = new();
+
     [Parameter]
     public List<TagDTO> ListTagFromDB { get; set; } = new();
+
     private string SearchString = "";
     private List<TagDTO> _lstTagDisPlay = new();
-    private bool _toggleAllTags = false;
-    private int _maxChipDisplay = 5;
+    private bool _toggleAllTags;
+    private readonly int _maxChipDisplay = 5;
 
     private void Cancel()
     {
@@ -77,7 +81,7 @@
 
     private async Task OnSearchFunc()
     {
-        if(string.IsNullOrWhiteSpace(SearchString))
+        if (string.IsNullOrWhiteSpace(SearchString))
         {
             _lstTagDisPlay = ListTagFromDB.Take(10).ToList();
         }
@@ -86,5 +90,5 @@
             _lstTagDisPlay = ListTagFromDB.Where(x => x.Name.Contains(SearchString)).ToList();
         }
     }
-    
+
 }

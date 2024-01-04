@@ -3,15 +3,14 @@ using FPLSP_Tutorial.Application.DataTransferObjects.PostTag;
 using FPLSP_Tutorial.Application.DataTransferObjects.PostTag.Request;
 using FPLSP_Tutorial.Domain.Entities;
 
-namespace FPLSP_Tutorial.Infrastructure.Extensions.AutoMapperProfiles
+namespace FPLSP_Tutorial.Infrastructure.Extensions.AutoMapperProfiles;
+
+public class PostTagProfile : Profile
 {
-    public class PostTagProfile : Profile
+    public PostTagProfile()
     {
-        public PostTagProfile()
-        {
-            CreateMap<PostTagEntity, PostTagDTO>();
-            CreateMap<PostTagCreateRequest, PostTagEntity>();
-            CreateMap<PostTagUpdateRequest, PostTagEntity>();
-        }
+        CreateMap<PostTagEntity, PostTagDTO>();
+        CreateMap<PostTagCreateRequest, PostTagEntity>();
+        CreateMap<PostTagUpdateRequest, PostTagEntity>();
     }
 }

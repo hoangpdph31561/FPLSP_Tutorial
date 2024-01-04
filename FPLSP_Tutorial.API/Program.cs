@@ -1,8 +1,4 @@
-using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadOnly;
-using FPLSP_Tutorial.Application.Interfaces.Repositories.ReadWrite;
 using FPLSP_Tutorial.Infrastructure.Extensions;
-using FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadOnly;
-using FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,7 +19,6 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddSwaggerGen();
 
 
-
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy",
@@ -40,6 +35,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 app.UseCors("CorsPolicy");
 app.UseHttpsRedirection();
 

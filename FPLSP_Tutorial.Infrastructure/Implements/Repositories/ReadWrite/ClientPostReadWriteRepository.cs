@@ -5,45 +5,44 @@ using FPLSP_Tutorial.Application.ValueObjects.Response;
 using FPLSP_Tutorial.Domain.Entities;
 using FPLSP_Tutorial.Infrastructure.Database.AppDbContext;
 
-namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite
+namespace FPLSP_Tutorial.Infrastructure.Implements.Repositories.ReadWrite;
+
+public class ClientPostReadWriteRepository : IClientPostReadWriteRespository
 {
-    public class ClientPostReadWriteRepository : IClientPostReadWriteRespository
+    private readonly AppReadWriteDbContext _dbContext;
+    private readonly ILocalizationService _localizationService;
+
+    public ClientPostReadWriteRepository(AppReadWriteDbContext dbContext, ILocalizationService localizationService)
     {
-        private readonly AppReadWriteDbContext _dbContext;
-        private readonly ILocalizationService _localizationService;
-        public ClientPostReadWriteRepository(AppReadWriteDbContext dbContext, ILocalizationService localizationService)
-        {
-            _dbContext = dbContext;
-            _localizationService = localizationService;
+        _dbContext = dbContext;
+        _localizationService = localizationService;
+    }
 
+    public async Task<RequestResult<Guid>> AddMajorRequest(MajorRequestEntity entity,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            entity.CreatedTime = DateTimeOffset.Now;
+            entity.ModifiedTime = DateTimeOffset.Now;
+            entity.DeletedTime = DateTimeOffset.Now;
+            entity.Deleted = false;
+            entity.IsManager = false;
+            entity.DeletedBy = null;
+            await _dbContext.MajorRequestEntities.AddAsync(entity);
+            await _dbContext.SaveChangesAsync();
+            return RequestResult<Guid>.Succeed(entity.Id);
         }
-        public async Task<RequestResult<Guid>> AddMajorRequest(MajorRequestEntity entity, CancellationToken cancellationToken)
+        catch (Exception e)
         {
-            try
+            return RequestResult<Guid>.Fail(_localizationService["Unable to create major request"], new[]
             {
-
-                entity.CreatedTime = DateTimeOffset.Now;
-                entity.ModifiedTime = DateTimeOffset.Now;
-                entity.DeletedTime = DateTimeOffset.Now;
-                entity.Deleted = false;
-                entity.IsManager = false;
-                entity.DeletedBy = null;
-                await _dbContext.MajorRequestEntities.AddAsync(entity);
-                await _dbContext.SaveChangesAsync();
-                return RequestResult<Guid>.Succeed(entity.Id);
-            }
-            catch (Exception e)
-            {
-
-                return RequestResult<Guid>.Fail(_localizationService["Unable to create major request"], new[]
+                new ErrorItem
                 {
-                    new ErrorItem
-                    {
-                        Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToCreate + "major request"
-                    }
-                });
-            }
+                    Error = e.Message,
+                    FieldName = LocalizationString.Common.FailedToCreate + "major request"
+                }
+            });
         }
     }
 }

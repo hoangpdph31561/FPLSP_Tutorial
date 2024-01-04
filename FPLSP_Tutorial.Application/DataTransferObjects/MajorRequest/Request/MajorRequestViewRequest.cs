@@ -1,6 +1,5 @@
-﻿namespace FPLSP_Tutorial.Application.DataTransferObjects.MajorRequest.Request
+﻿namespace FPLSP_Tutorial.Application.DataTransferObjects.MajorRequest.Request;
+
+public class MajorRequestViewRequest
 {
-    public class MajorRequestViewRequest
-    {
-    }
 }

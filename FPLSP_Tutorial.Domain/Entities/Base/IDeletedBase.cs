@@ -1,12 +1,10 @@
-﻿namespace FPLSP_Tutorial.Domain.Entities.Base
+﻿namespace FPLSP_Tutorial.Domain.Entities.Base;
+
+public interface IDeletedBase
 {
-    public interface IDeletedBase
-    {
-        public bool Deleted { get; set; }
+    public bool Deleted { get; set; }
 
-        public Guid? DeletedBy { get; set; }
+    public Guid? DeletedBy { get; set; }
 
-        public DateTimeOffset DeletedTime { get; set; }
-
-    }
+    public DateTimeOffset DeletedTime { get; set; }
 }

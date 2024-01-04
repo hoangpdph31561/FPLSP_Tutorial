@@ -1,40 +1,36 @@
 ﻿using FPLSP_Tutorial.Application.ValueObjects.Common;
 
-namespace FPLSP_Tutorial.Application.ValueObjects.Exceptions
+namespace FPLSP_Tutorial.Application.ValueObjects.Exceptions;
+
+[Serializable]
+public class ExceptionBase : Exception
 {
-    [Serializable]
-    public class ExceptionBase : Exception
+    public ExceptionBase(string context, string key, string message, Tracker? tracker = null)
+        : base(message)
     {
-        private static string BuildMessage(string message, Tracker? tracker = null)
-        {
-            if (tracker == null)
-            {
-                throw new ArgumentNullException("tracker must not be null");
-            }
+        base.Data["Context"] = context;
+        base.Data["Key"] = key;
+        base.Data["Tracker"] = tracker;
+    }
 
-            return "Request Id: " + tracker?.RequestId + " Message: " + message;
-        }
+    public ExceptionBase(string context, string key, string message, Exception exception, Tracker? tracker = null)
+        : base(message, exception)
+    {
+        base.Data["Context"] = context;
+        base.Data["Key"] = key;
+        base.Data["Tracker"] = tracker;
+    }
 
-        public ExceptionBase(string context, string key, string message, Tracker? tracker = null)
-            : base(message)
-        {
-            base.Data["Context"] = context;
-            base.Data["Key"] = key;
-            base.Data["Tracker"] = tracker;
-        }
+    private static string BuildMessage(string message, Tracker? tracker = null)
+    {
+        if (tracker == null) throw new ArgumentNullException("tracker must not be null");
 
-        public ExceptionBase(string context, string key, string message, Exception exception, Tracker? tracker = null)
-            : base(message, exception)
-        {
-            base.Data["Context"] = context;
-            base.Data["Key"] = key;
-            base.Data["Tracker"] = tracker;
-        }
+        return "Request Id: " + tracker?.RequestId + " Message: " + message;
+    }
 
-        public ExceptionBase WithData(string name, object value)
-        {
-            Data[name] = value;
-            return this;
-        }
+    public ExceptionBase WithData(string name, object value)
+    {
+        Data[name] = value;
+        return this;
     }
 }

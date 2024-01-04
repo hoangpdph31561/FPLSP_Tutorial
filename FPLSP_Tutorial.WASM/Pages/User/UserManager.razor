@@ -1,9 +1,9 @@
 ﻿@page "/user-manager"
-@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.MajorRequest.Request;
-@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.MajorRequest;
-@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.User;
-@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.User.Request;
-@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.UserMajor.Request;
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.MajorRequest.Request
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.User
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.User.Request
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.UserMajor.Request
+@using FPLSP_Tutorial.WASM.Data.DataTransferObjects.MajorRequest
 @layout ManagementLayout
 
 @inject IMajorRequestRepository _repoMajorRequest
@@ -19,7 +19,7 @@
 
 @if (_isLoadingAll)
 {
-    <LoadingIndicator />
+    <LoadingIndicator/>
 }
 else
 {
@@ -31,12 +31,12 @@ else
                 <MudTabPanel Text="Danh sách giảng viên">
                     @if (_isLoadingTab1)
                     {
-                        <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="m-3" />
+                        <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="m-3"/>
                     }
                     else
                     {
                         <div class="mx-5 mt-5">
-                            <MudTextField T="string" Variant="Variant.Outlined" Label="Tìm kiếm" Placeholder="Nhập tên bài viết cần tìm kiếm..." DebounceInterval="1000" OnDebounceIntervalElapsed="@(async (string val) => { _preqUser.SearchString = val; await OnQueryRequestTab1(); })" Class="mb-2"></MudTextField>
+                            <MudTextField T="string" Variant="Variant.Outlined" Label="Tìm kiếm" Placeholder="Nhập tên bài viết cần tìm kiếm..." DebounceInterval="1000" OnDebounceIntervalElapsed="@(async val => { _preqUser.SearchString = val; await OnQueryRequestTab1(); })" Class="mb-2"></MudTextField>
 
 
                             <MudTable Items="@_listUser" Style="position:relative;" Bordered="true" Striped="true" Loading=@(_isLoadingListTab1)>
@@ -50,11 +50,11 @@ else
                                 </HeaderContent>
                                 <RowTemplate>
                                     <MudTd>@(_listUser.IndexOf(context) + 1)</MudTd>
-                                        <MudTd>@context.Email</MudTd>
-                                        <MudTd>@context.Username</MudTd>
-                                        <MudTd>
-                                            @{
-                                            string roles = "";
+                                    <MudTd>@context.Email</MudTd>
+                                    <MudTd>@context.Username</MudTd>
+                                    <MudTd>
+                                        @{
+                                            var roles = "";
                                             foreach (var i in context.RoleCodes)
                                             {
                                                 if (roles != "") roles += ", ";
@@ -67,14 +67,11 @@ else
                                         @context.ListJoinedMajors.Count()
                                     </MudTd>
                                     <MudTd>
-                                        <MudFab OnClick="@(() => {
-                                        if(_isShowingLecturerDetail == context.Id) _isShowingLecturerDetail = null;
-                                        else _isShowingLecturerDetail = context.Id;
-                                    })" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Pageview" Size="Size.Small" DisableElevation="true" Disabled="@(context.ListJoinedMajors.Count == 0)">Xem chi tiết</MudFab>
+                                        <MudFab OnClick="@(() => { if (_isShowingLecturerDetail == context.Id) _isShowingLecturerDetail = null; else _isShowingLecturerDetail = context.Id; })" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Pageview" Size="Size.Small" DisableElevation="true" Disabled="@(context.ListJoinedMajors.Count == 0)">Xem chi tiết</MudFab>
                                     </MudTd>
                                 </RowTemplate>
                                 <ChildRowContent>
-                                    <MudTr Style="@((_isShowingLecturerDetail != context.Id ? "display: none;" : ""))">
+                                    <MudTr Style="@(_isShowingLecturerDetail != context.Id ? "display: none;" : "")">
                                         <td colspan="6">
                                             <div class="ma-5">
                                                 <div class="d-flex align-center mb-2">
@@ -90,11 +87,11 @@ else
                                                     </HeaderContent>
                                                     <RowTemplate>
                                                         <MudTd>@(context.ListJoinedMajors.IndexOf(major) + 1)</MudTd>
-                                                            <MudTd>@major.MajorCode</MudTd>
-                                                            <MudTd>@major.MajorName</MudTd>
-                                                            <MudTd>
-                                                                <MudIcon Size="Size.Small" Icon="@Icons.Material.Filled.RemoveRedEye" Title="Xem bài viết"></MudIcon>
-                                                                @if (major.IsManager)
+                                                        <MudTd>@major.MajorCode</MudTd>
+                                                        <MudTd>@major.MajorName</MudTd>
+                                                        <MudTd>
+                                                            <MudIcon Size="Size.Small" Icon="@Icons.Material.Filled.RemoveRedEye" Title="Xem bài viết"></MudIcon>
+                                                            @if (major.IsManager)
                                                             {
                                                                 <MudIcon Size="Size.Small" Icon="@Icons.Material.Filled.EditNote" Title="Thêm/Xóa bài viết của bản thân"></MudIcon>
                                                             }
@@ -114,7 +111,7 @@ else
                 <MudTabPanel Text="Yêu cầu chuyên ngành">
                     @if (_isLoadingTab2)
                     {
-                        <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="m-3" />
+                        <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="m-3"/>
                     }
                     else
                     {
@@ -128,97 +125,98 @@ else
                             </HeaderContent>
                             <RowTemplate>
                                 <MudTd>@(_listMajorRequestGrouped.IndexOf(context) + 1)</MudTd>
-                                    <MudTd>@context.Key.email</MudTd>
-                                    <MudTd>@context.Key.name</MudTd>
-                                    <MudTd>@context.Count()</MudTd>
-                                    <MudTd>
-                                        <MudFab OnClick="@(() => _isShowingMajorRequestDetail = (_isShowingMajorRequestDetail == null) ? context.Key.email : null)" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Pageview" Size="Size.Small" DisableElevation="true">Xem chi tiết</MudFab>
-                                    </MudTd>
-                                </RowTemplate>
-                                <ChildRowContent>
-                                    <MudTr Style="@((_isShowingMajorRequestDetail != context.Key.email ? "display: none;" : ""))">
-                                        <td colspan="5">
-                                            <div class="ma-5">
-                                                <div class="d-flex align-center mb-2">
-                                                    <MudText Style="font-weight: 500" Class="mr-auto">Chi tiết yêu cầu chuyên ngành</MudText>
-                                                    <MudIconButton Size="Size.Small" Icon="@Icons.Material.Filled.Close" OnClick="@(() => _isShowingMajorRequestDetail = null)"></MudIconButton>
-                                                </div>
-
-                                                <MudTable Items="@context" Context="major" Dense="true">
-                                                    <HeaderContent>
-                                                        <MudTh>STT</MudTh>
-                                                        <MudTh>Mã</MudTh>
-                                                        <MudTh>Tên</MudTh>
-                                                        <MudTh>Loại yêu cầu</MudTh>
-                                                        <MudTh>Hành động</MudTh>
-                                                    </HeaderContent>
-                                                    <RowTemplate>
-                                                        <MudTd>@(context.Select(c => c.Id).ToList().IndexOf(major.Id) + 1)</MudTd>
-                                                        <MudTd>@major.MajorCode</MudTd>
-                                                        <MudTd>@major.MajorName</MudTd>
-                                                        <MudTd>@(major.IsManager ? "Quản lý" : "Xem")</MudTd>
-                                                        <MudTd>
-                                                            <MudIconButton Color="Color.Primary" Class="mx-1" Size="Size.Small" Icon="@Icons.Material.Filled.Check" OnClick="@(async () => await OnAddToMajor(major))" Title="Xác nhận" DisableElevation="true"></MudIconButton>
-                                                            <MudIconButton Size="Size.Small" Color="Color.Error" Class="m-1" Icon="@Icons.Material.Filled.Delete" OnClick="@(async () => await OnDelete(major.Id))" Title="Hủy yêu cầu" DisableElevation="true">Xóa</MudIconButton>
-                                                        </MudTd>
-                                                    </RowTemplate>
-                                                </MudTable>
+                                <MudTd>@context.Key.email</MudTd>
+                                <MudTd>@context.Key.name</MudTd>
+                                <MudTd>@context.Count()</MudTd>
+                                <MudTd>
+                                    <MudFab OnClick="@(() => _isShowingMajorRequestDetail = _isShowingMajorRequestDetail == null ? context.Key.email : null)" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Pageview" Size="Size.Small" DisableElevation="true">Xem chi tiết</MudFab>
+                                </MudTd>
+                            </RowTemplate>
+                            <ChildRowContent>
+                                <MudTr Style="@(_isShowingMajorRequestDetail != context.Key.email ? "display: none;" : "")">
+                                    <td colspan="5">
+                                        <div class="ma-5">
+                                            <div class="d-flex align-center mb-2">
+                                                <MudText Style="font-weight: 500" Class="mr-auto">Chi tiết yêu cầu chuyên ngành</MudText>
+                                                <MudIconButton Size="Size.Small" Icon="@Icons.Material.Filled.Close" OnClick="@(() => _isShowingMajorRequestDetail = null)"></MudIconButton>
                                             </div>
-                                        </td>
-                                    </MudTr>
+
+                                            <MudTable Items="@context" Context="major" Dense="true">
+                                                <HeaderContent>
+                                                    <MudTh>STT</MudTh>
+                                                    <MudTh>Mã</MudTh>
+                                                    <MudTh>Tên</MudTh>
+                                                    <MudTh>Loại yêu cầu</MudTh>
+                                                    <MudTh>Hành động</MudTh>
+                                                </HeaderContent>
+                                                <RowTemplate>
+                                                    <MudTd>@(context.Select(c => c.Id).ToList().IndexOf(major.Id) + 1)</MudTd>
+                                                    <MudTd>@major.MajorCode</MudTd>
+                                                    <MudTd>@major.MajorName</MudTd>
+                                                    <MudTd>@(major.IsManager ? "Quản lý" : "Xem")</MudTd>
+                                                    <MudTd>
+                                                        <MudIconButton Color="Color.Primary" Class="mx-1" Size="Size.Small" Icon="@Icons.Material.Filled.Check" OnClick="@(async () => await OnAddToMajor(major))" Title="Xác nhận" DisableElevation="true"></MudIconButton>
+                                                        <MudIconButton Size="Size.Small" Color="Color.Error" Class="m-1" Icon="@Icons.Material.Filled.Delete" OnClick="@(async () => await OnDelete(major.Id))" Title="Hủy yêu cầu" DisableElevation="true">Xóa</MudIconButton>
+                                                    </MudTd>
+                                                </RowTemplate>
+                                            </MudTable>
+                                        </div>
+                                    </td>
+                                </MudTr>
                             </ChildRowContent>
                         </MudTable>
                         <CustomPagination Class="my-1" HasNext="@_presMajorRequest.HasNext" OnPageChange="@(async e => await OnPaginationButtonClickTab2(e))" CurrentPageNumber="@_presMajorRequest.PageNumber"></CustomPagination>
-
                     }
                 </MudTabPanel>
             </MudTabs>
         </MudPaper>
     </div>
-
-        
 }
 
 
 @code {
-    private List<BreadcrumbItem> _breadCrumbs = new List<BreadcrumbItem>
+
+    private readonly List<BreadcrumbItem> _breadCrumbs = new()
     {
-        new BreadcrumbItem("Trang chủ", href: "/recreation/post/client"),
-        new BreadcrumbItem("Quản lý giảng viên", href: null, disabled: true)
+        new BreadcrumbItem("Trang chủ", "/recreation/post/client"),
+        new BreadcrumbItem("Quản lý giảng viên", null, true)
     };
 
     MudTabs tabs = new();
 
-    private MajorRequestViewWithPaginationRequest _preqMajorRequest = new();
+    private readonly MajorRequestViewWithPaginationRequest _preqMajorRequest = new();
     private PaginationResponse<MajorRequestDTO> _presMajorRequest = new();
     private List<MajorRequestDTO> _listMajorRequest = new();
     private List<IGrouping<(string email, string name), MajorRequestDTO>>? _listMajorRequestGrouped;
 
-    private UserViewWithPaginationRequest _preqUser = new();
+    private readonly UserViewWithPaginationRequest _preqUser = new();
     private PaginationResponse<UserDTO> _presUser = new();
     private List<UserDTO> _listUser = new();
 
-    #region 
+    #region
+
     private bool _isLoadingAll = true;
     private bool _isLoadingTab1 = true;
     private bool _isLoadingTab2 = true;
 
-    private bool _isLoadingListTab1 = false;
+    private bool _isLoadingListTab1;
     private bool _isLoadingListTab2 = false;
 
-    private Guid? _isShowingLecturerDetail = null;
-    private string? _isShowingMajorRequestDetail = null;
+    private Guid? _isShowingLecturerDetail;
+    private string? _isShowingMajorRequestDetail;
+
     #endregion
+
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            await LoadDataTab1().ContinueWith((result) =>
+            await LoadDataTab1().ContinueWith(result =>
             {
                 _isLoadingTab1 = false;
                 StateHasChanged();
             });
-            await LoadDataTab2().ContinueWith((result) =>
+            await LoadDataTab2().ContinueWith(result =>
             {
                 _isLoadingTab2 = false;
                 StateHasChanged();
@@ -240,32 +238,30 @@ else
     private async Task LoadDataTab2()
     {
         _presMajorRequest = await _repoMajorRequest.GetListWithPaginationAsync(_preqMajorRequest);
-        if(_presMajorRequest.Data != null)
+        if (_presMajorRequest.Data != null)
         {
             _listMajorRequest = (List<MajorRequestDTO>)_presMajorRequest.Data;
         }
         _listMajorRequestGrouped = _listMajorRequest.GroupBy(c => (c.CreatedByEmail, c.CreatedByName)).ToList();
-
-
     }
 
     private async Task OnDelete(Guid id)
     {
         var request = new MajorRequestDeleteRequest
-            {
-                Id = id,
-            };
+        {
+            Id = id
+        };
         var confirm = await _diagService.ShowMessageBox
-              (
-                  "Thông báo",
-                  "Bạn chắn chắn muốn hủy yêu cầu này?",
-                  "Xác nhận",
-                  cancelText: "Hủy"
-              );
+            (
+                "Thông báo",
+                "Bạn chắn chắn muốn hủy yêu cầu này?",
+                "Xác nhận",
+                cancelText: "Hủy"
+            );
         if (confirm == true)
         {
             var result = await _repoMajorRequest.DeleteAsync(request);
-            if(result)
+            if (result)
             {
                 _mudSnackbar.Add("Hủy yêu cầu thành công", Severity.Success);
                 await LoadDataTab2();
@@ -273,7 +269,6 @@ else
             else
             {
                 _mudSnackbar.Add("Hủy yêu cầu thất bại", Severity.Error);
-
             }
         }
     }
@@ -281,34 +276,33 @@ else
     private async Task OnAddToMajor(MajorRequestDTO req)
     {
         var requestDelete = new MajorRequestDeleteRequest
-            {
-                Id = req.Id,
-            };
+        {
+            Id = req.Id
+        };
 
         var confirm = await _diagService.ShowMessageBox
-              (
-                  "Thông báo",
-                  "Xác nhận duyệt yêu cầu?",
-                  "Xác nhận",
-                  cancelText: "Hủy"
-              );
+            (
+                "Thông báo",
+                "Xác nhận duyệt yêu cầu?",
+                "Xác nhận",
+                cancelText: "Hủy"
+            );
         if (confirm == true)
         {
             var user = _listUser.FirstOrDefault(c => c.Id == req.CreatedBy);
             var userMajor = user.ListJoinedMajors.FirstOrDefault(c => c.MajorId == req.MajorId);
 
-            var result = await _repoUserMajor.UpdateAsync(new()
+            var result = await _repoUserMajor.UpdateAsync(new UserMajorUpdateRequest
             {
                 Id = userMajor.Id,
                 IsManager = true,
                 Status = userMajor.Status,
-                #warning Provide Id
+#warning Provide Id
                 ModifiedBy = Guid.Empty
             });
             if (!result)
             {
                 _mudSnackbar.Add("Duyệt thất bại", Severity.Error);
-
             }
             else
             {
@@ -317,7 +311,6 @@ else
                 await LoadDataTab2();
                 await LoadDataTab1();
             }
-
         }
     }
 
@@ -380,11 +373,11 @@ else
         {
             _preqUser.PageNumber = 1;
         }
-        await LoadDataTab1().ContinueWith((re) =>
+        await LoadDataTab1().ContinueWith(re =>
         {
             _isLoadingListTab1 = false;
             StateHasChanged();
         });
-
     }
+
 }

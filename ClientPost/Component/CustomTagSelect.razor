@@ -1,5 +1,4 @@
-﻿
-<style>
+﻿<style>
     .mud-dialog-title {
         padding: 0 !important;
     }
@@ -8,7 +7,7 @@
 <MudDialog Style="width: 50vw;">
     <TitleContent>
         <div class="d-flex align-center ps-5 pt-3">
-            <MudIcon Icon="@Icons.Material.Filled.Add" />
+            <MudIcon Icon="@Icons.Material.Filled.Add"/>
             <MudText Typo="Typo.h6" Style="font-weight: 600">Thêm tag</MudText>
         </div>
     </TitleContent>
@@ -17,7 +16,7 @@
             <MudTextField Variant="Variant.Outlined" T="string" @bind-Value="SearchString" Label="Tìm kiếm" DebounceInterval="200" OnDebounceIntervalElapsed="@(async () => await OnSearchFunc())" Immediate></MudTextField>
 
             <div class="mt-2">
-                 @foreach (var i in _lstTagDisPlay )
+                @foreach (var i in _lstTagDisPlay)
                 {
                     // Truyền pthc thêm Tag khỏi List<Tag> vào trong OnClose
                     <MudChip Color="Color.Primary" CloseIcon="@Icons.Material.Filled.AddCircle" OnClose="@(() => { _lstTag.Add(i); })">@i.Name</MudChip>
@@ -52,17 +51,22 @@
         <MudButton Color="Color.Primary" OnClick="DeleteServer">Lưu</MudButton>
     </DialogActions>
 </MudDialog>
+
 @code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; }
 
     [Parameter]
     public List<TagBaseDTO> _lstTag { get; set; }
+
     [Parameter]
     public List<TagBaseDTO> _lstTagFromDB { get; set; }
+
     private string SearchString;
     private List<TagBaseDTO> _lstTagDisPlay = new();
-    private bool _toggleAllTags = false;
-    private int _maxChipDisplay = 5;
+    private bool _toggleAllTags;
+    private readonly int _maxChipDisplay = 5;
 
     private void Cancel()
     {
@@ -73,16 +77,17 @@
     {
         MudDialog.Close(DialogResult.Ok(_lstTag));
     }
+
     private async Task OnSearchFunc()
     {
-        if(string.IsNullOrWhiteSpace(SearchString))
+        if (string.IsNullOrWhiteSpace(SearchString))
         {
-            _lstTagDisPlay = new();
+            _lstTagDisPlay = new List<TagBaseDTO>();
         }
         else
         {
             _lstTagDisPlay = _lstTagFromDB.Where(x => x.Name.Contains(SearchString)).ToList();
         }
     }
-    
+
 }

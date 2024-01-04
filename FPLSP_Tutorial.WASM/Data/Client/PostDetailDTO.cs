@@ -1,7 +1,6 @@
-﻿namespace FPLSP_Tutorial.WASM.Data.Client
+﻿namespace FPLSP_Tutorial.WASM.Data.Client;
+
+public class PostDetailDTO : PostMainDTO
 {
-    public class PostDetailDTO : PostMainDTO
-    {
-        public string Content { get; set; } = string.Empty;
-    }
+    public string Content { get; set; } = string.Empty;
 }

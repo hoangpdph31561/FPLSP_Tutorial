@@ -1,7 +1,6 @@
-﻿namespace FPLSP_Tutorial.WASM.Data.DataTransferObjects.User.Request
+﻿namespace FPLSP_Tutorial.WASM.Data.DataTransferObjects.User.Request;
+
+public class UserDeleteRequest
 {
-    public class UserDeleteRequest
-    {
-        public Guid Id { get; set; }
-    }
+    public Guid Id { get; set; }
 }

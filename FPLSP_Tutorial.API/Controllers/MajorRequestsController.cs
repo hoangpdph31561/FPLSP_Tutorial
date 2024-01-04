@@ -8,69 +8,74 @@ using FPLSP_Tutorial.Application.ValueObjects.Pagination;
 using FPLSP_Tutorial.Infrastructure.ViewModels.MajorRequests;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FPLSP_Tutorial.API.Controllers
+namespace FPLSP_Tutorial.API.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class MajorRequestsController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class MajorRequestsController : ControllerBase
+    private readonly ILocalizationService _localizationService;
+    public readonly IMajorRequestReadOnlyRepository _majorRequestReadOnlyRespository;
+    public readonly IMajorRequestReadWriteRepository _majorRequestReadWriteRespository;
+    private readonly IMapper _mapper;
+
+    public MajorRequestsController(IMajorRequestReadOnlyRepository majorRequestReadOnlyRespository,
+        IMajorRequestReadWriteRepository majorRequestReadWriteRespository, IConfiguration configuration,
+        ILocalizationService localizationService, IMapper mapper)
     {
-        public readonly IMajorRequestReadOnlyRepository _majorRequestReadOnlyRespository;
-        public readonly IMajorRequestReadWriteRepository _majorRequestReadWriteRespository;
-        private readonly ILocalizationService _localizationService;
-        private readonly IMapper _mapper;
+        _majorRequestReadOnlyRespository = majorRequestReadOnlyRespository;
+        _majorRequestReadWriteRespository = majorRequestReadWriteRespository;
+        _localizationService = localizationService;
+        _mapper = mapper;
+    }
 
-        public MajorRequestsController(IMajorRequestReadOnlyRepository majorRequestReadOnlyRespository, IMajorRequestReadWriteRepository majorRequestReadWriteRespository, IConfiguration configuration, ILocalizationService localizationService, IMapper mapper)
+    [HttpGet("GetListWithPagination")]
+    public async Task<IActionResult> GetListWithPagination([FromQuery] MajorRequestViewWithPaginationRequest request,
+        CancellationToken cancellationToken)
+    {
+        MajorRequestListWithPaginationViewModel vm = new(_majorRequestReadOnlyRespository, _localizationService);
+
+        await vm.HandleAsync(request, cancellationToken);
+        if (vm.Success)
         {
-            _majorRequestReadOnlyRespository = majorRequestReadOnlyRespository;
-            _majorRequestReadWriteRespository = majorRequestReadWriteRespository;
-            _localizationService = localizationService;
-            _mapper = mapper;
+            var paginationResponse = new PaginationResponse<MajorRequestDTO>();
+            paginationResponse = (PaginationResponse<MajorRequestDTO>)vm.Data;
+            return Ok(paginationResponse);
         }
 
-        [HttpGet("GetListWithPagination")]
-        public async Task<IActionResult> GetListWithPagination([FromQuery] MajorRequestViewWithPaginationRequest request, CancellationToken cancellationToken)
-        {
-            MajorRequestListWithPaginationViewModel vm = new(_majorRequestReadOnlyRespository, _localizationService);
+        return BadRequest();
+    }
 
-            await vm.HandleAsync(request, cancellationToken);
-            if (vm.Success)
-            {
-                PaginationResponse<MajorRequestDTO> paginationResponse = new PaginationResponse<MajorRequestDTO>();
-                paginationResponse = (PaginationResponse<MajorRequestDTO>)vm.Data;
-                return Ok(paginationResponse);
-            }
-            return BadRequest();
-        }
+    [HttpPost]
+    public async Task<IActionResult> AddAsync(MajorRequestCreateRequest request, CancellationToken cancellationToken)
+    {
+        MajorRequestCreateViewModel vm = new(_majorRequestReadOnlyRespository, _majorRequestReadWriteRespository,
+            _localizationService, _mapper);
 
-        [HttpPost]
-        public async Task<IActionResult> AddAsync(MajorRequestCreateRequest request, CancellationToken cancellationToken)
-        {
-            MajorRequestCreateViewModel vm = new(_majorRequestReadOnlyRespository, _majorRequestReadWriteRespository, _localizationService, _mapper);
+        await vm.HandleAsync(request, cancellationToken);
 
-            await vm.HandleAsync(request, cancellationToken);
-
-            return Ok(vm);
-        }
+        return Ok(vm);
+    }
 
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateAsync(MajorRequestUpdateRequest request, CancellationToken cancellationToken)
-        {
-            MajorRequestUpdateViewModel vm = new(_majorRequestReadWriteRespository, _localizationService, _mapper);
+    [HttpPut]
+    public async Task<IActionResult> UpdateAsync(MajorRequestUpdateRequest request, CancellationToken cancellationToken)
+    {
+        MajorRequestUpdateViewModel vm = new(_majorRequestReadWriteRespository, _localizationService, _mapper);
 
-            await vm.HandleAsync(request, cancellationToken);
+        await vm.HandleAsync(request, cancellationToken);
 
-            return Ok(vm);
-        }
+        return Ok(vm);
+    }
 
-        [HttpDelete]
-        public async Task<IActionResult> DeleteAsync([FromQuery] MajorRequestDeleteRequest request, CancellationToken cancellationToken)
-        {
-            MajorRequestDeleteViewModel vm = new(_majorRequestReadWriteRespository, _localizationService, _mapper);
+    [HttpDelete]
+    public async Task<IActionResult> DeleteAsync([FromQuery] MajorRequestDeleteRequest request,
+        CancellationToken cancellationToken)
+    {
+        MajorRequestDeleteViewModel vm = new(_majorRequestReadWriteRespository, _localizationService, _mapper);
 
-            await vm.HandleAsync(request, cancellationToken);
+        await vm.HandleAsync(request, cancellationToken);
 
-            return Ok(vm);
-        }
+        return Ok(vm);
     }
 }

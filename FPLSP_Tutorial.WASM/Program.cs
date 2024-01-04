@@ -1,23 +1,20 @@
+using Blazored.SessionStorage;
 using FPLSP_Tutorial.WASM;
+using FPLSP_Tutorial.WASM.Pages;
 using FPLSP_Tutorial.WASM.Repositories.Implements;
 using FPLSP_Tutorial.WASM.Repositories.Interfaces;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor.Services;
-using Blazored.SessionStorage;
-using Microsoft.AspNetCore.Authorization;
-using FPLSP_Tutorial.WASM.Pages;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddMudServices();
 builder.Services.AddAuthorizationCore();
-builder.Services.AddHttpClient("API", options =>
-{
-    options.BaseAddress = new Uri(builder.Configuration["API:Https"]);
-});
+builder.Services.AddHttpClient("API",
+    options => { options.BaseAddress = new Uri(builder.Configuration["API:Https"]); });
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7225") });
 

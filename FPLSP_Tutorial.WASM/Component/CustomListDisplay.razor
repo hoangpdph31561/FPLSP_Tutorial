@@ -1,7 +1,7 @@
 ﻿@if (IsLoading)
 {
     <div class="d-flex justify-center align-center" style=" width: 100%; height: 80vh;">
-        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true"/>
     </div>
 }
 else
@@ -89,10 +89,10 @@ else
     public RenderFragment? AdditionalSearchBarColumn { get; set; }
 
     [Parameter]
-    public bool HideSearch { get; set; } = false;
+    public bool HideSearch { get; set; }
 
     [Parameter]
-    public bool DisableSearch { get; set; } = false;
+    public bool DisableSearch { get; set; }
 
     [Parameter]
     public string HelperSearch { get; set; } = "";

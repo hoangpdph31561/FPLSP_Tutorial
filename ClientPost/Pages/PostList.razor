@@ -18,17 +18,17 @@ else
                         </MudTooltip>
                     </div>
                     <MudPaper Elevation="0" Class="truncated-inline-text-container">
-                        <MudIcon Icon="@Icons.Material.Filled.Man" />
+                        <MudIcon Icon="@Icons.Material.Filled.Man"/>
                         <MudText Typo="Typo.caption" Class="truncated-inline-text ">@item.CreatedName</MudText>
                     </MudPaper>
                     <MudText Typo="Typo.caption">Loại bài viết: @item.PostType</MudText>
                     <MudPaper Elevation="0" Class="truncated-text">
-                        @if(item.LstTags == null || item.LstTags.Count == 0)
+                        @if (item.LstTags == null || item.LstTags.Count == 0)
                         {
                             <MudText Typo="Typo.caption">Không có tags</MudText>
-        }
+                        }
                         else
-        {
+                        {
                             @foreach (var tag in item.LstTags)
                             {
                                 <MudChip Size="Size.Small" Variant="Variant.Outlined" Color="Color.Primary">@tag.Name</MudChip>
@@ -36,30 +36,43 @@ else
                         }
                     </MudPaper>
                     <MudPaper Elevation="0" Class="d-flex align-center justify-end">
-                        <MudButton OnClick="@(() => ButtonClick(item.Id))" Color="Color.Primary">Đọc thêm<MudText Class="mt-1 px-2 align-center" Typo="Typo.caption"><MudIcon Icon="@Icons.Material.Filled.East" /></MudText></MudButton>
+                        <MudButton OnClick="@(() => ButtonClick(item.Id))" Color="Color.Primary">
+                            Đọc thêm
+                            <MudText Class="mt-1 px-2 align-center" Typo="Typo.caption">
+                                <MudIcon Icon="@Icons.Material.Filled.East"/>
+                            </MudText>
+                        </MudButton>
                     </MudPaper>
                 </MudPaper>
             </MudItem>
         }
-        
+
 
     </MudGrid>
 }
+
 @code {
+
     [Parameter]
     public string? MajorId { get; set; }
+
     private bool previousState;
+
     [Inject]
     public IClientPostService ClientPostService { get; set; }
+
     [Inject]
     public NavigationManager NavigationManager { get; set; }
+
     private PaginationResponse<PostMainDTO> postPageResponse { get; set; }
     private List<PostMainDTO> lstPost { get; set; }
     private ClientPostGetByMajorIdWithPaginationRequest postRequest = new();
+
     protected override async Task OnInitializedAsync()
     {
         await LoadData();
     }
+
     private async Task LoadData()
     {
         if (MajorId == null)
@@ -72,8 +85,8 @@ else
         }
         postPageResponse = await ClientPostService.GetPostsByMajorId(postRequest);
         lstPost = postPageResponse.Data.ToList();
-        
     }
+
     private void ButtonClick(Guid id)
     {
         NavigationManager.NavigateTo($"/postdetail/{id}");

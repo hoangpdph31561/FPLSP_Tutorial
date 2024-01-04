@@ -4,42 +4,40 @@ using FPLSP_Tutorial.Application.Interfaces.Services;
 using FPLSP_Tutorial.Application.ValueObjects.Common;
 using FPLSP_Tutorial.Application.ViewModels;
 
-namespace FPLSP_Tutorial.Infrastructure.ViewModels.Tag
+namespace FPLSP_Tutorial.Infrastructure.ViewModels.Tag;
+
+public class TagDeleteViewModel : ViewModelBase<TagDeleteRequest>
 {
-    public class TagDeleteViewModel : ViewModelBase<TagDeleteRequest>
+    private readonly ILocalizationService _localizationService;
+    public readonly ITagReadWriteRepository _tagReadWriteRepository;
+
+    public TagDeleteViewModel(ITagReadWriteRepository tagReadWriteRepository, ILocalizationService localizationService)
     {
-        public readonly ITagReadWriteRepository _tagReadWriteRepository;
-        private readonly ILocalizationService _localizationService;
+        _tagReadWriteRepository = tagReadWriteRepository;
+        _localizationService = localizationService;
+    }
 
-        public TagDeleteViewModel(ITagReadWriteRepository tagReadWriteRepository, ILocalizationService localizationService)
+    public override async Task HandleAsync(TagDeleteRequest request, CancellationToken cancellationToken)
+    {
+        try
         {
-            _tagReadWriteRepository = tagReadWriteRepository;
-            _localizationService = localizationService;
+            var result = await _tagReadWriteRepository.DeleteTagAsync(request, cancellationToken);
+
+            Success = result.Success;
+            ErrorItems = result.Errors;
+            Message = result.Message;
         }
-
-        public override async Task HandleAsync(TagDeleteRequest request, CancellationToken cancellationToken)
+        catch (Exception)
         {
-            try
+            Success = false;
+            ErrorItems = new[]
             {
-                var result = await _tagReadWriteRepository.DeleteTagAsync(request, cancellationToken);
-
-                Success = result.Success;
-                ErrorItems = result.Errors;
-                Message = result.Message;
-                return;
-            }
-            catch (Exception)
-            {
-                Success = false;
-                ErrorItems = new[]
-                    {
-                    new ErrorItem
-                    {
-                        Error = _localizationService["Error occurred while delete the tag"],
-                        FieldName = string.Concat(LocalizationString.Common.FailedToDelete, "Tag")
-                    }
-                };
-            }
+                new ErrorItem
+                {
+                    Error = _localizationService["Error occurred while delete the tag"],
+                    FieldName = string.Concat(LocalizationString.Common.FailedToDelete, "Tag")
+                }
+            };
         }
     }
 }

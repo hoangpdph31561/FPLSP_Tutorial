@@ -1,8 +1,7 @@
-﻿namespace FPLSP_Tutorial.Application.DataTransferObjects.ClientPost
+﻿namespace FPLSP_Tutorial.Application.DataTransferObjects.ClientPost;
+
+public class PostBaseDTO
 {
-    public class PostBaseDTO
-    {
-        public Guid Id { get; set; }
-        public string Title { get; set; } = string.Empty;
-    }
+    public Guid Id { get; set; }
+    public string Title { get; set; } = string.Empty;
 }

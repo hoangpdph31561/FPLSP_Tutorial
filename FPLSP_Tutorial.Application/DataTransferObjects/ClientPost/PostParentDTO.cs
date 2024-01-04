@@ -1,6 +1,5 @@
-﻿namespace FPLSP_Tutorial.Application.DataTransferObjects.ClientPost
+﻿namespace FPLSP_Tutorial.Application.DataTransferObjects.ClientPost;
+
+public class PostParentDTO : PostMainDTO
 {
-    public class PostParentDTO : PostMainDTO
-    {
-    }
 }
